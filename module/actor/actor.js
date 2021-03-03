@@ -25,6 +25,17 @@ export default class SplittermondActor extends Actor {
             item.inInventory = true
         });
 
+        this._prepareWeapons();
+
+
+
+        this._prepareActiveDefense();
+
+    }
+
+    _prepareWeapons() {
+        const actorData = this.data;
+        const data = actorData.data;
         actorData.items.forEach(item => {
             if (item.type === "weapon") {
                 if (item.data.secondaryAttack) {
@@ -84,7 +95,11 @@ export default class SplittermondActor extends Actor {
             }
 
         });
+    }
 
+    _prepareActiveDefense() {
+        const actorData = this.data;
+        const data = actorData.data;
         data.activeDefense = {}
 
         data.activeDefense.defense = [];
@@ -134,10 +149,6 @@ export default class SplittermondActor extends Actor {
                 }
             }
         });
-
-
-
-
     }
 
     _addModifier(name, str, type = "misc") {
