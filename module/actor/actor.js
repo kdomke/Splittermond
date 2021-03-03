@@ -410,10 +410,6 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
-        if (!this.items.has(weaponData._id)) {
-            ui.notifications.info(game.i18n.localize("splittermond.spellNotAvailable"));
-            return
-        }
         let targettoken = Array.from(game.user.targets)[0];
 
         let checkData = await CheckDialog.create({
