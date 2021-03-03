@@ -12,6 +12,7 @@ export default class SplittermondActor extends Actor {
         data.experience.percentage = data.experience.spent - CONFIG.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
         data.experience.percentage /= data.experience.nextLevelValue;
         data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
+        data.bonusCap = data.experience.heroLevel + 2;
 
         this._prepareDerivedAttributes();
         this._prepareSkills();
@@ -244,8 +245,8 @@ export default class SplittermondActor extends Actor {
         CONFIG.splittermond.derivedAttributes.forEach(attr => {
             if (data.derivedAttributes[attr].bonus) {
                 let bonusMisc = data.derivedAttributes[attr].bonus?.misc?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
-                let bonusEquipment = Math.min(data.derivedAttributes[attr].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), 3) || 0;
-                let bonusMagic = Math.min(data.derivedAttributes[attr].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), 3) || 0;
+                let bonusEquipment = Math.min(data.derivedAttributes[attr].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let bonusMagic = Math.min(data.derivedAttributes[attr].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
                 let malus = data.derivedAttributes[attr].malus?.all?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
                 data.derivedAttributes[attr].value += bonusMisc + bonusEquipment + bonusMagic - malus;
             }
@@ -254,8 +255,8 @@ export default class SplittermondActor extends Actor {
         [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].forEach(skill => {
             if (data.skills[skill].bonus) {
                 let bonusMisc = data.skills[skill].bonus?.misc?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
-                let bonusEquipment = Math.min(data.skills[skill].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), 3) || 0;
-                let bonusMagic = Math.min(data.skills[skill].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), 3) || 0;
+                let bonusEquipment = Math.min(data.skills[skill].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let bonusMagic = Math.min(data.skills[skill].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
                 let malus = data.skills[skill].malus?.all?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
                 data.skills[skill].value += bonusMisc + bonusEquipment + bonusMagic - malus;
             }
