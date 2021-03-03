@@ -1,0 +1,13 @@
+<div class="splittermond dice-roll check">
+    <header>
+        <h2 class="title"><span class="roll-type">{{rollType}}</span>{{title}}</h2>
+    </header>
+    <div class="roll-summery">
+        <div class="dice-formula">{{roll.formula}}</div>
+        {{{tooltip}}}
+        <h4 class="dice-total"><span class="total">{{roll.total}}</span> vs. <span
+                class="difficulty">{{difficulty}}</span>
+    </div>
+    <h3 class="degree-of-success{{#if succeded}} success{{/if}}">{{degreeOfSuccess}} {{degreeOfSuccessMessage}}</h3>
+</div>
+</div>

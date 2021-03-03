@@ -1,0 +1,52 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header>
+
+        <img src="{{item.img}}" data-edit="img" title="{{item.name}}" height="92" width="92" />
+        <div>
+            <div class="type">
+                {{ localize typeLabel }}
+            </div>
+            <h1>
+                <input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'splittermond.name' }}" />
+            </h1>
+        </div>
+    </header>
+    <nav class="sheet-navigation tabs" data-group="primary">
+        <a class="item active" data-tab="description">{{ localize "splittermond.description" }}</a>
+        <a class="item" data-tab="properties">{{ localize "splittermond.properties" }}</a>
+    </nav>
+    <main>
+        <section class="tab description" data-group="primary" data-tab="description">
+            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+        </section>
+        <section class="tab properties" data-group="primary" data-tab="properties">
+            {{#*inline "input"}}
+            <label>{{localize templateData.label}}</label>
+            <input name="{{templateData.field}}" type="text" value="{{templateData.value}}"
+                placeholder="{{localize label}}" />
+            {{/inline}}
+            {{#*inline "textarea"}}
+            <label>{{localize templateData.label}}</label>
+            <textarea name="{{templateData.field}}">{{templateData.value}}</textarea>
+            {{/inline}}
+            {{#*inline "bool"}}
+            <label>{{localize templateData.label}}</label>
+            <input name="{{templateData.field}}" type="checkbox" value="true" {{#if
+                templateData.value}}checked{{/if}} />
+            {{/inline}}
+            {{#*inline "select"}}
+            <label>{{localize templateData.label}}</label>
+            <select name="{{templateData.field}}">
+                {{selectOptions templateData.choices selected=templateData.value localize=true}}
+            </select>
+            {{/inline}}
+
+            {{#each itemProperties}}
+            <h3>{{localize this.groupName}}</h3>
+            {{#each this.properties}}
+            {{> (lookup . 'template') templateData=this}}
+            {{/each}}
+            {{/each}}
+        </section>
+    </main>
+</form>

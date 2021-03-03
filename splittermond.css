@@ -1,0 +1,844 @@
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('./fonts/Vollkorn-VariableFont_wght.ttf') format('truetype');
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('./fonts/Vollkorn-Italic-VariableFont_wght.ttf') format('truetype');
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Vollkorn SC';
+  src: url('./fonts/VollkornSC-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn SC';
+  src: url('./fonts/VollkornSC-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn SC';
+  src: url('./fonts/VollkornSC-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn SC';
+  src: url('./fonts/VollkornSC-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+/*
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-MediumItalic.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-SemiBold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-SemiBoldItalic.otf') format('opentype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-BoldItalic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-ExtraBold.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-ExtraBoldItalic.otf') format('opentype');
+    font-weight: 800;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Vollkorn';
+    src: url('./fonts/Vollkorn-BlackItalic.otf') format('opentype');
+    font-weight: 900;
+    font-style: italic;
+}
+*/
+.splittermond {
+  /*
+    .window-content:after {
+        position: absolute;
+        left: 0;
+        top: 0;
+        content: " ";
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        border: 16px solid transparent;
+        border-image:url(./images/frame2.png) 16 16 repeat;
+        border-image-repeat: round;
+        opacity: 0.2;
+        z-index: -1;
+    }
+*/
+}
+.splittermond .window-title {
+  color: white;
+}
+.splittermond .window-content {
+  font-size: 14px;
+  color: #444546;
+  font-family: 'Vollkorn';
+  font-variant-numeric: lining-nums;
+  position: relative;
+  padding: 0em;
+  z-index: 0;
+}
+.splittermond .window-resizable-handle {
+  z-index: 0;
+  background-color: transparent;
+  border: none;
+  color: #444546;
+}
+.splittermond main {
+  padding: 7px;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
+  border-top: 1px outset rgba(255, 255, 255, 0.3);
+}
+.splittermond .tabs {
+  font-family: 'Vollkorn SC';
+  font-weight: 600;
+  text-transform: lowercase;
+  font-size: 18px;
+  color: #444546;
+  position: relative;
+  z-index: 10;
+  justify-content: stretch;
+}
+.splittermond .tabs .item {
+  position: relative;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px;
+  padding-left: 7px;
+  padding-right: 7px;
+  flex: 1;
+}
+.splittermond .tabs .item.active,
+.splittermond .tabs .item:hover {
+  text-shadow: 0 0 0.5em #2D80E1;
+  color: #19314D;
+}
+.splittermond .tabs .item.active {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
+  border: 1px outset rgba(255, 255, 255, 0.3);
+  border-bottom: none;
+  top: 1px;
+}
+.splittermond .tab[data-tab].active {
+  display: flex;
+  flex-direction: column;
+}
+.splittermond .tab .tabs {
+  border-radius: 3px;
+  font-size: 14px;
+  border: 1px inset rgba(255, 255, 255, 0.3);
+  align-self: start;
+}
+.splittermond .tab .tabs .item {
+  text-transform: none;
+  border-radius: 0;
+  border: 1px outset rgba(255, 255, 255, 0.3);
+}
+.splittermond .tab .tabs .item.active {
+  background: none;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
+  border: none;
+  top: 0px;
+  border-radius: 0;
+}
+.splittermond img {
+  border: none;
+}
+.splittermond h1,
+.splittermond h2,
+.splittermond h3,
+.splittermond h4,
+.splittermond h5,
+.splittermond h6 {
+  color: #444546;
+  font-weight: bold;
+  font-family: 'Vollkorn SC';
+  border: none;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+}
+.splittermond h1 {
+  font-size: 24px;
+  font-weight: 400;
+  font-variant: small-caps;
+  font-variant-caps: small-caps;
+}
+.splittermond h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.splittermond h3 {
+  font-size: 14px;
+  font-weight: 700;
+}
+.splittermond .tooltip-activator {
+  position: relative;
+}
+.splittermond .tooltip-activator:hover + .tooltip {
+  display: block;
+}
+.splittermond .tooltip {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  width: 90%;
+  top: 2em;
+  left: 10%;
+  padding: 7px;
+  background: url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 10;
+}
+.splittermond input[type="text"],
+.splittermond #autoexpanddummy {
+  font-variant-numeric: lining-nums;
+  border: none;
+  background: none;
+  color: #19314D;
+  padding: 3px;
+  padding-bottom: 3px;
+  margin: 0;
+  vertical-align: baseline;
+  display: inline-block;
+  height: 100%;
+  border-radius: 7px;
+  font-weight: bold;
+}
+.splittermond input[type="text"]:disabled,
+.splittermond #autoexpanddummy:disabled {
+  color: #444546;
+}
+.splittermond input[type="text"]:hover,
+.splittermond #autoexpanddummy:hover {
+  text-shadow: 0 0 0.3em white;
+}
+.splittermond input[type="text"]:focus,
+.splittermond #autoexpanddummy:focus {
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 0.3em white;
+}
+.splittermond input[type="text"].autoexpand,
+.splittermond #autoexpanddummy.autoexpand {
+  box-sizing: content-box;
+}
+.splittermond .button-inline {
+  padding: 0px;
+  margin: 0px;
+  background: none;
+  border: none;
+  display: inline-block;
+  width: unset;
+  box-shadow: none;
+  line-height: unset;
+  color: rgba(68, 69, 70, 0.7);
+}
+.splittermond .button-inline:hover {
+  text-shadow: none;
+  color: #444546;
+  box-shadow: none;
+}
+.splittermond .button-inline[disabled] {
+  color: rgba(68, 69, 70, 0.2);
+}
+.splittermond .button-inline[disabled]:hover {
+  text-shadow: none;
+  box-shadow: none;
+  color: rgba(68, 69, 70, 0.2);
+}
+.splittermond .button-inline:active {
+  box-shadow: none;
+}
+.splittermond .list {
+  display: flex;
+  flex-direction: column;
+  border-radius: 3px;
+  border: 1px inset rgba(255, 255, 255, 0.3);
+}
+.splittermond .list .actions {
+  width: 4em;
+  text-align: right;
+}
+.splittermond .list .actions button {
+  display: none;
+}
+.splittermond .list:hover > .list-header > .actions > button {
+  display: inline-block;
+}
+.splittermond .list li:hover > .actions > button {
+  display: inline-block;
+}
+.splittermond .list .list-header {
+  display: flex;
+  width: 100%;
+  border: 1px outset rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  align-items: center;
+  padding: 3px;
+}
+.splittermond .list .list-header *:not(:first-child) {
+  border-left: 2px groove rgba(255, 255, 255, 0.3);
+  color: rgba(68, 69, 70, 0.7);
+}
+.splittermond .list .list-header > *:first-child {
+  flex: 1;
+}
+.splittermond .list li:nth-child(odd) {
+  background-color: rgba(68, 69, 70, 0.05);
+}
+.splittermond .list li:hover {
+  background-color: rgba(45, 128, 225, 0.1);
+}
+.splittermond .list ul,
+.splittermond .list ol {
+  display: block;
+  flex-basis: 100%;
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0px;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.splittermond .list ul li,
+.splittermond .list ol li {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 3px;
+  border: 1px solid transparent;
+}
+.splittermond .list ul li input,
+.splittermond .list ol li input {
+  margin-top: -3px;
+  margin-bottom: -3px;
+}
+.splittermond .list ul li > *,
+.splittermond .list ol li > * {
+  border-left: 2px groove rgba(255, 255, 255, 0.3);
+}
+.splittermond .list ul li > *:first-child,
+.splittermond .list ol li > *:first-child {
+  flex: 1;
+  border-left: none;
+}
+.splittermond ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.splittermond ::-webkit-scrollbar-thumb {
+  outline: none;
+  border-radius: 3px;
+  background: rgba(25, 49, 77, 0.5);
+  border: 1px outset rgba(255, 255, 255, 0.3);
+}
+.splittermond ::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: transparent;
+  box-shadow: none;
+  margin-bottom: 14px;
+  border: none;
+}
+.splittermond.dialog form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 7px;
+  padding: 7px;
+}
+.splittermond.dialog form label {
+  text-align: right;
+}
+.dialog .dialog-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+  grid-gap: 7px;
+}
+#combat #combat-controls [data-control="previousRound"] {
+  display: none;
+}
+#combat #combat-controls [data-control="nextRound"] {
+  display: none;
+}
+.splittermond.dice-roll {
+  flex-direction: column;
+}
+.splittermond.dice-roll header {
+  display: flex;
+  flex-direction: row;
+}
+.splittermond.dice-roll header img {
+  margin-right: 7px;
+}
+.splittermond.dice-roll header h2 {
+  text-align: left;
+}
+.splittermond.dice-roll header h2 .roll-type {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  display: block;
+}
+.splittermond.dice-roll h3.degree-of-success {
+  padding: 7px;
+  text-align: center;
+}
+.splittermond.sheet .window-content {
+  overflow-y: hidden;
+}
+.splittermond.sheet .window-content form {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.sheet .window-content form header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px;
+}
+.splittermond.sheet .window-content form header h1 {
+  margin: 6px;
+  line-height: 1.2;
+}
+.splittermond.sheet .window-content form main {
+  overflow: hidden auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+.splittermond.sheet.item .window-content header > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond.sheet.item .window-content header h1 {
+  margin-top: 0px;
+  width: 100%;
+}
+.splittermond.sheet.item .window-content header .type {
+  font-family: "Vollkorn SC";
+  font-weight: bold;
+  margin-left: 10px;
+  text-transform: lowercase;
+}
+.splittermond.sheet.item .window-content main {
+  overflow: hidden;
+  min-height: 100px;
+}
+.splittermond.sheet.item .window-content main .tab {
+  overflow-y: auto;
+}
+.splittermond.sheet.item .window-content main .properties.active {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3px;
+  padding: 7px;
+  align-items: baseline;
+}
+.splittermond.sheet.item .window-content main .properties.active label {
+  font-weight: 600;
+  text-align: right;
+  justify-items: start;
+  border-right: 2px groove rgba(255, 255, 255, 0.3);
+  padding-right: 7px;
+}
+.splittermond.sheet.item .window-content main .properties.active input[type="checkbox"] {
+  align-self: center;
+}
+.splittermond.sheet.item .window-content main .properties.active h3 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+.splittermond.sheet.item .window-content main .description {
+  flex: 1;
+  justify-self: stretch;
+  align-self: stretch;
+  padding: 7px;
+}
+.splittermond.sheet.item .window-content main .description .editor {
+  flex: 1;
+  justify-self: stretch;
+  align-self: stretch;
+}
+.splittermond.sheet.actor .window-content header {
+  flex-direction: column;
+  align-items: stretch;
+}
+.splittermond.sheet.actor .window-content header img {
+  max-width: unset;
+  max-height: unset;
+}
+.splittermond.sheet.actor .window-content header section {
+  display: flex;
+}
+.splittermond.sheet.actor .window-content header .details {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  width: 100%;
+  flex-grow: 1;
+}
+.splittermond.sheet.actor .window-content header .details h1 {
+  margin: 0;
+}
+.splittermond.sheet.actor .window-content header .details h1 input {
+  width: 100%;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-bottom: none;
+  height: 1.4em;
+}
+.splittermond.sheet.actor .window-content header .details > * {
+  width: 100%;
+}
+.splittermond.sheet.actor .window-content header .details .experience {
+  display: flex;
+  flex-wrap: wrap;
+}
+.splittermond.sheet.actor .window-content header .details .experience .bar {
+  flex-basis: 100%;
+}
+.splittermond.sheet.actor .window-content header .details .experience .label {
+  flex-grow: 1;
+}
+.splittermond.sheet.actor .window-content header .details .experience .value {
+  text-align: right;
+  flex-grow: 1;
+}
+.splittermond.sheet.actor .window-content header .details .description {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.splittermond.sheet.actor .window-content header .attributes {
+  display: grid;
+  grid-template-columns: 3em 3em 3em 3em 3em 3em 3em 3em;
+  gap: 0.5em;
+}
+.splittermond.sheet.actor .window-content header .attributes .attribute {
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.sheet.actor .window-content header .attributes .attribute label {
+  font-weight: 900;
+}
+.splittermond.sheet.actor .window-content header .attributes .attribute span,
+.splittermond.sheet.actor .window-content header .attributes .attribute input {
+  font-weight: 700;
+  font-size: 18px;
+}
+.splittermond.sheet.actor .window-content header .attributes .attribute > * {
+  width: 100%;
+  text-align: center;
+}
+.splittermond.sheet.actor .window-content main {
+  overflow: hidden;
+}
+.splittermond.sheet.actor .window-content main .tab {
+  flex: 1;
+  overflow-y: auto;
+}
+.splittermond.sheet.actor .window-content main section.general {
+  z-index: 0;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  align-items: start;
+  align-content: start;
+  grid-gap: 6px;
+}
+.splittermond.sheet.actor .window-content main section.general.active {
+  display: grid;
+}
+.splittermond.sheet.actor .window-content main section.general > div {
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
+}
+.splittermond.sheet.actor .window-content main section.general .name {
+  text-align: left;
+}
+.splittermond.sheet.actor .window-content main section.general .name:hover ~ .description {
+  display: block;
+}
+.splittermond.sheet.actor .window-content main section.general .description {
+  display: none;
+  position: absolute;
+  width: 90%;
+  top: 2em;
+  left: 10%;
+  padding: 7px;
+  background: url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 9;
+}
+.splittermond.sheet.actor .window-content main section.general input {
+  width: 2em;
+  text-align: center;
+}
+.splittermond.sheet.actor .window-content main section.active {
+  display: grid;
+  gap: 3px;
+  align-items: start;
+}
+.splittermond.sheet.actor .window-content main section.skills.active {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list {
+  max-width: 480px;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .list-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  z-index: 10;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list label:hover ~ .description {
+  display: block;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .description {
+  display: none;
+  position: absolute;
+  width: 90%;
+  top: 2em;
+  left: 10%;
+  padding: 7px;
+  background: url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 10;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .value:hover ~ .bonus-malus-description {
+  display: grid;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .bonus-malus-description {
+  display: none;
+  position: absolute;
+  width: 15em;
+  bottom: 2em;
+  left: 10%;
+  padding: 7px;
+  background: url(../../ui/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 10;
+  grid-template-columns: 3fr 1fr;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .attribute,
+.splittermond.sheet.actor .window-content main section.skills.active .list .value,
+.splittermond.sheet.actor .window-content main section.skills.active .list input {
+  width: 3em;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .attribute {
+  text-align: center;
+  color: rgba(68, 69, 70, 0.5);
+  font-weight: 500;
+}
+.splittermond.sheet.actor .window-content main section.skills.active .list .value,
+.splittermond.sheet.actor .window-content main section.skills.active .list input {
+  text-align: center;
+}
+.splittermond.sheet.actor .window-content .inventory img,
+.splittermond.sheet.actor .window-content .fight img,
+.splittermond.sheet.actor .window-content .spells img {
+  width: 32;
+  height: 32;
+  flex: none;
+  margin: -3px;
+}
+.splittermond.sheet.actor .window-content .inventory label,
+.splittermond.sheet.actor .window-content .fight label,
+.splittermond.sheet.actor .window-content .spells label {
+  flex: 1;
+  padding-left: 7px;
+  border-left: none;
+}
+.splittermond.sheet.actor .window-content .inventory .qty,
+.splittermond.sheet.actor .window-content .fight .qty,
+.splittermond.sheet.actor .window-content .spells .qty,
+.splittermond.sheet.actor .window-content .inventory .load,
+.splittermond.sheet.actor .window-content .fight .load,
+.splittermond.sheet.actor .window-content .spells .load,
+.splittermond.sheet.actor .window-content .inventory .weapon-speed,
+.splittermond.sheet.actor .window-content .fight .weapon-speed,
+.splittermond.sheet.actor .window-content .spells .weapon-speed,
+.splittermond.sheet.actor .window-content .inventory .tick-malus,
+.splittermond.sheet.actor .window-content .fight .tick-malus,
+.splittermond.sheet.actor .window-content .spells .tick-malus,
+.splittermond.sheet.actor .window-content .inventory .defense-bonus,
+.splittermond.sheet.actor .window-content .fight .defense-bonus,
+.splittermond.sheet.actor .window-content .spells .defense-bonus,
+.splittermond.sheet.actor .window-content .inventory .damage-reduction,
+.splittermond.sheet.actor .window-content .fight .damage-reduction,
+.splittermond.sheet.actor .window-content .spells .damage-reduction,
+.splittermond.sheet.actor .window-content .inventory .handicap,
+.splittermond.sheet.actor .window-content .fight .handicap,
+.splittermond.sheet.actor .window-content .spells .handicap,
+.splittermond.sheet.actor .window-content .inventory .range,
+.splittermond.sheet.actor .window-content .fight .range,
+.splittermond.sheet.actor .window-content .spells .range,
+.splittermond.sheet.actor .window-content .inventory .value,
+.splittermond.sheet.actor .window-content .fight .value,
+.splittermond.sheet.actor .window-content .spells .value,
+.splittermond.sheet.actor .window-content .inventory .difficulty,
+.splittermond.sheet.actor .window-content .fight .difficulty,
+.splittermond.sheet.actor .window-content .spells .difficulty {
+  width: 3em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond.sheet.actor .window-content .inventory .damage,
+.splittermond.sheet.actor .window-content .fight .damage,
+.splittermond.sheet.actor .window-content .spells .damage,
+.splittermond.sheet.actor .window-content .inventory .costs,
+.splittermond.sheet.actor .window-content .fight .costs,
+.splittermond.sheet.actor .window-content .spells .costs,
+.splittermond.sheet.actor .window-content .inventory .cast-duration,
+.splittermond.sheet.actor .window-content .fight .cast-duration,
+.splittermond.sheet.actor .window-content .spells .cast-duration,
+.splittermond.sheet.actor .window-content .inventory .effect-duration,
+.splittermond.sheet.actor .window-content .fight .effect-duration,
+.splittermond.sheet.actor .window-content .spells .effect-duration {
+  width: 6em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond.sheet.actor .window-content .inventory .costs,
+.splittermond.sheet.actor .window-content .fight .costs,
+.splittermond.sheet.actor .window-content .spells .costs {
+  width: 9em;
+}
+.splittermond.sheet.actor .window-content .inventory .features,
+.splittermond.sheet.actor .window-content .fight .features,
+.splittermond.sheet.actor .window-content .spells .features {
+  width: 15em;
+  padding-left: 3px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.splittermond.sheet.actor .window-content .bar {
+  width: 100%;
+  height: 3px;
+  background-color: rgba(68, 69, 70, 0.3);
+}
+.splittermond.sheet.actor .window-content .bar div {
+  width: 0%;
+  height: 100%;
+  background-color: #2D80E1;
+}
+.splittermond.wizard.species .window-content header {
+  padding-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.splittermond.wizard.species .window-content main {
+  padding-bottom: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+.splittermond.wizard.species .window-content main .attribute {
+  display: grid;
+  grid-template-columns: 1fr 2em 2em 2em;
+  gap: 0.2em;
+  align-items: baseline;
+}
+.splittermond.wizard.species .window-content main .attribute .value {
+  text-align: center;
+}
+.splittermond.wizard.species .window-content footer {
+  display: flex;
+}

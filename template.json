@@ -1,0 +1,464 @@
+{
+  "Actor": {
+    "types": [
+      "character"
+    ],
+    "templates": {
+      "biography": {
+        "biography": ""
+      },
+      "attributes": {
+        "attributes": {
+          "charisma": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "agility": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "intuition": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "constitution": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "mystic": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "strength": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "mind": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          },
+          "willpower": {
+            "species": 0,
+            "initial": 2,
+            "advances": 0
+          }
+        }
+      },
+      "skills": {
+        "skills": {
+          "melee": {
+            "points": 0
+          },
+          "slashing": {
+            "points": 0
+          },
+          "chains": {
+            "points": 0
+          },
+          "blades": {
+            "points": 0
+          },
+          "longrange": {
+            "points": 0
+          },
+          "staffs": {
+            "points": 0
+          },
+          "throwing": {
+            "points": 0
+          },
+          "acrobatics": {
+            "points": 0
+          },
+          "alchemy": {
+            "points": 0
+          },
+          "leadership": {
+            "points": 0
+          },
+          "arcanelore": {
+            "points": 0
+          },
+          "athletics": {
+            "points": 0
+          },
+          "performance": {
+            "points": 0
+          },
+          "diplomacy": {
+            "points": 0
+          },
+          "clscraft": {
+            "points": 0
+          },
+          "empathy": {
+            "points": 0
+          },
+          "determination": {
+            "points": 0
+          },
+          "dexterity": {
+            "points": 0
+          },
+          "history": {
+            "points": 0
+          },
+          "craftmanship": {
+            "points": 0
+          },
+          "heal": {
+            "points": 0
+          },
+          "stealth": {
+            "points": 0
+          },
+          "hunting": {
+            "points": 0
+          },
+          "countrylore": {
+            "points": 0
+          },
+          "nature": {
+            "points": 0
+          },
+          "eloquence": {
+            "points": 0
+          },
+          "locksntraps": {
+            "points": 0
+          },
+          "swim": {
+            "points": 0
+          },
+          "seafaring": {
+            "points": 0
+          },
+          "streetlore": {
+            "points": 0
+          },
+          "animals": {
+            "points": 0
+          },
+          "survival": {
+            "points": 0
+          },
+          "perception": {
+            "points": 0
+          },
+          "endurance": {
+            "points": 0
+          },
+          "antimagic": {
+            "points": 0
+          },
+          "controlmagic": {
+            "points": 0
+          },
+          "motionmagic": {
+            "points": 0
+          },
+          "insightmagic": {
+            "points": 0
+          },
+          "stonemagic": {
+            "points": 0
+          },
+          "firemagic": {
+            "points": 0
+          },
+          "healmagic": {
+            "points": 0
+          },
+          "illusionmagic": {
+            "points": 0
+          },
+          "combatmagic": {
+            "points": 0
+          },
+          "lightmagic": {
+            "points": 0
+          },
+          "naturemagic": {
+            "points": 0
+          },
+          "shadowmagic": {
+            "points": 0
+          },
+          "fatemagic": {
+            "points": 0
+          },
+          "protectionmagic": {
+            "points": 0
+          },
+          "enhancemagic": {
+            "points": 0
+          },
+          "deathmagic": {
+            "points": 0
+          },
+          "transformationmagic": {
+            "points": 0
+          },
+          "watermagic": {
+            "points": 0
+          },
+          "windmagic": {
+            "points": 0
+          }
+        }
+      }
+    },
+    "character": {
+      "templates": [
+        "attributes",
+        "skills",
+        "biography"
+      ],
+      "splinterpoints": {
+        "value": 3
+      },
+      "damage": {
+        "normal": 0,
+        "stun": 0,
+        "channeled": 0
+      },
+      "focus": {
+        "consumed": 0,
+        "exhausted": 0,
+        "channeled": []
+      },
+      "experience": {
+        "heroLevel": 1,
+        "value": 0,
+        "spent": 0,
+        "nextLevelValue": 100
+      },
+      "species": {
+        "value": "",
+        "size": 5
+      },
+      "sex": "",
+      "ancestry": "",
+      "culture": "",
+      "education": ""
+    },
+    "npc": {
+      "templates": [
+        "attributes",
+        "skills",
+        "biography"
+      ],
+      "sex": "",
+      "type": "",
+      "level": 0,
+      "features": ""
+    }
+  },
+  "Item": {
+    "types": [
+      "weapon",
+      "projectile",
+      "equipment",
+      "shield",
+      "armor",
+      "spell",
+      "strength",
+      "weakness",
+      "mastery",
+      "species",
+      "culture",
+      "ancestry",
+      "education",
+      "resource"
+    ],
+    "templates": {
+      "description": {
+        "description": "",
+        "source": ""
+      },
+      "physicalProperties": {
+        "quantity": 1,
+        "price": "",
+        "weight": 0,
+        "hardness": 0,
+        "complexity": "",
+        "availability": "",
+        "quality": 0,
+        "durability": 0,
+        "damageLevel": 0
+      },
+      "defense": {
+        "tickMalus": 0,
+        "defenseBonus": 0,
+        "handicap": 0
+      }
+    },
+    "weapon": {
+      "templates": [
+        "description",
+        "physicalProperties"
+      ],
+      "damage": "",
+      "range": 0,
+      "weaponSpeed": 0,
+      "skill": "",
+      "skillMod": 0,
+      "features": [],
+      "attribute1": "",
+      "attribute2": "",
+      "minAttributes": "",
+      "prepared": false,
+      "equipped": false,
+      "secondaryAttack": {
+        "skill": "none",
+        "skillMod": 0,
+        "attribute1": "",
+        "attribute2": "",
+        "damage": "",
+        "range": 0,
+        "weaponSpeed": 0,
+        "minAttributes": ""
+      }
+    },
+    "projectile": {
+      "templates": [
+        "description",
+        "physicalProperties"
+      ],
+      "skill": "craftmanship",
+      "subSkill": "",
+      "weapon": "",
+      "features": []
+    },
+    "equipment": {
+      "templates": [
+        "description",
+        "physicalProperties"
+      ]
+    },
+    "shield": {
+      "templates": [
+        "description",
+        "physicalProperties",
+        "defense"
+      ],
+      "skill": "",
+      "features": [],
+      "minAttributes": "",
+      "equipped": false
+    },
+    "armor": {
+      "templates": [
+        "description",
+        "physicalProperties",
+        "defense"
+      ],
+      "minStr": 0,
+      "damageReduction": 0,
+      "features": [],
+      "equipped": false
+    },
+    "spell": {
+      "templates": [
+        "description"
+      ],
+      "skill": "",
+      "skillLevel": 0,
+      "spellType": [],
+      "costs": "",
+      "difficulty": "",
+      "damage": "",
+      "range": "",
+      "castDuration": "",
+      "effectDuration": "",
+      "enhancementDescription": "",
+      "enhancementCosts": "",
+      "degreeOfSuccessOptions": {
+        "castDuration": false,
+        "consumedFocus": false,
+        "exhaustedFocus": false,
+        "channelizedFocus": false,
+        "effectDuration": false
+      }
+    },
+    "statuseffect": {
+      "templates": [
+        "description"
+      ]
+    },
+    "mastery": {
+      "templates": [
+        "description"
+      ],
+      "availableIn": "",
+      "skill": "",
+      "modifier": "",
+      "level": 1
+    },
+    "strength": {
+      "templates": [
+        "description"
+      ],
+      "modifier": "",
+      "origin": "",
+      "level": 1,
+      "quantity": 1,
+      "multiSelectable": false,
+      "onCreationOnly": false
+    },
+    "species": {
+      "templates": [
+        "description"
+      ],
+      "size": 5,
+      "attributeMod": "",
+      "strengths": ""
+    },
+    "culture": {
+      "templates": [
+        "description"
+      ],
+      "typicalSpecies": "",
+      "typicalAncestries": "",
+      "cultureLore": "",
+      "language": "",
+      "strength": "",
+      "skills": "",
+      "mastery": ""
+    },
+    "ancestry": {
+      "templates": [
+        "description"
+      ],
+      "resources": "",
+      "skills": ""
+    },
+    "education": {
+      "templates": [
+        "description"
+      ],
+      "strength": "",
+      "ressources": "",
+      "skills": "",
+      "masteries": ""
+    },
+    "weakness": {
+      "templates": [
+        "description"
+      ]
+    },
+    "resource": {
+      "templates": [
+        "description"
+      ],
+      "value": 1
+    }
+  }
+}

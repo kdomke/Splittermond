@@ -1,0 +1,29 @@
+@import "./variables.less";
+
+.splittermond.wizard.species .window-content{
+    header {
+        padding-top: 1em;
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+    main {
+        padding-bottom: 1em;
+        padding-left: 1em;
+        padding-right: 1em;
+        .attribute {
+            display: grid;
+            grid-template-columns: 1fr 2em 2em 2em;
+            gap: 0.2em;
+            align-items: baseline;
+
+            .value {
+                text-align: center;
+            }
+        }
+    }
+
+    footer {
+        display: flex;
+    }
+    
+}

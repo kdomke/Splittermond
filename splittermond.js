@@ -1,0 +1,83 @@
+import SplittermondActor from "./module/actor/actor.js";
+import SplittermondItem from "./module/item/item.js";
+import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
+import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
+import { splittermond } from "./module/config.js";
+import * as Dice from "./module/util/dice.js"
+import * as Macros from "./module/util/macros.js"
+import SplittermondCombat from "./module/combat/combat.js";
+import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
+
+Hooks.once("init", function () {
+    console.log("Splittermond | Initialising Splittermond System ...");
+    CONFIG.Actor.entityClass = SplittermondActor;
+    CONFIG.Item.entityClass = SplittermondItem;
+    CONFIG.Combat.entityClass = SplittermondCombat;
+    CONFIG.ui.combat = SplittermondCombatTracker;
+    CONFIG.splittermond = splittermond;
+
+
+    game.splittermond = {
+        skillCheck: Macros.skillCheck,
+        itemCheck: Macros.itemCheck
+    }
+    Die.MODIFIERS.ri = Dice.riskModifier;
+
+    Actors.unregisterSheet("core", ActorSheet);
+    Actors.registerSheet("splittermond", SplittermondCharacterSheet, {
+        types: ["character"],
+        makeDefault: true,
+        label: "splittermond.character"
+    });
+
+    Items.unregisterSheet("core", ItemSheet);
+    Items.registerSheet("splittermond", SplittermondItemSheet, {
+        makeDefault: true
+    });
+
+    console.log("Splittermond | DONE!");
+});
+
+Hooks.on("hotbarDrop", async (bar, data, slot) => {
+    let macroData = {
+        name: "",
+        type: "script",
+        img: "icons/svg/dice-target.svg",
+        command: ""
+    };
+
+    if (data.type === "skill") {
+        macroData.name = game.i18n.localize(`splittermond.skillLabel.${data.skill}`);
+        macroData.command = `game.splittermond.skillCheck("${data.skill}")`;
+    };
+
+    if (data.type === "Item") {
+        if (data.id) {
+            data.data = game.items.get(data.id).data;
+        }
+        if (data.data) {
+            macroData.name = data.data.name;
+            macroData.img = data.data.img;
+
+            let actorId = data.actorId || "";
+
+            if (actorId && game.user.isGM) {
+                const actorName = game.actors.get(actorId)?.data.name;
+                macroData.name += ` (${actorName})`;
+            }
+
+            macroData.command = `game.splittermond.itemCheck("${data.data.type}","${data.data.name}","${actorId}","${data.data._id}")`;
+
+        }
+    };
+
+
+    if (macroData.command != "" && macroData.name != "") {
+        let macro = await Macro.create(macroData, { displaySheet: false });
+
+        game.user.assignHotbarMacro(macro, slot);
+    }
+
+
+
+});

@@ -1,0 +1,285 @@
+{
+    "splittermond": {
+        "heroLevel": "Heldengrad",
+        "name": "Name",
+        "sex": "Geschlecht",
+        "species": "Spezies",
+        "culture": "Kultur",
+        "properties": "Eigenschaften",
+        "description": "Beschreibung",
+        "ancestry": "Abstammung",
+        "education": "Ausbildung",
+        "spells": "Zauber",
+        "general": "Allgemein",
+        "biography": "Biographie",
+        "skill": "Fertigkeit",
+        "skills": "Fertigkeiten",
+        "inventory": "Ausrüstung",
+        "strength": "Stärke",
+        "strengths": "Stärken",
+        "weakness": "Schwäche",
+        "weaknesses": "Schwächen",
+        "statusEffects": "Zustände",
+        "modifier": "Modifikator",
+        "minStrength": "min. Stärke",
+        "generalSkills": "Allgemeine Fertigkeiten",
+        "magicSkills": "Magieschulen",
+        "fightingSkills": "Kampffertigkeiten",
+        "fightingSkill": "Kampffertigkeit",
+        "multiSelectable": "Mehrfach wählbar",
+        "onCreationOnly": "Nur bei Generierung wählbar",
+        "availableIn": "Verfügbar in",
+        "attributeModifiers": "Attributsmodifikatoren",
+        "save": "Speichern",
+        "cancel": "Abbrechen",
+        "fight": "Kampf",
+        "edit": "Bearbeiten",
+        "delete": "Löschen",
+        "qty": "Anz.",
+        "quantity": "Anzahl",
+        "price": "Preis",
+        "weaponless": "waffenlos",
+        "damageLevel": "Schadensstufe",
+        "weight": "Gewicht",
+        "hardness": "Härte",
+        "complexity": "Komplexität",
+        "availability": "Verfügbarkeit",
+        "quality": "Qualität",
+        "load": "Last",
+        "weapon": "Waffe",
+        "weapons": "Waffen",
+        "equipment": "Ausrüstung",
+        "skillValue": "Fertigkeitswert",
+        "skillValueAbbrev": "FW",
+        "spellLevel": "Grad",
+        "spellType": "Typus",
+        "focusCosts": "Fokuskosten",
+        "focusCostsAbbrev": "Fokus",
+        "difficulty": "Schwierigkeit",
+        "difficultyAbbrev": "SG",
+        "spell": "Zauber",
+        "castDuration": "Zauberdauer",
+        "castDurationAbbrev": "Zauberd.",
+        "effectDuration": "Wirkungsdauer",
+        "effectDurationAbbrev": "Wirk.d.",
+        "physicalProperties": "Physikalische Eigenschaften",
+        "armorProperties": "Rüstungseigenschaften",
+        "shieldProperties": "Schildeigenschaften",
+        "weaponProperties": "Waffeneigenschaften",
+        "secondaryWeaponProperties": "Waffeneigenschaften (sekundär)",
+        "generalProperties": "Allgemein",
+        "enhancementCosts": "Verstärkungskosten",
+        "enhancementDescription": "Verstärkung",
+        "degreeOfSuccessOptions": {
+            "castDuration": "Auslösezeit verkürzen",
+            "consumedFocus": "Verzehrten Fokus verringern",
+            "exhaustedFocus": "Erschöpften Fokus verringern",
+            "channelizedFocus": "Kanalisierten Fokus verringern",
+            "effectDuration": "Wirkungsdauer verlängern"
+        },
+        "shield": "Schild",
+        "shields": "Schilde",
+        "armor": "Rüstung",
+        "armors": "Rüstungen",
+        "damage": "Schaden",
+        "complexityOptions": {
+            "untrained": "U (ungeübt)",
+            "journeyman": "G (Geselle)",
+            "expert": "F (Fachmann)",
+            "master": "M (Meister)",
+            "instruction": "A (Anleitung)"
+        },
+        "availabilityOptions": {
+            "village": "Dorf",
+            "town": "Kleinstadt",
+            "city": "Großstadt",
+            "metropolis": "Metropole"
+        },
+        "durability": "Haltbarkeit",
+        "weaponSpeed": "Waffengeschwindigkeit",
+        "weaponSpeedAbbrev": "WGS",
+        "attack": "Angriff",
+        "activeDefense": "Aktive Abwehr",
+        "range": "Reichweite",
+        "rangeAbbrev": "RW",
+        "features": "Merkmale",
+        "defenseBonus": "VTD+",
+        "damageReduction": "Schadensreduktion",
+        "damageReductionAbbrev": "SR",
+        "tickMalus": "Tick+",
+        "handicap": "Behinderung",
+        "handicapAbbrev": "Beh.",
+        "attributes": "Attribute",
+        "minAttributes": "min. Attribute",
+        "mastery": "Meisterschaft",
+        "throwing": "werfen",
+        "masteryItem": {
+            "level": "Schwelle"
+        },
+        "strengthItem": {
+            "level": "Stufe"
+        },
+        "wizard": {
+            "distributeAttributemod": "Verteile {points} Punkt!",
+            "distributeAttributemodPlural": "Verteile {points} Punkte!",
+            "distributeAttributemodReady": "Alle Punkte vergeben!"
+        },
+        "attribute": {
+            "charisma": {
+                "short": "AUS",
+                "long": "Ausstrahlung"
+            },
+            "agility": {
+                "short": "BEW",
+                "long": "Bewegung"
+            },
+            "intuition": {
+                "short": "INT",
+                "long": "Intuition"
+            },
+            "constitution": {
+                "short": "KON",
+                "long": "Konstitution"
+            },
+            "mystic": {
+                "short": "MYS",
+                "long": "Mystik"
+            },
+            "strength": {
+                "short": "STÄ",
+                "long": "Stärke"
+            },
+            "mind": {
+                "short": "VER",
+                "long": "Verstand"
+            },
+            "willpower": {
+                "short": "WIL",
+                "long": "Wille"
+            }
+        },
+        "derivedAttribute": {
+            "size": {
+                "short": "GK",
+                "long": "Größenklasse"
+            },
+            "speed": {
+                "short": "GSW",
+                "long": "Geschwindigkeit"
+            },
+            "initiative": {
+                "short": "INI",
+                "long": "Initiative"
+            },
+            "healthpoints": {
+                "short": "LP",
+                "long": "Lebenspunkte"
+            },
+            "focuspoints": {
+                "short": "FO",
+                "long": "Fokus"
+            },
+            "defense": {
+                "short": "VTD",
+                "long": "Verteidigung"
+            },
+            "mindresist": {
+                "short": "GW",
+                "long": "Geistiger Widerstand"
+            },
+            "bodyresist": {
+                "short": "KW",
+                "long": "Körperlicher Widerstand"
+            }
+        },
+        "skillLabel": {
+            "melee": "Handgemenge",
+            "slashing": "Hiebwaffen",
+            "chains": "Kettenwaffen",
+            "blades": "Klingenwaffen",
+            "longrange": "Schusswaffen",
+            "staffs": "Stangenwaffen",
+            "throwing": "Wurfwaffen",
+            "acrobatics": "Akrobatik",
+            "alchemy": "Alchemie",
+            "leadership": "Anführen",
+            "arcanelore": "Arkane Kunde",
+            "athletics": "Athletik",
+            "performance": "Darbietung",
+            "diplomacy": "Diplomatie",
+            "clscraft": "Edelhandwerk",
+            "empathy": "Empathie",
+            "determination": "Entschlossenheit",
+            "dexterity": "Fingerfertigkeit",
+            "history": "Geschichten und Mythen",
+            "craftmanship": "Handwerk",
+            "heal": "Heilkunde",
+            "stealth": "Heimlichkeit",
+            "hunting": "Jagdkunst",
+            "countrylore": "Länderkunde",
+            "nature": "Naturkunde",
+            "eloquence": "Redegewandtheit",
+            "locksntraps": "Schlösser und Fallen",
+            "swim": "Schwimmen",
+            "seafaring": "Seefahrt",
+            "streetlore": "Straßenkunde",
+            "animals": "Tierführung",
+            "survival": "Überleben",
+            "perception": "Wahrnehmung",
+            "endurance": "Zähigkeit",
+            "antimagic": "Bannmagie",
+            "controlmagic": "Beherrschungsmagie",
+            "motionmagic": "Bewegungsmagie",
+            "insightmagic": "Erkenntnismagie",
+            "stonemagic": "Felsmagie",
+            "firemagic": "Feuermagie",
+            "healmagic": "Heilungsmagie",
+            "illusionmagic": "Illusionsmagie",
+            "combatmagic": "Kampfmagie",
+            "lightmagic": "Lichtmagie",
+            "naturemagic": "Naturmagie",
+            "shadowmagic": "Schattenmagie",
+            "fatemagic": "Schicksalsmagie",
+            "protectionmagic": "Schutzmagie",
+            "enhancemagic": "Stärkungsmage",
+            "deathmagic": "Todesmagie",
+            "transformationmagic": "Verwandlungsmagie",
+            "watermagic": "Wassermagie",
+            "windmagic": "Windmagie",
+            "none": "Keine Fertigkeit"
+        },
+        "resource": "Ressource",
+        "resources": "Ressourcen",
+        "rollType": {
+            "standard": "Standardwurf",
+            "risk": "Risikowurf",
+            "safety": "Sicherheitswurf"
+        },
+        "successMessage": [
+            "(Knapp) gelungen",
+            "Gelungen",
+            "Gelungen",
+            "(Gut) gelungen",
+            "(Gut) gelungen",
+            "Herausragend gelungen"
+        ],
+        "failMessage": [
+            "Knapp misslungen",
+            "Misslungen",
+            "Misslungen",
+            "(Schwer) misslungen",
+            "(Schwer) misslungen",
+            "Verheerend misslungen"
+        ],
+        "heroLevels": [
+            "in Erstellung",
+            "Suchender",
+            "Wanderer",
+            "Veteran",
+            "Heroe"
+        ]
+    },
+    "COMBAT": {
+        "Round": "Tick"
+    }
+}

@@ -1,0 +1,26 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header>
+        <h1>{{species.name}}</h1>
+    </header>
+    <main>
+        <p>{{message}}</p>
+        <section class="attribute-mod">
+            {{#each attributeModifiers}}
+            <div class="attribute">
+                <label>{{localize this.label}}</label>
+                <button class="button-inline" type="button" name="{{@key}}" value="-1" {{#if
+                    this.decDisabled}}disabled{{/if}}><i class="fa fa-minus" aria-hidden="true"></i></button>
+                <span class="value">{{numberFormat this.value}}</span>
+                <button class="button-inline" type="button" name="{{@key}}" value="+1" {{#if
+                    this.incDisabled}}disabled{{/if}}><i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>
+            {{/each}}
+        </section>
+
+    </main>
+    <footer>
+        <button name="cancel" type="button">{{localize "splittermond.cancel"}}</button>
+        <button name="save" type="button" {{#unless this.ready}}disabled{{/unless}}>{{localize
+            "splittermond.save"}}</button>
+    </footer>
+</form>
