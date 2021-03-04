@@ -838,6 +838,12 @@
 .splittermond.sheet.actor .window-content .spells .focus-management .focus .value {
   justify-self: center;
 }
+.splittermond.sheet.actor .window-content .spells .available {
+  opacity: 1;
+}
+.splittermond.sheet.actor .window-content .spells .not-available {
+  opacity: 0.5;
+}
 .splittermond.sheet.actor .window-content .bar {
   width: 100%;
   height: 5px;

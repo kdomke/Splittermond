@@ -337,7 +337,8 @@
                     </div>
                     <ol>
                         {{#each this.spells}}
-                        <li class="draggable" data-item-id="{{this._id}}">
+                        <li class="draggable {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
+                            data-item-id="{{this._id}}">
                             <label>
                                 <a class="rollable">{{localize this.name}}</a>
                             </label>

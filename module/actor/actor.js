@@ -30,9 +30,25 @@ export default class SplittermondActor extends Actor {
 
         this._prepareFocus();
 
+        this._prepareSpells();
+
 
         this._prepareActiveDefense();
 
+    }
+
+    _prepareSpells() {
+        const actorData = this.data;
+        const data = actorData.data;
+
+        actorData.items.forEach(item => {
+            if (item.type === "spell") {
+                let costData = this._parseCostsString(item.data.costs);
+                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+                item.enoughFocus = costTotal <= data.focus.available.value;
+            }
+
+        });
     }
 
     _prepareFocus() {
