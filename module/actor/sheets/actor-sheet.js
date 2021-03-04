@@ -214,6 +214,14 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.actor.update(updateData);
         });
 
+        html.find('[data-action="add-channeled-focus"]').click(event => {
+            this.actor.data.data.focus.channeled.entries.push({
+                description: game.i18n.localize("splittermond.description"),
+                costs: 1
+            });
+            this.actor.update({ "data.focus.channeled.entries": this.actor.data.data.focus.channeled.entries });
+        });
+
 
         html.find(".rollable").click(event => {
             const type = this._getClosestData($(event.currentTarget), 'roll-type');

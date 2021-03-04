@@ -296,6 +296,12 @@
                     <div class="list channeled-spells">
                         <div class="list-header">
                             <h3>{{localize "splittermond.channeledSpells"}}</h3>
+                            <div class="actions">
+                                <button class="button-inline" type="button" data-action="add-channeled-focus"
+                                    data-render-sheet="0">
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                         <ol data-array="data.focus.channeled.entries">
                             {{#each data.focus.channeled.entries}}
