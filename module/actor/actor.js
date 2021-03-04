@@ -27,6 +27,18 @@ export default class SplittermondActor extends Actor {
 
         this._prepareWeapons();
 
+
+        this._prepareFocus();
+
+
+        this._prepareActiveDefense();
+
+    }
+
+    _prepareFocus() {
+        const actorData = this.data;
+        const data = actorData.data;
+
         if (data.focus.channeled.hasOwnProperty("entries")) {
             data.focus.channeled.value = Math.max(
                 Math.min(
@@ -60,11 +72,6 @@ export default class SplittermondActor extends Actor {
         data.focus.available.percentage = 100 * data.focus.available.value / data.derivedAttributes.focuspoints.value;
         data.focus.exhausted.percentage = 100 * data.focus.exhausted.value / data.derivedAttributes.focuspoints.value;
         data.focus.channeled.percentage = 100 * data.focus.channeled.value / data.derivedAttributes.focuspoints.value;
-
-
-
-        this._prepareActiveDefense();
-
     }
 
     _prepareWeapons() {
