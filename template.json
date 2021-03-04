@@ -230,9 +230,15 @@
         "channeled": 0
       },
       "focus": {
-        "consumed": 0,
-        "exhausted": 0,
-        "channeled": []
+        "consumed": {
+          "value": 0
+        },
+        "exhausted": {
+          "value": 0
+        },
+        "channeled": {
+          "entries": []
+        }
       },
       "experience": {
         "heroLevel": 1,

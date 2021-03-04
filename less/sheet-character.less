@@ -279,12 +279,63 @@
 
     
 
-    
+    .spells {
+        .focus-management {
+            .focus {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+
+                text-align: center;
+
+                .bar {
+                    grid-column-start: 1;
+                    grid-column-end: 5;
+
+                    .channeled {
+                        background: repeating-linear-gradient(
+                            45deg,
+                            fade(@highlightTextColor,30%),
+                            fade(@highlightTextColor,30%) 5px,
+                            @highlightTextColor 5px,
+                            @highlightTextColor 10px
+                        );
+                    }
+
+                    .exhausted {
+                        background: fade(@highlightTextColor,30%);
+                    }
+                }
+
+                .channeled, .consumed, .exhausted, .available {
+                    display: grid;
+                    grid-template-columns: 1fr;
+
+                }
+
+                .available {
+                    font-weight: 700;
+
+                }
+
+                .value {
+                    justify-self: center;
+                }
+            }
+        }
+
+        .available {
+            opacity: 1
+        }
+        .not-available {
+            opacity: 0.5
+        }
+    }
 
     .bar {
         width: 100%;
-        height: 3px;
+        height: 5px;
         background-color: fade(@textColor, 30%);
+        display: flex;
         div {
             width: 0%;
             height: 100%;
