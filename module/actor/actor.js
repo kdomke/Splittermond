@@ -34,6 +34,11 @@ export default class SplittermondActor extends Actor {
                     data.derivedAttributes.focuspoints.value
                 ),
                 0);
+        } else {
+            data.focus.channeled = {
+                value: 0,
+                entries: []
+            }
         }
 
         if (!data.focus.exhausted.value) {
