@@ -111,6 +111,11 @@
         "handicapAbbrev": "Beh.",
         "attributes": "Attribute",
         "minAttributes": "min. Attribute",
+        "channeled": "kanalisiert",
+        "exhausted": "erschöpft",
+        "consumed": "verzehrt",
+        "available": "vefügbar",
+        "channeledSpells": "Kanalisierte Zauber",
         "mastery": "Meisterschaft",
         "throwing": "werfen",
         "masteryItem": {

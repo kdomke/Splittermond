@@ -174,6 +174,46 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.actor.getOwnedItem(itemId).update({ [field]: element.value });
         });
 
+        html.find('[data-array-field]').change(event => {
+            const element = event.currentTarget
+            const idx = parseInt(this._getClosestData($(event.currentTarget), 'index', "0"));
+            const array = this._getClosestData($(event.currentTarget), 'array');
+            const field = this._getClosestData($(event.currentTarget), 'array-field');
+            let newValue = [];
+            if (!(idx >= 0 && array !== "")) return;
+            if (field) {
+                newValue = array.split('.').reduce(function (prev, curr) {
+                    return prev ? prev[curr] : null
+                }, this.actor.data);
+                newValue[idx][field] = element.value;
+            } else {
+                newValue = array.split('.').reduce(function (prev, curr) {
+                    return prev ? prev[curr] : null
+                }, this.actor.data);
+                newValue[idx] = element.value;
+            }
+            this.actor.update({ [array]: newValue });
+        });
+
+        html.find('[data-action="delete-array-element"]').click(event => {
+            const element = event.currentTarget
+            const idx = parseInt(this._getClosestData($(event.currentTarget), 'index', "0"));
+            const array = this._getClosestData($(event.currentTarget), 'array');
+            if (!(idx >= 0 && array !== "")) return;
+            let arrayData = array.split('.').reduce(function (prev, curr) {
+                return prev ? prev[curr] : null
+            }, this.actor.data);
+            let updateData = {}
+            if (array === "data.focus.channeled.entries") {
+                this.actor.data.data.focus.exhausted.value += arrayData[idx].costs;
+                updateData["data.focus.exhausted.value"] = this.actor.data.data.focus.exhausted.value;
+            }
+
+            arrayData.splice(idx, 1);
+            updateData[array] = arrayData;
+            this.actor.update(updateData);
+        });
+
 
         html.find(".rollable").click(event => {
             const type = this._getClosestData($(event.currentTarget), 'roll-type');
@@ -201,6 +241,15 @@ export default class SplittermondActorSheet extends ActorSheet {
                 const itemId = this._getClosestData($(event.currentTarget), 'item-id');
                 const defenseType = this._getClosestData($(event.currentTarget), 'defense-type');
                 this.actor.rollActiveDefense(defenseType, this.actor.data.data.activeDefense[defenseType].find(el => el._id === itemId));
+            }
+        })
+
+        html.find(".consume").click(event => {
+            const type = this._getClosestData($(event.currentTarget), 'type');
+            const value = this._getClosestData($(event.currentTarget), 'value');
+            if (type === "focus") {
+                const description = this._getClosestData($(event.currentTarget), 'description');
+                this.actor.consumeCost(type, value, description);
             }
         })
 

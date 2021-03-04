@@ -810,10 +810,39 @@
   white-space: nowrap;
   font-size: 12px;
 }
+.splittermond.sheet.actor .window-content .spells .focus-management .focus {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  text-align: center;
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .bar {
+  grid-column-start: 1;
+  grid-column-end: 5;
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .bar .channeled {
+  background: repeating-linear-gradient(45deg, rgba(45, 128, 225, 0.3), rgba(45, 128, 225, 0.3) 5px, #2D80E1 5px, #2D80E1 10px);
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .bar .exhausted {
+  background: rgba(45, 128, 225, 0.3);
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .channeled,
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .consumed,
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .exhausted,
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .available {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .available {
+  font-weight: 700;
+}
+.splittermond.sheet.actor .window-content .spells .focus-management .focus .value {
+  justify-self: center;
+}
 .splittermond.sheet.actor .window-content .bar {
   width: 100%;
-  height: 3px;
+  height: 5px;
   background-color: rgba(68, 69, 70, 0.3);
+  display: flex;
 }
 .splittermond.sheet.actor .window-content .bar div {
   width: 0%;

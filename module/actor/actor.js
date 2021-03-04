@@ -27,6 +27,35 @@ export default class SplittermondActor extends Actor {
 
         this._prepareWeapons();
 
+        if (data.focus.channeled.hasOwnProperty("entries")) {
+            data.focus.channeled.value = Math.max(
+                Math.min(
+                    data.focus.channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
+                    data.derivedAttributes.focuspoints.value
+                ),
+                0);
+        }
+
+        if (!data.focus.exhausted.value) {
+            data.focus.exhausted = {
+                value: 0
+            }
+        }
+
+        if (!data.focus.consumed.value) {
+            data.focus.consumed = {
+                value: 0
+            }
+        }
+
+        data.focus.available = {
+            value: Math.max(Math.min(data.derivedAttributes.focuspoints.value - data.focus.channeled.value - data.focus.exhausted.value - data.focus.consumed.value, data.derivedAttributes.focuspoints.value), 0)
+        }
+
+        data.focus.available.percentage = 100 * data.focus.available.value / data.derivedAttributes.focuspoints.value;
+        data.focus.exhausted.percentage = 100 * data.focus.exhausted.value / data.derivedAttributes.focuspoints.value;
+        data.focus.channeled.percentage = 100 * data.focus.channeled.value / data.derivedAttributes.focuspoints.value;
+
 
 
         this._prepareActiveDefense();
@@ -516,6 +545,57 @@ export default class SplittermondActor extends Actor {
         rollData[game.i18n.localize(`splittermond.derivedAttribute.initiative.short`).toLowerCase()] = data.derivedAttributes.initiative.value;
 
         return rollData;
+    }
+    _parseCostsString(str) {
+        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
+        return {
+            channeled: costDataRaw[1] === "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
+            exhausted: costDataRaw[1] !== "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
+            consumed: parseInt(costDataRaw[3] || 0)
+        }
+    }
+
+    consumeCost(type, valueStr, description) {
+        const actorData = this.data;
+        const data = actorData.data;
+        let costData = this._parseCostsString(valueStr.toString());
+
+        if (type === "focus") {
+
+            if (costData.channeled) {
+                if (!data.focus.channeled.hasOwnProperty("entries")) {
+                    data.focus.channeled = {
+                        value: 0,
+                        entries: []
+                    }
+                }
+
+                data.focus.channeled.entries.push({
+                    description: description,
+                    costs: costData.channeled,
+                });
+
+            }
+            if (!data.focus.exhausted.value) {
+                data.focus.exhausted = {
+                    value: 0
+                }
+            }
+
+            if (!data.focus.consumed.value) {
+                data.focus.consumed = {
+                    value: 0
+                }
+            }
+
+            data.focus.exhausted.value += costData.exhausted;
+            data.focus.consumed.value += costData.consumed;
+
+            this.update({ "data.focus": data.focus });
+
+        }
+
+
     }
 
 }
