@@ -99,6 +99,9 @@
             border: 1px inset rgba(255, 255, 255, 0.3);
             //justify-self: start;
             align-self: start;
+
+            overflow: hidden;
+            margin-bottom: @paddingMedium;
             .item {
                 text-transform: none;
                 border-radius: 0;
@@ -264,6 +267,10 @@
         border-radius: @paddingSmall;
         border: 1px inset rgba(255,255,255,0.3);
 
+        overflow: hidden;
+
+        margin-bottom: @paddingMedium;
+
         .actions {
             width: 4em;
             text-align: right;
@@ -290,6 +297,8 @@
             border-bottom-right-radius: 0px;
             align-items: center;
             padding: @paddingSmall;
+
+            overflow: hidden;
 
             *:not(:first-child) {
                 border-left: 2px groove rgba(255,255,255,0.3);
@@ -319,6 +328,7 @@
             box-shadow: inset 0 0 @paddingLarge rgba(0,0,0,0.2);
             border-bottom-left-radius: @paddingSmall;
             border-bottom-right-radius: @paddingSmall;
+            overflow: hidden;
             li {
                 display: flex;
                 align-items: center;

@@ -63,8 +63,18 @@
                 </div>
                 {{/each}}
             </div>
-            <div class="health">
-
+            <div class="focus-health">
+                <div class="focus">
+                    <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
+                    <div class="value" style="left: {{data.focus.available.percentage}}%">{{data.focus.available.value}}
+                    </div>
+                    <div class="bar"
+                        title="{{localize 'splittermond.available'}}: {{data.focus.available.value}} | {{localize 'splittermond.channeled'}}: {{data.focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
+                        <div class="available" style="width: {{data.focus.available.percentage}}%"></div>
+                        <div class="channeled" style="width: {{data.focus.channeled.percentage}}%"></div>
+                        <div class="exhausted" style="width: {{data.focus.exhausted.percentage}}%"></div>
+                    </div>
+                </div>
             </div>
         </section>
     </header>
@@ -269,57 +279,46 @@
             <div>
                 <div class="focus-management">
                     <div class="focus">
-                        <div class="bar">
-                            <div class="available" style="width: {{data.focus.available.percentage}}%"></div>
-                            <div class="channeled" style="width: {{data.focus.channeled.percentage}}%"></div>
-                            <div class="exhausted" style="width: {{data.focus.exhausted.percentage}}%"></div>
-                        </div>
-                        <div class="available">
-                            <label>{{localize "splittermond.available"}}</label>
-                            <div class="value">{{data.focus.available.value}}</div>
-                        </div>
-                        <div class="channeled">
-                            <label>{{localize "splittermond.channeled"}}</label>
-                            <div class="value">{{data.focus.channeled.value}}</div>
-                        </div>
-                        <div class="exhausted">
-                            <label>{{localize "splittermond.exhausted"}}</label>
-                            <input name="data.focus.exhausted.value" type="text" value="{{data.focus.exhausted.value}}"
-                                data-dtype="Number">
-                        </div>
-                        <div class="consumed">
-                            <label>{{localize "splittermond.consumed"}}</label>
-                            <input name="data.focus.consumed.value" type="text" value="{{data.focus.consumed.value}}"
-                                data-dtype="Number">
-                        </div>
-                    </div>
-                    <div class="list channeled-spells">
-                        <div class="list-header">
-                            <h3>{{localize "splittermond.channeledSpells"}}</h3>
-                            <div class="actions">
-                                <button class="button-inline" type="button" data-action="add-channeled-focus"
-                                    data-render-sheet="0">
-                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <ol data-array="data.focus.channeled.entries">
-                            {{#each data.focus.channeled.entries}}
-                            <li data-index="{{@index}}">
-                                <input data-array-field="description" type="text" value="{{this.description}}">
-
-                                <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
-                                        data-dtype="Number"></div>
-                                <div class="actions">
-                                    <button class="button-inline" type="button" data-action="delete-array-element">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </button>
-                                </div>
-                            </li>
-                            {{/each}}
-                        </ol>
+                        <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}} {{localize
+                            "splittermond.available"}}:</label>
+                        <div class="value">{{data.focus.available.value}}</div>
+                        <label>{{localize "splittermond.channeled"}}:</label>
+                        <div class="value">{{data.focus.channeled.value}}</div>
+                        <label>{{localize "splittermond.exhausted"}}:</label>
+                        <div class="value"><input class="value" name="data.focus.exhausted.value" type="text"
+                                value="{{data.focus.exhausted.value}}" data-dtype="Number"></div>
+                        <label>{{localize "splittermond.consumed"}}:</label>
+                        <div class="value"><input class="value" name="data.focus.consumed.value" type="text"
+                                value="{{data.focus.consumed.value}}" data-dtype="Number"></div>
                     </div>
                 </div>
+                <div class="list channeled-spells">
+                    <div class="list-header">
+                        <h3>{{localize "splittermond.channeledSpells"}}</h3>
+                        <div class="actions">
+                            <button class="button-inline" type="button" data-action="add-channeled-focus"
+                                data-render-sheet="0">
+                                <i class="fa fa-plus-square" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <ol data-array="data.focus.channeled.entries">
+                        {{#each data.focus.channeled.entries}}
+                        <li data-index="{{@index}}">
+                            <input data-array-field="description" type="text" value="{{this.description}}">
+
+                            <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
+                                    data-dtype="Number"></div>
+                            <div class="actions">
+                                <button class="button-inline" type="button" data-action="delete-array-element">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ol>
+                </div>
+
                 <div class="list spells" data-item-type="spell" data-roll-type="spell">
 
                     {{#each spellsBySkill}}

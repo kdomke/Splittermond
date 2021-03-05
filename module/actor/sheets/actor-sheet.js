@@ -205,7 +205,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }, this.actor.data);
             let updateData = {}
             if (array === "data.focus.channeled.entries") {
-                this.actor.data.data.focus.exhausted.value += arrayData[idx].costs;
+                this.actor.data.data.focus.exhausted.value = parseInt(this.actor.data.data.focus.exhausted.value) + parseInt(arrayData[idx].costs);
                 updateData["data.focus.exhausted.value"] = this.actor.data.data.focus.exhausted.value;
             }
 

@@ -61,10 +61,11 @@
             display: grid;
             grid-template-columns: 3em 3em 3em 3em 3em 3em 3em 3em;
             gap: 0.5em;
+            
             .attribute {
                 display: flex;
                 flex-direction: column;
-                
+                align-items: center;
 
                 label {
                     font-weight: 900;
@@ -75,12 +76,72 @@
                     font-size: @fontSizeLarge;
                 }
 
+                input {
+                    margin: -@paddingSmall;
+                }
+
                 > * {
                     width: 100%;
                     text-align: center;
                 }
             }
         }
+
+        .focus-health {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            padding-left: @paddingMedium;
+            padding-right: @paddingMedium;
+            .focus {
+                position: relative;
+                label {
+                    display: inline-block;
+                    width: 100%;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    text-align: center;
+                }
+
+                .value {
+                    font-weight: 700;
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    border-radius: 12px;
+                    text-align: center;
+                    bottom: -7px;
+                    vertical-align: middle;
+                    line-height: 24px;
+                    margin-left: -12px;
+                    box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+                    color: white;
+                    left: 12.5%;
+                    z-index: 2;
+                    background-color: #2D80E1;
+                    font-size: 14px;
+                }
+                
+                .bar {
+                    grid-column-start: 1;
+                    grid-column-end: end;
+                    position: relative;
+                    height: 10px;
+                    box-shadow: 0 0 10px inset rgba(0,0,0,0.5);
+                    border-radius: 3px;
+                    overflow: hidden;
+
+                    div {
+                        box-shadow: 0 0 5px inset rgba(0,0,0,0.3);
+                    }
+                }
+
+                
+            }
+        }
+
+        
     }
 
     main {
@@ -230,6 +291,10 @@
             margin: -@paddingSmall;
         }
 
+        .list {
+            margin-bottom: @paddingMedium;
+        }
+
         label {
             flex: 1;
             padding-left: @paddingMedium;
@@ -279,46 +344,31 @@
 
     
 
+    
+
     .spells {
         .focus-management {
+            margin-bottom: @paddingMedium;
             .focus {
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr;
-
-                text-align: center;
-
-                .bar {
-                    grid-column-start: 1;
-                    grid-column-end: 5;
-
-                    .channeled {
-                        background: repeating-linear-gradient(
-                            45deg,
-                            fade(@highlightTextColor,30%),
-                            fade(@highlightTextColor,30%) 5px,
-                            @highlightTextColor 5px,
-                            @highlightTextColor 10px
-                        );
-                    }
-
-                    .exhausted {
-                        background: fade(@highlightTextColor,30%);
-                    }
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                label {
+                    flex: 0;
+                    white-space: nowrap;
+                    padding-right: @paddingSmall;
                 }
-
-                .channeled, .consumed, .exhausted, .available {
-                    display: grid;
-                    grid-template-columns: 1fr;
-
-                }
-
-                .available {
-                    font-weight: 700;
-
-                }
-
                 .value {
                     justify-self: center;
+                    width: 20px;
+                    border-right: 2px groove rgba(255,255,255,0.3);
+                    overflow: visible;
+                }
+
+                input {
+                    padding-top: 0px;
+                    padding-bottom: 0px;
+                    min-width: 20px;
                 }
             }
         }
@@ -340,6 +390,20 @@
             width: 0%;
             height: 100%;
             background-color: @highlightTextColor;
+        }
+
+        .channeled {
+            background: repeating-linear-gradient(
+                45deg,
+                fade(@highlightTextColor,30%),
+                fade(@highlightTextColor,30%) 5px,
+                @highlightTextColor 5px,
+                @highlightTextColor 10px
+            );
+        }
+
+        .exhausted {
+            background: fade(@highlightTextColor,30%);
         }
     }
 
