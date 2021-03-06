@@ -628,24 +628,28 @@
   padding-left: 7px;
   padding-right: 7px;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus {
+.splittermond.sheet.actor .window-content header .focus-health .focus,
+.splittermond.sheet.actor .window-content header .focus-health .health {
   position: relative;
+  margin-bottom: 14px;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus label {
+.splittermond.sheet.actor .window-content header .focus-health .focus label,
+.splittermond.sheet.actor .window-content header .focus-health .health label {
   display: inline-block;
   width: 100%;
   font-weight: 900;
   text-transform: uppercase;
   text-align: center;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .value {
+.splittermond.sheet.actor .window-content header .focus-health .focus .value,
+.splittermond.sheet.actor .window-content header .focus-health .health .value {
   font-weight: 700;
   width: 24px;
   height: 24px;
   position: absolute;
   border-radius: 12px;
   text-align: center;
-  bottom: -7px;
+  top: 12px;
   vertical-align: middle;
   line-height: 24px;
   margin-left: -12px;
@@ -656,7 +660,8 @@
   background-color: #2D80E1;
   font-size: 14px;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar {
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar {
   grid-column-start: 1;
   grid-column-end: end;
   position: relative;
@@ -665,8 +670,36 @@
   border-radius: 3px;
   overflow: hidden;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar div {
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar div,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar div {
   box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.3);
+}
+.splittermond.sheet.actor .window-content header .focus-health .health {
+  margin-bottom: 0;
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .value {
+  background-color: #892100;
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .bar div {
+  background-color: #892100;
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .bar .channeled {
+  background: repeating-linear-gradient(45deg, rgba(137, 33, 0, 0.3), rgba(137, 33, 0, 0.3) 5px, #892100 5px, #892100 10px);
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .bar .exhausted {
+  background: rgba(137, 33, 0, 0.3);
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus {
+  position: relative;
+  display: flex;
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level-5 {
+  width: 20%;
+  border-right: 2px groove rgba(255, 255, 255, 0.5);
+  padding-top: 12px;
+  position: relative;
+  top: -10px;
+  text-align: center;
 }
 .splittermond.sheet.actor .window-content main {
   overflow: hidden;
@@ -872,6 +905,35 @@
   white-space: nowrap;
   font-size: 12px;
 }
+.splittermond.sheet.actor .window-content .status .damage {
+  grid-column-start: 1;
+  grid-column-end: end;
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.sheet.actor .window-content .status .damage .general-damage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.splittermond.sheet.actor .window-content .status .damage .general-damage label {
+  flex: 0;
+  white-space: nowrap;
+  padding-right: 3px;
+  padding-left: 7px;
+}
+.splittermond.sheet.actor .window-content .status .damage .general-damage .value {
+  justify-self: center;
+  width: 40px;
+  border-right: 2px groove rgba(255, 255, 255, 0.3);
+  overflow: visible;
+}
+.splittermond.sheet.actor .window-content .status .damage .general-damage input {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-width: 40px;
+}
 .splittermond.sheet.actor .window-content .spells .focus-management {
   margin-bottom: 7px;
 }
@@ -887,14 +949,14 @@
 }
 .splittermond.sheet.actor .window-content .spells .focus-management .focus .value {
   justify-self: center;
-  width: 20px;
+  width: 40px;
   border-right: 2px groove rgba(255, 255, 255, 0.3);
   overflow: visible;
 }
 .splittermond.sheet.actor .window-content .spells .focus-management .focus input {
   padding-top: 0px;
   padding-bottom: 0px;
-  min-width: 20px;
+  min-width: 40px;
 }
 .splittermond.sheet.actor .window-content .spells .available {
   opacity: 1;

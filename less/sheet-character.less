@@ -94,8 +94,9 @@
 
             padding-left: @paddingMedium;
             padding-right: @paddingMedium;
-            .focus {
+            .focus, .health {
                 position: relative;
+                margin-bottom: @paddingLarge;
                 label {
                     display: inline-block;
                     width: 100%;
@@ -111,7 +112,7 @@
                     position: absolute;
                     border-radius: 12px;
                     text-align: center;
-                    bottom: -7px;
+                    top: 12px;
                     vertical-align: middle;
                     line-height: 24px;
                     margin-left: -12px;
@@ -136,7 +137,45 @@
                         box-shadow: 0 0 5px inset rgba(0,0,0,0.3);
                     }
                 }
+            }
 
+            .health {
+                margin-bottom: 0;
+                .value {
+                    background-color: #892100;
+                }
+                .bar {
+                    div {
+                        background-color: #892100;
+                    }
+
+                    .channeled {
+                        background: repeating-linear-gradient(
+                            45deg,
+                            fade(#892100,30%),
+                            fade(#892100,30%) 5px,
+                            #892100 5px,
+                            #892100 10px
+                        );
+                    }
+
+                    .exhausted {
+                        background: fade(#892100,30%);
+                    }
+                }
+
+                .wound-malus {
+                    position: relative;
+                    display: flex;
+                    .level-5 {
+                        width: 20%;
+                        border-right: 2px groove rgba(255,255,255,0.5);
+                        padding-top: 12px;
+                        position: relative;
+                        top: -10px;
+                        text-align: center;
+                    }
+                }
                 
             }
         }
@@ -197,6 +236,8 @@
             width: 2em;
             text-align: center;
         }
+
+        
 
     }
 
@@ -343,7 +384,41 @@
     }
 
     
+    .status {
+        .damage {
+            grid-column-start: 1;
+            grid-column-end: end;
 
+            display: flex;
+            flex-direction: column;
+
+
+            .general-damage {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin-bottom: @paddingMedium;
+                label {
+                    flex: 0;
+                    white-space: nowrap;
+                    padding-right: @paddingSmall;
+                    padding-left: @paddingMedium;
+                }
+                .value {
+                    justify-self: center;
+                    width: 40px;
+                    border-right: 2px groove rgba(255,255,255,0.3);
+                    overflow: visible;
+                }
+
+                input {
+                    padding-top: 0px;
+                    padding-bottom: 0px;
+                    min-width: 40px;
+                }
+            }
+        }
+    }
     
 
     .spells {
@@ -360,7 +435,7 @@
                 }
                 .value {
                     justify-self: center;
-                    width: 20px;
+                    width: 40px;
                     border-right: 2px groove rgba(255,255,255,0.3);
                     overflow: visible;
                 }
@@ -368,7 +443,7 @@
                 input {
                     padding-top: 0px;
                     padding-bottom: 0px;
-                    min-width: 20px;
+                    min-width: 40px;
                 }
             }
         }

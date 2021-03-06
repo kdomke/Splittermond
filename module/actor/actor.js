@@ -28,7 +28,7 @@ export default class SplittermondActor extends Actor {
         this._prepareWeapons();
 
 
-        this._prepareFocus();
+        this._prepareHealthFocus();
 
         this._prepareSpells();
 
@@ -51,43 +51,93 @@ export default class SplittermondActor extends Actor {
         });
     }
 
-    _prepareFocus() {
+    _prepareHealthFocus() {
         const actorData = this.data;
         const data = actorData.data;
 
-        if (data.focus.channeled.hasOwnProperty("entries")) {
-            data.focus.channeled.value = Math.max(
-                Math.min(
-                    data.focus.channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
-                    data.derivedAttributes.focuspoints.value
-                ),
-                0);
-        } else {
-            data.focus.channeled = {
-                value: 0,
-                entries: []
+        ["health", "focus"].forEach((type) => {
+            if (data[type].channeled.hasOwnProperty("entries")) {
+                data[type].channeled.value = Math.max(
+                    Math.min(
+                        data[type].channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
+                        data.derivedAttributes[type + "points"].value
+                    ),
+                    0);
+            } else {
+                data[type].channeled = {
+                    value: 0,
+                    entries: []
+                }
             }
-        }
 
-        if (!data.focus.exhausted.value) {
-            data.focus.exhausted = {
-                value: 0
+            if (!data[type].exhausted.value) {
+                data[type].exhausted = {
+                    value: 0
+                }
             }
-        }
 
-        if (!data.focus.consumed.value) {
-            data.focus.consumed = {
-                value: 0
+            data[type].exhausted.value = parseInt(data[type].exhausted.value);
+
+            if (!data[type].consumed.value) {
+                data[type].consumed = {
+                    value: 0
+                }
             }
+
+            data[type].consumed.value = parseInt(data[type].consumed.value);
+            if (type == "health") {
+                data[type].available = {
+                    value: Math.max(Math.min(5 * data.derivedAttributes[type + "points"].value - data[type].channeled.value - data[type].exhausted.value - data[type].consumed.value, 5 * data.derivedAttributes[type + "points"].value), 0)
+                }
+
+                data[type].total = {
+                    value: Math.max(Math.min(5 * data.derivedAttributes[type + "points"].value - data[type].consumed.value, 5 * data.derivedAttributes[type + "points"].value), 0)
+                }
+
+                data[type].available.percentage = 100 * data[type].available.value / (5 * data.derivedAttributes[type + "points"].value);
+                data[type].exhausted.percentage = 100 * data[type].exhausted.value / (5 * data.derivedAttributes[type + "points"].value);
+                data[type].channeled.percentage = 100 * data[type].channeled.value / (5 * data.derivedAttributes[type + "points"].value);
+                data[type].total.percentage = 100 * data[type].total.value / (5 * data.derivedAttributes[type + "points"].value);
+            } else {
+                data[type].available = {
+                    value: Math.max(Math.min(data.derivedAttributes[type + "points"].value - data[type].channeled.value - data[type].exhausted.value - data[type].consumed.value, data.derivedAttributes[type + "points"].value), 0)
+                }
+
+                data[type].total = {
+                    value: Math.max(Math.min(data.derivedAttributes[type + "points"].value - data[type].consumed.value, data.derivedAttributes[type + "points"].value), 0)
+                }
+
+                data[type].available.percentage = 100 * data[type].available.value / (data.derivedAttributes[type + "points"].value);
+                data[type].exhausted.percentage = 100 * data[type].exhausted.value / (data.derivedAttributes[type + "points"].value);
+                data[type].channeled.percentage = 100 * data[type].channeled.value / (data.derivedAttributes[type + "points"].value);
+                data[type].total.percentage = 100 * data[type].total.value / (data.derivedAttributes[type + "points"].value);
+            }
+
+
+
+        });
+
+        data.health.woundMalus = {
+            level: 0,
+            value: 0,
+            levels: [0, -1, -2, -4, -8]
         }
 
-        data.focus.available = {
-            value: Math.max(Math.min(data.derivedAttributes.focuspoints.value - data.focus.channeled.value - data.focus.exhausted.value - data.focus.consumed.value, data.derivedAttributes.focuspoints.value), 0)
+        data.health.woundMalus.level = 5 - Math.ceil(data.health.total.percentage / 20);
+        data.health.woundMalus.value = data.health.woundMalus.levels[data.health.woundMalus.level];
+
+        if (data.health.woundMalus.value != 0) {
+            ["speed", "initiative"].forEach((type) => {
+                if (!data.derivedAttributes[type].malus) {
+                    data.derivedAttributes[type].malus = {
+                        all: []
+                    };
+                }
+                data.derivedAttributes[type].malus.all.push({ value: data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+                data.derivedAttributes[type].value += data.health.woundMalus.value;
+            });
         }
 
-        data.focus.available.percentage = 100 * data.focus.available.value / data.derivedAttributes.focuspoints.value;
-        data.focus.exhausted.percentage = 100 * data.focus.exhausted.value / data.derivedAttributes.focuspoints.value;
-        data.focus.channeled.percentage = 100 * data.focus.channeled.value / data.derivedAttributes.focuspoints.value;
     }
 
     _prepareWeapons() {

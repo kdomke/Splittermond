@@ -111,6 +111,9 @@
         "handicapAbbrev": "Beh.",
         "attributes": "Attribute",
         "minAttributes": "min. Attribute",
+        "channeledDamage": "kanalisierter Schaden",
+        "normalDamage": "normaler Schaden",
+        "stunDamage": "Betäubungsschaden",
         "channeled": "kanalisiert",
         "channeledAbbrev": "K",
         "exhausted": "erschöpft",
@@ -120,6 +123,7 @@
         "available": "vefügbar",
         "channeledSpells": "Kanalisierte Zauber",
         "mastery": "Meisterschaft",
+        "status": "Status",
         "throwing": "werfen",
         "masteryItem": {
             "level": "Schwelle"

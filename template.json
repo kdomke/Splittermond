@@ -224,10 +224,16 @@
       "splinterpoints": {
         "value": 3
       },
-      "damage": {
-        "normal": 0,
-        "stun": 0,
-        "channeled": 0
+      "health": {
+        "consumed": {
+          "value": 0
+        },
+        "exhausted": {
+          "value": 0
+        },
+        "channeled": {
+          "entries": []
+        }
       },
       "focus": {
         "consumed": {
