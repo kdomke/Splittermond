@@ -258,6 +258,13 @@ export default class SplittermondActorSheet extends ActorSheet {
                 const defenseType = this._getClosestData($(event.currentTarget), 'defense-type');
                 this.actor.rollActiveDefense(defenseType, this.actor.data.data.activeDefense[defenseType].find(el => el._id === itemId));
             }
+        });
+
+        html.find(".add-tick").click(event => {
+            let value = this._getClosestData($(event.currentTarget), 'ticks');
+            let message = this._getClosestData($(event.currentTarget), 'message');
+
+            this.actor.addTicks(value, message);
         })
 
         html.find(".consume").click(event => {

@@ -391,7 +391,12 @@
                                     data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
                                     data-value="{{this.data.enhancementCosts}}">{{this.data.enhancementCosts}}</a>)
                             </div>
-                            <div class="cast-duration">{{this.data.castDuration}}</div>
+                            <div class="cast-duration">
+                                <a class="add-tick" data-ticks="{{this.data.castDuration}}" data-message="{{localize "
+                                    splittermond.castDuration"}}: {{this.name}}">
+                                    {{this.data.castDuration}}
+                                </a>
+                            </div>
                             <div class="range">{{this.data.range}}</div>
                             <div class="effect-duration">{{this.data.effectDuration}}</div>
                             <div class="actions">
@@ -445,7 +450,12 @@
                                             data-features="{{this.data.features}}">{{this.data.damage}}</a>
                                     </div>
                                     <div class="range">{{this.data.range}}</div>
-                                    <div class="weapon-speed">{{this.data.weaponSpeed}}</div>
+                                    <div class="weapon-speed">
+                                        <a class="add-tick" data-ticks="{{this.data.weaponSpeed}}"
+                                            data-message="{{localize 'splittermond.attack'}}: {{this.name}}">
+                                            {{this.data.weaponSpeed}}
+                                        </a>
+                                    </div>
                                     <div class="features" title="{{this.data.features}}">{{this.data.features}}</div>
                                 </li>
                                 {{/if}}

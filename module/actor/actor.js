@@ -613,6 +613,45 @@ export default class SplittermondActor extends Actor {
         ChatMessage.create(chatData);
     }
 
+    async addTicks(value = 3, message = "") {
+
+        value = parseInt(value);
+        if (!value) return;
+        if (!game.combat) return;
+
+        // Find combatant
+        let combatant = game.combat.combatants.find((c) => c.actor === this);
+
+        if (!combatant) return;
+
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: "Ticks",
+                content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
+                buttons: {
+                    ok: {
+                        label: "Ok",
+                        callback: html => {
+                            resolve(parseInt(html.find('.ticks')[0].value));
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        let nTicks = await p;
+
+        let newInitiative = combatant.initiative + parseInt(nTicks);
+        combatant.flags.relativeTickPosition = game.combat.combatants.reduce((acc, c) => {
+            return acc + (c.initiative == newInitiative) ? 1 : 0;
+        }, 0);
+
+        game.combat.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
+
+        return game.combat.setInitiative(combatant._id, newInitiative);
+    }
+
 
     getRollData() {
         const actorData = this.data;
