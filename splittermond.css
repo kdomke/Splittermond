@@ -331,7 +331,6 @@
   flex-direction: column;
   border-radius: 3px;
   border: 1px inset rgba(255, 255, 255, 0.3);
-  overflow: hidden;
   margin-bottom: 7px;
 }
 .splittermond .list .actions {
@@ -382,7 +381,6 @@
   box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
-  overflow: hidden;
 }
 .splittermond .list ul li,
 .splittermond .list ol li {

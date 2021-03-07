@@ -17,7 +17,7 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
     degreeOfSuccess = ((skillPoints < 1) ? Math.min(degreeOfSuccess, 0) : degreeOfSuccess);
     const isFumble = rollType != "safety" && roll.dice[0].total <= 3;
     const isCrit = roll.dice[0].total >= 19;
-    degreeOfSuccess = degreeOfSuccess - (isFumble ? 3 : 0);
+    degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
     degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
 
     const degreeOfSuccessMessage = game.i18n.localize(`splittermond.${succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(degreeOfSuccess), 5)}`);
@@ -42,10 +42,10 @@ export function damage(damageFormula, featureString) {
     });
     // sanatize String
     damageFormula = damageFormula.toLowerCase().replace("w", "d").replace(" ", "");
-    let damageFormulaData = /([0-9]{0,1})d(6|10)[+]*([0-9]*)/.exec(damageFormula);
+    let damageFormulaData = /([0-9]{0,1})d(6|10)([+\-0-9]*)/.exec(damageFormula);
     let nDices = parseInt(damageFormulaData[1] || 1);
     let nFaces = parseInt(damageFormulaData[2]);
-    let damageModifier = parseInt(damageFormulaData[3] || 0);
+    let damageModifier = damageFormulaData[3];
 
 
 
@@ -56,7 +56,7 @@ export function damage(damageFormula, featureString) {
     }
 
     if (damageModifier) {
-        damageFormula += `+${damageModifier}`;
+        damageFormula += damageModifier;
     }
 
     let chatData = {
