@@ -97,72 +97,113 @@
             .focus, .health {
                 position: relative;
                 margin-bottom: @paddingLarge;
-                label {
-                    display: inline-block;
-                    width: 100%;
-                    font-weight: 900;
-                    text-transform: uppercase;
-                    text-align: center;
-                }
-
-                .value {
-                    font-weight: 700;
-                    width: 24px;
-                    height: 24px;
-                    position: absolute;
-                    border-radius: 12px;
-                    text-align: center;
-                    top: 12px;
-                    vertical-align: middle;
-                    line-height: 24px;
-                    margin-left: -12px;
-                    box-shadow: 0 1px 5px rgba(0,0,0,0.5);
-                    color: white;
-                    left: 12.5%;
-                    z-index: 2;
-                    background-color: #2D80E1;
-                    font-size: 14px;
-                }
                 
-                .bar {
-                    grid-column-start: 1;
-                    grid-column-end: end;
-                    position: relative;
-                    height: 10px;
-                    box-shadow: 0 0 10px inset rgba(0,0,0,0.5);
-                    border-radius: 3px;
-                    overflow: hidden;
 
-                    div {
-                        box-shadow: 0 0 5px inset rgba(0,0,0,0.3);
+                .headline {
+                    
+                    display: flex;
+
+                    > label {
+                        display: inline-block;
+                        font-weight: 900;
+                        align-self: center;
+                        flex: 1;
+                    }
+
+                    > .data {
+                        display: grid;
+                        grid-template-columns: 30px 30px;
+
+                        gap: @paddingSmall;
+
+                        label {
+                            text-align: right;
+                        }
+
+                        .value {
+                            text-align: center;
+                        }
+
+                        input {
+                            margin: -@paddingSmall;
+                        }
+                    }
+
+                }
+
+                
+
+                .bar-with-value {
+                    position: relative;
+                    > .value {
+                        font-weight: 700;
+                        width: 24px;
+                        height: 24px;
+                        position: absolute;
+                        border-radius: 12px;
+                        text-align: center;
+                        top: -7px;
+                        vertical-align: middle;
+                        line-height: 24px;
+                        margin-left: -12px;
+                        box-shadow: 0 1px 5px rgba(0,0,0,0.5);
+                        color: white;
+                        left: 12.5%;
+                        z-index: 2;
+                        background-color: #2D80E1;
+                        font-size: 14px;
+                    }
+                    > .bar {
+                        grid-column-start: 1;
+                        grid-column-end: end;
+                        position: relative;
+                        height: 10px;
+                        box-shadow: 0 0 10px inset rgba(0,0,0,0.5);
+                        border-radius: 3px;
+                        overflow: hidden;
+
+                        div {
+                            box-shadow: 0 0 5px inset rgba(0,0,0,0.3);
+                        }
                     }
                 }
+                
+                
             }
 
             .health {
                 margin-bottom: 0;
-                .value {
-                    background-color: #892100;
-                }
-                .bar {
-                    div {
+
+                .bar-with-value {
+
+                    .value {
                         background-color: #892100;
                     }
+                
+                    .bar {
+                        
+                        div {
+                            background-color: #892100;
+                        }
 
-                    .channeled {
-                        background: repeating-linear-gradient(
-                            45deg,
-                            fade(#892100,30%),
-                            fade(#892100,30%) 5px,
-                            #892100 5px,
-                            #892100 10px
-                        );
+                        .channeled {
+                            background: repeating-linear-gradient(
+                                45deg,
+                                fade(#892100,30%),
+                                fade(#892100,30%) 5px,
+                                #892100 5px,
+                                #892100 10px
+                            );
+                        }
+
+                        .exhausted {
+                            background: fade(#892100,30%);
+                        }
                     }
 
-                    .exhausted {
-                        background: fade(#892100,30%);
-                    }
                 }
+
+                
 
                 .wound-malus {
                     position: relative;

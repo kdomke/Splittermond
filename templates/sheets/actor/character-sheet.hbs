@@ -66,25 +66,64 @@
             <div class="focus-health"
                 title="{{localize 'splittermond.available'}}: {{data.focus.available.value}} | {{localize 'splittermond.channeled'}}: {{data.focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
                 <div class="focus">
-                    <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
-                    <div class="value" style="left: {{data.focus.available.percentage}}%">{{data.focus.available.value}}
+                    <div class="headline">
+                        <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
+                        <div class="data" title="{{localize 'splittermond.channeled'}}">
+                            <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
+                            <div class="value">{{data.focus.channeled.value}}</div>
+                        </div>
+                        <div class="data" title="{{localize 'splittermond.exhausted'}}">
+                            <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
+                            <div class="value"><input class="value" name="data.focus.exhausted.value" type="text"
+                                    value="{{data.focus.exhausted.value}}" data-dtype="Number"></div>
+                        </div>
+                        <div class="data" title="{{localize 'splittermond.consumed'}}">
+                            <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+                            <div class="value"><input class="value" name="data.focus.consumed.value" type="text"
+                                    value="{{data.focus.consumed.value}}" data-dtype="Number"></div>
+                        </div>
                     </div>
-                    <div class="bar">
-                        <div class="available" style="width: {{data.focus.available.percentage}}%"></div>
-                        <div class="channeled" style="width: {{data.focus.channeled.percentage}}%"></div>
-                        <div class="exhausted" style="width: {{data.focus.exhausted.percentage}}%"></div>
+
+
+                    <div class="bar-with-value">
+                        <div class="value" style="left: {{data.focus.available.percentage}}%">
+                            {{data.focus.available.value}}
+                        </div>
+                        <div class="bar">
+                            <div class="available" style="width: {{data.focus.available.percentage}}%"></div>
+                            <div class="channeled" style="width: {{data.focus.channeled.percentage}}%"></div>
+                            <div class="exhausted" style="width: {{data.focus.exhausted.percentage}}%"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="health"
                     title="{{localize 'splittermond.normalDamage'}}: {{data.health.consumed.value}} | {{localize 'splittermond.stunDamage'}}: {{data.health.exhausted.value}} | {{localize 'splittermond.channeledDamage'}}: {{data.health.channeled.value}}">
-                    <label>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</label>
-                    <div class="value" style="left: {{data.health.total.percentage}}%">
-                        {{data.health.total.value}}
+                    <div class="headline">
+                        <label>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</label>
+                        <div class="data" title="{{localize 'splittermond.channeledDamage'}}">
+                            <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
+                            <div class="value">{{data.health.channeled.value}}</div>
+                        </div>
+                        <div class="data" title="{{localize 'splittermond.stunDamage'}}">
+                            <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
+                            <div class="value"><input class="value" name="data.health.exhausted.value" type="text"
+                                    value="{{data.health.exhausted.value}}" data-dtype="Number"></div>
+                        </div>
+                        <div class="data" title="{{localize 'splittermond.normalDamage'}}">
+                            <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+                            <div class="value"><input class="value" name="data.health.consumed.value" type="text"
+                                    value="{{data.health.consumed.value}}" data-dtype="Number"></div>
+                        </div>
                     </div>
-                    <div class="bar">
-                        <div class="available" style="width: {{data.health.available.percentage}}%"></div>
-                        <div class="channeled" style="width: {{data.health.channeled.percentage}}%"></div>
-                        <div class="exhausted" style="width: {{data.health.exhausted.percentage}}%"></div>
+                    <div class="bar-with-value">
+                        <div class="value" style="left: {{data.health.total.percentage}}%">
+                            {{data.health.total.value}}
+                        </div>
+                        <div class="bar">
+                            <div class="available" style="width: {{data.health.available.percentage}}%"></div>
+                            <div class="channeled" style="width: {{data.health.channeled.percentage}}%"></div>
+                            <div class="exhausted" style="width: {{data.health.exhausted.percentage}}%"></div>
+                        </div>
                     </div>
                     <div class="wound-malus">
                         <div class="level-5">-8</div>
@@ -295,21 +334,6 @@
         </section>
         <section class="tab spells" data-group="primary" data-tab="spells">
             <div>
-                <div class="focus-management">
-                    <div class="focus">
-                        <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}} {{localize
-                            "splittermond.available"}}:</label>
-                        <div class="value">{{data.focus.available.value}}</div>
-                        <label>{{localize "splittermond.channeled"}}:</label>
-                        <div class="value">{{data.focus.channeled.value}}</div>
-                        <label>{{localize "splittermond.exhausted"}}:</label>
-                        <div class="value"><input class="value" name="data.focus.exhausted.value" type="text"
-                                value="{{data.focus.exhausted.value}}" data-dtype="Number"></div>
-                        <label>{{localize "splittermond.consumed"}}:</label>
-                        <div class="value"><input class="value" name="data.focus.consumed.value" type="text"
-                                value="{{data.focus.consumed.value}}" data-dtype="Number"></div>
-                    </div>
-                </div>
                 <div class="list channeled-spells">
                     <div class="list-header">
                         <h3>{{localize "splittermond.channeledSpells"}}</h3>
@@ -653,16 +677,6 @@
         </section>
         <section class="tab status" data-group="primary" data-tab="status">
             <div class="damage">
-                <div class="general-damage">
-                    <label>{{localize "splittermond.damage"}}:</label>
-                    <div class="value"><input class="value" name="data.health.consumed.value" type="text"
-                            value="{{data.health.consumed.value}}" data-dtype="Number"></div>
-                    <label>{{localize "splittermond.stunDamage"}}:</label>
-                    <div class="value"><input class="value" name="data.health.exhausted.value" type="text"
-                            value="{{data.health.exhausted.value}}" data-dtype="Number"></div>
-                    <label>{{localize "splittermond.channeled"}}:</label>
-                    <div class="value">{{data.health.channeled.value}}</div>
-                </div>
                 <div class="list">
                     <div class="list-header">
                         <h3>{{localize "splittermond.channeledDamage"}}</h3>

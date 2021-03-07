@@ -633,23 +633,48 @@
   position: relative;
   margin-bottom: 14px;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus label,
-.splittermond.sheet.actor .window-content header .focus-health .health label {
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline {
+  display: flex;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline > label,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline > label {
   display: inline-block;
-  width: 100%;
   font-weight: 900;
-  text-transform: uppercase;
+  align-self: center;
+  flex: 1;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data {
+  display: grid;
+  grid-template-columns: 30px 30px;
+  gap: 3px;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data label,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data label {
+  text-align: right;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data .value,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data .value {
   text-align: center;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .value,
-.splittermond.sheet.actor .window-content header .focus-health .health .value {
+.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data input,
+.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data input {
+  margin: -3px;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value {
+  position: relative;
+}
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .value,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .value {
   font-weight: 700;
   width: 24px;
   height: 24px;
   position: absolute;
   border-radius: 12px;
   text-align: center;
-  top: 12px;
+  top: -7px;
   vertical-align: middle;
   line-height: 24px;
   margin-left: -12px;
@@ -660,8 +685,8 @@
   background-color: #2D80E1;
   font-size: 14px;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar {
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .bar,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .bar {
   grid-column-start: 1;
   grid-column-end: end;
   position: relative;
@@ -670,23 +695,23 @@
   border-radius: 3px;
   overflow: hidden;
 }
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar div,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar div {
+.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .bar div,
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .bar div {
   box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.3);
 }
 .splittermond.sheet.actor .window-content header .focus-health .health {
   margin-bottom: 0;
 }
-.splittermond.sheet.actor .window-content header .focus-health .health .value {
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .value {
   background-color: #892100;
 }
-.splittermond.sheet.actor .window-content header .focus-health .health .bar div {
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar div {
   background-color: #892100;
 }
-.splittermond.sheet.actor .window-content header .focus-health .health .bar .channeled {
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar .channeled {
   background: repeating-linear-gradient(45deg, rgba(137, 33, 0, 0.3), rgba(137, 33, 0, 0.3) 5px, #892100 5px, #892100 10px);
 }
-.splittermond.sheet.actor .window-content header .focus-health .health .bar .exhausted {
+.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar .exhausted {
   background: rgba(137, 33, 0, 0.3);
 }
 .splittermond.sheet.actor .window-content header .focus-health .health .wound-malus {
