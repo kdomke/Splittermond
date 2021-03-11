@@ -1,0 +1,69 @@
+<div class="focus-health"
+    title="{{localize 'splittermond.available'}}: {{focus.available.value}} | {{localize 'splittermond.channeled'}}: {{focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
+    <div class="focus">
+        <div class="headline">
+            <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
+            <div class="data" title="{{localize 'splittermond.channeled'}}">
+                <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
+                <div class="value">{{focus.channeled.value}}</div>
+            </div>
+            <div class="data" title="{{localize 'splittermond.exhausted'}}">
+                <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
+                <div class="value"><input class="value" name="data.focus.exhausted.value" type="text"
+                        value="{{focus.exhausted.value}}" data-dtype="Number"></div>
+            </div>
+            <div class="data" title="{{localize 'splittermond.consumed'}}">
+                <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+                <div class="value"><input class="value" name="data.focus.consumed.value" type="text"
+                        value="{{focus.consumed.value}}" data-dtype="Number"></div>
+            </div>
+        </div>
+
+
+        <div class="bar-with-value">
+            <div class="value" style="left: {{focus.available.percentage}}%">
+                {{focus.available.value}}
+            </div>
+            <div class="bar">
+                <div class="available" style="width: {{focus.available.percentage}}%"></div>
+                <div class="channeled" style="width: {{focus.channeled.percentage}}%"></div>
+                <div class="exhausted" style="width: {{focus.exhausted.percentage}}%"></div>
+            </div>
+        </div>
+    </div>
+    <div class="health"
+        title="{{localize 'splittermond.normalDamage'}}: {{health.consumed.value}} | {{localize 'splittermond.stunDamage'}}: {{exhausted.value}} | {{localize 'splittermond.channeledDamage'}}: {{health.channeled.value}}">
+        <div class="headline">
+            <label>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</label>
+            <div class="data" title="{{localize 'splittermond.channeledDamage'}}">
+                <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
+                <div class="value">{{health.channeled.value}}</div>
+            </div>
+            <div class="data" title="{{localize 'splittermond.stunDamage'}}">
+                <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
+                <div class="value"><input class="value" name="data.health.exhausted.value" type="text"
+                        value="{{health.exhausted.value}}" data-dtype="Number"></div>
+            </div>
+            <div class="data" title="{{localize 'splittermond.normalDamage'}}">
+                <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+                <div class="value"><input class="value" name="data.health.consumed.value" type="text"
+                        value="{{health.consumed.value}}" data-dtype="Number"></div>
+            </div>
+        </div>
+        <div class="bar-with-value">
+            <div class="value" style="left: {{health.total.percentage}}%">
+                {{health.total.value}}
+            </div>
+            <div class="bar">
+                <div class="available" style="width: {{health.available.percentage}}%"></div>
+                <div class="channeled" style="width: {{health.channeled.percentage}}%"></div>
+                <div class="exhausted" style="width: {{health.exhausted.percentage}}%"></div>
+            </div>
+        </div>
+        <div class="wound-malus">
+            {{#each health.woundMalus.levels}}
+            <div class="level">{{this}}</div>
+            {{/each}}
+        </div>
+    </div>
+</div>
