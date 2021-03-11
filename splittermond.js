@@ -1,6 +1,7 @@
 import SplittermondActor from "./module/actor/actor.js";
 import SplittermondItem from "./module/item/item.js";
 import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
+import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
 import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
 import { splittermond } from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
@@ -30,10 +31,25 @@ Hooks.once("init", function () {
         label: "splittermond.character"
     });
 
+    Actors.registerSheet("splittermond", SplittermondNPCSheet, {
+        types: ["npc"],
+        makeDefault: true,
+        label: "splittermond.npc"
+    });
+
     Items.unregisterSheet("core", ItemSheet);
     Items.registerSheet("splittermond", SplittermondItemSheet, {
         makeDefault: true
     });
+
+    const templateBasePath = "systems/splittermond/templates"
+
+    loadTemplates([
+        // Actor Partials
+        `${templateBasePath}/sheets/actor/parts/attribute-input.hbs`,
+        `${templateBasePath}/sheets/actor/parts/focus-health.hbs`
+    ]);
+
 
     console.log("Splittermond | DONE!");
 });

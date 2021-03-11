@@ -11,6 +11,18 @@ splittermond.attributes = ["charisma", "agility", "intuition",
 
 splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "mindresist", "bodyresist"];
 
+splittermond.woundMalus = {
+    "5": [0, -1, -2, -4, -8],
+    "3": [0, -2, -8],
+    "1": [0],
+}
+
+splittermond.woundMalusText = {
+    "5": ["unverletzt", "angeschlagen", "verletzt", "schwer verletzt", "todgeweiht"],
+    "3": ["unverletzt", "verletzt", "todgeweiht"],
+    "1": ["unverletzt"],
+}
+
 splittermond.skillGroups = {
     fighting: [
         "melee",
@@ -393,6 +405,11 @@ splittermond.itemSheetProperties = {
                     field: "data.quality",
                     label: "splittermond.quality",
                     template: "input"
+                },
+                {
+                    field: "data.modifier",
+                    label: "splittermond.modifier",
+                    template: "input"
                 }
             ]
         }
@@ -662,6 +679,19 @@ splittermond.itemSheetProperties.spell = [
                 field: "data.degreeOfSuccessOptions.effectDuration",
                 label: "splittermond.degreeOfSuccessOptions.effectDuration",
                 template: "bool"
+            }
+        ]
+    }
+]
+
+splittermond.itemSheetProperties.npcfeature = [
+    {
+        groupName: "splittermond.generalProperties",
+        properties: [
+            {
+                field: "data.modifier",
+                label: "splittermond.modifier",
+                template: "input"
             }
         ]
     }

@@ -18,7 +18,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
     getData() {
         const sheetData = super.getData();
 
-
+        sheetData.data.experience.heroLevelName = game.i18n.localize(`splittermond.heroLevels.${sheetData.data.experience.heroLevel}`);
 
         //this._prepareItems(sheetData);
 
@@ -43,6 +43,27 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
 
         return super._onDropItemCreate(itemData);
+    }
+
+    activateListeners(html) {
+
+
+        html.find('.attribute input').change(this._onChangeAttribute.bind(this));
+
+        super.activateListeners(html);
+    }
+
+    _onChangeAttribute(event) {
+        event.preventDefault();
+
+        const input = event.currentTarget;
+        const value = parseInt(input.value);
+        const attrBaseName = input.name.split('.')[2];
+        const initialValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.initial`));
+        const speciesValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.species`));
+        this.actor.update({
+            [`data.attributes.${attrBaseName}.advances`]: value - initialValue - speciesValue
+        });
     }
 
 

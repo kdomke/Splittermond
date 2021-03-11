@@ -1,7 +1,8 @@
 {
   "Actor": {
     "types": [
-      "character"
+      "character",
+      "npc"
     ],
     "templates": {
       "biography": {
@@ -54,154 +55,204 @@
       "skills": {
         "skills": {
           "melee": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "slashing": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "chains": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "blades": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "longrange": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "staffs": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "throwing": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "acrobatics": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "alchemy": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "leadership": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "arcanelore": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "athletics": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "performance": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "diplomacy": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "clscraft": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "empathy": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "determination": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "dexterity": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "history": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "craftmanship": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "heal": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "stealth": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "hunting": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "countrylore": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "nature": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "eloquence": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "locksntraps": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "swim": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "seafaring": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "streetlore": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "animals": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "survival": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "perception": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "endurance": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "antimagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "controlmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "motionmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "insightmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "stonemagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "firemagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "healmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "illusionmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "combatmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "lightmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "naturemagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "shadowmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "fatemagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "protectionmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "enhancemagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "deathmagic": {
-            "points": 0
+            "points": 0,
+            "value": 0
           },
           "transformationmagic": {
             "points": 0
@@ -213,38 +264,44 @@
             "points": 0
           }
         }
+      },
+      "health": {
+        "health": {
+          "consumed": {
+            "value": 0
+          },
+          "exhausted": {
+            "value": 0
+          },
+          "channeled": {
+            "entries": []
+          }
+        }
+      },
+      "focus": {
+        "focus": {
+          "consumed": {
+            "value": 0
+          },
+          "exhausted": {
+            "value": 0
+          },
+          "channeled": {
+            "entries": []
+          }
+        }
       }
     },
     "character": {
       "templates": [
         "attributes",
         "skills",
-        "biography"
+        "biography",
+        "health",
+        "focus"
       ],
       "splinterpoints": {
         "value": 3
-      },
-      "health": {
-        "consumed": {
-          "value": 0
-        },
-        "exhausted": {
-          "value": 0
-        },
-        "channeled": {
-          "entries": []
-        }
-      },
-      "focus": {
-        "consumed": {
-          "value": 0
-        },
-        "exhausted": {
-          "value": 0
-        },
-        "channeled": {
-          "entries": []
-        }
       },
       "experience": {
         "heroLevel": 1,
@@ -265,12 +322,39 @@
       "templates": [
         "attributes",
         "skills",
-        "biography"
+        "biography",
+        "health",
+        "focus"
       ],
+      "derivedAttributes": {
+        "size": {
+          "value": 0
+        },
+        "speed": {
+          "value": 0
+        },
+        "initiative": {
+          "value": 0
+        },
+        "healthpoints": {
+          "value": 0
+        },
+        "focuspoints": {
+          "value": 0
+        },
+        "defense": {
+          "value": 0
+        },
+        "mindresist": {
+          "value": 0
+        },
+        "bodyresist": {
+          "value": 0
+        }
+      },
       "sex": "",
       "type": "",
-      "level": 0,
-      "features": ""
+      "level": ""
     }
   },
   "Item": {
@@ -288,7 +372,8 @@
       "culture",
       "ancestry",
       "education",
-      "resource"
+      "resource",
+      "npcfeature"
     ],
     "templates": {
       "description": {
@@ -310,12 +395,16 @@
         "tickMalus": 0,
         "defenseBonus": 0,
         "handicap": 0
+      },
+      "modifier": {
+        "modifier": ""
       }
     },
     "weapon": {
       "templates": [
         "description",
-        "physicalProperties"
+        "physicalProperties",
+        "modifier"
       ],
       "damage": "",
       "range": 0,
@@ -352,14 +441,16 @@
     "equipment": {
       "templates": [
         "description",
-        "physicalProperties"
+        "physicalProperties",
+        "modifier"
       ]
     },
     "shield": {
       "templates": [
         "description",
         "physicalProperties",
-        "defense"
+        "defense",
+        "modifier"
       ],
       "skill": "",
       "features": [],
@@ -370,7 +461,8 @@
       "templates": [
         "description",
         "physicalProperties",
-        "defense"
+        "defense",
+        "modifier"
       ],
       "minStr": 0,
       "damageReduction": 0,
@@ -402,23 +494,24 @@
     },
     "statuseffect": {
       "templates": [
-        "description"
+        "description",
+        "modifier"
       ]
     },
     "mastery": {
       "templates": [
-        "description"
+        "description",
+        "modifier"
       ],
       "availableIn": "",
       "skill": "",
-      "modifier": "",
       "level": 1
     },
     "strength": {
       "templates": [
-        "description"
+        "description",
+        "modifier"
       ],
-      "modifier": "",
       "origin": "",
       "level": 1,
       "quantity": 1,
@@ -471,6 +564,12 @@
         "description"
       ],
       "value": 1
+    },
+    "npcfeature": {
+      "templates": [
+        "description",
+        "modifier"
+      ]
     }
   }
 }

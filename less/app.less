@@ -1,9 +1,48 @@
 @import "./variables.less";
 
 .splittermond {
-   
+
+    &.window-app {
+        background: url(../../systems/splittermond/images/parchment.jpg),url(../../systems/splittermond/images/background7.jpg);
+        background-size: auto;
+        background-repeat: repeat, no-repeat;
+        background-position: top right;
+        background-blend-mode: multiply;
+        color: black;
+        box-shadow: 0 0 5px inset rgba(255,255,255,0.3), 0 0 20px #000;
+    }
+
+    .window-header, &.window-app.minimized .window-header {
+        color: black;
+        border:none;
+        text-shadow: 0 0 10px white;
+    }
+
+    .window-header::after {
+        display:block;
+        content:"";
+        position:absolute;
+        width: 200px;
+        height: 60px;
+        left: 50%;
+        top: -32px;
+        margin-left: -100px;
+        background: url(../../systems/splittermond/images/splittermond-logo.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center top;
+        filter: drop-shadow(0 0 5px lighten(@highlightTextColor,20%));
+    }
+
+    &.window-app.minimized .window-header::after {
+        width: 100px;
+        margin-left: -50px;
+        height: 30px;
+        top: -16px;
+    }
+
     .window-title {
-        color: white;
+        color: black;
     }
     
 
@@ -16,6 +55,7 @@
         //padding: 16px;
         padding: 0em;
         z-index: 0;
+        background: unset;
     }
 /*
     .window-content:after {
@@ -43,7 +83,8 @@
 
     main {
         padding: @paddingMedium;
-        background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+        //background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+        background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
         box-shadow: 0 -2px 2px rgba(0,0,0,0.2);
         border-top: 1px outset rgba(255, 255, 255, 0.3);
     }
@@ -56,6 +97,8 @@
         color: @textColor;
         position: relative;
         z-index: 10;
+
+        
 
         justify-content: stretch;
         .item {
@@ -78,7 +121,7 @@
             }
 
             &.active {
-                background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
                 box-shadow: 0 -2px 2px rgba(0,0,0,0.2);
                 border: 1px outset rgba(255, 255, 255, 0.3);
                 border-bottom: none;
@@ -89,10 +132,19 @@
 
     .tab[data-tab].active {
         display: flex;
-        flex-direction: column;
+        
+        
+    }
+
+    a {
+        &:hover, &:active {
+            text-shadow: 0 0 8px @highlightTextColor;
+        }
     }
 
     .tab {
+        
+        flex-direction: column;
         .tabs {
             border-radius: @paddingSmall;
             font-size: @fontSizeNormal;
@@ -154,8 +206,8 @@
 
     .tooltip-activator {
         position: relative;
-        &:hover + .tooltip {
-            display: block;
+        &:hover + .tooltip, &:hover > .tooltip {
+            display: flex;
         }
 
         
@@ -165,11 +217,10 @@
         display: none;
         position: absolute;
         min-width: 160px;
-        width: 90%;
         top: 2em;
         left: 10%;
         padding: @paddingMedium;
-        background: url(../../ui/parchment.jpg) repeat fixed;
+        background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
         box-shadow: 1px 1px 5px rgba(0,0,0,0.5);
         border-radius: 0.5rem;
         text-shadow: none;
@@ -269,22 +320,13 @@
 
         margin-bottom: @paddingMedium;
 
-        .actions {
-            width: 4em;
-            text-align: right;
-
-            button {
-                display: none;
-            }
-        }
+        
 
         &:hover > .list-header > .actions > button {
             display: inline-block;
         }
 
-        li:hover > .actions > button {
-            display: inline-block;
-        }
+        
         
         .list-header {
             display: flex;
@@ -306,17 +348,20 @@
                 flex: 1;
             }
 
+            >.actions {
+                width: 4em;
+                text-align: right;
+
+                button {
+                    display: none;
+                }
+            }
+
         }
 
-        li:nth-child(odd) {
-            background-color: fade(@textColor, 5%);
-        }
+        
 
-        li:hover {
-            background-color: fade(@highlightTextColor, 10%);
-        }
-
-        ul, ol {
+        > ul, > ol {
             display: block;
             flex-basis: 100%;
             padding: 0;
@@ -326,12 +371,26 @@
             box-shadow: inset 0 0 @paddingLarge rgba(0,0,0,0.2);
             border-bottom-left-radius: @paddingSmall;
             border-bottom-right-radius: @paddingSmall;
-            li {
+            
+
+            > li {
                 display: flex;
                 align-items: center;
                 position: relative;
                 padding: @paddingSmall;
                 border: 1px solid transparent;
+
+                &:nth-child(odd) {
+                    background-color: fade(@textColor, 5%);
+                }
+
+                &:hover {
+                    background-color: fade(@highlightTextColor, 10%);
+
+                    > .actions > button {
+                        display: inline-block;
+                    }
+                }
 
                 input {
                     margin-top: -@paddingSmall;
@@ -345,9 +404,20 @@
 
                 
 
+                
+
                 > *:first-child {
                     flex: 1;
                     border-left: none;
+                }
+
+                >.actions {
+                    width: 4em;
+                    text-align: right;
+
+                    button {
+                        display: none;
+                    }
                 }
             }
         }
@@ -385,6 +455,59 @@
         }
     }
 
+}
+.taglist {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    li {
+        display: flex;
+        align-items: center;
+        margin-right: @paddingSmall;
+        //padding: @paddingSmall;
+        margin-top: @paddingSmall;
+        margin-bottom: @paddingSmall;
+        line-height: 22px;
+        box-shadow: 0 0px 2px rgba(0,0,0,0.3),0 0px 3px inset white;
+        position: relative;
+        border-radius: @paddingMedium;
+
+        .name {
+            padding-left: @paddingSmall;
+            padding-right: @paddingSmall;
+            flex: 1;
+        }
+
+        .actions {
+            padding-left: @paddingSmall;
+            padding-right: @paddingSmall;
+            display: inline-block;
+            opacity: 0;
+        }
+
+        .tooltip {
+            width: 20em;
+        }
+
+        &:hover {
+            box-shadow: 0 0px 3px rgba(0,0,0,0.3),0 0px 3px inset white;
+            .actions {
+                opacity: 1;
+            }
+        } 
+    }
+
+    li.actions {
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
+            margin-left: @paddingSmall;
+    }
 }
 
 .dialog .dialog-buttons {

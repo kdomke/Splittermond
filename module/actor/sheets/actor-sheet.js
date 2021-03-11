@@ -62,7 +62,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         }
         this._prepareItems(sheetData);
 
-        sheetData.data.experience.heroLevelName = game.i18n.localize(`splittermond.heroLevels.${sheetData.data.experience.heroLevel}`);
+
 
         console.log("getData()");
 
@@ -92,7 +92,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 return result;
             }, {});
         }
-
+        data.spellsBySkill = {};
         if (data.itemsByType.spell) {
             data.spellsBySkill = data.itemsByType.spell.reduce((result, item) => {
                 let skill = item.data.skill || "none";
@@ -127,9 +127,6 @@ export default class SplittermondActorSheet extends ActorSheet {
 
 
     activateListeners(html) {
-
-        html.find('.attribute input').change(this._onChangeAttribute.bind(this));
-
         html.find('input.autoexpand').on('input', function () {
             let dummyElement = $('<span id="autoexpanddummy"/>').hide();
             $(this).after(dummyElement);
@@ -338,18 +335,7 @@ export default class SplittermondActorSheet extends ActorSheet {
     }
 
 
-    _onChangeAttribute(event) {
-        event.preventDefault();
 
-        const input = event.currentTarget;
-        const value = parseInt(input.value);
-        const attrBaseName = input.name.split('.')[2];
-        const initialValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.initial`));
-        const speciesValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.species`));
-        this.actor.update({
-            [`data.attributes.${attrBaseName}.advances`]: value - initialValue - speciesValue
-        });
-    }
 
 
 

@@ -135,8 +135,44 @@
     }
 */
 }
+.splittermond.window-app {
+  background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background7.jpg);
+  background-size: auto;
+  background-repeat: repeat, no-repeat;
+  background-position: top right;
+  background-blend-mode: multiply;
+  color: black;
+  box-shadow: 0 0 5px inset rgba(255, 255, 255, 0.3), 0 0 20px #000;
+}
+.splittermond .window-header,
+.splittermond.window-app.minimized .window-header {
+  color: black;
+  border: none;
+  text-shadow: 0 0 10px white;
+}
+.splittermond .window-header::after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 200px;
+  height: 60px;
+  left: 50%;
+  top: -32px;
+  margin-left: -100px;
+  background: url(../../systems/splittermond/images/splittermond-logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center top;
+  filter: drop-shadow(0 0 5px #86b6ee);
+}
+.splittermond.window-app.minimized .window-header::after {
+  width: 100px;
+  margin-left: -50px;
+  height: 30px;
+  top: -16px;
+}
 .splittermond .window-title {
-  color: white;
+  color: black;
 }
 .splittermond .window-content {
   font-size: 14px;
@@ -146,6 +182,7 @@
   position: relative;
   padding: 0em;
   z-index: 0;
+  background: unset;
 }
 .splittermond .window-resizable-handle {
   z-index: 0;
@@ -155,7 +192,7 @@
 }
 .splittermond main {
   padding: 7px;
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
   border-top: 1px outset rgba(255, 255, 255, 0.3);
 }
@@ -187,7 +224,7 @@
   color: #19314D;
 }
 .splittermond .tabs .item.active {
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
   border: 1px outset rgba(255, 255, 255, 0.3);
   border-bottom: none;
@@ -195,6 +232,12 @@
 }
 .splittermond .tab[data-tab].active {
   display: flex;
+}
+.splittermond a:hover,
+.splittermond a:active {
+  text-shadow: 0 0 8px #2D80E1;
+}
+.splittermond .tab {
   flex-direction: column;
 }
 .splittermond .tab .tabs {
@@ -250,18 +293,18 @@
 .splittermond .tooltip-activator {
   position: relative;
 }
-.splittermond .tooltip-activator:hover + .tooltip {
-  display: block;
+.splittermond .tooltip-activator:hover + .tooltip,
+.splittermond .tooltip-activator:hover > .tooltip {
+  display: flex;
 }
 .splittermond .tooltip {
   display: none;
   position: absolute;
   min-width: 160px;
-  width: 90%;
   top: 2em;
   left: 10%;
   padding: 7px;
-  background: url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
   border-radius: 0.5rem;
   text-shadow: none;
@@ -333,17 +376,7 @@
   border: 1px inset rgba(255, 255, 255, 0.3);
   margin-bottom: 7px;
 }
-.splittermond .list .actions {
-  width: 4em;
-  text-align: right;
-}
-.splittermond .list .actions button {
-  display: none;
-}
 .splittermond .list:hover > .list-header > .actions > button {
-  display: inline-block;
-}
-.splittermond .list li:hover > .actions > button {
   display: inline-block;
 }
 .splittermond .list .list-header {
@@ -364,14 +397,15 @@
 .splittermond .list .list-header > *:first-child {
   flex: 1;
 }
-.splittermond .list li:nth-child(odd) {
-  background-color: rgba(68, 69, 70, 0.05);
+.splittermond .list .list-header > .actions {
+  width: 4em;
+  text-align: right;
 }
-.splittermond .list li:hover {
-  background-color: rgba(45, 128, 225, 0.1);
+.splittermond .list .list-header > .actions button {
+  display: none;
 }
-.splittermond .list ul,
-.splittermond .list ol {
+.splittermond .list > ul,
+.splittermond .list > ol {
   display: block;
   flex-basis: 100%;
   padding: 0;
@@ -382,27 +416,48 @@
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-.splittermond .list ul li,
-.splittermond .list ol li {
+.splittermond .list > ul > li,
+.splittermond .list > ol > li {
   display: flex;
   align-items: center;
   position: relative;
   padding: 3px;
   border: 1px solid transparent;
 }
-.splittermond .list ul li input,
-.splittermond .list ol li input {
+.splittermond .list > ul > li:nth-child(odd),
+.splittermond .list > ol > li:nth-child(odd) {
+  background-color: rgba(68, 69, 70, 0.05);
+}
+.splittermond .list > ul > li:hover,
+.splittermond .list > ol > li:hover {
+  background-color: rgba(45, 128, 225, 0.1);
+}
+.splittermond .list > ul > li:hover > .actions > button,
+.splittermond .list > ol > li:hover > .actions > button {
+  display: inline-block;
+}
+.splittermond .list > ul > li input,
+.splittermond .list > ol > li input {
   margin-top: -3px;
   margin-bottom: -3px;
 }
-.splittermond .list ul li > *,
-.splittermond .list ol li > * {
+.splittermond .list > ul > li > *,
+.splittermond .list > ol > li > * {
   border-left: 2px groove rgba(255, 255, 255, 0.3);
 }
-.splittermond .list ul li > *:first-child,
-.splittermond .list ol li > *:first-child {
+.splittermond .list > ul > li > *:first-child,
+.splittermond .list > ol > li > *:first-child {
   flex: 1;
   border-left: none;
+}
+.splittermond .list > ul > li > .actions,
+.splittermond .list > ol > li > .actions {
+  width: 4em;
+  text-align: right;
+}
+.splittermond .list > ul > li > .actions button,
+.splittermond .list > ol > li > .actions button {
+  display: none;
 }
 .splittermond ::-webkit-scrollbar {
   width: 6px;
@@ -429,6 +484,52 @@
 }
 .splittermond.dialog form label {
   text-align: right;
+}
+.taglist {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+.taglist li {
+  display: flex;
+  align-items: center;
+  margin-right: 3px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  line-height: 22px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+  position: relative;
+  border-radius: 7px;
+}
+.taglist li .name {
+  padding-left: 3px;
+  padding-right: 3px;
+  flex: 1;
+}
+.taglist li .actions {
+  padding-left: 3px;
+  padding-right: 3px;
+  display: inline-block;
+  opacity: 0;
+}
+.taglist li .tooltip {
+  width: 20em;
+}
+.taglist li:hover {
+  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+}
+.taglist li:hover .actions {
+  opacity: 1;
+}
+.taglist li.actions {
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 3px;
 }
 .dialog .dialog-buttons {
   display: grid;
@@ -561,6 +662,61 @@
   padding-right: 0.5rem;
   width: 100%;
   flex-grow: 1;
+  /*
+            .npcfeatures {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                
+                margin: 0;
+                padding: 0;
+                flex: 1;
+                li {
+                    display: flex;
+                    align-items: center;
+                    margin-right: @paddingSmall;
+                    //padding: @paddingSmall;
+                    margin-top: @paddingSmall;
+                    margin-bottom: @paddingSmall;
+                    line-height: 22px;
+                    box-shadow: 0 0px 2px rgba(0,0,0,0.3),0 0px 3px inset white;
+                    position: relative;
+                    border-radius: @paddingMedium;
+
+                    .name {
+                        padding-left: @paddingSmall;
+                        padding-right: @paddingSmall;
+                        flex: 1;
+                    }
+
+                    .actions {
+                        padding-left: @paddingSmall;
+                        padding-right: @paddingSmall;
+                        display: inline-block;
+                        opacity: 0;
+                    }
+
+                    .tooltip {
+                        width: 20em;
+                    }
+
+                    &:hover {
+                        box-shadow: 0 0px 3px rgba(0,0,0,0.3),0 0px 3px inset white;
+                        .actions {
+                            opacity: 1;
+                        }
+                    } 
+                }
+
+                li.actions {
+                     box-shadow: none;
+                     padding: 0;
+                     margin: 0;
+                     margin-left: @paddingSmall;
+                }
+            }
+            */
 }
 .splittermond.sheet.actor .window-content header .details h1 {
   margin: 0;
@@ -588,6 +744,7 @@
 .splittermond.sheet.actor .window-content header .details .experience .value {
   text-align: right;
   flex-grow: 1;
+  margin-top: -3px;
 }
 .splittermond.sheet.actor .window-content header .details .description {
   width: 100%;
@@ -645,7 +802,7 @@
 .splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data,
 .splittermond.sheet.actor .window-content header .focus-health .health .headline > .data {
   display: grid;
-  grid-template-columns: 30px 30px;
+  grid-template-columns: 25px 25px;
   gap: 3px;
 }
 .splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data label,
@@ -666,22 +823,22 @@
 }
 .splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .value,
 .splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .value {
-  font-weight: 700;
-  width: 24px;
-  height: 24px;
+  font-family: "Signika";
+  font-size: 14px;
+  width: 20px;
+  height: 20px;
   position: absolute;
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: center;
-  top: -7px;
+  top: -5px;
   vertical-align: middle;
-  line-height: 24px;
+  line-height: 20px;
   margin-left: -12px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
   color: white;
   left: 12.5%;
   z-index: 2;
   background-color: #2D80E1;
-  font-size: 14px;
 }
 .splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .bar,
 .splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .bar {
@@ -715,14 +872,20 @@
 .splittermond.sheet.actor .window-content header .focus-health .health .wound-malus {
   position: relative;
   display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  width: 100%;
 }
-.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level-5 {
-  width: 20%;
+.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level {
   border-right: 2px groove rgba(255, 255, 255, 0.5);
   padding-top: 12px;
   position: relative;
   top: -10px;
   text-align: center;
+  flex: 1;
+}
+.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level:first-child {
+  border-right: none;
 }
 .splittermond.sheet.actor .window-content main {
   overflow: hidden;
@@ -783,7 +946,7 @@
 .splittermond.sheet.actor .window-content main section.skills.active .list .list-header {
   position: sticky;
   top: 0;
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   z-index: 10;
 }
 .splittermond.sheet.actor .window-content main section.skills.active .list label {
@@ -801,7 +964,7 @@
   top: 2em;
   left: 10%;
   padding: 7px;
-  background: url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
   border-radius: 0.5rem;
   text-shadow: none;
@@ -817,7 +980,7 @@
   bottom: 2em;
   left: 10%;
   padding: 7px;
-  background: url(../../ui/parchment.jpg) repeat fixed;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
   border-radius: 0.5rem;
   text-shadow: none;
@@ -838,88 +1001,107 @@
 .splittermond.sheet.actor .window-content main section.skills.active .list input {
   text-align: center;
 }
-.splittermond.sheet.actor .window-content .inventory img,
-.splittermond.sheet.actor .window-content .fight img,
-.splittermond.sheet.actor .window-content .spells img {
+.splittermond.sheet.actor .window-content .list.inventory img,
+.splittermond.sheet.actor .window-content .list.attack img,
+.splittermond.sheet.actor .window-content .list.active-defense img,
+.splittermond.sheet.actor .window-content .list.spells img {
   width: 32;
   height: 32;
   flex: none;
   margin: -3px;
 }
-.splittermond.sheet.actor .window-content .inventory .list,
-.splittermond.sheet.actor .window-content .fight .list,
-.splittermond.sheet.actor .window-content .spells .list {
+.splittermond.sheet.actor .window-content .list.inventory .list,
+.splittermond.sheet.actor .window-content .list.attack .list,
+.splittermond.sheet.actor .window-content .list.active-defense .list,
+.splittermond.sheet.actor .window-content .list.spells .list {
   margin-bottom: 7px;
 }
-.splittermond.sheet.actor .window-content .inventory label,
-.splittermond.sheet.actor .window-content .fight label,
-.splittermond.sheet.actor .window-content .spells label {
+.splittermond.sheet.actor .window-content .list.inventory label,
+.splittermond.sheet.actor .window-content .list.attack label,
+.splittermond.sheet.actor .window-content .list.active-defense label,
+.splittermond.sheet.actor .window-content .list.spells label {
   flex: 1;
   padding-left: 7px;
   border-left: none;
 }
-.splittermond.sheet.actor .window-content .inventory .qty,
-.splittermond.sheet.actor .window-content .fight .qty,
-.splittermond.sheet.actor .window-content .spells .qty,
-.splittermond.sheet.actor .window-content .inventory .load,
-.splittermond.sheet.actor .window-content .fight .load,
-.splittermond.sheet.actor .window-content .spells .load,
-.splittermond.sheet.actor .window-content .inventory .weapon-speed,
-.splittermond.sheet.actor .window-content .fight .weapon-speed,
-.splittermond.sheet.actor .window-content .spells .weapon-speed,
-.splittermond.sheet.actor .window-content .inventory .tick-malus,
-.splittermond.sheet.actor .window-content .fight .tick-malus,
-.splittermond.sheet.actor .window-content .spells .tick-malus,
-.splittermond.sheet.actor .window-content .inventory .defense-bonus,
-.splittermond.sheet.actor .window-content .fight .defense-bonus,
-.splittermond.sheet.actor .window-content .spells .defense-bonus,
-.splittermond.sheet.actor .window-content .inventory .damage-reduction,
-.splittermond.sheet.actor .window-content .fight .damage-reduction,
-.splittermond.sheet.actor .window-content .spells .damage-reduction,
-.splittermond.sheet.actor .window-content .inventory .handicap,
-.splittermond.sheet.actor .window-content .fight .handicap,
-.splittermond.sheet.actor .window-content .spells .handicap,
-.splittermond.sheet.actor .window-content .inventory .range,
-.splittermond.sheet.actor .window-content .fight .range,
-.splittermond.sheet.actor .window-content .spells .range,
-.splittermond.sheet.actor .window-content .inventory .value,
-.splittermond.sheet.actor .window-content .fight .value,
-.splittermond.sheet.actor .window-content .spells .value,
-.splittermond.sheet.actor .window-content .inventory .difficulty,
-.splittermond.sheet.actor .window-content .fight .difficulty,
-.splittermond.sheet.actor .window-content .spells .difficulty {
+.splittermond.sheet.actor .window-content .list.inventory .qty,
+.splittermond.sheet.actor .window-content .list.attack .qty,
+.splittermond.sheet.actor .window-content .list.active-defense .qty,
+.splittermond.sheet.actor .window-content .list.spells .qty,
+.splittermond.sheet.actor .window-content .list.inventory .load,
+.splittermond.sheet.actor .window-content .list.attack .load,
+.splittermond.sheet.actor .window-content .list.active-defense .load,
+.splittermond.sheet.actor .window-content .list.spells .load,
+.splittermond.sheet.actor .window-content .list.inventory .weapon-speed,
+.splittermond.sheet.actor .window-content .list.attack .weapon-speed,
+.splittermond.sheet.actor .window-content .list.active-defense .weapon-speed,
+.splittermond.sheet.actor .window-content .list.spells .weapon-speed,
+.splittermond.sheet.actor .window-content .list.inventory .tick-malus,
+.splittermond.sheet.actor .window-content .list.attack .tick-malus,
+.splittermond.sheet.actor .window-content .list.active-defense .tick-malus,
+.splittermond.sheet.actor .window-content .list.spells .tick-malus,
+.splittermond.sheet.actor .window-content .list.inventory .defense-bonus,
+.splittermond.sheet.actor .window-content .list.attack .defense-bonus,
+.splittermond.sheet.actor .window-content .list.active-defense .defense-bonus,
+.splittermond.sheet.actor .window-content .list.spells .defense-bonus,
+.splittermond.sheet.actor .window-content .list.inventory .damage-reduction,
+.splittermond.sheet.actor .window-content .list.attack .damage-reduction,
+.splittermond.sheet.actor .window-content .list.active-defense .damage-reduction,
+.splittermond.sheet.actor .window-content .list.spells .damage-reduction,
+.splittermond.sheet.actor .window-content .list.inventory .handicap,
+.splittermond.sheet.actor .window-content .list.attack .handicap,
+.splittermond.sheet.actor .window-content .list.active-defense .handicap,
+.splittermond.sheet.actor .window-content .list.spells .handicap,
+.splittermond.sheet.actor .window-content .list.inventory .range,
+.splittermond.sheet.actor .window-content .list.attack .range,
+.splittermond.sheet.actor .window-content .list.active-defense .range,
+.splittermond.sheet.actor .window-content .list.spells .range,
+.splittermond.sheet.actor .window-content .list.inventory .value,
+.splittermond.sheet.actor .window-content .list.attack .value,
+.splittermond.sheet.actor .window-content .list.active-defense .value,
+.splittermond.sheet.actor .window-content .list.spells .value,
+.splittermond.sheet.actor .window-content .list.inventory .difficulty,
+.splittermond.sheet.actor .window-content .list.attack .difficulty,
+.splittermond.sheet.actor .window-content .list.active-defense .difficulty,
+.splittermond.sheet.actor .window-content .list.spells .difficulty {
   width: 3em;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.splittermond.sheet.actor .window-content .inventory .damage,
-.splittermond.sheet.actor .window-content .fight .damage,
-.splittermond.sheet.actor .window-content .spells .damage,
-.splittermond.sheet.actor .window-content .inventory .costs,
-.splittermond.sheet.actor .window-content .fight .costs,
-.splittermond.sheet.actor .window-content .spells .costs,
-.splittermond.sheet.actor .window-content .inventory .cast-duration,
-.splittermond.sheet.actor .window-content .fight .cast-duration,
-.splittermond.sheet.actor .window-content .spells .cast-duration,
-.splittermond.sheet.actor .window-content .inventory .effect-duration,
-.splittermond.sheet.actor .window-content .fight .effect-duration,
-.splittermond.sheet.actor .window-content .spells .effect-duration {
+.splittermond.sheet.actor .window-content .list.inventory .damage,
+.splittermond.sheet.actor .window-content .list.attack .damage,
+.splittermond.sheet.actor .window-content .list.active-defense .damage,
+.splittermond.sheet.actor .window-content .list.spells .damage,
+.splittermond.sheet.actor .window-content .list.inventory .costs,
+.splittermond.sheet.actor .window-content .list.attack .costs,
+.splittermond.sheet.actor .window-content .list.active-defense .costs,
+.splittermond.sheet.actor .window-content .list.spells .costs,
+.splittermond.sheet.actor .window-content .list.inventory .cast-duration,
+.splittermond.sheet.actor .window-content .list.attack .cast-duration,
+.splittermond.sheet.actor .window-content .list.active-defense .cast-duration,
+.splittermond.sheet.actor .window-content .list.spells .cast-duration,
+.splittermond.sheet.actor .window-content .list.inventory .effect-duration,
+.splittermond.sheet.actor .window-content .list.attack .effect-duration,
+.splittermond.sheet.actor .window-content .list.active-defense .effect-duration,
+.splittermond.sheet.actor .window-content .list.spells .effect-duration {
   width: 6em;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.splittermond.sheet.actor .window-content .inventory .costs,
-.splittermond.sheet.actor .window-content .fight .costs,
-.splittermond.sheet.actor .window-content .spells .costs {
+.splittermond.sheet.actor .window-content .list.inventory .costs,
+.splittermond.sheet.actor .window-content .list.attack .costs,
+.splittermond.sheet.actor .window-content .list.active-defense .costs,
+.splittermond.sheet.actor .window-content .list.spells .costs {
   width: 9em;
 }
-.splittermond.sheet.actor .window-content .inventory .features,
-.splittermond.sheet.actor .window-content .fight .features,
-.splittermond.sheet.actor .window-content .spells .features {
+.splittermond.sheet.actor .window-content .list.inventory .features,
+.splittermond.sheet.actor .window-content .list.attack .features,
+.splittermond.sheet.actor .window-content .list.active-defense .features,
+.splittermond.sheet.actor .window-content .list.spells .features {
   width: 15em;
   padding-left: 3px;
   text-align: left;
@@ -1003,6 +1185,24 @@
 }
 .splittermond.sheet.actor .window-content .bar .exhausted {
   background: rgba(45, 128, 225, 0.3);
+}
+.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li > * {
+  border: none;
+}
+.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li > label {
+  font-weight: bold;
+}
+.splittermond.sheet.actor.npc .window-content main .tab.general.active {
+  grid-template-columns: 200px auto;
+}
+.splittermond.sheet.actor.npc .window-content main .tab.general.active > div {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 .splittermond.wizard.species .window-content header {
   padding-top: 1em;

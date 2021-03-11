@@ -30,6 +30,8 @@
         "onCreationOnly": "Nur bei Generierung wählbar",
         "availableIn": "Verfügbar in",
         "attributeModifiers": "Attributsmodifikatoren",
+        "npc": "Nicht-Spieler-Charakter",
+        "character": "Spieler-Charakter",
         "save": "Speichern",
         "cancel": "Abbrechen",
         "fight": "Kampf",
@@ -125,6 +127,7 @@
         "mastery": "Meisterschaft",
         "status": "Status",
         "throwing": "werfen",
+        "masteries": "Meisterschaften",
         "masteryItem": {
             "level": "Schwelle"
         },

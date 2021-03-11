@@ -47,6 +47,7 @@
                 .value {
                     text-align: right;
                     flex-grow: 1;
+                    margin-top: -@paddingSmall;
                 }
             }
 
@@ -55,6 +56,61 @@
                 display: flex;
                 align-items: center;
             }
+/*
+            .npcfeatures {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                
+                margin: 0;
+                padding: 0;
+                flex: 1;
+                li {
+                    display: flex;
+                    align-items: center;
+                    margin-right: @paddingSmall;
+                    //padding: @paddingSmall;
+                    margin-top: @paddingSmall;
+                    margin-bottom: @paddingSmall;
+                    line-height: 22px;
+                    box-shadow: 0 0px 2px rgba(0,0,0,0.3),0 0px 3px inset white;
+                    position: relative;
+                    border-radius: @paddingMedium;
+
+                    .name {
+                        padding-left: @paddingSmall;
+                        padding-right: @paddingSmall;
+                        flex: 1;
+                    }
+
+                    .actions {
+                        padding-left: @paddingSmall;
+                        padding-right: @paddingSmall;
+                        display: inline-block;
+                        opacity: 0;
+                    }
+
+                    .tooltip {
+                        width: 20em;
+                    }
+
+                    &:hover {
+                        box-shadow: 0 0px 3px rgba(0,0,0,0.3),0 0px 3px inset white;
+                        .actions {
+                            opacity: 1;
+                        }
+                    } 
+                }
+
+                li.actions {
+                     box-shadow: none;
+                     padding: 0;
+                     margin: 0;
+                     margin-left: @paddingSmall;
+                }
+            }
+            */
         }
 
         .attributes {
@@ -112,7 +168,7 @@
 
                     > .data {
                         display: grid;
-                        grid-template-columns: 30px 30px;
+                        grid-template-columns: 25px 25px;
 
                         gap: @paddingSmall;
 
@@ -136,22 +192,23 @@
                 .bar-with-value {
                     position: relative;
                     > .value {
-                        font-weight: 700;
-                        width: 24px;
-                        height: 24px;
+                        //font-weight: 700;
+                        font-family: "Signika";
+                        font-size: 14px;
+                        width: 20px;
+                        height: 20px;
                         position: absolute;
-                        border-radius: 12px;
+                        border-radius: 10px;
                         text-align: center;
-                        top: -7px;
+                        top: -5px;
                         vertical-align: middle;
-                        line-height: 24px;
+                        line-height: 20px;
                         margin-left: -12px;
                         box-shadow: 0 1px 5px rgba(0,0,0,0.5);
                         color: white;
                         left: 12.5%;
                         z-index: 2;
                         background-color: #2D80E1;
-                        font-size: 14px;
                     }
                     > .bar {
                         grid-column-start: 1;
@@ -208,13 +265,20 @@
                 .wound-malus {
                     position: relative;
                     display: flex;
-                    .level-5 {
-                        width: 20%;
+                    flex-direction: row-reverse;
+                    align-items: stretch;
+                    width: 100%;
+                    .level {
                         border-right: 2px groove rgba(255,255,255,0.5);
                         padding-top: 12px;
                         position: relative;
                         top: -10px;
                         text-align: center;
+                        flex: 1;
+                    }
+
+                    .level:first-child {
+                        border-right: none;
                     }
                 }
                 
@@ -232,6 +296,8 @@
         }
 
     }
+
+    
 
     main section.general {
         z-index: 0;
@@ -297,7 +363,7 @@
             .list-header {
                 position: sticky;
                 top: 0;
-                background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), url(../../ui/parchment.jpg) repeat fixed;
+                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
                 z-index: 10;
                 //border-top-left-radius: @paddingSmall;
                 //border-top-right-radius: @paddingSmall;
@@ -321,7 +387,7 @@
                 top: 2em;
                 left: 10%;
                 padding: @paddingMedium;
-                background: url(../../ui/parchment.jpg) repeat fixed;
+                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
                 box-shadow: 1px 1px 10px rgba(1,1,1,0.5);
                 border-radius: 0.5rem;
                 text-shadow: none;
@@ -339,7 +405,7 @@
                 bottom: 2em;
                 left: 10%;
                 padding: @paddingMedium;
-                background: url(../../ui/parchment.jpg) repeat fixed;
+                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
                 box-shadow: 1px 1px 10px rgba(1,1,1,0.5);
                 border-radius: 0.5rem;
                 text-shadow: none;
@@ -365,7 +431,7 @@
     }
 
    
-    .inventory, .fight, .spells {
+    .list.inventory, .list.attack, .list.active-defense, .list.spells {
         img {
             width: 32;
             height: 32;
@@ -523,4 +589,32 @@
         }
     }
 
+    
+
 }
+
+.splittermond.sheet.actor.npc .window-content main{
+    ol.mastery-list {
+        > li {
+            flex-direction: column;
+            align-items: flex-start;
+            > * {
+                border: none;
+            }
+            > label {
+                font-weight: bold;
+            }
+        }
+    }
+    .tab.general.active {
+        grid-template-columns: 200px auto;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+    
+
+} 
