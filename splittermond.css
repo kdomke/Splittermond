@@ -912,22 +912,6 @@
 .splittermond.sheet.actor .window-content main section.general .name {
   text-align: left;
 }
-.splittermond.sheet.actor .window-content main section.general .name:hover ~ .description {
-  display: block;
-}
-.splittermond.sheet.actor .window-content main section.general .description {
-  display: none;
-  position: absolute;
-  width: 90%;
-  top: 2em;
-  left: 10%;
-  padding: 7px;
-  background: url(../../ui/parchment.jpg) repeat fixed;
-  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
-  border-radius: 0.5rem;
-  text-shadow: none;
-  z-index: 9;
-}
 .splittermond.sheet.actor .window-content main section.general input {
   width: 2em;
   text-align: center;
@@ -954,39 +938,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.splittermond.sheet.actor .window-content main section.skills.active .list label:hover ~ .description {
-  display: block;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list .description {
-  display: none;
-  position: absolute;
-  width: 90%;
-  top: 2em;
-  left: 10%;
-  padding: 7px;
-  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
-  border-radius: 0.5rem;
-  text-shadow: none;
-  z-index: 10;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list .value:hover ~ .bonus-malus-description {
-  display: grid;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list .bonus-malus-description {
-  display: none;
-  position: absolute;
-  width: 15em;
-  bottom: 2em;
-  left: 10%;
-  padding: 7px;
-  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-  box-shadow: 1px 1px 10px rgba(1, 1, 1, 0.5);
-  border-radius: 0.5rem;
-  text-shadow: none;
-  z-index: 10;
-  grid-template-columns: 3fr 1fr;
-}
 .splittermond.sheet.actor .window-content main section.skills.active .list .attribute,
 .splittermond.sheet.actor .window-content main section.skills.active .list .value,
 .splittermond.sheet.actor .window-content main section.skills.active .list input {
@@ -1000,6 +951,16 @@
 .splittermond.sheet.actor .window-content main section.skills.active .list .value,
 .splittermond.sheet.actor .window-content main section.skills.active .list input {
   text-align: center;
+}
+.splittermond.sheet.actor .window-content ol.mastery-list > li {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond.sheet.actor .window-content ol.mastery-list > li > * {
+  border: none;
+}
+.splittermond.sheet.actor .window-content ol.mastery-list > li > label {
+  font-weight: bold;
 }
 .splittermond.sheet.actor .window-content .list.inventory img,
 .splittermond.sheet.actor .window-content .list.attack img,
@@ -1185,16 +1146,6 @@
 }
 .splittermond.sheet.actor .window-content .bar .exhausted {
   background: rgba(45, 128, 225, 0.3);
-}
-.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li > * {
-  border: none;
-}
-.splittermond.sheet.actor.npc .window-content main ol.mastery-list > li > label {
-  font-weight: bold;
 }
 .splittermond.sheet.actor.npc .window-content main .tab.general.active {
   grid-template-columns: 200px auto;

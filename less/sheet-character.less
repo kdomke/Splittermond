@@ -322,22 +322,6 @@
         .name {
             text-align: left;
         }
-        .name:hover ~ .description {
-            display: block;
-        }
-        .description {
-            display: none;
-            position: absolute;
-            width: 90%;
-            top: 2em;
-            left: 10%;
-            padding: @paddingMedium;
-            background: url(../../ui/parchment.jpg) repeat fixed;
-            box-shadow: 1px 1px 10px rgba(1,1,1,0.5);
-            border-radius: 0.5rem;
-            text-shadow: none;
-            z-index: 9;
-        }
 
         input {
             width: 2em;
@@ -376,43 +360,6 @@
                 white-space: nowrap;
             }
 
-            label:hover ~.description {
-                display: block;
-            }
-
-            .description {
-                display: none;
-                position: absolute;
-                width: 90%;
-                top: 2em;
-                left: 10%;
-                padding: @paddingMedium;
-                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-                box-shadow: 1px 1px 10px rgba(1,1,1,0.5);
-                border-radius: 0.5rem;
-                text-shadow: none;
-                z-index: 10;
-            }
-
-            .value:hover ~.bonus-malus-description {
-                display: grid;
-            }
-
-            .bonus-malus-description {
-                display: none;
-                position: absolute;
-                width: 15em;
-                bottom: 2em;
-                left: 10%;
-                padding: @paddingMedium;
-                background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-                box-shadow: 1px 1px 10px rgba(1,1,1,0.5);
-                border-radius: 0.5rem;
-                text-shadow: none;
-                z-index: 10;
-                grid-template-columns: 3fr 1fr;
-            }
-
             .attribute, .value, input {
                 width: 3em;
             }
@@ -427,6 +374,19 @@
                 text-align: center;
             }
 
+        }
+    }
+
+    ol.mastery-list {
+        > li {
+            flex-direction: column;
+            align-items: flex-start;
+            > * {
+                border: none;
+            }
+            > label {
+                font-weight: bold;
+            }
         }
     }
 
@@ -594,18 +554,7 @@
 }
 
 .splittermond.sheet.actor.npc .window-content main{
-    ol.mastery-list {
-        > li {
-            flex-direction: column;
-            align-items: flex-start;
-            > * {
-                border: none;
-            }
-            > label {
-                font-weight: bold;
-            }
-        }
-    }
+    
     .tab.general.active {
         grid-template-columns: 200px auto;
 

@@ -74,9 +74,9 @@
                 </div>
                 <ul class="strengths">
                     {{#each itemsByType.strength}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}</div>
-                        <div class="description">
+                        <div class="tooltip">
                             {{{this.data.description}}}
                         </div>
                         <div class="actions">
@@ -102,9 +102,9 @@
                 </div>
                 <ul class="weaknesses">
                     {{#each itemsByType.weakness}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        <div class="description">
+                        <div class="tooltip">
                             {{{this.data.description}}}
                         </div>
                         <div class="actions">
@@ -168,9 +168,9 @@
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
-                        <div class="value">{{skill.value}}</div>
+                        <div class="value tooltip-activator">{{skill.value}}</div>
                         {{#if skill.bonus}}
-                        <div class="bonus-malus-description">
+                        <div class="bonus-malus-description tooltip">
                             {{#each skill.bonus.equipment}}
                             <label>{{this.description}}</label>
                             <div class="value">{{this.value}}</div>
@@ -226,6 +226,9 @@
                     {{/each}}
                 </ol>
             </div>
+            {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
+            masteriesBySkill=masteriesBySkill}}
+            <!--
             <div class="list masteries">
                 {{#each masteriesBySkill}}
                 <div class="list-header">
@@ -233,9 +236,9 @@
                 </div>
                 <ol class="mastery-list">
                     {{#each this.masteries}}
-                    <li data-item-id="{{this._id}}">
+                    <li class="tooltip-activator" data-item-id="{{this._id}}">
                         <label>{{this.name}}</label>
-                        <div class="description">{{{this.data.description}}}</div>
+                        <div class="tooltip">{{{this.data.description}}}</div>
                         <div class="actions">
                             <button class="button-inline" type="button" data-action="edit-item">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -249,6 +252,7 @@
                 </ol>
                 {{/each}}
             </div>
+            -->
         </section>
         <section class="tab spells" data-group="primary" data-tab="spells">
             <div>
@@ -296,12 +300,12 @@
                     </div>
                     <ol>
                         {{#each this.spells}}
-                        <li class="draggable {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
+                        <li class="draggable tooltip-activator {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
                             data-item-id="{{this._id}}">
                             <label>
                                 <a class="rollable">{{localize this.name}}</a>
                             </label>
-                            <div class="description">{{{this.data.description}}}</div>
+                            <div class="tooltip">{{{this.data.description}}}</div>
                             <div class="difficulty">{{this.data.difficulty}}</div>
                             <div class="costs" data-type="focus" data-description="{{this.name}}">
                                 <a class="consume" data-value="{{this.data.costs}}">{{this.data.costs}}</a>

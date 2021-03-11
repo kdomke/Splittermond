@@ -140,10 +140,20 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="add-item"]').click(event => {
             const itemType = this._getClosestData($(event.currentTarget), 'item-type');
             const renderSheet = Boolean((event.currentTarget.dataset.renderSheet || "true") === "true");
-            return this.actor.createOwnedItem({
+            let itemData = {
                 name: game.i18n.localize("splittermond." + itemType),
                 type: itemType
-            }, { renderSheet: renderSheet });
+            };
+
+            if (itemType === "mastery") {
+                const skill = this._getClosestData($(event.currentTarget), 'skill');
+                if (skill) {
+                    itemData.data = {
+                        skill: skill
+                    }
+                }
+            }
+            return this.actor.createOwnedItem(itemData, { renderSheet: renderSheet });
         });
 
 

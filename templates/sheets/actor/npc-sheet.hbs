@@ -37,7 +37,7 @@
                     </li>
                     {{/each}}
                     <li class="actions"><button class="button-inline" type="button" data-action="add-item"
-                            data-render-sheet="false">
+                            data-render-sheet="true">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button></li>
                 </ul>
@@ -281,6 +281,9 @@
                         </div>
                     </div>
                 </div>
+                {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
+                masteriesBySkill=masteriesBySkill}}
+                <!--
                 <div class="list masteries">
                     <div class="list-header">
                         <h3>{{localize "splittermond.masteries"}}</h3>
@@ -309,6 +312,7 @@
                     </ol>
 
                 </div>
+                -->
             </div>
 
         </section>

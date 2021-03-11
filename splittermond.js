@@ -47,7 +47,8 @@ Hooks.once("init", function () {
     loadTemplates([
         // Actor Partials
         `${templateBasePath}/sheets/actor/parts/attribute-input.hbs`,
-        `${templateBasePath}/sheets/actor/parts/focus-health.hbs`
+        `${templateBasePath}/sheets/actor/parts/focus-health.hbs`,
+        `${templateBasePath}/sheets/actor/parts/mastery-list.hbs`
     ]);
 
 
