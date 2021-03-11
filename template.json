@@ -301,7 +301,8 @@
         "focus"
       ],
       "splinterpoints": {
-        "value": 3
+        "value": 3,
+        "max": 3
       },
       "experience": {
         "heroLevel": 1,
@@ -373,7 +374,8 @@
       "ancestry",
       "education",
       "resource",
-      "npcfeature"
+      "npcfeature",
+      "moonsign"
     ],
     "templates": {
       "description": {
@@ -570,6 +572,13 @@
         "description",
         "modifier"
       ]
+    },
+    "moonsign": {
+      "templates": [
+        "description"
+      ],
+      "enhancement": "",
+      "secretGift": ""
     }
   }
 }

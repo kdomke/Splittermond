@@ -1,0 +1,76 @@
+<div class="list channeled-spells">
+    <div class="list-header">
+        <h3>{{localize "splittermond.channeledSpells"}}</h3>
+        <div class="actions">
+            <button class="button-inline" type="button" data-action="add-channeled-focus" data-render-sheet="0">
+                <i class="fa fa-plus-square" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+    <ol data-array="data.focus.channeled.entries">
+        {{#each channeledSpells}}
+        <li data-index="{{@index}}">
+            <input data-array-field="description" type="text" value="{{this.description}}">
+
+            <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}" data-dtype="Number">
+            </div>
+            <div class="actions">
+                <button class="button-inline" type="button" data-action="delete-array-element">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+            </div>
+        </li>
+        {{/each}}
+    </ol>
+</div>
+
+<div class="list spells" data-item-type="spell" data-roll-type="spell">
+
+    {{#each spellsBySkill}}
+    <div class="list-header">
+        <h3>{{localize this.label}} ({{this.skillValue}})</h3>
+        <div class="difficulty">{{localize "splittermond.difficultyAbbrev"}}</div>
+        <div class="costs">{{localize "splittermond.focusCostsAbbrev"}}</div>
+        <div class="cast-duration">{{localize "splittermond.castDurationAbbrev"}}</div>
+        <div class="range">{{localize "splittermond.rangeAbbrev"}}</div>
+        <div class="effect-duration">{{localize "splittermond.effectDurationAbbrev"}}</div>
+        <div class="actions">
+            <button class="button-inline" type="button" data-action="add-item"><i class="fa fa-plus-square"
+                    aria-hidden="true"></i></button>
+        </div>
+    </div>
+    <ol>
+        {{#each this.spells}}
+        <li class="draggable tooltip-activator {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
+            data-item-id="{{this._id}}">
+            <label>
+                <a class="rollable">{{localize this.name}}</a>
+            </label>
+            <div class="tooltip">{{{this.data.description}}}</div>
+            <div class="difficulty">{{this.data.difficulty}}</div>
+            <div class="costs" data-type="focus" data-description="{{this.name}}">
+                <a class="consume" data-value="{{this.data.costs}}">{{this.data.costs}}</a>
+                (<a class="consume" data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
+                    data-value="{{this.data.enhancementCosts}}">{{this.data.enhancementCosts}}</a>)
+            </div>
+            <div class="cast-duration">
+                <a class="add-tick" data-ticks="{{this.data.castDuration}}" data-message="{{localize "
+                    splittermond.castDuration"}}: {{this.name}}">
+                    {{this.data.castDuration}}
+                </a>
+            </div>
+            <div class="range">{{this.data.range}}</div>
+            <div class="effect-duration">{{this.data.effectDuration}}</div>
+            <div class="actions">
+                <button class="button-inline" type="button" data-action="edit-item">
+                    <i class="fa fa-edit" aria-hidden="true"></i>
+                </button>
+                <button class="button-inline" type="button" data-action="delete-item">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+            </div>
+        </li>
+        {{/each}}
+    </ol>
+    {{/each}}
+</div>

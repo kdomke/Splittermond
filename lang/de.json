@@ -70,6 +70,11 @@
         "weaponProperties": "Waffeneigenschaften",
         "secondaryWeaponProperties": "Waffeneigenschaften (sekundär)",
         "generalProperties": "Allgemein",
+        "moonsign": "Mondzeichen",
+        "npcfeature": "Gegnermerkmal",
+        "secretGift": "Geheime Gabe",
+        "splinterpoint": "Splitterpunkt",
+        "splinterpoints": "Splitterpunkte",
         "enhancementCosts": "Verstärkungskosten",
         "enhancementDescription": "Verstärkung",
         "degreeOfSuccessOptions": {

@@ -112,6 +112,14 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
     }
 
+    async _onDropItemCreate(itemData) {
+
+        if (["mastery", "npcfeature", "spell", "weapon", "equipment", "shield", "armor"].includes(itemData.type)) {
+            return super._onDropItemCreate(itemData);
+        }
+
+    }
+
 
 
 }

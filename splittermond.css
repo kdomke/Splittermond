@@ -657,66 +657,70 @@
 .splittermond.sheet.actor .window-content header section {
   display: flex;
 }
+.splittermond.sheet.actor .window-content header .moonsign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  position: relative;
+}
+.splittermond.sheet.actor .window-content header .moonsign .tooltip {
+  right: 160px;
+  top: unset;
+  width: 300px;
+  left: unset;
+  flex-direction: column;
+  z-index: 1000;
+}
+.splittermond.sheet.actor .window-content header .moonsign label {
+  text-align: center;
+  text-shadow: 0 0 5px white;
+  font-weight: bold;
+}
+.splittermond.sheet.actor .window-content header .moonsign img {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 5px white) opacity(0.3);
+}
+.splittermond.sheet.actor .window-content header .splinterpoints {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  font-size: 24px;
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints input {
+  width: 30px;
+  text-align: right;
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints input:disabled {
+  color: white;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints input:hover {
+  text-shadow: 0 0 5px black;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints input:focus {
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 5px black;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints input.autoexpand {
+  box-sizing: content-box;
+}
+.splittermond.sheet.actor .window-content header .splinterpoints span {
+  display: block;
+  width: 40px;
+}
 .splittermond.sheet.actor .window-content header .details {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   width: 100%;
   flex-grow: 1;
-  /*
-            .npcfeatures {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                align-items: center;
-                
-                margin: 0;
-                padding: 0;
-                flex: 1;
-                li {
-                    display: flex;
-                    align-items: center;
-                    margin-right: @paddingSmall;
-                    //padding: @paddingSmall;
-                    margin-top: @paddingSmall;
-                    margin-bottom: @paddingSmall;
-                    line-height: 22px;
-                    box-shadow: 0 0px 2px rgba(0,0,0,0.3),0 0px 3px inset white;
-                    position: relative;
-                    border-radius: @paddingMedium;
-
-                    .name {
-                        padding-left: @paddingSmall;
-                        padding-right: @paddingSmall;
-                        flex: 1;
-                    }
-
-                    .actions {
-                        padding-left: @paddingSmall;
-                        padding-right: @paddingSmall;
-                        display: inline-block;
-                        opacity: 0;
-                    }
-
-                    .tooltip {
-                        width: 20em;
-                    }
-
-                    &:hover {
-                        box-shadow: 0 0px 3px rgba(0,0,0,0.3),0 0px 3px inset white;
-                        .actions {
-                            opacity: 1;
-                        }
-                    } 
-                }
-
-                li.actions {
-                     box-shadow: none;
-                     padding: 0;
-                     margin: 0;
-                     margin-left: @paddingSmall;
-                }
-            }
-            */
 }
 .splittermond.sheet.actor .window-content header .details h1 {
   margin: 0;

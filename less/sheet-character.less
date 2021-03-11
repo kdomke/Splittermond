@@ -13,6 +13,87 @@
         section {
             display:flex;
         }
+        .moonsign {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 180px;
+            position: relative;
+
+            .tooltip {
+                right: 160px;
+                top: unset;
+                width: 300px;
+                left: unset;
+                flex-direction: column;
+                z-index: 1000;
+            }
+            
+
+            label {
+                text-align: center;
+                text-shadow: 0 0 5px white;
+                font-weight: bold;
+            }
+
+            img {
+                width: 48px;
+                height: 48px;
+                filter: drop-shadow(0 0 5px white) opacity(0.3);
+            }
+        }
+
+        .splinterpoints {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            position: absolute;
+            z-index: 10;
+
+            top: 10px;
+
+            font-size: @fontSizeLarger;
+
+            color: white;
+
+            text-shadow: 0 0 3px black;
+
+            input {
+                width:30px;
+                text-align: right;
+                color: white;
+                text-shadow: 0 0 3px black;
+
+                &:disabled {
+                    color: white;
+                }
+
+                &:hover {
+                    //background-color: rgba(255,255,255,0.25);
+                    text-shadow: 0 0 5px black;
+                }
+
+                &:focus {
+                    //box-shadow: 0px 0px @paddingSmall inset rgba(0,0,0,0.5);
+                    box-shadow: 0px 0px @paddingSmall rgba(0,0,0,0.5);
+
+                    //background-color: rgba(0,0,0,0.1);
+                    text-shadow: 0 0 5px black;
+                }
+
+                &.autoexpand {
+                    box-sizing: content-box;
+                }
+            }
+
+            span {
+                display: block;
+                width: 40px;
+            }
+        }
+
+
         .details {
             padding-left: 0.5rem;
             padding-right: 0.5rem;
@@ -56,61 +137,6 @@
                 display: flex;
                 align-items: center;
             }
-/*
-            .npcfeatures {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                align-items: center;
-                
-                margin: 0;
-                padding: 0;
-                flex: 1;
-                li {
-                    display: flex;
-                    align-items: center;
-                    margin-right: @paddingSmall;
-                    //padding: @paddingSmall;
-                    margin-top: @paddingSmall;
-                    margin-bottom: @paddingSmall;
-                    line-height: 22px;
-                    box-shadow: 0 0px 2px rgba(0,0,0,0.3),0 0px 3px inset white;
-                    position: relative;
-                    border-radius: @paddingMedium;
-
-                    .name {
-                        padding-left: @paddingSmall;
-                        padding-right: @paddingSmall;
-                        flex: 1;
-                    }
-
-                    .actions {
-                        padding-left: @paddingSmall;
-                        padding-right: @paddingSmall;
-                        display: inline-block;
-                        opacity: 0;
-                    }
-
-                    .tooltip {
-                        width: 20em;
-                    }
-
-                    &:hover {
-                        box-shadow: 0 0px 3px rgba(0,0,0,0.3),0 0px 3px inset white;
-                        .actions {
-                            opacity: 1;
-                        }
-                    } 
-                }
-
-                li.actions {
-                     box-shadow: none;
-                     padding: 0;
-                     margin: 0;
-                     margin-left: @paddingSmall;
-                }
-            }
-            */
         }
 
         .attributes {

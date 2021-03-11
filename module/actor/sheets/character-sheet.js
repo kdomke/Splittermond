@@ -34,6 +34,8 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
     async _onDropItemCreate(itemData) {
 
+
+
         if (itemData.type === "species") {
 
             let wizard = new SplittermondSpeciesWizard(this.actor, itemData);
@@ -41,8 +43,18 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             return;
         }
 
+        if (itemData.type === "moonsign") {
+            const moonsignIds = this.actor.items.filter(i => i.type === "moonsign")?.map(i => i._id);
+            if (moonsignIds) {
+                const deleted = await this.actor.deleteEmbeddedEntity("OwnedItem", moonsignIds);
+            }
 
-        return super._onDropItemCreate(itemData);
+        }
+
+        if (["mastery", "strength", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign"].includes(itemData.type)) {
+            return super._onDropItemCreate(itemData);
+        }
+
     }
 
     activateListeners(html) {

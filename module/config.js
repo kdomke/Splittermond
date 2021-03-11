@@ -697,5 +697,23 @@ splittermond.itemSheetProperties.npcfeature = [
     }
 ]
 
+splittermond.itemSheetProperties.moonsign = [
+    {
+        groupName: "splittermond.generalProperties",
+        properties: [
+            {
+                field: "data.enhancement",
+                label: "splittermond.enhancementDescription",
+                template: "input"
+            },
+            {
+                field: "data.secretGift",
+                label: "splittermond.secretGift",
+                template: "input"
+            }
+        ]
+    }
+]
+
 
 

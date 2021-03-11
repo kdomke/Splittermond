@@ -1,0 +1,107 @@
+<div class="tabs" data-group="fight-action-type">
+    <a class="item active" data-group="fight-action-type" data-tab="attack">{{ localize
+        "splittermond.attack" }}</a>
+    <a class="item" data-group="fight-action-type" data-tab="defense">{{ localize
+        "splittermond.activeDefense"
+        }}</a>
+</div>
+<div class="tab-list">
+    <div class="tab" data-tab="attack" data-group="fight-action-type">
+        <div class="list attack" data-roll-type="attack">
+            <div class="list-header">
+                <h3>{{localize "splittermond.weapons"}}</h3>
+                <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
+                <div class="damage">{{localize "splittermond.damage"}}</div>
+                <div class="range">{{localize "splittermond.rangeAbbrev"}}</div>
+                <div class="weapon-speed">{{localize "splittermond.weaponSpeedAbbrev"}}</div>
+                <div class="features">{{localize
+                    "splittermond.features"}}
+                </div>
+            </div>
+            <ol>
+                {{#each itemsByType.weapon}}
+                {{#if this.data.equipped}}
+                <li class="draggable" data-item-id="{{this._id}}">
+                    <img width="32" height="32" src="{{{this.img}}}">
+                    <label>
+                        <a class="rollable">{{localize this.name}}</a>
+                    </label>
+                    <div class="value">{{this.data.skillValue}}</div>
+                    <div class="damage">
+                        <a class="rollable" data-roll-type="damage" data-damage="{{this.data.damage}}"
+                            data-features="{{this.data.features}}">{{this.data.damage}}</a>
+                    </div>
+                    <div class="range">{{this.data.range}}</div>
+                    <div class="weapon-speed">
+                        <a class="add-tick" data-ticks="{{this.data.weaponSpeed}}"
+                            data-message="{{localize 'splittermond.attack'}}: {{this.name}}">
+                            {{this.data.weaponSpeed}}
+                        </a>
+                    </div>
+                    <div class="features" title="{{this.data.features}}">{{this.data.features}}</div>
+                </li>
+                {{/if}}
+                {{/each}}
+            </ol>
+        </div>
+    </div>
+    <div class="tab active" data-tab="defense" data-group="fight-action-type">
+        <div class="list active-defense" data-roll-type="activeDefense">
+            <div class="list-header">
+                <h3>{{localize "splittermond.derivedAttribute.defense.long"}}</h3>
+                <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
+                <div class="features">{{localize
+                    "splittermond.features"}}
+                </div>
+            </div>
+            <ol data-defense-type="defense">
+                {{#each activeDefense.defense}}
+                <li data-item-id="{{this._id}}">
+                    {{#if this.img}}
+                    <img width="32" height="32" src="{{{this.img}}}">
+                    {{/if}}
+                    <label>
+                        <a class="rollable">{{localize this.name}}</a>
+                    </label>
+                    <div class="value">{{this.data.skillValue}}</div>
+                    <div class="features" title="{{this.data.features}}">{{this.data.features}}</div>
+                </li>
+                {{/each}}
+            </ol>
+            <div class="list-header">
+                <h3>{{localize "splittermond.derivedAttribute.mindresist.long"}}</h3>
+                <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
+            </div>
+            <ol data-defense-type="mindresist">
+                {{#each activeDefense.mindresist}}
+                <li data-item-id="{{this._id}}">
+                    {{#if this.img}}
+                    <img width="32" height="32" src="{{{this.img}}}">
+                    {{/if}}
+                    <label>
+                        <a class="rollable">{{localize this.name}}</a>
+                    </label>
+                    <div class="value">{{this.data.skillValue}}</div>
+                </li>
+                {{/each}}
+            </ol>
+            <div class="list-header">
+                <h3>{{localize "splittermond.derivedAttribute.bodyresist.long"}}</h3>
+                <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
+            </div>
+            <ol data-defense-type="bodyresist">
+                {{#each activeDefense.bodyresist}}
+                <li data-item-id="{{this._id}}">
+                    {{#if this.img}}
+                    <img width="32" height="32" src="{{{this.img}}}">
+                    {{/if}}
+                    <label>
+                        <a class="rollable">{{localize this.name}}</a>
+                    </label>
+                    <div class="value">{{this.data.skillValue}}</div>
+                </li>
+                {{/each}}
+            </ol>
+        </div>
+    </div>
+</div>

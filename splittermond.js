@@ -48,7 +48,10 @@ Hooks.once("init", function () {
         // Actor Partials
         `${templateBasePath}/sheets/actor/parts/attribute-input.hbs`,
         `${templateBasePath}/sheets/actor/parts/focus-health.hbs`,
-        `${templateBasePath}/sheets/actor/parts/mastery-list.hbs`
+        `${templateBasePath}/sheets/actor/parts/mastery-list.hbs`,
+        `${templateBasePath}/sheets/actor/parts/spells-list.hbs`,
+        `${templateBasePath}/sheets/actor/parts/combat-actions.hbs`,
+        `${templateBasePath}/sheets/actor/parts/inventory-list.hbs`
     ]);
 
 
