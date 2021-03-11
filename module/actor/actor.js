@@ -641,10 +641,27 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
-        let targettoken = Array.from(game.user.targets)[0];
+        let target = Array.from(game.user.targets)[0];
+
+        let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
+        if (target) {
+            switch (difficulty) {
+                case "VTD":
+                    difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    break;
+                case "GW":
+                    difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    break;
+                case "KW":
+                    difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         let checkData = await CheckDialog.create({
-            difficulty: spellData.data.difficulty,
+            difficulty: difficulty,
             modifier: 0
         });
 
