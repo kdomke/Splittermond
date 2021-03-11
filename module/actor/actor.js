@@ -384,6 +384,10 @@ export default class SplittermondActor extends Actor {
                 if (temp[0] === "woundMalus.mod") {
                     data.health.woundMalus.mod += value;
                 }
+
+                if (temp[0] === "splinterpoints") {
+                    data.splinterpoints.max = parseInt(data.splinterpoints.max) + value;
+                }
             }
         });
     }
