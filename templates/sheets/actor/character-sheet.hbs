@@ -18,6 +18,8 @@
                         {{data.experience.heroLevelName}}
                     </div>
                     <div class="value">
+                        <input class="autoexpand" name="data.experience.free" type="text"
+                            value="{{data.experience.free}}" placeholder="{{localize 'splittermond.xpFree'}}" /> -
                         <input class="autoexpand" name="data.experience.spent" type="text"
                             value="{{data.experience.spent}}" placeholder="{{localize 'splittermond.xpSpent'}}" /> -
                         {{data.experience.nextLevelValue}}
@@ -49,14 +51,18 @@
                 </div>
                 {{#each itemsByType.moonsign}}
                 <img src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
-                <label class="tooltip-activator">{{this.name}}</label>
+                <label class="tooltip-activator"><a data-action="edit-item"
+                        data-item-id="{{this._id}}">{{this.name}}</a></label>
                 <div class="tooltip">
                     {{{this.data.description}}}
-
+                    {{#if this.data.enhancement}}
                     <h3>{{localize "splittermond.enhancementDescription"}}</h3>
                     <p>{{this.data.enhancement}}</p>
+                    {{/if}}
+                    {{#if this.data.secretGift}}
                     <h3>{{localize "splittermond.secretGift"}}</h3>
                     <p>{{this.data.secretGift}}</p>
+                    {{/if}}
                 </div>
                 {{/each}}
 
@@ -93,9 +99,11 @@
                     {{#each itemsByType.strength}}
                     <li class="item tooltip-activator" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}</div>
+                        {{#if this.data.description}}
                         <div class="tooltip">
                             {{{this.data.description}}}
                         </div>
+                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -121,9 +129,11 @@
                     {{#each itemsByType.weakness}}
                     <li class="item tooltip-activator" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
+                        {{#if this.data.description}}
                         <div class="tooltip">
                             {{{this.data.description}}}
                         </div>
+                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -151,9 +161,11 @@
                     <li class="item tooltip-activator" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
                         <input type="text" data-field="data.value" value="{{this.data.value}}" data-dtype="Number">
+                        {{#if this.data.description}}
                         <div class="tooltip">
                             {{{this.data.description}}}
                         </div>
+                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                     aria-hidden="true"></i></button>
@@ -165,6 +177,66 @@
                     {{/each}}
                 </ul>
 
+            </div>
+            <div class="list" data-item-type="language">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.languages"}}</h3>
+                    <div class="actions">
+                        <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <ul class="languages">
+                    {{#each itemsByType.language}}
+                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                        <input class="name" type="text" data-field="name" value="{{this.name}}">
+                        {{#if this.data.description}}
+                        <div class="tooltip">
+                            {{{this.data.description}}}
+                        </div>
+                        {{/if}}
+                        <div class="actions">
+                            <button class="button-inline" data-action="edit-item" type="button">
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                            </button>
+                            <button class="button-inline" type="button" data-action="delete-item">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            <div class="list" data-item-type="culturelore">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.culturelore"}}</h3>
+                    <div class="actions">
+                        <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <ul class="culturelores">
+                    {{#each itemsByType.culturelore}}
+                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                        <input class="name" type="text" data-field="name" value="{{this.name}}">
+                        {{#if this.data.description}}
+                        <div class="tooltip">
+                            {{{this.data.description}}}
+                        </div>
+                        {{/if}}
+                        <div class="actions">
+                            <button class="button-inline" data-action="edit-item" type="button">
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                            </button>
+                            <button class="button-inline" type="button" data-action="delete-item">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
             </div>
         </section>
         <section class="tab skills" data-group="primary" data-tab="skills">
@@ -255,7 +327,7 @@
         <section class="tab fight" data-group="primary" data-tab="fight">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs" itemsByType=itemsByType
-                activeDefense=data.activeDefense}}
+                activeDefense=data.activeDefense editableSkill=false}}
             </div>
         </section>
         <section class="tab inventory" data-group="primary" data-tab="inventory">

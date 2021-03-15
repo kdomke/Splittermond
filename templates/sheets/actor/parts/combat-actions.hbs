@@ -26,7 +26,15 @@
                     <label>
                         <a class="rollable">{{localize this.name}}</a>
                     </label>
-                    <div class="value">{{this.data.skillValue}}</div>
+                    <div class="value">
+                        {{#if editableSkill}}
+                        {{this.data.skillValue}}
+                        {{else}}
+                        <input name="data.skills.{{this.data.skill}}.value" type="text"
+                            data-skill-value="{{this.data.skillValue}}" value="{{this.data.skillValue}}"
+                            data-dtype="Number">
+                        {{/if}}
+                    </div>
                     <div class="damage">
                         <a class="rollable" data-roll-type="damage" data-damage="{{this.data.damage}}"
                             data-features="{{this.data.features}}">{{this.data.damage}}</a>

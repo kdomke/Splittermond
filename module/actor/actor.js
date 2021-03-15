@@ -288,7 +288,7 @@ export default class SplittermondActor extends Actor {
 
         actorData.items.forEach(item => {
             if (item.type === "weapon") {
-                if (["slashing", "chains", "blades", "staffs"].includes(item.data.skill)) {
+                if (["melee", "slashing", "chains", "blades", "staffs"].includes(item.data.skill)) {
                     if (!item._id.endsWith("_attack") && item.data.equipped) {
                         data.activeDefense.defense.push(item);
                     }
@@ -404,7 +404,14 @@ export default class SplittermondActor extends Actor {
             }
             if (["mastery", "strength", "npcfeature"].includes(i.type)) {
                 if (i.data.modifier) {
-                    this._addModifier(i.name, i.data.modifier);
+                    if (i.type === "strength") {
+                        for (var k = 0; k < parseInt(i.data.quantity); k = k + 1) {
+                            this._addModifier(i.name, i.data.modifier);
+                        }
+                    } else {
+                        this._addModifier(i.name, i.data.modifier);
+                    }
+
                 }
             }
         });
@@ -533,12 +540,13 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.defense = {
                 value: 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value)) + 2 * (data.experience.heroLevel - 1)
             };
-            data.derivedAttributes.mindresist = {
-                value: 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.strength.value) + 2 * (data.experience.heroLevel - 1)
-            };
             data.derivedAttributes.bodyresist = {
                 value: 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1)
             };
+            data.derivedAttributes.mindresist = {
+                value: 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1)
+            };
+
         }
 
     }
@@ -591,6 +599,279 @@ export default class SplittermondActor extends Actor {
         };
 
         ChatMessage.create(chatData);
+    }
+
+    async importFromJSON(json) {
+        const data = JSON.parse(json);
+
+        // If Genesis-JSON-Export
+        if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
+            let newData = {};
+            newData.items = [];
+            newData.data = {};
+            newData.name = data.name;
+            newData.data.species = {
+                value: data.race
+            }
+            newData.data.sex = data.gender;
+            newData.data.culture = data.culture;
+            newData.data.ancestry = data.background;
+            newData.data.education = data.education;
+            newData.data.experience = {
+                free: data.freeExp,
+                spent: data.investedExp
+            }
+            let moonSignDescription = data.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
+            moonSignDescription = "<p>" + moonSignDescription.split("\n").join("</p><p>") + "</p>";
+
+            let moonSignImage = "systems/splittermond/images/moonsign/" + data.moonSign.name.split(" ").join("_").toLowerCase() + ".png";
+            let moonsignObj = {
+                type: "moonsign",
+                name: data.moonSign.name,
+                img: moonSignImage,
+                data: {
+                    description: moonSignDescription
+                }
+            }
+            let moonsignIds = this.items.filter(i => i.type === "moonsign")?.map(i => i._id);
+            if (moonsignIds) {
+                if (moonsignIds.length > 0) {
+                    moonsignObj._id = moonsignIds[0];
+                }
+            }
+            newData.items.push(moonsignObj);
+
+
+            data.weaknesses.forEach((w) => {
+                newData.items.push({
+                    type: "weakness",
+                    name: w
+                })
+            });
+            data.languages.forEach((w) => {
+                newData.items.push({
+                    type: "language",
+                    name: w
+                })
+            });
+            data.cultureLores.forEach((w) => {
+                newData.items.push({
+                    type: "culturelore",
+                    name: w
+                })
+            });
+            newData.data.attributes = duplicate(this._data.data.attributes);
+            data.attributes.forEach((a) => {
+                const id = a.id.toLowerCase();
+                if (CONFIG.splittermond.attributes.includes(id)) {
+                    newData.data.attributes[id].species = 0;
+                    newData.data.attributes[id].initial = a.startValue;
+                    newData.data.attributes[id].advances = a.value - a.startValue;
+                }
+
+                if (id === "size") {
+                    newData.data.species.size = a.value;
+                }
+
+            });
+            newData.data.skills = duplicate(this._data.data.skills);
+            data.skills.forEach((s) => {
+                let id = s.id.toLowerCase();
+                if (newData.data.skills[id]) {
+                    newData.data.skills[id].points = s.points;
+
+                    s.masterships.forEach((m) => {
+                        let newMastership = {
+                            type: "mastery",
+                            name: m.name,
+                            data: {
+                                skill: id,
+                                level: m.level,
+                                description: m.longDescription,
+                                modifier: CONFIG.splittermond.modifier[m.id] || ""
+                            }
+                        }
+
+                        newData.items.push(newMastership);
+                    })
+                } else {
+                    console.log("undefined Skill:" + id);
+                }
+
+            });
+
+            data.powers.forEach((s) => {
+                newData.items.push({
+                    type: "strength",
+                    name: s.name,
+                    data: {
+                        quantity: s.count,
+                        description: s.longDescription,
+                        modifier: CONFIG.splittermond.modifier[s.id] || ""
+                    }
+                })
+            });
+
+            data.resources.forEach((r) => {
+                newData.items.push({
+                    type: "resource",
+                    name: r.name,
+                    data: {
+                        value: r.value,
+                        description: r.description
+                    }
+                })
+            });
+
+            data.spells.forEach((s) => {
+                let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(s.longDescription);
+                if (damage) {
+                    damage = damage[0] || "";
+                } else {
+                    damage = "";
+                }
+                let skill = "";
+                if (s.school === "Arkane Kunde") {
+                    skill = "arcanelore";
+                } else {
+                    skill = CONFIG.splittermond.skillGroups.magic.find(skill => {
+                        return s.school.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
+                    });
+                }
+
+
+                newData.items.push({
+                    type: "spell",
+                    name: s.name,
+                    img: CONFIG.splittermond.icons.spell[s.id] || CONFIG.splittermond.icons.spell.default,
+                    data: {
+                        description: s.longDescription,
+                        skill: skill,
+                        skillLevel: s.schoolGrade,
+                        costs: s.focus,
+                        difficulty: s.difficulty,
+                        damage: damage.trim(),
+                        range: s.castRange,
+                        castDuration: s.castDuration,
+                        effectDuration: s.spellDuration,
+                        enhancementCosts: s.enhancement,
+                        enhancementDescription: s.enhancementDescription,
+                        degreeOfSuccessOptions: {
+                            castDuration: s.enhancementOptions.search("Auslösezeit") >= 0,
+                            consumedFocus: s.enhancementOptions.search("Verzehrter Fokus") >= 0,
+                            exhaustedFocus: s.enhancementOptions.search("Erschöpfter Fokus") >= 0,
+                            channelizedFocus: s.enhancementOptions.search("Kanalisierter Fokus") >= 0,
+                            effectDuration: s.enhancementOptions.search("Wirkungsdauer") >= 0
+                        }
+                    }
+                })
+            });
+
+            data.armors.forEach((a) => {
+                newData.items.push({
+                    type: "armor",
+                    name: a.name,
+                    img: CONFIG.splittermond.icons.armor[a.name] || CONFIG.splittermond.icons.armor.default,
+                    data: {
+                        defenseBonus: a.defense,
+                        tickMalus: a.tickMalus,
+                        handicap: a.handicap,
+                        damageReduction: a.damageReduction,
+                        features: a.features.map(f => `${f.name}`)?.join(', ')
+                    }
+                })
+            });
+
+            data.shields.forEach((s) => {
+                newData.items.push({
+                    type: "shield",
+                    name: s.name,
+                    img: CONFIG.splittermond.icons.shield[s.name] || CONFIG.splittermond.icons.shield.default,
+                    data: {
+                        skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
+                            return s.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
+                        }),
+                        defenseBonus: s.defensePlus,
+                        tickMalus: s.tickMalus,
+                        handicap: s.handicap,
+                        features: s.features.map(f => `${f.name}`)?.join(', ')
+                    }
+                })
+            });
+
+
+            data.meleeWeapons.forEach((w) => {
+                if (w.name !== "Waffenlos") {
+                    newData.items.push({
+                        type: "weapon",
+                        name: w.name,
+                        img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
+                        data: {
+                            skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
+                                return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
+                            }),
+                            attribute1: w.attribute1Id.toLowerCase(),
+                            attribute2: w.attribute2Id.toLowerCase(),
+                            features: w.features.map(f => `${f.name}`)?.join(', '),
+                            damage: w.damage,
+                            weaponSpeed: w.weaponSpeed,
+                        }
+                    })
+
+                }
+            });
+
+            data.longRangeWeapons.forEach((w) => {
+                const itemData = newData.items.find(i => i.name === w.name && i.type === "weapon");
+                if (itemData) {
+                    itemData.data.secondaryAttack = {
+                        skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
+                            return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
+                        }),
+                        attribute1: w.attribute1Id.toLowerCase(),
+                        attribute2: w.attribute2Id.toLowerCase(),
+                        features: w.features.map(f => `${f.name}`)?.join(', '),
+                        damage: w.damage,
+                        weaponSpeed: w.weaponSpeed,
+                        range: w.range
+                    }
+                } else {
+                    newData.items.push({
+                        type: "weapon",
+                        name: w.name,
+                        img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
+                        data: {
+                            skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
+                                return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
+                            }),
+                            attribute1: w.attribute1Id.toLowerCase(),
+                            attribute2: w.attribute2Id.toLowerCase(),
+                            features: w.features.map(f => `${f.name}`)?.join(', '),
+                            damage: w.damage,
+                            weaponSpeed: w.weaponSpeed,
+                            range: w.range
+                        }
+                    })
+                }
+
+            });
+
+            data.items.forEach((e) => {
+                newData.items.push({
+                    type: "equipment",
+                    name: e.name,
+                    img: CONFIG.splittermond.icons.equipment[e.name] || CONFIG.splittermond.icons.equipment.default,
+                    data: {
+                        quantity: e.count
+                    }
+                });
+            });
+
+            json = JSON.stringify(newData);
+        }
+
+
+        return super.importFromJSON(json);
     }
 
 
@@ -805,7 +1086,7 @@ export default class SplittermondActor extends Actor {
         return rollData;
     }
     _parseCostsString(str) {
-        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
+        let costDataRaw = /[0-9]*[ eg\/+]*([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
         return {
             channeled: costDataRaw[1] === "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
             exhausted: costDataRaw[1] !== "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,

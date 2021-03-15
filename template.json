@@ -306,7 +306,7 @@
       },
       "experience": {
         "heroLevel": 1,
-        "value": 0,
+        "free": 0,
         "spent": 0,
         "nextLevelValue": 100
       },
@@ -346,10 +346,10 @@
         "defense": {
           "value": 0
         },
-        "mindresist": {
+        "bodyresist": {
           "value": 0
         },
-        "bodyresist": {
+        "mindresist": {
           "value": 0
         }
       },
@@ -375,7 +375,9 @@
       "education",
       "resource",
       "npcfeature",
-      "moonsign"
+      "moonsign",
+      "language",
+      "culturelore"
     ],
     "templates": {
       "description": {
@@ -413,7 +415,7 @@
       "weaponSpeed": 0,
       "skill": "",
       "skillMod": 0,
-      "features": [],
+      "features": "",
       "attribute1": "",
       "attribute2": "",
       "minAttributes": "",
@@ -427,7 +429,8 @@
         "damage": "",
         "range": 0,
         "weaponSpeed": 0,
-        "minAttributes": ""
+        "minAttributes": "",
+        "features": ""
       }
     },
     "projectile": {
@@ -484,6 +487,7 @@
       "range": "",
       "castDuration": "",
       "effectDuration": "",
+      "effectArea": "",
       "enhancementDescription": "",
       "enhancementCosts": "",
       "degreeOfSuccessOptions": {
@@ -579,6 +583,16 @@
       ],
       "enhancement": "",
       "secretGift": ""
+    },
+    "language": {
+      "templates": [
+        "description"
+      ]
+    },
+    "culturelore": {
+      "templates": [
+        "description"
+      ]
     }
   }
 }

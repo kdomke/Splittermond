@@ -99,7 +99,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (!(skill in result)) {
                     result[skill] = {
                         label: `splittermond.skillLabel.${skill}`,
-                        skillValue: data.data.skills[skill].value,
+                        skillValue: data.data.skills[skill]?.value || 0,
                         spells: []
                     };
                 }

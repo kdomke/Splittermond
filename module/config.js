@@ -9,7 +9,7 @@ splittermond.attributes = ["charisma", "agility", "intuition",
     "mind",
     "willpower"];
 
-splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "mindresist", "bodyresist"];
+splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "bodyresist", "mindresist"];
 
 splittermond.woundMalus = {
     "5": [0, -1, -2, -4, -8],
@@ -646,6 +646,11 @@ splittermond.itemSheetProperties.spell = [
                 template: "input"
             },
             {
+                field: "data.effectArea",
+                label: "splittermond.effectArea",
+                template: "input"
+            },
+            {
                 field: "data.enhancementCosts",
                 label: "splittermond.enhancementCosts",
                 template: "input"
@@ -715,5 +720,43 @@ splittermond.itemSheetProperties.moonsign = [
     }
 ]
 
+splittermond.icons = {
+    equipment: {
+        default: "icons/svg/chest.svg"
+    },
+    shield: {
+        default: "icons/svg/shield.svg"
+    },
+    armor: {
+        default: "icons/svg/statue.svg"
+    },
+    weapon: {
+        default: "icons/svg/sword.svg"
+    },
+    spell: {
+        default: "icons/svg/daze.svg"
+    }
+}
+
+splittermond.modifier = {
+    addsplinter: "splinterpoints +2",
+    sturdy: "LP +1",
+    resistbody: "KW +2",
+    resistmind: "GW +2",
+    focuspool: "FO +5",
+    highini: "INI -3",
+    resistpain: "woundMalus.mod -1",
+    resistpain1: "woundMalus.mod -1",
+    resistpain2: "woundMalus.mod -1",
+    swift: "GSW +1",
+    armour1: "handicap.armor.mod -1",
+    shield1: "handicap.shield.mod -1",
+    armour2: "tickmalus.armor.mod -1",
+    shield2: "tickmalus.shield.mod -1",
+    flashreflexes: "INI -3",
+    goodreflexes: "VTD +1",
+    arcanespeed: "GSW +1",
+    sprinter: "GSW +1"
+}
 
 
