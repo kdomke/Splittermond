@@ -756,7 +756,9 @@ splittermond.modifier = {
     flashreflexes: "INI -3",
     goodreflexes: "VTD +1",
     arcanespeed: "GSW +1",
-    sprinter: "GSW +1"
+    sprinter: "GSW +1",
+    focusregen: "focusRegeneration.multiplier 3",
+    liferegen: "healthRegeneration.multiplier 3",
 }
 
 

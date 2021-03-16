@@ -260,6 +260,34 @@
   top: 0px;
   border-radius: 0;
 }
+.splittermond button:hover,
+.splittermond button:focus,
+.splittermond.dialog button:hover,
+.splittermond.dialog button.default:hover {
+  box-shadow: 0 0 14px inset white;
+  text-shadow: 0 0 8px #2D80E1;
+}
+.splittermond button:active {
+  box-shadow: 0 0 14px inset rgba(0, 0, 0, 0.2);
+}
+.splittermond button,
+.splittermond.dialog button,
+.splittermond.dialog button.default {
+  background: none;
+  border: 2px groove rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  border-radius: 3px;
+  font-family: "Vollkorn";
+  text-shadow: 0 0 3px white;
+  margin: 3px;
+}
+.splittermond.dialog button,
+.splittermond.dialog button.default {
+  margin: 0;
+}
+.splittermond .actions {
+  display: flex;
+}
 .splittermond img {
   border: none;
 }
@@ -535,6 +563,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
   grid-gap: 7px;
+  padding: 3px;
 }
 #combat #combat-controls [data-control="previousRound"] {
   display: none;

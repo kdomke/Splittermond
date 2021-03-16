@@ -388,6 +388,14 @@ export default class SplittermondActor extends Actor {
                 if (temp[0] === "splinterpoints") {
                     data.splinterpoints.max = parseInt(data.splinterpoints.max) + value;
                 }
+
+                if (temp[0] === "healthRegeneration.multiplier") {
+                    actorData.healthRegeneration.multiplier = value;
+                }
+
+                if (temp[0] === "focusRegeneration.multiplier") {
+                    actorData.focusRegeneration.multiplier = value;
+                }
             }
         });
     }
@@ -545,6 +553,16 @@ export default class SplittermondActor extends Actor {
             };
             data.derivedAttributes.mindresist = {
                 value: 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1)
+            };
+
+            actorData.focusRegeneration = {
+                multiplier: 2,
+                bonus: 0
+            };
+
+            actorData.healthRegeneration = {
+                multiplier: 2,
+                bonus: 0
             };
 
         }
@@ -1092,6 +1110,55 @@ export default class SplittermondActor extends Actor {
             exhausted: costDataRaw[1] !== "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
             consumed: parseInt(costDataRaw[3] || 0)
         }
+    }
+
+    async shortRest() {
+        const actorData = this.data;
+        const data = actorData.data;
+        data.focus.exhausted.value = 0;
+        data.health.exhausted.value = 0;
+
+        return this.update({ "data.focus": data.focus, "data.health": data.health });
+    }
+
+    async longRest() {
+        const actorData = this.data;
+        const data = actorData.data;
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: game.i18n.localize("splittermond.clearChanneledFocus"),
+                content: "<p>" + game.i18n.localize("splittermond.clearChanneledFocus") + "</p>",
+                buttons: {
+                    yes: {
+                        label: game.i18n.localize("splittermond.yes"),
+                        callback: html => {
+                            resolve(true);
+                        }
+                    },
+                    no: {
+                        label: game.i18n.localize("splittermond.no"),
+                        callback: html => {
+                            resolve(false);
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        if (await p) {
+            data.focus.channeled.entries = [];
+        }
+
+        data.health.channeled.entries = [];
+
+        data.focus.exhausted.value = 0;
+        data.health.exhausted.value = 0;
+
+        data.focus.consumed.value = Math.max(data.focus.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
+        data.health.consumed.value = Math.max(data.health.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
+
+        return this.update({ "data.focus": data.focus, "data.health": data.health });
     }
 
     consumeCost(type, valueStr, description) {

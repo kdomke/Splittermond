@@ -237,6 +237,14 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.actor.update({ "data.health.channeled.entries": this.actor.data.data.health.channeled.entries });
         });
 
+        html.find('[data-action="long-rest"]').click(event => {
+            this.actor.longRest();
+        });
+
+        html.find('[data-action="short-rest"]').click(event => {
+            this.actor.shortRest();
+        });
+
 
         html.find(".rollable").click(event => {
             const type = this._getClosestData($(event.currentTarget), 'roll-type');

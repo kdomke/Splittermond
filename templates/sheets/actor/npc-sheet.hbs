@@ -11,14 +11,17 @@
                 </h1>
                 <div class="description">
                     <input class="autoexpand" name="data.type" type="text" value="{{data.type}}"
-                        placeholder="{{localize 'splittermond.opponenttype'}}" />&nbsp;&middot;&nbsp;
+                        placeholder="{{localize 'splittermond.opponenttype'}}" />
+                    {{#unless this.limited}}
+                    &nbsp;&middot;&nbsp;
                     <input class="autoexpand" name="data.level" type="text" value="{{data.level}}"
                         placeholder="{{localize 'splittermond.opponentlevel'}}" />&nbsp;&middot;&nbsp;
                     <input class="autoexpand" name="data.sex" type="text" value="{{data.sex}}"
                         placeholder="{{localize 'splittermond.sex'}}" />
+                    {{/unless}}
 
                 </div>
-
+                {{#unless limited}}
                 <ul class="npcfeatures taglist" data-item-type="npcfeature">
                     {{#each itemsByType.npcfeature}}
                     <li class="item" data-item-id="{{this._id}}">
@@ -42,15 +45,18 @@
                         </button></li>
                 </ul>
             </div>
+            {{/unless}}
         </section>
-
+        {{#unless limited}}
         <section>
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes
             derivedAttributes=data.derivedAttributes}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
         </section>
+        {{/unless}}
     </header>
+    {{#unless limited}}
     <nav class="sheet-navigation tabs" data-group="primary">
         <a class="item" data-tab="general">{{ localize "splittermond.general" }}</a>
         <a class="item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
@@ -216,5 +222,5 @@
             </div>
         </section>
     </main>
-
+    {{/unless}}
 </form>

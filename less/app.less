@@ -168,6 +168,34 @@
             }
         }
     }
+
+
+    button:hover, button:focus, &.dialog button:hover, &.dialog button.default:hover {
+        box-shadow: 0 0 @paddingLarge inset white;
+        text-shadow: 0 0 8px @highlightTextColor;
+    }
+
+    button:active {
+        box-shadow: 0 0 @paddingLarge inset rgba(0,0,0,0.2);
+    }
+
+    button, &.dialog button, &.dialog button.default {
+        background: none;
+        border: 2px groove rgba(255, 255, 255, 0.3);
+        box-shadow: none;
+        border-radius: @paddingSmall;
+        font-family: "Vollkorn";
+        text-shadow: 0 0 @paddingSmall white;
+        margin: 3px;
+    }
+
+    &.dialog button, &.dialog button.default {
+        margin: 0;
+    }
+
+    .actions {
+        display: flex;
+    }
     
 
 
@@ -514,6 +542,7 @@
     display: grid;
     grid-template-columns: repeat( auto-fit, minmax(5rem, 1fr) );
     grid-gap: @paddingMedium;
+    padding: @paddingSmall;
 }
 
 #combat {

@@ -68,14 +68,16 @@
 
             </div>
         </section>
-
+        {{#unless limited}}
         <section>
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes
             derivedAttributes=data.derivedAttributes}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
         </section>
+        {{/unless}}
     </header>
+    {{#unless limited}}
     <nav class="sheet-navigation tabs" data-group="primary">
         <a class="item active" data-tab="general">{{ localize "splittermond.general" }}</a>
         <a class="item" data-tab="skills">{{ localize "splittermond.skills" }}</a>
@@ -336,36 +338,47 @@
             </div>
         </section>
         <section class="tab status" data-group="primary" data-tab="status">
-            <div class="damage">
-                <div class="list">
-                    <div class="list-header">
-                        <h3>{{localize "splittermond.channeledDamage"}}</h3>
-                        <div class="actions">
-                            <button class="button-inline" type="button" data-action="add-channeled-health"
-                                data-render-sheet="0">
-                                <i class="fa fa-plus-square" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <ol data-array="data.health.channeled.entries">
-                        {{#each data.health.channeled.entries}}
-                        <li data-index="{{@index}}">
-                            <input data-array-field="description" type="text" value="{{this.description}}">
-
-                            <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
-                                    data-dtype="Number"></div>
+            <div>
+                <div class="actions">
+                    <button type="button" data-action="short-rest">
+                        {{localize "splittermond.shortRest"}}
+                    </button>
+                    <button type="button" data-action="long-rest">
+                        {{localize "splittermond.longRest"}}
+                    </button>
+                </div>
+                <div class="damage">
+                    <div class="list">
+                        <div class="list-header">
+                            <h3>{{localize "splittermond.channeledDamage"}}</h3>
                             <div class="actions">
-                                <button class="button-inline" type="button" data-action="delete-array-element">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                <button class="button-inline" type="button" data-action="add-channeled-health"
+                                    data-render-sheet="0">
+                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
                                 </button>
                             </div>
-                        </li>
-                        {{/each}}
-                    </ol>
-                </div>
+                        </div>
+                        <ol data-array="data.health.channeled.entries">
+                            {{#each data.health.channeled.entries}}
+                            <li data-index="{{@index}}">
+                                <input data-array-field="description" type="text" value="{{this.description}}">
 
+                                <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
+                                        data-dtype="Number"></div>
+                                <div class="actions">
+                                    <button class="button-inline" type="button" data-action="delete-array-element">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            {{/each}}
+                        </ol>
+                    </div>
+
+                </div>
             </div>
         </section>
-    </main>
 
+    </main>
+    {{/unless}}
 </form>
