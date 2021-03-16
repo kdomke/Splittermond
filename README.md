@@ -4,6 +4,7 @@
 
 Installations-URL: [https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/master/system.json](https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/master/system.json)
 
-![Screensoht](FoundryModul1.png)
+![Screenshot](FoundryModul1.png)
 
-Dies ist der erste Wurf.
+Auch wenn man hiermit schon gut arbeiten kann: wir sind noch in der Entwicklung.
+Es ist möglich, dass wir Änderungen machen, die die Abwärtskompatibilität stören.
