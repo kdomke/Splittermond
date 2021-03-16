@@ -71,5 +71,9 @@
   "primaryTokenAttribute": null,
   "secondaryTokenAttribute": null,
   "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.7.9"
+  "compatibleCoreVersion": "0.7.9",
+  "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
+  "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/master/system.json",
+  "download": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/get/master.zip"
+  
 }
