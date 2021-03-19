@@ -2,7 +2,7 @@
   "name": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "author": "Simon",
   "scripts": [],
   "esmodules": [
@@ -20,32 +20,6 @@
       "entity": "Item",
       "tags": [
         "species"
-      ],
-      "langs": [
-        "de"
-      ]
-    },
-    {
-      "name": "strengths",
-      "label": "Stärken",
-      "system": "splittermond",
-      "path": "packs/strengths.db",
-      "entity": "Item",
-      "tags": [
-        "strength"
-      ],
-      "langs": [
-        "de"
-      ]
-    },
-    {
-      "name": "weapons",
-      "label": "Waffen",
-      "system": "splittermond",
-      "path": "packs/weapons.db",
-      "entity": "Item",
-      "tags": [
-        "weapon"
       ],
       "langs": [
         "de"
@@ -75,5 +49,4 @@
   "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
   "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
   "download": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/get/main.zip"
-  
 }

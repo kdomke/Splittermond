@@ -1,0 +1,77 @@
+{
+  "name": "splittermond",
+  "title": "Splittermond",
+  "description": "A system for playing the german pen and paper RPG Splittermond.",
+  "version": "0.0.38",
+  "author": "Simon",
+  "scripts": [],
+  "esmodules": [
+    "splittermond.js"
+  ],
+  "styles": [
+    "splittermond.css"
+  ],
+  "packs": [
+    {
+      "name": "species",
+      "label": "Spezies",
+      "system": "splittermond",
+      "path": "packs/species.db",
+      "entity": "Item",
+      "tags": [
+        "species"
+      ],
+      "langs": [
+        "de"
+      ]
+    },
+    {
+      "name": "strengths",
+      "label": "Stärken",
+      "system": "splittermond",
+      "path": "packs/strengths.db",
+      "entity": "Item",
+      "tags": [
+        "strength"
+      ],
+      "langs": [
+        "de"
+      ]
+    },
+    {
+      "name": "weapons",
+      "label": "Waffen",
+      "system": "splittermond",
+      "path": "packs/weapons.db",
+      "entity": "Item",
+      "tags": [
+        "weapon"
+      ],
+      "langs": [
+        "de"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    }
+  ],
+  "socket": true,
+  "gridDistance": 1,
+  "gridUnits": "m",
+  "initiative": "@initiative - 1d6",
+  "primaryTokenAttribute": null,
+  "secondaryTokenAttribute": null,
+  "minimumCoreVersion": "0.7.9",
+  "compatibleCoreVersion": "0.7.9",
+  "manifest": "http://foundry.simonundclaudia.de/splittermond/system.json",
+  "download": "http://foundry.simonundclaudia.de/splittermond/splittermond.zip"
+}
