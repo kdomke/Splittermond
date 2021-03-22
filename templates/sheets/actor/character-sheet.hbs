@@ -79,6 +79,7 @@
     </header>
     {{#unless limited}}
     <nav class="sheet-navigation tabs" data-group="primary">
+        <a class="item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
         <a class="item active" data-tab="general">{{ localize "splittermond.general" }}</a>
         <a class="item" data-tab="skills">{{ localize "splittermond.skills" }}</a>
         <a class="item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
@@ -87,6 +88,9 @@
         <a class="item" data-tab="status">{{ localize "splittermond.status" }}</a>
     </nav>
     <main class="tab-list">
+        <section class="tab biography" data-group="primary" data-tab="biography">
+            {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
+        </section>
         <section class="tab general" data-group="primary" data-tab="general">
             <div class="list" data-item-type="strength">
                 <div class="list-header">
