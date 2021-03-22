@@ -185,8 +185,18 @@ export default class SplittermondActor extends Actor {
                         all: []
                     };
                 }
-                data.derivedAttributes[type].malus.all.push({ value: data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+                data.derivedAttributes[type].malus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
                 data.derivedAttributes[type].value += data.health.woundMalus.value;
+            });
+
+            Object.keys(data.skills).forEach(skill => {
+                if (!data.skills[skill].malus) {
+                    data.skills[skill].malus = {
+                        all: []
+                    };
+                }
+                data.skills[skill].malus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+                data.skills[skill].value += data.health.woundMalus.value;
             });
         }
 

@@ -68,6 +68,7 @@
         "effectArea": "Wirkungsbereich",
         "shortRest": "Verschnaufpause",
         "longRest": "Ruhephase",
+        "woundMalus": "Wundabzug",
         "clearChanneledFocus": "Kanalisierten Fokus freigeben?",
         "yes": "Ja",
         "no": "Nein",

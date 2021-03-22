@@ -96,7 +96,7 @@
                                 <input name="data.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
                                 {{#if skill.bonus}}
-                                <div class="tooltip">
+                                <div class="bonus-malus tooltip">
                                     {{#each skill.bonus.equipment}}
                                     <label>{{this.description}}</label>
                                     <div class="value">{{this.value}}</div>
@@ -146,7 +146,7 @@
                             <div class="value tooltip-activator"><input name="data.skills.{{skillId}}.value" type="text"
                                     value="{{skill.value}}" data-dtype="Number">
                                 {{#if skill.bonus}}
-                                <div class="tooltip">
+                                <div class="bonus-malus tooltip">
                                     {{#each skill.bonus.equipment}}
                                     <label>{{this.description}}</label>
                                     <div class="value">{{this.value}}</div>

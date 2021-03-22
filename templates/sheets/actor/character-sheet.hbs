@@ -265,22 +265,22 @@
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
                         <div class="value tooltip-activator">{{skill.value}}</div>
                         {{#if skill.bonus}}
-                        <div class="bonus-malus-description tooltip">
+                        <div class="bonus-malus tooltip">
                             {{#each skill.bonus.equipment}}
                             <label>{{this.description}}</label>
-                            <div class="value">{{this.value}}</div>
+                            <div class="value">+{{this.value}}</div>
                             {{/each}}
                             {{#each skill.bonus.magic}}
                             <label>{{this.description}}</label>
-                            <div class="value">{{this.value}}</div>
+                            <div class="value">+{{this.value}}</div>
                             {{/each}}
                             {{#each skill.bonus.misc}}
                             <label>{{this.description}}</label>
-                            <div class="value">{{this.value}}</div>
+                            <div class="value">+{{this.value}}</div>
                             {{/each}}
                             {{#each skill.malus.all}}
                             <label>{{this.description}}</label>
-                            <div class="value">{{this.value}}</div>
+                            <div class="value">-{{this.value}}</div>
                             {{/each}}
                         </div>
                         {{/if}}
@@ -316,7 +316,27 @@
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
-                        <div class="value">{{skill.value}}</div>
+                        <div class="value tooltip-activator">{{skill.value}}</div>
+                        {{#if skill.bonus}}
+                        <div class="bonus-malus tooltip">
+                            {{#each skill.bonus.equipment}}
+                            <label>{{this.description}}</label>
+                            <div class="value">+{{this.value}}</div>
+                            {{/each}}
+                            {{#each skill.bonus.magic}}
+                            <label>{{this.description}}</label>
+                            <div class="value">+{{this.value}}</div>
+                            {{/each}}
+                            {{#each skill.bonus.misc}}
+                            <label>{{this.description}}</label>
+                            <div class="value">+{{this.value}}</div>
+                            {{/each}}
+                            {{#each skill.malus.all}}
+                            <label>{{this.description}}</label>
+                            <div class="value">-{{this.value}}</div>
+                            {{/each}}
+                        </div>
+                        {{/if}}
                     </li>
                     {{/each}}
                 </ol>

@@ -7,7 +7,7 @@
     </div>
     {{/each}}
     {{#each derivedAttributes as |attribute attributeId|}}
-    <div class="attribute" id="{{attributeId}}">
+    <div class="attribute tooltip-activator" id="{{attributeId}}">
         <label>{{localize attribute.label.short}}</label>
         {{#if attribute.editable}}
         <input name="data.derivedAttributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
@@ -15,6 +15,27 @@
         {{else}}
         <span>{{attribute.value}}</span>
         {{/if}}
+        {{#if attribute.bonus}}
+        <div class="bonus-malus tooltip">
+            {{#each attribute.bonus.equipment}}
+            <label>{{this.description}}</label>
+            <div class="value">+{{this.value}}</div>
+            {{/each}}
+            {{#each attribute.bonus.magic}}
+            <label>{{this.description}}</label>
+            <div class="value">+{{this.value}}</div>
+            {{/each}}
+            {{#each attribute.bonus.misc}}
+            <label>{{this.description}}</label>
+            <div class="value">+{{this.value}}</div>
+            {{/each}}
+            {{#each attribute.malus.all}}
+            <label>{{this.description}}</label>
+            <div class="value">-{{this.value}}</div>
+            {{/each}}
+        </div>
+        {{/if}}
     </div>
+
     {{/each}}
 </div>

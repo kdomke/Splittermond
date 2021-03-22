@@ -338,6 +338,18 @@
   text-shadow: none;
   z-index: 1000;
 }
+.splittermond .tooltip-activator:hover + .bonus-malus.tooltip,
+.splittermond .tooltip-activator:hover > .bonus-malus.tooltip {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 3px;
+}
+.splittermond .bonus-malus label {
+  font-weight: normal;
+}
+.splittermond .bonus-malus .value {
+  font-weight: bold;
+}
 .splittermond input[type="text"],
 .splittermond #autoexpanddummy {
   font-variant-numeric: lining-nums;

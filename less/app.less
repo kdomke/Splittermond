@@ -254,6 +254,21 @@
         text-shadow: none;
         z-index: 1000;
     }
+
+    .tooltip-activator {
+        &:hover + .bonus-malus.tooltip, &:hover > .bonus-malus.tooltip {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: @paddingSmall;
+        }
+    }
+
+    .bonus-malus label {
+        font-weight: normal;
+    }
+    .bonus-malus .value {
+        font-weight: bold;
+    }
         
     
 
