@@ -34,11 +34,22 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             sheetData.data.fightingSkills = {};
             CONFIG.splittermond.skillGroups.fighting.forEach(skill => {
+                if (!sheetData.data.skills[skill]) {
+                    sheetData.data.skills[skill] = {
+                        points: 0
+                    }
+                }
                 sheetData.data.fightingSkills[skill] = duplicate(sheetData.data.skills[skill]);
                 sheetData.data.fightingSkills[skill].label = `splittermond.skillLabel.${skill}`;
+
             });
             sheetData.data.generalSkills = {};
             CONFIG.splittermond.skillGroups.general.forEach(skill => {
+                if (!sheetData.data.skills[skill]) {
+                    sheetData.data.skills[skill] = {
+                        points: 0
+                    }
+                }
                 sheetData.data.generalSkills[skill] = duplicate(sheetData.data.skills[skill]);
                 sheetData.data.generalSkills[skill].label = `splittermond.skillLabel.${skill}`;
                 sheetData.data.generalSkills[skill].attribute1 = {
@@ -50,6 +61,11 @@ export default class SplittermondActorSheet extends ActorSheet {
             });
             sheetData.data.magicSkills = {};
             CONFIG.splittermond.skillGroups.magic.forEach(skill => {
+                if (!sheetData.data.skills[skill]) {
+                    sheetData.data.skills[skill] = {
+                        points: 0
+                    }
+                }
                 sheetData.data.magicSkills[skill] = duplicate(sheetData.data.skills[skill]);
                 sheetData.data.magicSkills[skill].label = `splittermond.skillLabel.${skill}`;
                 sheetData.data.magicSkills[skill].attribute1 = {

@@ -8,6 +8,34 @@ export default class SplittermondActor extends Actor {
         const actorData = this.data;
         const data = actorData.data;
 
+        if (!data.health) {
+            data.health = {
+                "consumed": {
+                    "value": 0
+                },
+                "exhausted": {
+                    "value": 0
+                },
+                "channeled": {
+                    "entries": []
+                }
+            }
+        }
+
+        if (!data.focus) {
+            data.focus = {
+                "consumed": {
+                    "value": 0
+                },
+                "exhausted": {
+                    "value": 0
+                },
+                "channeled": {
+                    "entries": []
+                }
+            }
+        }
+
         data.health.woundMalus = {
             nbrLevels: 5,
             level: 0,
@@ -573,12 +601,22 @@ export default class SplittermondActor extends Actor {
         const data = actorData.data;
 
         CONFIG.splittermond.skillGroups.general.forEach(skill => {
+            if (!data.skills[skill]) {
+                data.skills[skill] = {
+                    points: 0
+                }
+            }
             data.skills[skill].value = parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) +
                 parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value)
                 + parseInt(data.skills[skill].points);
         });
 
         CONFIG.splittermond.skillGroups.magic.forEach(skill => {
+            if (!data.skills[skill]) {
+                data.skills[skill] = {
+                    points: 0
+                }
+            }
             data.skills[skill].value = parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) +
                 parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value)
                 + parseInt(data.skills[skill].points);
