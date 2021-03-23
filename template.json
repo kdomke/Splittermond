@@ -377,7 +377,8 @@
       "npcfeature",
       "moonsign",
       "language",
-      "culturelore"
+      "culturelore",
+      "statuseffect"
     ],
     "templates": {
       "description": {
@@ -502,7 +503,8 @@
       "templates": [
         "description",
         "modifier"
-      ]
+      ],
+      "level": 1
     },
     "mastery": {
       "templates": [

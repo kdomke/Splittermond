@@ -333,6 +333,11 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
+                    field: "data.quantity",
+                    label: "splittermond.quantity",
+                    template: "input"
+                },
+                {
                     field: "data.level",
                     label: "splittermond.strengthItem.level",
                     template: "input"
@@ -354,6 +359,24 @@ splittermond.itemSheetProperties = {
                 }
             ]
         }
+    ],
+    statuseffect: [
+        {
+            groupName: "splittermond.general",
+            properties: [
+                {
+                    field: "data.level",
+                    label: "splittermond.level",
+                    template: "input"
+                },
+                {
+                    field: "data.modifier",
+                    label: "splittermond.modifier",
+                    template: "input"
+                }
+            ]
+        }
+
     ],
     equipment: [
         {

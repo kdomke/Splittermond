@@ -51,7 +51,8 @@ Hooks.once("init", function () {
         `${templateBasePath}/sheets/actor/parts/mastery-list.hbs`,
         `${templateBasePath}/sheets/actor/parts/spells-list.hbs`,
         `${templateBasePath}/sheets/actor/parts/combat-actions.hbs`,
-        `${templateBasePath}/sheets/actor/parts/inventory-list.hbs`
+        `${templateBasePath}/sheets/actor/parts/inventory-list.hbs`,
+        `${templateBasePath}/sheets/actor/parts/status-tab.hbs`
     ]);
 
 

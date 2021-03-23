@@ -95,7 +95,7 @@
                             <div class="value tooltip-activator">
                                 <input name="data.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
-                                {{#if skill.bonus}}
+                                {{#if skill.malus}}
                                 <div class="bonus-malus tooltip">
                                     {{#each skill.bonus.equipment}}
                                     <label>{{this.description}}</label>
@@ -145,7 +145,7 @@
                             </label>
                             <div class="value tooltip-activator"><input name="data.skills.{{skillId}}.value" type="text"
                                     value="{{skill.value}}" data-dtype="Number">
-                                {{#if skill.bonus}}
+                                {{#if skill.malus}}
                                 <div class="bonus-malus tooltip">
                                     {{#each skill.bonus.equipment}}
                                     <label>{{this.description}}</label>
@@ -195,35 +195,9 @@
             </div>
         </section>
         <section class="tab status" data-group="primary" data-tab="status">
-            <div class="damage">
-                <div class="list">
-                    <div class="list-header">
-                        <h3>{{localize "splittermond.channeledDamage"}}</h3>
-                        <div class="actions">
-                            <button class="button-inline" type="button" data-action="add-channeled-health"
-                                data-render-sheet="0">
-                                <i class="fa fa-plus-square" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <ol data-array="data.health.channeled.entries">
-                        {{#each data.health.channeled.entries}}
-                        <li data-index="{{@index}}">
-                            <input data-array-field="description" type="text" value="{{this.description}}">
-
-                            <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
-                                    data-dtype="Number"></div>
-                            <div class="actions">
-                                <button class="button-inline" type="button" data-action="delete-array-element">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </li>
-                        {{/each}}
-                    </ol>
-                </div>
-
-            </div>
+            {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
+            channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
+            hasRestActions=false}}
         </section>
     </main>
     {{/unless}}

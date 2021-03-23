@@ -20,6 +20,12 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
         sheetData.data.experience.heroLevelName = game.i18n.localize(`splittermond.heroLevels.${sheetData.data.experience.heroLevel}`);
 
+        sheetData.items.forEach(i => {
+            if (i.type === "strength") {
+                i.multiple = i.data.quantity > 1;
+            }
+        })
+
         //this._prepareItems(sheetData);
 
         //sheetData.config = CONFIG.splittermond;
@@ -51,7 +57,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
         }
 
-        if (["mastery", "strength", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign", "culturelore"].includes(itemData.type)) {
+        if (["mastery", "strength", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign", "culturelore", "statuseffect"].includes(itemData.type)) {
             return super._onDropItemCreate(itemData);
         }
 

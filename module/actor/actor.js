@@ -40,7 +40,8 @@ export default class SplittermondActor extends Actor {
             nbrLevels: 5,
             level: 0,
             value: 0,
-            mod: 0
+            mod: 0,
+            levelMod: 0
         }
 
         if (actorData.type === "character") {
@@ -78,7 +79,7 @@ export default class SplittermondActor extends Actor {
 
 
         this._prepareActiveDefense();
-
+        data.derivedAttributes.speed.value *= data.derivedAttributes.speed.multiplier;
 
     }
 
@@ -175,19 +176,30 @@ export default class SplittermondActor extends Actor {
 
 
 
-        data.health.woundMalus.level = data.health.woundMalus.nbrLevels - Math.ceil(data.health.total.value / data.derivedAttributes.healthpoints.value);
+        data.health.woundMalus.level = Math.max(Math.min(data.health.woundMalus.nbrLevels - Math.ceil(data.health.total.value / data.derivedAttributes.healthpoints.value) + data.health.woundMalus.levelMod, data.health.woundMalus.nbrLevels - 1), 0);
         data.health.woundMalus.value = data.health.woundMalus.levels[data.health.woundMalus.level];
 
         if (data.health.woundMalus.value) {
-            ["speed", "initiative"].forEach((type) => {
-                if (!data.derivedAttributes[type].malus) {
-                    data.derivedAttributes[type].malus = {
-                        all: []
-                    };
-                }
-                data.derivedAttributes[type].malus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
-                data.derivedAttributes[type].value += data.health.woundMalus.value;
-            });
+            if (!data.derivedAttributes.initiative.malus) {
+                data.derivedAttributes.initiative.malus = {
+                    all: []
+                };
+            }
+            if (!data.derivedAttributes.initiative.bonus) {
+                data.derivedAttributes.initiative.bonus = {
+                    misc: []
+                };
+            }
+            data.derivedAttributes.initiative.bonus.misc.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+            data.derivedAttributes.initiative.value -= data.health.woundMalus.value;
+
+            if (!data.derivedAttributes.speed.malus) {
+                data.derivedAttributes.speed.malus = {
+                    all: []
+                };
+            }
+            data.derivedAttributes.speed.malus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+            data.derivedAttributes.speed.value += data.health.woundMalus.value;
 
             Object.keys(data.skills).forEach(skill => {
                 if (!data.skills[skill].malus) {
@@ -198,6 +210,20 @@ export default class SplittermondActor extends Actor {
                 data.skills[skill].malus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
                 data.skills[skill].value += data.health.woundMalus.value;
             });
+
+            actorData.items.forEach(item => {
+                if (item.type === "weapon" || item.type === "shield") {
+                    if (!item.data.skillMalus) {
+                        item.data.skillMalus = {
+                            all: []
+                        };
+                    }
+                    item.data.skillMalus.all.push({ value: -data.health.woundMalus.value, description: game.i18n.localize("splittermond.woundMalus") });
+                    item.data.skillValue += data.health.woundMalus.value;
+                }
+            });
+
+
         }
 
     }
@@ -266,19 +292,46 @@ export default class SplittermondActor extends Actor {
 
         actorData.items.forEach(item => {
             if (item.type === "weapon") {
+                let bonusMisc = data.skills[item.data.skill].bonus?.misc?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
+                let bonusEquipment = Math.min(data.skills[item.data.skill].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let bonusMagic = Math.min(data.skills[item.data.skill].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let malus = data.skills[item.data.skill].malus?.all?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
+
                 item.data.skillValue = parseInt(data.skills[item.data.skill].points);
                 item.data.skillValue += parseInt(data.attributes[item.data.attribute1].value);
                 item.data.skillValue += parseInt(data.attributes[item.data.attribute2].value);
+                item.data.skillBaseValue = item.data.skillValue;
+                item.data.skillValue += bonusMisc + bonusEquipment + bonusMagic - malus;
                 item.data.weaponSpeed = parseInt(item.data.weaponSpeed) + parseInt(data.tickMalus.value);
+                item.data.skillBonus = duplicate(data.skills[item.data.skill].bonus || null);
+                item.data.skillMalus = duplicate(data.skills[item.data.skill].malus || null);
+
+                if (actorData.type === "npc") {
+                    item.editableSkill = true;
+                }
             }
 
             if (item.type === "shield") {
+                let bonusMisc = data.skills[item.data.skill].bonus?.misc?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
+                let bonusEquipment = Math.min(data.skills[item.data.skill].bonus?.equipment?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let bonusMagic = Math.min(data.skills[item.data.skill].bonus?.magic?.reduce((acc, element) => acc + parseInt(element.value), 0), data.bonusCap) || 0;
+                let malus = data.skills[item.data.skill].malus?.all?.reduce((acc, element) => acc + parseInt(element.value), 0) || 0;
+
                 item.data.skillValue = parseInt(data.skills[item.data.skill].points);
                 item.data.skillValue += parseInt(data.attributes.intuition.value);
                 item.data.skillValue += parseInt(data.attributes.strength.value);
+                item.data.skillBaseValue = item.data.skillValue;
+                item.data.skillValue += bonusMisc + bonusEquipment + bonusMagic - malus;
                 item.data.attribute1 = "intuition";
                 item.data.attribute2 = "strength";
+                item.data.skillBonus = duplicate(data.skills[item.data.skill].bonus || null);
+                item.data.skillMalus = duplicate(data.skills[item.data.skill].malus || null);
+
+                if (actorData.type === "npc") {
+                    item.editableSkill = true;
+                }
             }
+
 
         });
     }
@@ -340,7 +393,7 @@ export default class SplittermondActor extends Actor {
         });
     }
 
-    _addModifier(name, str, type = "misc") {
+    _addModifier(name, str, type = "misc", multiplier = 1) {
         const actorData = this.data;
         const data = actorData.data;
         let allSkills = [CONFIG.splittermond.skillGroups.general,
@@ -348,30 +401,141 @@ export default class SplittermondActor extends Actor {
         ...CONFIG.splittermond.skillGroups.magic]
 
         str.split(',').forEach(str => {
+            str = str.trim();
             let temp = str.split(' ');
-            let value = parseInt(temp[1]);
-            if (value) {
-                let dataset;
-                let element = CONFIG.splittermond.derivedAttributes.find(attr => {
-                    return temp[0] === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
-                });
-                if (element) {
-                    dataset = data.derivedAttributes[element];
-                } else {
-                    if (CONFIG.splittermond.skillGroups.general.includes(temp[0])) {
-                        dataset = data.skills[temp[0]];
-                    };
+            temp[0] = temp[0].trim();
+            let value = parseFloat(temp[1]);
+            let dataset;
+            let element = CONFIG.splittermond.derivedAttributes.find(attr => {
+                return temp[0] === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
+            });
+            if (element) {
+                dataset = data.derivedAttributes[element];
+            } else {
+                if (CONFIG.splittermond.skillGroups.general.includes(temp[0])) {
+                    dataset = data.skills[temp[0]];
+                };
+                /*
+                if (temp[0] === "handicap") {
+                    dataset = data.handicap;
+                }
+                */
+            }
 
-                    if (temp[0] === "handicap") {
-                        dataset = data.handicap;
+            if (dataset) {
+                if (!dataset.malus)
+                    dataset.malus = {
+                        all: []
+                    };
+                if (!dataset.bonus)
+                    dataset.bonus = {
+                        magic: [],
+                        equipment: [],
+                        misc: [],
+                    };
+                if (value * multiplier != 0) {
+                    if (value * multiplier > 0) {
+                        dataset.bonus[type].push({ value: value * multiplier, description: name });
+                    } else {
+                        dataset.malus.all.push({ value: -value * multiplier, description: name });
                     }
                 }
 
-                if (dataset) {
+                return
+            }
+
+            if (temp[0] === "GSW.mult") {
+                data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
+            }
+
+            if (temp[0] === "handicap.shield.mod") {
+                if (!data.handicap.shield.mod) {
+                    data.handicap.shield.mod = 0;
+                }
+                data.handicap.shield.mod += value * multiplier;
+            }
+
+            if (temp[0] === "handicap.armor.mod") {
+                if (!data.handicap.armor.mod) {
+                    data.handicap.armor.mod = 0;
+                }
+                data.handicap.armor.mod += value * multiplier;
+            }
+
+            if (temp[0] === "tickmalus.shield.mod") {
+                if (!data.tickMalus.shield.mod) {
+                    data.tickMalus.shield.mod = 0;
+                }
+                data.tickMalus.shield.mod += value * multiplier;
+            }
+
+            if (temp[0] === "tickmalus.armor.mod") {
+                if (!data.tickMalus.armor.mod) {
+                    data.tickMalus.armor.mod = 0;
+                }
+                data.tickMalus.armor.mod += value * multiplier;
+            }
+
+            if (temp[0] === "tickmalus.mod") {
+                data.tickMalus.mod += value;
+            }
+
+            if (temp[0] === "woundMalus.nbrLevels") {
+                data.health.woundMalus.nbrLevels = value * multiplier;
+            }
+
+            if (temp[0] === "woundMalus.mod") {
+                data.health.woundMalus.mod += value * multiplier;
+            }
+
+            if (temp[0] === "woundMalus.levelMod") {
+                data.health.woundMalus.levelMod += value * multiplier;
+            }
+
+            if (temp[0] === "splinterpoints") {
+                data.splinterpoints.max = parseInt(data.splinterpoints.max) + value * multiplier;
+            }
+
+            if (temp[0] === "healthRegeneration.multiplier") {
+                actorData.healthRegeneration.multiplier = value * multiplier;
+            }
+
+            if (temp[0] === "focusRegeneration.multiplier") {
+                actorData.focusRegeneration.multiplier = value * multiplier;
+            }
+
+            if (temp[0] === "generalSkills") {
+                CONFIG.splittermond.skillGroups.general.forEach((skill) => {
+                    let dataset = data.skills[skill];
                     if (!dataset.malus)
                         dataset.malus = {
                             all: []
+                        }
+
+                    if (!dataset.bonus)
+                        dataset.bonus = {
+                            magic: [],
+                            equipment: [],
+                            misc: [],
                         };
+                    if (value * multiplier != 0) {
+                        if (value * multiplier > 0) {
+                            dataset.bonus[type].push({ value: value * multiplier, description: name });
+                        } else {
+                            dataset.malus.all.push({ value: -value * multiplier, description: name });
+                        }
+                    }
+                });
+            }
+
+            if (temp[0] === "magicSkills") {
+                CONFIG.splittermond.skillGroups.magic.forEach((skill) => {
+                    let dataset = data.skills[skill];
+                    if (!dataset.malus)
+                        dataset.malus = {
+                            all: []
+                        }
+
                     if (!dataset.bonus)
                         dataset.bonus = {
                             magic: [],
@@ -379,61 +543,39 @@ export default class SplittermondActor extends Actor {
                             misc: [],
                         };
 
-                    if (value > 0) {
-                        dataset.bonus[type].push({ value: value, description: name });
-                    } else {
-                        dataset.malus.all.push({ value: -value, description: name });
+                    if (value * multiplier != 0) {
+                        if (value * multiplier > 0) {
+                            dataset.bonus[type].push({ value: value * multiplier, description: name });
+                        } else {
+                            dataset.malus.all.push({ value: -value * multiplier, description: name });
+                        }
                     }
-                    return
-                }
+                });
+            }
 
-                if (temp[0] === "handicap.shield.mod") {
-                    if (!data.handicap.shield.mod) {
-                        data.handicap.shield.mod = 0;
+            if (temp[0] === "fightingSkills") {
+                CONFIG.splittermond.skillGroups.fighting.forEach((skill) => {
+                    let dataset = data.skills[skill];
+                    if (!dataset.malus)
+                        dataset.malus = {
+                            all: []
+                        }
+
+                    if (!dataset.bonus)
+                        dataset.bonus = {
+                            magic: [],
+                            equipment: [],
+                            misc: [],
+                        };
+
+                    if (value * multiplier != 0) {
+                        if (value * multiplier > 0) {
+                            dataset.bonus[type].push({ value: value * multiplier, description: name });
+                        } else {
+                            dataset.malus.all.push({ value: -value * multiplier, description: name });
+                        }
                     }
-                    data.handicap.shield.mod += value;
-                }
-
-                if (temp[0] === "handicap.armor.mod") {
-                    if (!data.handicap.armor.mod) {
-                        data.handicap.armor.mod = 0;
-                    }
-                    data.handicap.armor.mod += value;
-                }
-
-                if (temp[0] === "tickmalus.shield.mod") {
-                    if (!data.tickMalus.shield.mod) {
-                        data.tickMalus.shield.mod = 0;
-                    }
-                    data.tickMalus.shield.mod += value;
-                }
-
-                if (temp[0] === "tickmalus.armor.mod") {
-                    if (!data.tickMalus.armor.mod) {
-                        data.tickMalus.armor.mod = 0;
-                    }
-                    data.tickMalus.armor.mod += value;
-                }
-
-                if (temp[0] === "woundMalus.nbrLevels") {
-                    data.health.woundMalus.nbrLevels = value;
-                }
-
-                if (temp[0] === "woundMalus.mod") {
-                    data.health.woundMalus.mod += value;
-                }
-
-                if (temp[0] === "splinterpoints") {
-                    data.splinterpoints.max = parseInt(data.splinterpoints.max) + value;
-                }
-
-                if (temp[0] === "healthRegeneration.multiplier") {
-                    actorData.healthRegeneration.multiplier = value;
-                }
-
-                if (temp[0] === "focusRegeneration.multiplier") {
-                    actorData.focusRegeneration.multiplier = value;
-                }
+                });
             }
         });
     }
@@ -448,14 +590,17 @@ export default class SplittermondActor extends Actor {
                     this._addModifier(i.name, i.data.modifier, "equipment");
                 }
             }
-            if (["mastery", "strength", "npcfeature"].includes(i.type)) {
+            if (["mastery", "strength", "npcfeature", "statuseffect"].includes(i.type)) {
                 if (i.data.modifier) {
                     if (i.type === "strength") {
-                        for (var k = 0; k < parseInt(i.data.quantity); k = k + 1) {
+                        this._addModifier(i.name, i.data.modifier, "misc", i.data.quantity);
+                    } else {
+                        if (i.type === "statuseffect") {
+                            this._addModifier(i.name, i.data.modifier, "misc", i.data.level);
+                        } else {
                             this._addModifier(i.name, i.data.modifier);
                         }
-                    } else {
-                        this._addModifier(i.name, i.data.modifier);
+
                     }
 
                 }
@@ -520,7 +665,7 @@ export default class SplittermondActor extends Actor {
             data.tickMalus.armor.value = Math.max(data.tickMalus.armor.value + data.tickMalus.armor.mod, 0);
         }
 
-        data.tickMalus.value = data.tickMalus.shield.value + data.tickMalus.armor.value;
+        data.tickMalus.value = data.tickMalus.shield.value + data.tickMalus.armor.value + data.tickMalus.mod;
 
         if (data.handicap.value) {
             let label = game.i18n.localize("splittermond.handicap");
@@ -543,6 +688,15 @@ export default class SplittermondActor extends Actor {
                 data.derivedAttributes[attr].value += bonusMisc + bonusEquipment + bonusMagic - malus;
             }
         });
+
+
+
+        let stealthModifier = 5 - data.derivedAttributes.size.value;
+        if (stealthModifier) {
+            this._addModifier(game.i18n.localize("splittermond.derivedAttribute.size.short"), `stealth ${stealthModifier}`);
+        }
+
+
 
         [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].forEach(skill => {
             if (data.skills[skill].bonus) {
@@ -572,7 +726,8 @@ export default class SplittermondActor extends Actor {
                 value: parseInt(data.species.size)
             };
             data.derivedAttributes.speed = {
-                value: parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value)
+                value: parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value),
+                multiplier: 1
             };
             data.derivedAttributes.initiative = {
                 value: 10 - parseInt(data.attributes.intuition.value)
@@ -619,6 +774,8 @@ export default class SplittermondActor extends Actor {
             data.skills[skill].value = parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) +
                 parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value)
                 + parseInt(data.skills[skill].points);
+
+            data.skills[skill].baseValue = data.skills[skill].value;
         });
 
         CONFIG.splittermond.skillGroups.magic.forEach(skill => {
@@ -630,6 +787,7 @@ export default class SplittermondActor extends Actor {
             data.skills[skill].value = parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) +
                 parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value)
                 + parseInt(data.skills[skill].points);
+            data.skills[skill].baseValue = data.skills[skill].value;
         });
     }
 

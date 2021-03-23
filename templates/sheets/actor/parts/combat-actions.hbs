@@ -26,15 +26,38 @@
                     <label>
                         <a class="rollable">{{localize this.name}}</a>
                     </label>
-                    <div class="value">
+                    <div class="value tooltip-activator">
                         {{#if editableSkill}}
-                        {{this.data.skillValue}}
-                        {{else}}
                         <input name="data.skills.{{this.data.skill}}.value" type="text"
                             data-skill-value="{{this.data.skillValue}}" value="{{this.data.skillValue}}"
                             data-dtype="Number">
+                        {{else}}
+                        {{this.data.skillValue}}
                         {{/if}}
+
                     </div>
+                    {{#if this.data.skillMalus}}
+                    <div class="bonus-malus tooltip">
+                        <label>{{localize "splittermond.skillValue"}}</label>
+                        <div class="value">{{this.data.skillBaseValue}}</div>
+                        {{#each this.data.skillBonus.equipment}}
+                        <label>{{this.description}}</label>
+                        <div class="value">+{{this.value}}</div>
+                        {{/each}}
+                        {{#each this.data.skillBonus.magic}}
+                        <label>{{this.description}}</label>
+                        <div class="value">+{{this.value}}</div>
+                        {{/each}}
+                        {{#each this.data.skillBonus.misc}}
+                        <label>{{this.description}}</label>
+                        <div class="value">+{{this.value}}</div>
+                        {{/each}}
+                        {{#each this.data.skillMalus.all}}
+                        <label>{{this.description}}</label>
+                        <div class="value">-{{this.value}}</div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
                     <div class="damage">
                         <a class="rollable" data-roll-type="damage" data-damage="{{this.data.damage}}"
                             data-features="{{this.data.features}}">{{this.data.damage}}</a>

@@ -330,7 +330,6 @@
   position: absolute;
   min-width: 160px;
   top: 2em;
-  left: 10%;
   padding: 7px;
   background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
@@ -938,6 +937,9 @@
 .splittermond.sheet.actor .window-content main .tab {
   flex: 1;
   overflow-y: auto;
+}
+.splittermond.sheet.actor .window-content main .tab .tab {
+  overflow: unset;
 }
 .splittermond.sheet.actor .window-content main section.general {
   z-index: 0;
