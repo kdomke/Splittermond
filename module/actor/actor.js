@@ -758,6 +758,8 @@ export default class SplittermondActor extends Actor {
                 bonus: 0
             };
 
+        } else {
+            data.derivedAttributes.speed.multiplier = 1;
         }
 
     }
