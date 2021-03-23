@@ -665,7 +665,7 @@ export default class SplittermondActor extends Actor {
             data.tickMalus.armor.value = Math.max(data.tickMalus.armor.value + data.tickMalus.armor.mod, 0);
         }
 
-        data.tickMalus.value = data.tickMalus.shield.value + data.tickMalus.armor.value + data.tickMalus.mod;
+        data.tickMalus.value = data.tickMalus.shield.value + data.tickMalus.armor.value + (data.tickMalus.mod || 0);
 
         if (data.handicap.value) {
             let label = game.i18n.localize("splittermond.handicap");
