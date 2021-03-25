@@ -336,8 +336,8 @@
         </section>
         <section class="tab fight" data-group="primary" data-tab="fight">
             <div>
-                {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs" itemsByType=itemsByType
-                activeDefense=data.activeDefense attacks=data.attacks editableSkill=false}}
+                {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
+                activeDefense=data.activeDefense attacks=data.attacks}}
             </div>
         </section>
         <section class="tab inventory" data-group="primary" data-tab="inventory">
@@ -348,6 +348,7 @@
         <section class="tab status" data-group="primary" data-tab="status">
             {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
             channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
+            spelleffects=itemsByType.spelleffect
             hasRestActions=true}}
         </section>
 

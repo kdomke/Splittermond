@@ -66,6 +66,31 @@
                 {{/each}}
             </ol>
         </div>
-
+    </div>
+    <div class="spell-effects">
+        <div class="list" data-item-type="spelleffect">
+            <div class="list-header">
+                <h3>{{localize "splittermond.spellEffects"}}</h3>
+                <div class="actions">
+                    <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <ol>
+                {{#each spelleffects}}
+                <li data-item-id="{{this._id}}">
+                    <input class="name tooltip-activator" type="text" data-field="name" value="{{this.name}}">
+                    <div class="tooltip">{{{this.data.description}}}</div>
+                    <div class="actions">
+                        <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
+                                aria-hidden="true"></i></button>
+                        <button class="button-inline" type="button" data-action="delete-item"><i class="fas fa-trash"
+                                aria-hidden="true"></i></button>
+                    </div>
+                </li>
+                {{/each}}
+            </ol>
+        </div>
     </div>
 </div>

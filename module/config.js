@@ -378,6 +378,19 @@ splittermond.itemSheetProperties = {
         }
 
     ],
+    spelleffect: [
+        {
+            groupName: "splittermond.general",
+            properties: [
+                {
+                    field: "data.modifier",
+                    label: "splittermond.modifier",
+                    template: "input"
+                }
+            ]
+        }
+
+    ],
     equipment: [
         {
             groupName: "splittermond.physicalProperties",

@@ -378,7 +378,8 @@
       "moonsign",
       "language",
       "culturelore",
-      "statuseffect"
+      "statuseffect",
+      "spelleffect"
     ],
     "templates": {
       "description": {
@@ -505,6 +506,12 @@
         "modifier"
       ],
       "level": 1
+    },
+    "spelleffect": {
+      "templates": [
+        "description",
+        "modifier"
+      ]
     },
     "mastery": {
       "templates": [

@@ -331,7 +331,8 @@ export default class SplittermondActor extends Actor {
                 attack.skill.baseValue += parseInt(data.attributes[attack.attribute1].value)
                 attack.skill.baseValue += parseInt(data.attributes[attack.attribute2].value)
                 if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skillId))
-                    attack.weaponSpeed += parseInt(data.tickMalus.value);
+                    attack.weaponSpeed += parseInt(data.tickMalus.shield.value) + parseInt(data.tickMalus.armor.value);
+                attack.weaponSpeed += parseInt(data.tickMalus.value);
                 if (actorData.type === "npc") {
                     attack.skill.editable = true;
                 }
@@ -473,13 +474,13 @@ export default class SplittermondActor extends Actor {
                 case "handicap.armor.mod":
                     addModifierHelper(data.handicap.armor);
                     break;
-                case "tickmalus.shield.mod":
+                case "tickMalus.shield.mod":
                     addModifierHelper(data.tickMalus.shield);
                     break;
-                case "tickmalus.armor.mod":
+                case "tickMalus.armor.mod":
                     addModifierHelper(data.tickMalus.armor);
                     break;
-                case "tickmalus.mod":
+                case "tickMalus.mod":
                     addModifierHelper(data.tickMalus);
                     break;
                 case "woundMalus.nbrLevels":
@@ -556,6 +557,9 @@ export default class SplittermondActor extends Actor {
                     case "statuseffect":
                         this._addModifier(i.name, i.data.modifier, "misc", i.data.level);
                         break;
+                    case "spelleffect":
+                        this._addModifier(i.name, i.data.modifier, "magic");
+                        break
                     default:
                         this._addModifier(i.name, i.data.modifier);
                         break;
@@ -564,13 +568,16 @@ export default class SplittermondActor extends Actor {
         });
 
         let _sumAllHelper = (acc, current) => acc + current.value;
-        data.handicap.value = data.handicap.shield.value + (data.handicap.shield.mod?.sources.reduce(_sumAllHelper, 0) || 0);
-        data.handicap.value += data.handicap.armor.value + (data.handicap.armor.mod?.sources.reduce(_sumAllHelper, 0) || 0);
-        data.handicap.value += (data.handicap.mod?.sources.reduce(_sumAllHelper, 0) || 0);
+        data.handicap.shield.value = Math.max(data.handicap.shield.value + (data.handicap.shield.mod?.sources.reduce(_sumAllHelper, 0) || 0), 0);
+        data.handicap.armor.value = Math.max(data.handicap.armor.value + (data.handicap.armor.mod?.sources.reduce(_sumAllHelper, 0) || 0), 0);
+        data.handicap.value = Math.max(data.handicap.shield.value + data.handicap.armor.value + (data.handicap.mod?.sources.reduce(_sumAllHelper, 0) || 0), 0);
 
-        data.tickMalus.value = data.tickMalus.shield.value + (data.tickMalus.shield.mod?.sources.reduce(_sumAllHelper, 0) || 0);
-        data.tickMalus.value += data.tickMalus.armor.value + (data.tickMalus.armor.mod?.sources.reduce(_sumAllHelper, 0) || 0);
-        data.tickMalus.value += (data.tickMalus.mod?.sources.reduce(_sumAllHelper, 0) || 0);
+
+        data.tickMalus.shield.value += (data.tickMalus.shield.mod?.sources.reduce(_sumAllHelper, 0) || 0);
+        data.tickMalus.shield.value = Math.max(data.tickMalus.shield.value, 0)
+        data.tickMalus.armor.value += (data.tickMalus.armor.mod?.sources.reduce(_sumAllHelper, 0) || 0);
+        data.tickMalus.armor.value = Math.max(data.tickMalus.armor.value, 0)
+        data.tickMalus.value = (data.tickMalus.mod?.sources.reduce(_sumAllHelper, 0) || 0);
 
         if (data.handicap.value) {
             let label = game.i18n.localize("splittermond.handicap");
