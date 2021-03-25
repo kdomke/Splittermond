@@ -496,7 +496,7 @@ splittermond.itemSheetProperties.weapon = [
                 field: "data.secondaryAttack.skill",
                 label: "splittermond.fightingSkill",
                 template: "select",
-                choices: { none: "splittermond.none", ...splittermond.fightingSkillOptions }
+                choices: { none: "splittermond.skillLabel.none", ...splittermond.fightingSkillOptions }
             },
             {
                 field: "data.secondaryAttack.attribute1",
@@ -783,5 +783,7 @@ splittermond.modifier = {
     focusregen: "focusRegeneration.multiplier 3",
     liferegen: "healthRegeneration.multiplier 3",
 }
+
+
 
 

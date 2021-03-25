@@ -175,8 +175,8 @@
 
             <div>
                 <div>
-                    {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs" itemsByType=itemsByType
-                    activeDefense=data.activeDefense editableSkill=true}}
+                    {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
+                    activeDefense=data.activeDefense attacks=data.attacks}}
                 </div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
                 masteriesBySkill=masteriesBySkill}}

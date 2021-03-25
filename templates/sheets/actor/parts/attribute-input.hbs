@@ -15,23 +15,11 @@
         {{else}}
         <span>{{attribute.value}}</span>
         {{/if}}
-        {{#if attribute.bonus}}
+        {{#if attribute.mod}}
         <div class="bonus-malus tooltip">
-            {{#each attribute.bonus.equipment}}
+            {{#each attribute.mod.sources}}
             <label>{{this.description}}</label>
-            <div class="value">+{{this.value}}</div>
-            {{/each}}
-            {{#each attribute.bonus.magic}}
-            <label>{{this.description}}</label>
-            <div class="value">+{{this.value}}</div>
-            {{/each}}
-            {{#each attribute.bonus.misc}}
-            <label>{{this.description}}</label>
-            <div class="value">+{{this.value}}</div>
-            {{/each}}
-            {{#each attribute.malus.all}}
-            <label>{{this.description}}</label>
-            <div class="value">-{{this.value}}</div>
+            <div class="value">{{modifierFormat this.value}}</div>
             {{/each}}
         </div>
         {{/if}}

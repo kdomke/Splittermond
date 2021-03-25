@@ -10,6 +10,8 @@ export default class SplittermondActorSheet extends ActorSheet {
     getData() {
         const sheetData = super.getData();
 
+        Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
+
         if (sheetData.data.attributes) {
             for (let [attrId, attr] of Object.entries(sheetData.data.attributes)) {
                 attr.label = {
@@ -270,8 +272,8 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (type === "attack") {
-                const itemId = this._getClosestData($(event.currentTarget), 'item-id');
-                this.actor.rollAttack(this.actor.data.items.find(el => el._id === itemId));
+                const attackId = this._getClosestData($(event.currentTarget), 'attack-id');
+                this.actor.rollAttack(attackId);
             }
             if (type === "spell") {
                 const itemId = this._getClosestData($(event.currentTarget), 'item-id');
@@ -308,12 +310,11 @@ export default class SplittermondActorSheet extends ActorSheet {
         })
 
         $(".draggable").on("dragstart", event => {
-            const itemId = event.currentTarget.dataset.itemId;
-            if (itemId) {
-                const itemData = this.actor.data.items.find(el => el._id === itemId);
+            const attackId = event.currentTarget.dataset.attackId;
+            if (attackId) {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                    type: "Item",
-                    data: itemData,
+                    type: "attack",
+                    attackId: attackId,
                     actorId: this.actor._id
                 }));
                 event.stopPropagation();
@@ -331,36 +332,18 @@ export default class SplittermondActorSheet extends ActorSheet {
                 event.stopPropagation();
                 return;
             }
-            /*
-            const type = this._getClosestData($(event.currentTarget), 'roll-type');
-            if (type === "skill") {
-                const skill = this._getClosestData($(event.currentTarget), 'skill');
-                event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                    type: "skill",
-                    skill: skill
-                }));
-            }
 
-            if (type === "attack") {
-                const itemId = this._getClosestData($(event.currentTarget), 'item-id');
-                const item = this.actor.data.items.find(el => el._id === itemId);
+            const itemId = event.currentTarget.dataset.itemId;
+            if (itemId) {
+                const itemData = this.actor.data.items.find(el => el._id === itemId);
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                    type: "attack",
-                    actor: this.actor._id,
-                    item: item
+                    type: "Item",
+                    data: itemData,
+                    actorId: this.actor._id
                 }));
+                event.stopPropagation();
+                return;
             }
-
-            if (type === "spell") {
-                const itemId = this._getClosestData($(event.currentTarget), 'item-id');
-                const item = this.actor.data.items.find(el => el._id === itemId);
-                event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
-                    type: "spell",
-                    actor: this.actor._id,
-                    item: item
-                }));
-            }
-            */
 
         }).attr('draggable', true);
 

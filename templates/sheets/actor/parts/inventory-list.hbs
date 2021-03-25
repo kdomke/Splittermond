@@ -14,7 +14,6 @@
     </div>
     <ol>
         {{#each itemsByType.weapon}}
-        {{#if this.inInventory}}
         <li class="draggable" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}} <button class="button-inline" type="button" data-action="toggle-equipped">
@@ -35,7 +34,6 @@
                 </button>
             </div>
         </li>
-        {{/if}}
         {{/each}}
     </ol>
 </div>

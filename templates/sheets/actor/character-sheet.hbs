@@ -268,25 +268,13 @@
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
                         <div class="value tooltip-activator">{{skill.value}}</div>
-                        {{#if skill.malus}}
+                        {{#if skill.mod}}
                         <div class="bonus-malus tooltip">
                             <label>{{localize "splittermond.skillValue"}}</label>
                             <div class="value">{{this.baseValue}}</div>
-                            {{#each skill.bonus.equipment}}
+                            {{#each skill.mod.sources}}
                             <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.bonus.magic}}
-                            <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.bonus.misc}}
-                            <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.malus.all}}
-                            <label>{{this.description}}</label>
-                            <div class="value">-{{this.value}}</div>
+                            <div class="value">{{modifierFormat this.value}}</div>
                             {{/each}}
                         </div>
                         {{/if}}
@@ -323,25 +311,13 @@
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
                         <div class="value tooltip-activator">{{skill.value}}</div>
-                        {{#if skill.malus}}
+                        {{#if skill.mod}}
                         <div class="bonus-malus tooltip">
                             <label>{{localize "splittermond.skillValue"}}</label>
                             <div class="value">{{this.baseValue}}</div>
-                            {{#each skill.bonus.equipment}}
+                            {{#each skill.mod.sources}}
                             <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.bonus.magic}}
-                            <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.bonus.misc}}
-                            <label>{{this.description}}</label>
-                            <div class="value">+{{this.value}}</div>
-                            {{/each}}
-                            {{#each skill.malus.all}}
-                            <label>{{this.description}}</label>
-                            <div class="value">-{{this.value}}</div>
+                            <div class="value">{{modifierFormat this.value}}</div>
                             {{/each}}
                         </div>
                         {{/if}}
@@ -361,7 +337,7 @@
         <section class="tab fight" data-group="primary" data-tab="fight">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs" itemsByType=itemsByType
-                activeDefense=data.activeDefense editableSkill=false}}
+                activeDefense=data.activeDefense attacks=data.attacks editableSkill=false}}
             </div>
         </section>
         <section class="tab inventory" data-group="primary" data-tab="inventory">

@@ -20,6 +20,7 @@ Hooks.once("init", function () {
 
     game.splittermond = {
         skillCheck: Macros.skillCheck,
+        attackCheck: Macros.attackCheck,
         itemCheck: Macros.itemCheck
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
@@ -70,6 +71,26 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
     if (data.type === "skill") {
         macroData.name = game.i18n.localize(`splittermond.skillLabel.${data.skill}`);
         macroData.command = `game.splittermond.skillCheck("${data.skill}")`;
+    };
+
+    if (data.type === "attack") {
+        let actorId = data.actorId || "";
+        let actor = game.actors.get(actorId);
+        if (!actor) return;
+        const attack = actor.data.data.attacks.find(a => a._id === data.attackId);
+        if (!attack) return;
+
+        macroData.name = attack.name;
+        macroData.img = attack.img;
+
+
+
+        if (game.user.isGM) {
+            macroData.name += ` (${actor.data.name})`;
+        }
+
+        macroData.command = `game.splittermond.attackCheck("${actorId}","${data.attackId}")`;
+
     };
 
     if (data.type === "Item") {

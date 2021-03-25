@@ -6,6 +6,12 @@ export function skillCheck(skill) {
     actor.rollSkill(skill);
 }
 
+export function attackCheck(actorId, attack) {
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+    actor.rollAttack(attack);
+}
+
 export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
     let actor;
     if (actorId)
@@ -45,3 +51,4 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
 
 
 }
+
