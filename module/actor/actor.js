@@ -722,8 +722,8 @@ export default class SplittermondActor extends Actor {
 
     async rollSkill(skill, options = {}) {
         let checkData = await CheckDialog.create({
-            difficulty: options.difficulty | 15,
-            modifier: options.modifier | 0
+            difficulty: options.difficulty || 15,
+            modifier: options.modifier || 0
         });
         if (!checkData) return;
 

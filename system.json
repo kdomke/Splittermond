@@ -2,7 +2,7 @@
   "name": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "author": "Simon",
   "scripts": [],
   "esmodules": [
@@ -20,6 +20,32 @@
       "entity": "Item",
       "tags": [
         "species"
+      ],
+      "langs": [
+        "de"
+      ]
+    },
+    {
+      "name": "macros",
+      "label": "Macros",
+      "system": "splittermond",
+      "path": "packs/macros.db",
+      "entity": "Macro",
+      "tags": [
+        "macros"
+      ],
+      "langs": [
+        "de"
+      ]
+    },
+    {
+      "name": "journal-entries",
+      "label": "Journal",
+      "system": "splittermond",
+      "path": "packs/journal-entries.db",
+      "entity": "JournalEntry",
+      "tags": [
+        "journal-entry"
       ],
       "langs": [
         "de"

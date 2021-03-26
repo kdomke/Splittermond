@@ -21,7 +21,8 @@ Hooks.once("init", function () {
     game.splittermond = {
         skillCheck: Macros.skillCheck,
         attackCheck: Macros.attackCheck,
-        itemCheck: Macros.itemCheck
+        itemCheck: Macros.itemCheck,
+        requestSkillCheck: Macros.requestSkillCheck
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
