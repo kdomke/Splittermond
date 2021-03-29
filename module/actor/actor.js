@@ -278,23 +278,25 @@ export default class SplittermondActor extends Actor {
                         features: itemData.features,
                         damage: itemData.damage
                     });
-
-                    if (!(item.data.secondaryAttack.skill === "" || item.data.secondaryAttack.skill === "none")) {
-                        let itemData = duplicate(item.data.secondaryAttack);
-                        attacks.push({
-                            _id: item._id + "_secondary",
-                            name: item.name + " (" + game.i18n.localize("splittermond.skillLabel." + itemData.skill) + ")",
-                            img: item.img,
-                            item: item,
-                            skillId: itemData.skill,
-                            attribute1: itemData.attribute1,
-                            attribute2: itemData.attribute2,
-                            weaponSpeed: parseInt(itemData.weaponSpeed),
-                            range: itemData.range,
-                            features: itemData.features,
-                            damage: itemData.damage
-                        });
+                    if (item.data.secondaryAttack) {
+                        if (item.data.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
+                            let itemData = duplicate(item.data.secondaryAttack);
+                            attacks.push({
+                                _id: item._id + "_secondary",
+                                name: item.name + " (" + game.i18n.localize("splittermond.skillLabel." + itemData.skill) + ")",
+                                img: item.img,
+                                item: item,
+                                skillId: itemData.skill,
+                                attribute1: itemData.attribute1,
+                                attribute2: itemData.attribute2,
+                                weaponSpeed: parseInt(itemData.weaponSpeed),
+                                range: itemData.range,
+                                features: itemData.features,
+                                damage: itemData.damage
+                            });
+                        }
                     }
+
                 }
             }
 
