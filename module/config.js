@@ -636,6 +636,11 @@ splittermond.itemSheetProperties.spell = [
         groupName: "splittermond.generalProperties",
         properties: [
             {
+                field: "data.availableIn",
+                label: "splittermond.availableIn",
+                template: "input"
+            },
+            {
                 field: "data.skill",
                 label: "splittermond.skill",
                 template: "select",

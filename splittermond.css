@@ -524,6 +524,9 @@
 .splittermond.dialog form label {
   text-align: right;
 }
+.splittermond.dialog.selection .dialog-buttons {
+  grid-template-columns: 1fr;
+}
 .taglist {
   display: flex;
   flex-direction: row;
