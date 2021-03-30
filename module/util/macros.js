@@ -145,15 +145,15 @@ export async function importSpell(rawData) {
     let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)\n[^ ]+:/);
     spellData.data.difficulty = difficultyData[1];
 
-    if (spellData.data.difficulty.search("Geistiger Widerstand")) {
+    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0) {
         spellData.data.difficulty = "GW";
     }
 
-    if (spellData.data.difficulty.search("Körperlicher Widerstand")) {
+    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0) {
         spellData.data.difficulty = "KW";
     }
 
-    if (spellData.data.difficulty.search("Verteidigung")) {
+    if (spellData.data.difficulty.search("Verteidigung") >= 0) {
         spellData.data.difficulty = "VTD";
     }
 
@@ -190,7 +190,7 @@ export async function importSpell(rawData) {
     let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
     spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
     spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
-    spellData.data.description = spellData.data.enhancementDescription.replace(/  /g, " ");
+    spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
     spellData.data.degreeOfSuccessOptions = {
         castDuration: egData[1].search("Auslösezeit") >= 0,
         consumedFocus: egData[1].search("Verzehrter Fokus") >= 0,
