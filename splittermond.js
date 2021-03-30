@@ -22,7 +22,8 @@ Hooks.once("init", function () {
         skillCheck: Macros.skillCheck,
         attackCheck: Macros.attackCheck,
         itemCheck: Macros.itemCheck,
-        requestSkillCheck: Macros.requestSkillCheck
+        requestSkillCheck: Macros.requestSkillCheck,
+        importNpc: Macros.importNpc
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -56,6 +57,23 @@ Hooks.once("init", function () {
         `${templateBasePath}/sheets/actor/parts/inventory-list.hbs`,
         `${templateBasePath}/sheets/actor/parts/status-tab.hbs`
     ]);
+
+    document.addEventListener('paste', function (e) {
+        let rawData = e.clipboardData.getData("text");
+        rawData = rawData.replace(/\r\n/g, "\n");
+        rawData = rawData.replace(/-\n/g, "");
+        rawData = rawData.replace(//g, "");
+        console.log(rawData);
+
+        if (rawData.includes("Schulen:") &&
+            rawData.includes("Schwierigkeit:") &&
+            rawData.includes("Typus:") &&
+            rawData.includes("Kosten:") &&
+            rawData.includes("Zauberdauer:") &&
+            rawData.includes("Wirkung:")) {
+            Macros.importSpell(rawData);
+        }
+    }, false);
 
 
     console.log("Splittermond | DONE!");

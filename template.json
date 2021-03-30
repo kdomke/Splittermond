@@ -480,6 +480,7 @@
       "templates": [
         "description"
       ],
+      "availableIn": "",
       "skill": "",
       "skillLevel": 0,
       "spellType": [],

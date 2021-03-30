@@ -635,9 +635,9 @@ export default class SplittermondActor extends Actor {
 
         if (actorData.type === "character") {
             CONFIG.splittermond.attributes.forEach(attr => {
-                data.attributes[attr].value = parseInt(data.attributes[attr].initial)
-                    + parseInt(data.attributes[attr].species)
-                    + parseInt(data.attributes[attr].advances);
+                data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
+                    + parseInt(data.attributes[attr].species || 0)
+                    + parseInt(data.attributes[attr].advances || 0);
             });
 
 
@@ -1245,11 +1245,20 @@ export default class SplittermondActor extends Actor {
     }
     _parseCostsString(str) {
         let costDataRaw = /[0-9]*[ eg\/+]*([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
-        return {
-            channeled: costDataRaw[1] === "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
-            exhausted: costDataRaw[1] !== "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
-            consumed: parseInt(costDataRaw[3] || 0)
+        if (costDataRaw) {
+            return {
+                channeled: costDataRaw[1] === "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
+                exhausted: costDataRaw[1] !== "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
+                consumed: parseInt(costDataRaw[3] || 0)
+            }
+        } else {
+            return {
+                channeled: 0,
+                exhausted: 0,
+                consumed: 0
+            }
         }
+
     }
 
     async shortRest() {
