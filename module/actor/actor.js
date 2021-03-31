@@ -912,11 +912,11 @@ export default class SplittermondActor extends Actor {
                         enhancementCosts: s.enhancement,
                         enhancementDescription: s.enhancementDescription,
                         degreeOfSuccessOptions: {
-                            castDuration: s.enhancementOptions.search("Auslösezeit") >= 0,
-                            consumedFocus: s.enhancementOptions.search("Verzehrter Fokus") >= 0,
-                            exhaustedFocus: s.enhancementOptions.search("Erschöpfter Fokus") >= 0,
-                            channelizedFocus: s.enhancementOptions.search("Kanalisierter Fokus") >= 0,
-                            effectDuration: s.enhancementOptions.search("Wirkungsdauer") >= 0
+                            castDuration: s.enhancementOptions?.search("Auslösezeit") >= 0,
+                            consumedFocus: s.enhancementOptions?.search("Verzehrter Fokus") >= 0,
+                            exhaustedFocus: s.enhancementOptions?.search("Erschöpfter Fokus") >= 0,
+                            channelizedFocus: s.enhancementOptions?.search("Kanalisierter Fokus") >= 0,
+                            effectDuration: s.enhancementOptions?.search("Wirkungsdauer") >= 0
                         }
                     }
                 })
