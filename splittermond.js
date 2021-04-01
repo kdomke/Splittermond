@@ -50,6 +50,7 @@ Hooks.once("init", function () {
     loadTemplates([
         // Actor Partials
         `${templateBasePath}/sheets/actor/parts/attribute-input.hbs`,
+        `${templateBasePath}/sheets/actor/parts/derived-attributes.hbs`,
         `${templateBasePath}/sheets/actor/parts/focus-health.hbs`,
         `${templateBasePath}/sheets/actor/parts/mastery-list.hbs`,
         `${templateBasePath}/sheets/actor/parts/spells-list.hbs`,

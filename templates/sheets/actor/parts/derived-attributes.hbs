@@ -1,0 +1,29 @@
+<div class="attributes">
+    {{#each derivedAttributes as |attribute attributeId|}}
+    <div class="attribute tooltip-activator" id="{{attributeId}}">
+        <label>{{localize attribute.label.short}}</label>
+        {{#if attribute.editable}}
+        <input name="data.derivedAttributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+            data-dtype="Number">
+        {{else}}
+        <span>{{attribute.value}}</span>
+        {{/if}}
+        {{#if attribute.mod}}
+        <div class="bonus-malus tooltip">
+            {{#each attribute.mod.sources}}
+            <label>{{this.description}}</label>
+            <div class="value">{{modifierFormat this.value}}</div>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
+    {{/each}}
+</div>
+<div class="damage-reduction">
+    <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
+    {{#if damageReduction.editable}}
+    <input name="data.damageReduction.value" type="text" value="{{damageReduction.value}}" data-dtype="Number">
+    {{else}}
+    <span>{{damageReduction.value}}</span>
+    {{/if}}
+</div>

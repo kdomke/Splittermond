@@ -1,6 +1,3 @@
-import * as Dice from "../util/dice.js"
-import CheckDialog from "../apps/dialog/check-dialog.js"
-
 export default class SplittermondItem extends Item {
 
     prepareData() {
@@ -9,10 +6,42 @@ export default class SplittermondItem extends Item {
         const itemData = this.data;
         const data = itemData.data;
 
-        if (itemData.type === "weapon" && this.actor) {
-            data.skillPoints = this.skillPoints;
-            data.skillValue = this.skillValue;
+        if (data.id) {
+            if (!data.description) {
+                const descriptionId = `${itemData.type}.${data.id}.desc`;
+                const descriptionText = game.i18n.localize(descriptionId);
+                if (descriptionId !== descriptionText) {
+                    data.description = descriptionText;
+                }
+            }
+
+            if (CONFIG.splittermond.modifier[data.id]) {
+                data.modifier = CONFIG.splittermond.modifier[data.id];
+            }
+
+            if (itemData.type === "spell") {
+                const enhancementDescriptionId = `${itemData.type}.${data.id}.enhan`;
+                const enhancementDescriptionText = game.i18n.localize(enhancementDescriptionId);
+                if (enhancementDescriptionText !== enhancementDescriptionId) {
+                    data.enhancementDescription = enhancementDescriptionText;
+                }
+            }
+
+            if (itemData.type === "strength") {
+                if (data.level === false || data.level === true) {
+                    data.multiSelectable = data.level;
+                    data.level = 1;
+                }
+                if (data.quantity) {
+                    data.quantity = 1;
+                }
+            }
+
+
         }
+
+
+
     }
 
 }

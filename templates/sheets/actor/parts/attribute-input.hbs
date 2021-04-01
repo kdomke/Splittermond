@@ -6,24 +6,4 @@
         <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
     </div>
     {{/each}}
-    {{#each derivedAttributes as |attribute attributeId|}}
-    <div class="attribute tooltip-activator" id="{{attributeId}}">
-        <label>{{localize attribute.label.short}}</label>
-        {{#if attribute.editable}}
-        <input name="data.derivedAttributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
-            data-dtype="Number">
-        {{else}}
-        <span>{{attribute.value}}</span>
-        {{/if}}
-        {{#if attribute.mod}}
-        <div class="bonus-malus tooltip">
-            {{#each attribute.mod.sources}}
-            <label>{{this.description}}</label>
-            <div class="value">{{modifierFormat this.value}}</div>
-            {{/each}}
-        </div>
-        {{/if}}
-    </div>
-
-    {{/each}}
 </div>

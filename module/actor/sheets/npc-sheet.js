@@ -31,6 +31,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             attr.editable = true;
         }
 
+        sheetData.data.damageReduction.editable = true;
+
         CONFIG.splittermond.skillGroups.general.forEach(skill => {
             sheetData.data.generalSkills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
                 (parseInt(sheetData.data.generalSkills[skill].points) > 0) || !this._hideSkills;
@@ -54,6 +56,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
     activateListeners(html) {
 
         html.find('.attribute input[name^="data.derivedAttributes"]').change(this._onChangeDerivedAttribute.bind(this));
+        html.find('input[name^="data.damageReduction"]').change(this._onChangeDamageReduction.bind(this));
 
         html.find('input[name^="data.skills"]').change(this._onChangeSkill.bind(this));
 
@@ -73,10 +76,23 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[2];
-        const newValue = (value - parseInt(this.actor.data.data.derivedAttributes[attrBaseName].value | 0)) +
-            parseInt(this.actor._data.data.derivedAttributes[attrBaseName].value | 0);
+        const newValue = (value - parseInt(this.actor.data.data.derivedAttributes[attrBaseName].value || 0)) +
+            parseInt(this.actor._data.data.derivedAttributes[attrBaseName].value || 0);
         this.actor.update({
             [`data.derivedAttributes.${attrBaseName}.value`]: newValue
+        });
+    }
+
+    _onChangeDamageReduction(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const input = event.currentTarget;
+        const value = parseInt(input.value);
+        const newValue = (value - parseInt(this.actor.data.data.damageReduction.value || 0)) +
+            parseInt(this.actor._data.data.damageReduction.value || 0);
+        this.actor.update({
+            [`data.damageReduction.value`]: newValue
         });
     }
 
@@ -93,13 +109,13 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             if (skillValue) {
 
                 const newValue = (value - parseInt(skillValue)) +
-                    parseInt(this.actor.data.data.skills[skillBaseName].points | 0);
+                    parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
                 this.actor.update({
                     [`data.skills.${skillBaseName}.points`]: newValue
                 });
             } else {
-                const newValue = (value - parseInt(this.actor.data.data.skills[skillBaseName].value | 0)) +
-                    parseInt(this.actor.data.data.skills[skillBaseName].points | 0);
+                const newValue = (value - parseInt(this.actor.data.data.skills[skillBaseName].value || 0)) +
+                    parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
                 this.actor.update({
                     [`data.skills.${skillBaseName}.points`]: newValue
                 });

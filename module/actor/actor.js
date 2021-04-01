@@ -467,6 +467,8 @@ export default class SplittermondActor extends Actor {
                 case "GSW.mult":
                     data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
                     break;
+                case "SR":
+                    addModifierHelper(data.damageReduction);
                 case "handicap.shield.mod":
                     addModifierHelper(data.handicap.shield);
                     break;
@@ -617,6 +619,15 @@ export default class SplittermondActor extends Actor {
             }
         };
 
+        if (!data.damageReduction) {
+            data.damageReduction = {
+                value: 0
+            }
+        }
+
+
+        data.damageReduction.value += actorData.items.reduce((acc, i) => ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.damageReduction || 0) : acc, 0);
+
         actorData.items.forEach(i => {
             if (i.type === "armor" || i.type === "shield") {
                 if (i.data.equipped && i.data.defenseBonus != 0) {
@@ -650,18 +661,26 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
 
-
         }
 
-        actorData.damageReduction = {
-            value: 0
-        }
+
+
 
         let _sumAllHelper = (acc, current) => acc + current.value;
         let _sumEquipmentBonus = (acc, current) => current.value > 0 && current.source === "equipment" ? acc + current.value : acc;
         let _sumMagicBonus = (acc, current) => current.value > 0 && current.source === "magic" ? acc + current.value : acc;
         let _sumEquipmentMalus = (acc, current) => current.value < 0 && current.source === "equipment" ? acc + current.value : acc;
         let _sumMagicMalus = (acc, current) => current.value < 0 && current.source === "magic" ? acc + current.value : acc;
+
+        if (data.damageReduction.mod) {
+            let allMod = (data.damageReduction.mod.sources.reduce(_sumAllHelper, 0) || 0);
+            let equipmentMalus = (data.damageReduction.mod.sources.reduce(_sumEquipmentMalus, 0) || 0);
+            let magicMalus = (data.damageReduction.mod.sources.reduce(_sumMagicMalus, 0) || 0);
+            data.damageReduction.value += allMod;
+            data.damageReduction.value += Math.max(0, -equipmentMalus - data.bonusCap);
+            data.damageReduction.value += Math.max(0, -magicMalus - data.bonusCap);
+        }
+
 
         CONFIG.splittermond.derivedAttributes.forEach(attr => {
             if (data.derivedAttributes[attr].mod) {

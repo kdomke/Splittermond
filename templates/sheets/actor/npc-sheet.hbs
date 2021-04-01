@@ -49,8 +49,8 @@
         </section>
         {{#unless limited}}
         <section>
-            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes
-            derivedAttributes=data.derivedAttributes}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
+            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
         </section>
@@ -69,6 +69,7 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab general" data-group="primary" data-tab="general">
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
             <div data-roll-type="skill">
                 <div class="list skills">
                     <div class="list-header">

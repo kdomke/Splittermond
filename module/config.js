@@ -800,6 +800,7 @@ splittermond.modifier = {
     sprinter: "GSW +1",
     focusregen: "focusRegeneration.multiplier 3",
     liferegen: "healthRegeneration.multiplier 3",
+    naturalarmor: "SR +1"
 }
 
 

@@ -70,8 +70,8 @@
         </section>
         {{#unless limited}}
         <section>
-            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes
-            derivedAttributes=data.derivedAttributes}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
+            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
         </section>
@@ -92,6 +92,30 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab general" data-group="primary" data-tab="general">
+            {{#each attributes as |attribute attributeId|}}
+            <div class="attribute" id="{{attributeId}}">
+                <label for="data.attributes.{{attributeId}}.value" title="{{localize attribute.label.long}}">{{localize
+                    attribute.label.short}}</label>
+                <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                    data-dtype="Number">
+            </div>
+            {{/each}}
+            <div class="list" data-item-type="strength">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.attributes"}}</h3>
+                </div>
+                <ul class="strengths">
+                    {{#each data.attributes as |attribute attributeId|}}
+                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                        <label for="data.attributes.{{attributeId}}.value"
+                            title="{{localize attribute.label.long}}">{{localize
+                            attribute.label.long}}</label>
+                        <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                            data-dtype="Number">
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
             <div class="list" data-item-type="strength">
                 <div class="list-header">
                     <h3>{{localize "splittermond.strengths"}}</h3>
@@ -250,6 +274,7 @@
             </div>
         </section>
         <section class="tab skills" data-group="primary" data-tab="skills">
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
             <div class="list skills" data-roll-type="skill">
                 <div class="list-header">
                     <h3>{{localize "splittermond.generalSkills"}}</h3>
