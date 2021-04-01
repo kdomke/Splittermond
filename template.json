@@ -499,7 +499,10 @@
         "consumedFocus": false,
         "exhaustedFocus": false,
         "channelizedFocus": false,
-        "effectDuration": false
+        "effectDuration": false,
+        "damage" : false,
+        "range"  : false,
+        "effectrange": false
       }
     },
     "statuseffect": {
