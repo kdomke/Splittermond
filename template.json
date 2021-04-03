@@ -356,7 +356,8 @@
       "sex": "",
       "type": "",
       "level": "",
-      "damageReduction": 0
+      "damageReduction": 0,
+      "attacks": []
     }
   },
   "Item": {

@@ -236,6 +236,15 @@ export default class SplittermondActor extends Actor {
             });
         }
 
+        data.healthBar = {
+            value: data.health.total.value,
+            max: data.health.woundMalus.nbrLevels * data.derivedAttributes.healthpoints.value
+        }
+
+        data.focusBar = {
+            value: data.focus.available.value,
+            max: data.derivedAttributes.focuspoints.value
+        }
     }
 
 
@@ -335,9 +344,6 @@ export default class SplittermondActor extends Actor {
                 if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skillId))
                     attack.weaponSpeed += parseInt(data.tickMalus.shield.value) + parseInt(data.tickMalus.armor.value);
                 attack.weaponSpeed += parseInt(data.tickMalus.value);
-                if (actorData.type === "npc") {
-                    attack.skill.editable = true;
-                }
             }
 
         });

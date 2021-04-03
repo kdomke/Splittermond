@@ -42,6 +42,10 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             sheetData.data.magicSkills[skill].isVisible = parseInt(sheetData.data.magicSkills[skill].points) > 0 || !this._hideSkills;
         });
 
+        sheetData.data.attacks.forEach(attack => {
+            attack.skill.editable = true;
+        });
+
 
 
         //this._prepareItems(sheetData);
