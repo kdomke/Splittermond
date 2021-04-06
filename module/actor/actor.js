@@ -732,8 +732,8 @@ export default class SplittermondActor extends Actor {
             data.skills[skill].value = parseInt(data.skills[skill].points);
 
             if (CONFIG.splittermond.skillAttributes[skill]) {
-                data.skills[skill].value += parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) +
-                    parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value)
+                data.skills[skill].value += parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value || 0) +
+                    parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value || 0)
             }
 
 
