@@ -54,7 +54,7 @@ export default class SplittermondCombat extends Combat {
             }, value);
         } else {
             value = this.combatants.reduce((acc, c) => {
-                return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) + 0.01, acc) : acc);
+                return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
             }, value);
         }
 
