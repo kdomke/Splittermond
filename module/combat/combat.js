@@ -44,18 +44,27 @@ export default class SplittermondCombat extends Combat {
         let combatant = this.combatant;
 
         let newInitiative = combatant.initiative + nTicks;
-        combatant.flags.relativeTickPosition = this.combatants.reduce((acc, c) => {
-            return acc + (c.initiative == newInitiative) ? 1 : 0;
-        }, 0);
 
-        this.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
+
+        //await this.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
 
         return this.setInitiative(combatant._id, newInitiative);
     }
 
-    async setInitiative(id, value) {
-        const currentId = this.combatant._id;
-        await this.updateCombatant({ _id: id, initiative: value }, {});
+    async setInitiative(id, value, relativeTickPosition = NaN) {
+        if (isNaN(relativeTickPosition)) {
+            relativeTickPosition = this.combatants.reduce((acc, c) => {
+                return acc + ((c.initiative == value) ? 1 : 0);
+            }, 0);
+        }
+
+        await this.updateCombatant({
+            _id: id,
+            initiative: value,
+            flags: {
+                relativeTickPosition: relativeTickPosition
+            }
+        });
         await this.nextRound();
     }
 
