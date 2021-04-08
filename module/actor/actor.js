@@ -1263,9 +1263,47 @@ export default class SplittermondActor extends Actor {
             if (feature["defensiv"]) {
                 defenseValue += feature["defensiv"];
             }
+
+            data.degreeOfSuccessMessage = game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}`;
+
+            if (data.degreeOfSuccess >= 5) {
+                data.degreeOfSuccessMessage += ` Die Aktion dauert nur 2 Tick.`
+            }
+        } else {
+
+            if (data.degreeOfSuccess === 0) {
+                defenseValue += 1;
+            }
+            data.degreeOfSuccessMessage = game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}`;
+            if (data.degreeOfSuccess === 0) {
+                data.degreeOfSuccessMessage += ` + [[1d6]] Punkte Betäubungsschaden`
+            }
+            if (data.degreeOfSuccess <= -5) {
+                if (itemData._id === "acrobatics") {
+                    data.degreeOfSuccessMessage += ` Der Abenteurer stürzt hart auf empfindliche Körperteile ([[2d6]] Schaden) und gilt als liegend`
+                } else if (itemData._id === "determination") {
+                    data.degreeOfSuccessMessage += `Die Willenskraft des Abenteurers ist erschöpft.
+Er verliert alle Zuversicht, so dass er für den Rest des Tages einen
+Malus in Höhe von 3 Punkten auf alle seine Proben erhält.`
+                } else if (itemData._id === "endurance") {
+                    data.degreeOfSuccessMessage += ` Der Abenteurer ist völlig erschöpft. Er erhält den Zustand @Item[Erschöpft]{Erschöpft 3}, der anhält bis er eine Ruhephase eingelegt hat.`
+                } else {
+                    data.degreeOfSuccessMessage += " Auf Patzertabelle würfeln."
+                    data.actions = [{
+                        name: "Patzertabelle",
+                        icon: "fa-dice",
+                        classes: "rollable",
+                        data: {
+                            "roll-type": "attackFumble"
+                        }
+                    }];
+                }
+
+            }
+
         }
 
-        data.degreeOfSuccessMessage = game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}`;
+
 
         let templateContext = {
             ...data,
