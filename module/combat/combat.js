@@ -48,15 +48,22 @@ export default class SplittermondCombat extends Combat {
 
     async setInitiative(id, value, first = false) {
         value = Math.round(value);
-        if (!first) {
-            value = this.combatants.reduce((acc, c) => {
-                return ((Math.round(c.initiative) == value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
-            }, value);
+        if (value < 10000) {
+            if (!first) {
+                value = this.combatants.reduce((acc, c) => {
+                    return ((Math.round(c.initiative) == value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
+                }, value);
+            } else {
+                value = this.combatants.reduce((acc, c) => {
+                    return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
+                }, value);
+            }
         } else {
-            value = this.combatants.reduce((acc, c) => {
-                return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
-            }, value);
+            if (value !== 10000 && value !== 20000) {
+                return
+            }
         }
+
 
         await this.updateCombatant({
             _id: id,
