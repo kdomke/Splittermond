@@ -1,4 +1,32 @@
 {
+    "ITEM": {
+        "TypeWeapon": "Waffe",
+        "TypeProjectile": "Geschoss",
+        "TypeEquipment": "Ausrüstung",
+        "TypeShield": "Schild",
+        "TypeArmor": "Rüstung",
+        "TypeSpell": "Zauber",
+        "TypeStrength": "Stärke",
+        "TypeWeakness": "Schwäche",
+        "TypeMastery": "Meisterschaft",
+        "TypeSpecies": "Spezies",
+        "TypeCulture": "Kultur",
+        "TypeAncestry": "Abstammung",
+        "TypeEducation": "Ausbildung",
+        "TypeResource": "Resource",
+        "TypeNpcfeature": "NSC Eigenschaft",
+        "TypeMoonsign": "Mondzeichen",
+        "TypeLanguage": "Sprache",
+        "TypeCulturelore": "Kulturkunde",
+        "TypeStatuseffect": "Zustand",
+        "TypeSpelleffect": "Zaubereffekt"
+    },
+
+    "ACTOR": {
+        "TypeCharacter": "Spielercharakter",
+        "TypeNpc":"NSC"
+    },
+
     "splittermond": {
         "heroLevel": "Heldengrad",
         "name": "Name",
