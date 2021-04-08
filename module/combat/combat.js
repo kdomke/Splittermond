@@ -1,13 +1,8 @@
-
 export default class SplittermondCombat extends Combat {
     _sortCombatants(a, b) {
-        const iniA = parseInt(a.initiative || 0);
-        const iniB = parseInt(b.initiative || 0);
-
-        const relativeTickPositionA = parseInt(a.flags.relativeTickPosition || 0);
-        const relativeTickPositionB = parseInt(b.flags.relativeTickPosition || 0);
-
-        return (iniA * 100 + relativeTickPositionA) - (iniB * 100 + relativeTickPositionB);
+        const iniA = parseFloat(a.initiative) || 0;
+        const iniB = parseFloat(b.initiative) || 0;
+        return (iniA + (a.defeated ? 1000 : 0)) - (iniB + (b.defeated ? 1000 : 0));
     }
 
     async startCombat() {
@@ -43,7 +38,7 @@ export default class SplittermondCombat extends Combat {
 
         let combatant = this.combatant;
 
-        let newInitiative = combatant.initiative + nTicks;
+        let newInitiative = Math.round(combatant.initiative) + nTicks;
 
 
         //await this.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
@@ -51,19 +46,21 @@ export default class SplittermondCombat extends Combat {
         return this.setInitiative(combatant._id, newInitiative);
     }
 
-    async setInitiative(id, value, relativeTickPosition = NaN) {
-        if (isNaN(relativeTickPosition)) {
-            relativeTickPosition = this.combatants.reduce((acc, c) => {
-                return acc + ((c.initiative == value) ? 1 : 0);
-            }, 0);
+    async setInitiative(id, value, first = false) {
+        value = Math.round(value);
+        if (!first) {
+            value = this.combatants.reduce((acc, c) => {
+                return ((Math.round(c.initiative) == value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
+            }, value);
+        } else {
+            value = this.combatants.reduce((acc, c) => {
+                return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) + 0.01, acc) : acc);
+            }, value);
         }
 
         await this.updateCombatant({
             _id: id,
-            initiative: value,
-            flags: {
-                relativeTickPosition: relativeTickPosition
-            }
+            initiative: value
         });
         await this.nextRound();
     }

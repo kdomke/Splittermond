@@ -5,15 +5,14 @@ export default class SplittermondCombatTracker extends CombatTracker {
         data.turns = duplicate(data.turns);
 
         data.turns.forEach(c => {
-            c.initiative = c.initiative ? c.initiative : 0;
-            let temp = c.flags.relativeTickPosition || 0;
-            c.initiative = `${c.initiative} | ${temp}`
+            let tickNumber = c.initiative ? Math.round(c.initiative) : 0;
+            c.initiative = tickNumber + " | " + Math.round(100 * (c.initiative - tickNumber));
         });
 
-        data.round = data.round + "";
+        data.round = Math.round(data.round) + "";
 
         if (data.combat?.data.round != null) {
-            data.combat.data.round = data.combat.data.round + "";
+            data.combat.data.round = Math.round(data.combat.data.round) + "";
         }
 
         return data;
