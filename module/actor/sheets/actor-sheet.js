@@ -156,7 +156,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         }).trigger('input');
 
         html.find('[data-action="add-item"]').click(event => {
-            const itemType = this._getClosestData($(event.currentTarget), 'item-type');
+            const itemType = $(event.currentTarget).closestData('item-type');
             const renderSheet = Boolean((event.currentTarget.dataset.renderSheet || "true") === "true");
             let itemData = {
                 name: game.i18n.localize("splittermond." + itemType),
@@ -164,7 +164,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             };
 
             if (itemType === "mastery") {
-                const skill = this._getClosestData($(event.currentTarget), 'skill');
+                const skill = $(event.currentTarget).vlosestData('skill');
                 if (skill) {
                     itemData.data = {
                         skill: skill
@@ -176,17 +176,17 @@ export default class SplittermondActorSheet extends ActorSheet {
 
 
         html.find('[data-action="delete-item"]').click(event => {
-            const itemId = this._getClosestData($(event.currentTarget), 'item-id');
+            const itemId = $(event.currentTarget).closestData('item-id');
             this.actor.deleteOwnedItem(itemId);
         });
 
         html.find('[data-action="edit-item"]').click(event => {
-            const itemId = this._getClosestData($(event.currentTarget), 'item-id');
+            const itemId = $(event.currentTarget).closestData('item-id');
             this.actor.getOwnedItem(itemId).sheet.render(true);
         });
 
         html.find('[data-action="toggle-equipped"]').click(event => {
-            const itemId = this._getClosestData($(event.currentTarget), 'item-id');
+            const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.actor.getOwnedItem(itemId);
 
             item.update({ "data.equipped": !item.data.data.equipped });
@@ -201,9 +201,9 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-array-field]').change(event => {
             const element = event.currentTarget
-            const idx = parseInt(this._getClosestData($(event.currentTarget), 'index', "0"));
-            const array = this._getClosestData($(event.currentTarget), 'array');
-            const field = this._getClosestData($(event.currentTarget), 'array-field');
+            const idx = parseInt($(event.currentTarget).closestData('index', "0"));
+            const array = $(event.currentTarget).closestData('array');
+            const field = $(event.currentTarget).closestData('array-field');
             let newValue = [];
             if (!(idx >= 0 && array !== "")) return;
             if (field) {
@@ -222,8 +222,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-action="delete-array-element"]').click(event => {
             const element = event.currentTarget
-            const idx = parseInt(this._getClosestData($(event.currentTarget), 'index', "0"));
-            const array = this._getClosestData($(event.currentTarget), 'array');
+            const idx = parseInt($(event.currentTarget).closestData('index', "0"));
+            const array = $(event.currentTarget).closestData('array');
             if (!(idx >= 0 && array !== "")) return;
             let arrayData = array.split('.').reduce(function (prev, curr) {
                 return prev ? prev[curr] : null
@@ -265,18 +265,18 @@ export default class SplittermondActorSheet extends ActorSheet {
 
 
         html.find(".rollable").click(event => {
-            const type = this._getClosestData($(event.currentTarget), 'roll-type');
+            const type = $(event.currentTarget).closestData('roll-type');
             if (type === "skill") {
-                const skill = this._getClosestData($(event.currentTarget), 'skill');
+                const skill = $(event.currentTarget).closestData('skill');
                 this.actor.rollSkill(skill);
             }
 
             if (type === "attack") {
-                const attackId = this._getClosestData($(event.currentTarget), 'attack-id');
+                const attackId = $(event.currentTarget).closestData('attack-id');
                 this.actor.rollAttack(attackId);
             }
             if (type === "spell") {
-                const itemId = this._getClosestData($(event.currentTarget), 'item-id');
+                const itemId = $(event.currentTarget).closestData('item-id');
                 this.actor.rollSpell(this.actor.data.items.find(el => el._id === itemId));
             }
 
@@ -287,24 +287,24 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (type === "activeDefense") {
-                const itemId = this._getClosestData($(event.currentTarget), 'item-id');
-                const defenseType = this._getClosestData($(event.currentTarget), 'defense-type');
+                const itemId = $(event.currentTarget).closestData('item-id');
+                const defenseType = $(event.currentTarget).closestData('defense-type');
                 this.actor.rollActiveDefense(defenseType, this.actor.data.data.activeDefense[defenseType].find(el => el._id === itemId));
             }
         });
 
         html.find(".add-tick").click(event => {
-            let value = this._getClosestData($(event.currentTarget), 'ticks');
-            let message = this._getClosestData($(event.currentTarget), 'message');
+            let value = $(event.currentTarget).closestData('ticks');
+            let message = $(event.currentTarget).closestData('message');
 
             this.actor.addTicks(value, message);
         })
 
         html.find(".consume").click(event => {
-            const type = this._getClosestData($(event.currentTarget), 'type');
-            const value = this._getClosestData($(event.currentTarget), 'value');
+            const type = $(event.currentTarget).closestData('type');
+            const value = $(event.currentTarget).closestData('value');
             if (type === "focus") {
-                const description = this._getClosestData($(event.currentTarget), 'description');
+                const description = $(event.currentTarget).closestData('description');
                 this.actor.consumeCost(type, value, description);
             }
         })
@@ -323,7 +323,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const skill = event.currentTarget.dataset.skill;
             if (skill) {
-                const skill = this._getClosestData($(event.currentTarget), 'skill');
+                const skill = $(event.currentTarget).closestData('skill');
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "skill",
                     skill: skill,

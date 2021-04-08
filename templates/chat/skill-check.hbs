@@ -1,13 +1,38 @@
-<div class="splittermond dice-roll check">
+<div
+    class="splittermond check{{#if succeeded}} success{{/if}}{{#if isFumble}} fumble{{/if}}{{#if isCrit}} critical{{/if}}">
     <header>
-        <h2 class="title"><span class="roll-type">{{rollType}}</span>{{title}}</h2>
+        {{#if img}}
+        <img src="{{img}}" title="{{title}}" width="36" height="36" />
+        {{/if}}
+        <div>
+            <h2>{{title}}</h2>
+            <span class="roll-type">{{rollType}}</span>
+            {{#if difficulty}}
+            &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
+            {{/if}}
+        </div>
     </header>
-    <div class="roll-summery">
-        <div class="dice-formula">{{roll.formula}}</div>
+    <div class="roll-summary dice-roll">
+        <div class="roll-total">{{roll.total}}</div>
         {{{tooltip}}}
-        <h4 class="dice-total"><span class="total">{{roll.total}}</span> vs. <span
-                class="difficulty">{{difficulty}}</span>
     </div>
-    <h3 class="degree-of-success{{#if succeded}} success{{/if}}">{{degreeOfSuccess}} {{degreeOfSuccessMessage}}</h3>
-</div>
+    {{#if difficulty}}
+    <div class="degree-of-success">
+        <div class="stars">
+            {{#times degreeOfSuccess}}
+            <i class="fas fa-star"></i>
+            {{/times}}
+        </div>
+        <strong>{{degreeOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+    </div>
+    {{/if}}
+    {{#if actions}}
+    <div class="actions">
+        <h3>{{localize "splittermond.furtherActions"}}</h3>
+        {{#each actions}}
+        <button class="{{this.classes}}" {{#each this.data}}data-{{@key}}="{{this}}" {{/each}}><i
+                class="fas {{this.icon}}"></i> {{this.name}}</button>
+        {{/each}}
+    </div>
+    {{/if}}
 </div>

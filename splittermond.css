@@ -585,28 +585,66 @@
 #combat #combat-controls [data-control="nextRound"] {
   display: none;
 }
-.splittermond.dice-roll {
+.splittermond.check {
   flex-direction: column;
 }
-.splittermond.dice-roll header {
+.splittermond.check header {
   display: flex;
   flex-direction: row;
 }
-.splittermond.dice-roll header img {
+.splittermond.check header img {
   margin-right: 7px;
 }
-.splittermond.dice-roll header h2 {
-  text-align: left;
+.splittermond.check .roll-type,
+.splittermond.check .difficulty {
+  font-weight: bold;
 }
-.splittermond.dice-roll header h2 .roll-type {
-  text-align: left;
-  font-size: 12px;
-  font-weight: 700;
+.splittermond.check .roll-total {
   display: block;
-}
-.splittermond.dice-roll h3.degree-of-success {
-  padding: 7px;
   text-align: center;
+  font-size: 20px;
+  font-family: Vollkorn;
+  font-variant-numeric: lining-nums;
+  font-weight: bold;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
+  color: #892100;
+  box-sizing: border-box;
+  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.5), 0 0 3px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  text-shadow: 0px 0px 5px #FFFFFF;
+}
+.splittermond.check .degree-of-success {
+  display: block;
+  text-align: center;
+  line-height: 24px;
+  font-family: Vollkorn;
+  color: #892100;
+  font-variant-numeric: lining-nums;
+}
+.splittermond.check .degree-of-success .stars {
+  color: #FFB800;
+  filter: drop-shadow(0px 0px 10px #FFEFC7);
+}
+.splittermond.check.fumble .roll-total {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(239, 58, 0, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+}
+.splittermond.check.success .degree-of-success,
+.splittermond.check.success .roll-total {
+  color: #458900;
+}
+.splittermond.check.critical .roll-total {
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(120, 239, 0, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+}
+.splittermond.check .actions {
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.check .actions h3 {
+  font-family: Signika;
+  font-size: 14px;
+  font-weight: bold;
 }
 .splittermond.sheet .window-content {
   overflow-y: hidden;

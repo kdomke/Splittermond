@@ -8,19 +8,30 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
         skillValue: skillValue,
         modifier: modifier
     };
+    difficulty = parseInt(difficulty);
+    if (isNaN(difficulty)) {
+        difficulty = 0;
+    }
 
     const roll = new Roll(rollFormula, rollData).roll();
 
     const difference = roll.total - difficulty;
-    const succeeded = difference >= 0;
+
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
     degreeOfSuccess = ((skillPoints < 1) ? Math.min(degreeOfSuccess, 0) : degreeOfSuccess);
     const isFumble = rollType != "safety" && roll.dice[0].total <= 3;
     const isCrit = roll.dice[0].total >= 19;
+    const succeeded = difference >= 0 && !isFumble;
     degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
     degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
 
-    const degreeOfSuccessMessage = game.i18n.localize(`splittermond.${succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(degreeOfSuccess), 5)}`);
+    let degreeOfSuccessMessage = game.i18n.localize(`splittermond.${succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(degreeOfSuccess), 5)}`);
+    if (isCrit) {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.critical`);
+    }
+    if (isFumble) {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.fumble`);
+    }
     return {
         difficulty: difficulty,
         succeeded: succeeded,

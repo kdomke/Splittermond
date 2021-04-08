@@ -9,6 +9,12 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 
+
+$.fn.closestData = function (dataName, defaultValue = "") {
+    let value = this.closest(`[data-${dataName}]`)?.data(dataName);
+    return (value) ? value : defaultValue;
+}
+
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
     CONFIG.Actor.entityClass = SplittermondActor;
@@ -58,6 +64,13 @@ Hooks.once("init", function () {
         `${templateBasePath}/sheets/actor/parts/inventory-list.hbs`,
         `${templateBasePath}/sheets/actor/parts/status-tab.hbs`
     ]);
+
+    Handlebars.registerHelper('times', function (n, block) {
+        var accum = '';
+        for (var i = 0; i < n; ++i)
+            accum += block.fn(i);
+        return accum;
+    });
 
     document.addEventListener('paste', function (e) {
         let rawData = e.clipboardData.getData("text");
@@ -141,5 +154,55 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
     }
 
 
+
+});
+
+Hooks.on('preCreateActor', (actor) => {
+    if (actor.type === 'character') {
+        actor.token = {
+            vision: true,
+            actorLink: true,
+            name: actor.name
+        };
+    }
+});
+
+Hooks.on('ready', function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
+    // Patch enrichHTML function for Custom Links
+    const oldEnrich = TextEditor.enrichHTML;
+    TextEditor.enrichHTML = function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
+        content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
+
+        content = content.replace(/@Damage\[([0-9VK]+)\](?:\{([^}]*)\})?/, (match, damage, label) => {
+            return `<a class="damage-link" data-damage="${damage}"><i class="fas fa-heart-broken"></i> ${label}</a>`
+        })
+
+        return content;
+    };
+})
+
+Hooks.on('renderChatMessage', function (app, html, data) {
+    html.find(".rollable").click(event => {
+        const type = $(event.currentTarget).closestData("roll-type");
+
+        if (type === "damage") {
+            const damage = $(event.currentTarget).closestData("damage");
+            const features = $(event.currentTarget).closestData("features");
+            Dice.damage(damage, features);
+        }
+
+    });
+
+    html.find(".add-tick").click(event => {
+        let value = $(event.currentTarget).closestData("ticks");
+        let message = $(event.currentTarget).closestData("message");
+
+        const speaker = ChatMessage.getSpeaker();
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        actor.addTicks(value, message);
+    });
 
 });

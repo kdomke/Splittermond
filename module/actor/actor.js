@@ -378,11 +378,9 @@ export default class SplittermondActor extends Actor {
             _id: "endurance",
             name: game.i18n.localize("splittermond.skillLabel.endurance"),
             item: null,
-            data: {
-                skill: "endurance",
-                skillValue: parseInt(this.data.data.skills.endurance.value),
-                features: ""
-            }
+            skillId: "endurance",
+            skill: this.data.data.skills.endurance,
+            features: ""
         }];
 
 
@@ -1084,11 +1082,30 @@ export default class SplittermondActor extends Actor {
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
         data.title = weaponData.name;
+        data.img = weaponData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
+
+        data.actions = [{
+            name: game.i18n.localize(`splittermond.damage`) + " (" + weaponData.damage + ")",
+            icon: "fa-heart-broken",
+            classes: "rollable",
+            data: {
+                "roll-type": "damage",
+                damage: weaponData.damage,
+                features: weaponData.features
+            }
+        }, {
+            name: `${weaponData.weaponSpeed} ` + game.i18n.localize(`splittermond.ticks`),
+            icon: "fa-stopwatch",
+            classes: "add-tick",
+            data: {
+                ticks: weaponData.weaponSpeed,
+                message: weaponData.name
+            }
+        }];
 
         let templateContext = {
             ...data,
-            item: weaponData,
             tooltip: await data.roll.getTooltip()
         };
 
@@ -1096,7 +1113,7 @@ export default class SplittermondActor extends Actor {
             user: game.user._id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
-            content: await renderTemplate("systems/splittermond/templates/chat/weapon-check.hbs", templateContext),
+            content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
             type: CONST.CHAT_MESSAGE_TYPES.ROLL
         };
@@ -1170,14 +1187,15 @@ export default class SplittermondActor extends Actor {
 
 
         const actorData = this.data.data;
-        let skillPoints = parseInt(actorData.skills[itemData.data.skill].points);
-        let skillValue = itemData.data.skillValue;
+        let skillPoints = parseInt(itemData.skill.points);
+        let skillValue = parseInt(itemData.skill.value);
         //skillValue += parseInt(actorData.attributes[itemData.data.attribute1].value);
         //skillValue += parseInt(actorData.attributes[itemData.data.attribute2].value);
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
         data.title = itemData.name;
+        data.img = itemData.img;
         data.rollType = game.i18n.localize(`splittermond.activeDefense`) + " | " + game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
 
         let defenseValue = actorData.derivedAttributes[defenseType].value;
@@ -1186,7 +1204,7 @@ export default class SplittermondActor extends Actor {
             defenseValue = defenseValue + 1 + data.degreeOfSuccess;
 
             let feature = {};
-            itemData.data.features?.toLowerCase().split(',').forEach(feat => {
+            itemData.features?.toLowerCase().split(',').forEach(feat => {
                 let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
                 if (temp[1]) {
                     feature[temp[1]] = parseInt(temp[2] || 1);
@@ -1210,7 +1228,7 @@ export default class SplittermondActor extends Actor {
             user: game.user._id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
-            content: await renderTemplate("systems/splittermond/templates/chat/weapon-check.hbs", templateContext),
+            content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
             type: CONST.CHAT_MESSAGE_TYPES.ROLL
         };
