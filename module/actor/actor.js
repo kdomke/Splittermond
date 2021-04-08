@@ -1104,6 +1104,17 @@ export default class SplittermondActor extends Actor {
             }
         }];
 
+        if (data.isFumble) {
+            data.actions.push({
+                name: "Patzertabelle",
+                icon: "fa-dice",
+                classes: "rollable",
+                data: {
+                    "roll-type": "attackFumble"
+                }
+            });
+        }
+
         let templateContext = {
             ...data,
             tooltip: await data.roll.getTooltip()
@@ -1156,7 +1167,45 @@ export default class SplittermondActor extends Actor {
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
         data.title = spellData.name;
+        data.img = spellData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
+
+        data.actions = [];
+        if (spellData.data.damage && data.succeeded) {
+            data.actions.push({
+                name: game.i18n.localize(`splittermond.damage`) + " (" + spellData.data.damage + ")",
+                icon: "fa-heart-broken",
+                classes: "rollable",
+                data: {
+                    "roll-type": "damage",
+                    damage: spellData.data.damage,
+                    features: ""
+                }
+            });
+        }
+
+        data.actions.push({
+            name: `3 ` + game.i18n.localize(`splittermond.ticks`),
+            icon: "fa-stopwatch",
+            classes: "add-tick",
+            data: {
+                ticks: 3,
+                message: spellData.name
+            }
+        });
+
+        if (data.isFumble) {
+            data.actions.push({
+                name: "Patzertabelle",
+                icon: "fa-dice",
+                classes: "rollable",
+                data: {
+                    "roll-type": "magicFumble",
+                    success: -data.degreeOfSuccess,
+                    costs: spellData.data.costs
+                }
+            });
+        }
 
         let templateContext = {
             ...data,
@@ -1168,7 +1217,7 @@ export default class SplittermondActor extends Actor {
             user: game.user._id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
-            content: await renderTemplate("systems/splittermond/templates/chat/weapon-check.hbs", templateContext),
+            content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
             type: CONST.CHAT_MESSAGE_TYPES.ROLL
         };

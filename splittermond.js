@@ -29,7 +29,8 @@ Hooks.once("init", function () {
         attackCheck: Macros.attackCheck,
         itemCheck: Macros.itemCheck,
         requestSkillCheck: Macros.requestSkillCheck,
-        importNpc: Macros.importNpc
+        importNpc: Macros.importNpc,
+        magicFumble: Macros.magicFumble
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -174,7 +175,7 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
         content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
 
         content = content.replace(/@Damage\[([0-9VK]+)\](?:\{([^}]*)\})?/, (match, damage, label) => {
-            return `<a class="damage-link" data-damage="${damage}"><i class="fas fa-heart-broken"></i> ${label}</a>`
+            return `<a class="rollable" data-roll-type="damage" data-damage="${damage}" data-features=""><i class="fas fa-heart-broken"></i> ${label}</a>`
         })
 
         return content;
@@ -189,6 +190,22 @@ Hooks.on('renderChatMessage', function (app, html, data) {
             const damage = $(event.currentTarget).closestData("damage");
             const features = $(event.currentTarget).closestData("features");
             Dice.damage(damage, features);
+        }
+
+        if (type === "magicFumble") {
+            const eg = $(event.currentTarget).closestData("success");
+            const costs = $(event.currentTarget).closestData("costs");
+            Macros.magicFumble(eg, costs);
+        }
+
+        if (type === "attackFumble") {
+            const table = game.tables.find(t => t.name === "Patzertabelle Kampf");
+            if (table) {
+                table.draw();
+            } else {
+                ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Kampf'!");
+            }
+
         }
 
     });

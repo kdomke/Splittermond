@@ -533,3 +533,68 @@ export async function importNpc() {
     });
     d.render(true);
 }
+
+export function magicFumble(eg = 0, costs = 0) {
+
+    let d = new Dialog({
+        title: "Zauberpatzer",
+        content: `<form style='display: grid; grid-template-columns: 1fr 1fr; align-items: center'>
+        <label>Negative Erfolgsgrade</label><input name='eg' type='text' value='${eg}' data-dtype='Number'>
+        <label>Fokuskosten</label><input name='costs' type='text' value='${costs}' data-dtype='Number'></form>`,
+        buttons: {
+
+            cancel: {
+                icon: '<i class="fas fa-times"></i>',
+                label: game.i18n.localize("splittermond.cancel")
+            },
+            priest: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Priester",
+                callback: (html) => {
+                    let eg = parseInt(html.find('[name=eg]')[0].value || 0);
+                    let costs = html.find('[name=costs]')[0].value;
+                    if (parseInt(costs)) {
+                        costs = parseInt(costs);
+                    } else {
+                        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(costs.toLowerCase());
+                        costs = parseInt(costDataRaw[2]);
+                    }
+
+
+                    const table = game.tables.find(t => t.name === "Patzertabelle Priester");
+                    if (table) {
+                        return table.draw({ roll: new Roll("2d10+" + (eg * costs)) });
+                    } else {
+                        ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Priester'!");
+                        return null;
+                    }
+                }
+            },
+            sorcerer: {
+                icon: '<i class="fas fa-check"></i>',
+                label: "Zauberer",
+                callback: (html) => {
+                    let eg = parseInt(html.find('[name=eg]')[0].value);
+                    let costs = html.find('[name=costs]')[0].value;
+                    if (parseInt(costs)) {
+                        costs = parseInt(costs);
+                    } else {
+                        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(costs.toLowerCase());
+                        costs = parseInt(costDataRaw[2]);
+                    }
+
+                    const table = game.tables.find(t => t.name === "Patzertabelle Zauberer");
+                    if (table) {
+                        return table.draw({ roll: new Roll("2d10+" + (eg * costs)) });
+                    } else {
+                        ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Zauberer'!");
+                        return null;
+                    }
+
+                }
+            },
+        },
+        default: "sorcerer"
+    }, { classes: ["splittermond", "dialog"] });
+    d.render(true);
+}
