@@ -405,6 +405,57 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
         }
 
+        if (itemData.type === "mastery") {
+            if (itemData.data.availableIn) {
+                let availableIn = itemData.data.availableIn.trim().toLowerCase();
+                [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
+                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
+                });
+                let selectedSkill = "";
+                if (availableIn.split(",").length > 1) {
+                    let p = new Promise((resolve, reject) => {
+                        let buttons = {};
+
+
+                        availableIn.split(",").forEach(item => {
+                            let data = item.trim().toLowerCase().split(" ");
+                            if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
+                                buttons[data[0]] = {
+                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`) + " " + data[1],
+                                    callback: html => {
+                                        resolve(data[0] + " " + data[1])
+                                    }
+                                }
+                            }
+                        });
+                        buttons["_cancel"] = {
+                            label: game.i18n.localize("splittermond.cancel"),
+                            callback: html => {
+                                resolve("");
+                            }
+                        }
+                        let dialog = new Dialog({
+                            title: game.i18n.localize("splittermond.chooseSkill"),
+                            content: "",
+                            buttons: buttons
+                        }, {
+                            classes: ["splittermond", "dialog", "selection"]
+                        });
+                        dialog.render(true);
+                    });
+
+                    selectedSkill = await p;
+                } else {
+                    selectedSkill = availableIn;
+                }
+
+
+                if (selectedSkill) {
+                    itemData.data.skill = selectedSkill;
+                }
+            }
+        }
+
         return super._onDropItemCreate(itemData);
     }
 
