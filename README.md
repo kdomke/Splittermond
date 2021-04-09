@@ -66,3 +66,20 @@ Eine Liste möglicher Modifikatoren wird noch bereitgestellt.
 Kampf- und Zauberpatzertabellen sind implementiert. Per Drag-n-Drop können die Erwürfelten Zustände auf das Charakterblatt gezogen werden. Mali durch Zustände wie z.B. *Erschöpft* werden im Charakterbogen berücksichtigt.
 
 ![Screenshot](screenshots/character-sheet-status.png)
+
+### Fertigkeitswurf fordern
+Der Spielleiter kann mittels Makro einen Fertigkeitswurf fordern. Dafür aktiviert er das Makro und wählt die Fertigkeit und Schwierigkeit. Es wird eine Chatnachricht erstellt auf die die Spieler klicken können um einen Fertigkeitswurf auszuführen
+
+![Screenshot](screenshots/request-skill-check.gif)
+
+### Tickleiste
+Der in Foundry eingebaute "Combat Tracker" lässt sich nun als Tickleiste verwenden. Die Spieler können auf ihre Waffengeschwindigkeit, Zauberdauer etc. klicken um ihre Ticks zu erhöhen. Außerdem kann ein Spieler auf das "Abwarten/Bereithalten"-Feld gesetzt werden.
+
+![Screenshot](screenshots/combat-tracker.gif)
+
+### NSC Bogen
+Der NSC-Bogen bietet für Nicht-Spieler-Charaktere die Möglichkeit *abgeleitete Werte* sowie eine Auswahl an Fertigkeiten einzutragen.
+
+![Screenshot](screenshots/npc-sheet-general.png)
+
+Gegnermerkmale wie *Schwächlich* haben aufgrund der einstellbaren Modifikatoren Auswirkungen auf die Anzahl der Wundstufen.
