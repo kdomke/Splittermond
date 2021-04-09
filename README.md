@@ -43,7 +43,7 @@ Abhängig von den ausgerüsteten Waffen wird unter dem Tab "Kampf" die entsprech
 
 ![Screenshot](screenshots/character-sheet-attack.png)
 
-Durch anklicken des Waffennamens kann eine Probe ausgelöst werden.
+Durch anklicken des Waffennamens kann eine Probe ausgelöst werden. Ist in Foundry VTT ein Ziel ausgewählt, wird dessen Verteidigung automatisch als Schwierigkeit eingetragen.
 
 ![Screenshot](screenshots/weapon-check.gif)
 
@@ -61,3 +61,8 @@ Alle Gegenstände als auch Meisterschaften, Stärken, Zustände und Zaubereffekt
 ![Screenshot](screenshots/modifier.gif)
 
 Eine Liste möglicher Modifikatoren wird noch bereitgestellt.
+
+### Patzertabellen
+Kampf- und Zauberpatzertabellen sind implementiert. Per Drag-n-Drop können die Erwürfelten Zustände auf das Charakterblatt gezogen werden. Mali durch Zustände wie z.B. *Erschöpft* werden im Charakterbogen berücksichtigt.
+
+![Screenshot](screenshots/character-sheet-status.png)
