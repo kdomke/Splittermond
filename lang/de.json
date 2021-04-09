@@ -21,12 +21,10 @@
         "TypeStatuseffect": "Zustand",
         "TypeSpelleffect": "Zaubereffekt"
     },
-
     "ACTOR": {
         "TypeCharacter": "Spielercharakter",
-        "TypeNpc":"NSC"
+        "TypeNpc": "NSC"
     },
-
     "splittermond": {
         "heroLevel": "Heldengrad",
         "name": "Name",
@@ -80,6 +78,8 @@
         "qty": "Anz.",
         "quantity": "Anzahl",
         "price": "Preis",
+        "opponenttype": "Typus",
+        "opponentlevel": "Monstergrad",
         "weaponless": "waffenlos",
         "damageLevel": "Schadensstufe",
         "weight": "Gewicht",
