@@ -9,6 +9,11 @@ Dieses Foundry VTT - System implementiert das deutsche Rollenspiel-System [Split
 ![Screenshot](screenshots/character-sheet-general.png)
 
 ## Features
+### Genesis Import
+Jeder Charakter aus dem Charaktererstellungstool Gensis lässt sich als JSON-Datei importieren.
+
+![Screenshot](screenshots/genesis-import.gif)
+
 ### Automatische Berechnung von Werten
 Alle abgeleiten Werte sowie die Fertigkeitswerte werden aus den Attributen und Fertigkeitspunkten automatisch berechnet.
 
