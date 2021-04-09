@@ -337,10 +337,10 @@ export default class SplittermondActor extends Actor {
         attacks.forEach(attack => {
             if (attack.skillId) {
                 attack.skill = duplicate(data.skills[attack.skillId]);
-                attack.skill.value += parseInt(data.attributes[attack.attribute1].value)
-                attack.skill.value += parseInt(data.attributes[attack.attribute2].value)
-                attack.skill.baseValue += parseInt(data.attributes[attack.attribute1].value)
-                attack.skill.baseValue += parseInt(data.attributes[attack.attribute2].value)
+                attack.skill.value += parseInt(data.attributes[attack.attribute1].value || 0)
+                attack.skill.value += parseInt(data.attributes[attack.attribute2].value || 0)
+                attack.skill.baseValue += parseInt(data.attributes[attack.attribute1].value || 0)
+                attack.skill.baseValue += parseInt(data.attributes[attack.attribute2].value || 0)
                 if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skillId))
                     attack.weaponSpeed += parseInt(data.tickMalus.shield.value) + parseInt(data.tickMalus.armor.value);
                 attack.weaponSpeed += parseInt(data.tickMalus.value);
