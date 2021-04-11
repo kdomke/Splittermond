@@ -145,11 +145,13 @@ export async function importSpell(rawData) {
     let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)\n[^ ]+:/);
     spellData.data.difficulty = difficultyData[1];
 
-    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0) {
+    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
+        spellData.data.difficulty.search("Geist") >= 0) {
         spellData.data.difficulty = "GW";
     }
 
-    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0) {
+    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
+        spellData.data.difficulty.search("Körper") >= 0) {
         spellData.data.difficulty = "KW";
     }
 
@@ -163,7 +165,7 @@ export async function importSpell(rawData) {
     let castDurationData = rawData.match(/Zauberdauer: ([^:]+?)\n[^ ]+:/);
     spellData.data.castDuration = castDurationData[1];
 
-    let descriptionData = rawData.match(/Wirkung: ([^:]+?)\n[^ ]+:/);
+    let descriptionData = rawData.match(/Wirkung: ([^]+?)\n[^ ]+:/);
     spellData.data.description = descriptionData[1];
     spellData.data.description = spellData.data.description.replace(/\n/g, " ");
     spellData.data.description = spellData.data.description.replace(/  /g, " ");
