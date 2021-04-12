@@ -655,7 +655,6 @@ export default class SplittermondActor extends Actor {
                     + parseInt(data.attributes[attr].advances || 0);
             });
 
-
             data.derivedAttributes.size.value = parseInt(data.species.size);
             data.derivedAttributes.speed.value = parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value);
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
@@ -665,6 +664,10 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
 
+        } else {
+            CONFIG.splittermond.attributes.forEach(attr => {
+                data.attributes[attr].value = parseInt(data.attributes[attr].value || 0);
+            });
         }
 
 
