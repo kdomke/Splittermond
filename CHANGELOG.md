@@ -1,3 +1,13 @@
+## 0.1.1 ##
+2021-04-12
+
+* Robusterer Copy-and-Paste Zauberspruchparser
+* Für NPCs werden die Attribute, wenn nicht anders angegeben, auf 0 gesetzt.
+* Modifikatoren werden nur für ausgerüstete Gegenstände berücksichtigt. (Issue #13)
+* Erfolgsgradoptionen für Zauber in ItemSheet hinzugefügt (Issue #12)
+* Erfolgsgradoptionen für Zauber in Chatnachrichten hinzugefügt
+* JournalEntry zum Thema "Modifikatoren" hinzugefügt (Issue #14)
+
 ## 0.1.0 ##
 2021-04-09
 
