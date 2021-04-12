@@ -26,6 +26,11 @@
         <strong>{{degreeOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
     </div>
     {{/if}}
+    {{#if degreeOfSuccessDescription}}
+    <div class="degree-of-success-description">
+        {{{degreeOfSuccessDescription}}}
+    </div>
+    {{/if}}
     {{#if actions}}
     <div class="actions">
         <h3>{{localize "splittermond.furtherActions"}}</h3>

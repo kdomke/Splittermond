@@ -195,10 +195,13 @@ export async function importSpell(rawData) {
     spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
     spellData.data.degreeOfSuccessOptions = {
         castDuration: egData[1].search("Auslösezeit") >= 0,
-        consumedFocus: egData[1].search("Verzehrter Fokus") >= 0,
-        exhaustedFocus: egData[1].search("Erschöpfter Fokus") >= 0,
-        channelizedFocus: egData[1].search("Kanalisierter Fokus") >= 0,
-        effectDuration: egData[1].search("Wirkungsdauer") >= 0
+        consumedFocus: egData[1].search("Verzehrter") >= 0,
+        exhaustedFocus: egData[1].search("Erschöpfter") >= 0,
+        channelizedFocus: egData[1].search("Kanalisierter") >= 0,
+        effectDuration: egData[1].search("Wirkungsd") >= 0 || egData[1].search("dauer") >= 0,
+        damage: egData[1].search("Schaden,") >= 0,
+        range: egData[1].search("Reichw") >= 0,
+        effectArea: egData[1].search("Wirkungsb") >= 0 || egData[1].search("bereich") >= 0
     }
 
     let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.data.description);

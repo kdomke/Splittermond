@@ -705,7 +705,12 @@ splittermond.itemSheetProperties.spell = [
                 field: "data.enhancementDescription",
                 label: "splittermond.enhancementDescription",
                 template: "input"
-            },
+            }
+        ]
+    },
+    {
+        groupName: "splittermond.degreeOfSuccessOptionsHeader",
+        properties: [
             {
                 field: "data.degreeOfSuccessOptions.castDuration",
                 label: "splittermond.degreeOfSuccessOptions.castDuration",
@@ -729,6 +734,21 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "data.degreeOfSuccessOptions.effectDuration",
                 label: "splittermond.degreeOfSuccessOptions.effectDuration",
+                template: "bool"
+            },
+            {
+                field: "data.degreeOfSuccessOptions.damage",
+                label: "splittermond.degreeOfSuccessOptions.damage",
+                template: "bool"
+            },
+            {
+                field: "data.degreeOfSuccessOptions.range",
+                label: "splittermond.degreeOfSuccessOptions.range",
+                template: "bool"
+            },
+            {
+                field: "data.degreeOfSuccessOptions.effectArea",
+                label: "splittermond.degreeOfSuccessOptions.effectArea",
                 template: "bool"
             }
         ]
