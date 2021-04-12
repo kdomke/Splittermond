@@ -128,12 +128,21 @@
         "splinterpoints": "Splitterpunkte",
         "enhancementCosts": "Verstärkungskosten",
         "enhancementDescription": "Verstärkung",
+        "degreeOfSuccessOptionsHeader": "Erfolgsgradoptionen",
         "degreeOfSuccessOptions": {
             "castDuration": "Auslösezeit verkürzen",
             "consumedFocus": "Verzehrten Fokus verringern",
             "exhaustedFocus": "Erschöpften Fokus verringern",
             "channelizedFocus": "Kanalisierten Fokus verringern",
-            "effectDuration": "Wirkungsdauer verlängern"
+            "effectDuration": "Wirkungsdauer verlängern",
+            "damage": "Schaden erhöhen",
+            "range": "Reichweite erhöhen",
+            "effectArea": "Wirkungsbereich erhöhen"
+        },
+        "spellCheckResultDescription": {
+            "devastating": "Anzahl negativer Erfolgsgrade an Fokuspunkten <i>erschöpfen</i> und auf Patzertabelle würfeln!",
+            "failed": "Anzahl negativer Erfolgsgrade an Fokuspunkten <i>erschöpfen</i>!",
+            "outstanding": "Einen <i>erschöpften</i> oder <i>verzehrten Fokuspunkt</i> einsparen!"
         },
         "shield": "Schild",
         "shields": "Schilde",

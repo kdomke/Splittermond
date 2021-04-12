@@ -553,10 +553,13 @@ export default class SplittermondActor extends Actor {
         actorData.items.forEach(i => {
             if (i.data.modifier) {
                 switch (i.type) {
-                    case "equipment":
                     case "weapon":
                     case "shield":
                     case "armor":
+                        if (!i.data.equipped) {
+                            break;
+                        }
+                    case "equipment":
                         this._addModifier(i.name, i.data.modifier, "equipment");
                         break;
                     case "strength":
@@ -655,7 +658,6 @@ export default class SplittermondActor extends Actor {
                     + parseInt(data.attributes[attr].advances || 0);
             });
 
-
             data.derivedAttributes.size.value = parseInt(data.species.size);
             data.derivedAttributes.speed.value = parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value);
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
@@ -665,6 +667,10 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
 
+        } else {
+            CONFIG.splittermond.attributes.forEach(attr => {
+                data.attributes[attr].value = parseInt(data.attributes[attr].value || 0);
+            });
         }
 
 
@@ -939,7 +945,10 @@ export default class SplittermondActor extends Actor {
                             consumedFocus: s.enhancementOptions?.search("Verzehrter Fokus") >= 0,
                             exhaustedFocus: s.enhancementOptions?.search("Erschöpfter Fokus") >= 0,
                             channelizedFocus: s.enhancementOptions?.search("Kanalisierter Fokus") >= 0,
-                            effectDuration: s.enhancementOptions?.search("Wirkungsdauer") >= 0
+                            effectDuration: s.enhancementOptions?.search("Wirkungsdauer") >= 0,
+                            damage: s.enhancementOptions?.search("Schaden") >= 0,
+                            range: s.enhancementOptions?.search("Reichweite") >= 0,
+                            effectArea: s.enhancementOptions?.search("Wirkungsbereich") >= 0
                         }
                     }
                 })
@@ -1170,6 +1179,52 @@ export default class SplittermondActor extends Actor {
         data.img = spellData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
 
+
+
+        if (data.succeeded) {
+            if (data.degreeOfSuccess > 0) {
+                data.degreeOfSuccessDescription = "<h3>" + game.i18n.localize(`splittermond.degreeOfSuccessOptionsHeader`) + "</h3>";
+                if (data.degreeOfSuccess >= 5) {
+                    data.degreeOfSuccessDescription = "<p>" + game.i18n.localize(`splittermond.spellCheckResultDescription.outstanding`) + "</p>";
+                }
+                data.degreeOfSuccessDescription += "<ul>";
+                if (spellData.data.degreeOfSuccessOptions.castDuration) {
+                    data.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.castDuration`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.exhaustedFocus) {
+                    data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.exhaustedFocus`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.channelizedFocus) {
+                    data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.channelizedFocus`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.range) {
+                    data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.range`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.damage) {
+                    data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.damage`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.consumedFocus) {
+                    data.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.consumedFocus`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.effectArea) {
+                    data.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.effectArea`) + "</li>";
+                }
+                if (spellData.data.degreeOfSuccessOptions.effectDuration) {
+                    data.degreeOfSuccessDescription += "<li>2 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.effectDuration`) + "</li>";
+                }
+                data.degreeOfSuccessDescription += `<li>${spellData.data.enhancementCosts}: ${spellData.data.enhancementDescription}</li>`;
+                data.degreeOfSuccessDescription += "</ul>";
+
+            }
+
+        } else {
+            if (data.degreeOfSuccess <= -5) {
+                data.degreeOfSuccessDescription = "<p><strong>" + game.i18n.localize(`splittermond.spellCheckResultDescription.devastating`) + "</strong></p>";
+            } else if (data.degreeOfSuccess <= -1) {
+                data.degreeOfSuccessDescription = "<p><strong>" + game.i18n.localize(`splittermond.spellCheckResultDescription.failed`) + "</strong></p>";
+            }
+        }
+
         data.actions = [];
         if (spellData.data.damage && data.succeeded) {
             data.actions.push({
@@ -1194,7 +1249,7 @@ export default class SplittermondActor extends Actor {
             }
         });
 
-        if (data.isFumble) {
+        if (data.isFumble || spellData.degreeOfSuccess <= -5) {
             data.actions.push({
                 name: "Patzertabelle",
                 icon: "fa-dice",
@@ -1212,6 +1267,13 @@ export default class SplittermondActor extends Actor {
             item: spellData,
             tooltip: await data.roll.getTooltip()
         };
+
+        templateContext.tooltip = $(templateContext.tooltip).append(`
+        <section class="tooltip-part">
+        <p>${spellData.data.description}</p>
+        </section>
+        `).wrapAll('<div>').parent().html();
+        //templateContext.tooltip += "<p>" + spellData.data.description + "</p>";
 
         let chatData = {
             user: game.user._id,
@@ -1249,9 +1311,11 @@ export default class SplittermondActor extends Actor {
 
         let defenseValue = actorData.derivedAttributes[defenseType].value;
 
+
+
         if (data.succeeded) {
             defenseValue = defenseValue + 1 + data.degreeOfSuccess;
-
+            data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}</strong></p>`;
             let feature = {};
             itemData.features?.toLowerCase().split(',').forEach(feat => {
                 let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
@@ -1264,31 +1328,30 @@ export default class SplittermondActor extends Actor {
                 defenseValue += feature["defensiv"];
             }
 
-            data.degreeOfSuccessMessage = game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}`;
-
             if (data.degreeOfSuccess >= 5) {
-                data.degreeOfSuccessMessage += ` Die Aktion dauert nur 2 Tick.`
+                data.degreeOfSuccessDescription += `<p>Die Aktion dauert nur 2 Tick.</p>`
             }
         } else {
 
             if (data.degreeOfSuccess === 0) {
                 defenseValue += 1;
+
             }
-            data.degreeOfSuccessMessage = game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}`;
+            data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}</strong></p>`;
             if (data.degreeOfSuccess === 0) {
-                data.degreeOfSuccessMessage += ` + [[1d6]] Punkte Betäubungsschaden`
+                data.degreeOfSuccessDescription += `<p>+ [[1d6]] Punkte Betäubungsschaden</p>`;
             }
             if (data.degreeOfSuccess <= -5) {
                 if (itemData._id === "acrobatics") {
-                    data.degreeOfSuccessMessage += ` Der Abenteurer stürzt hart auf empfindliche Körperteile ([[2d6]] Schaden) und gilt als liegend`
+                    data.degreeOfSuccessDescription += `<p>Der Abenteurer stürzt hart auf empfindliche Körperteile ([[2d6]] Schaden) und gilt als liegend</p>`
                 } else if (itemData._id === "determination") {
-                    data.degreeOfSuccessMessage += `Die Willenskraft des Abenteurers ist erschöpft.
+                    data.degreeOfSuccessDescription += `<p>Die Willenskraft des Abenteurers ist erschöpft.
 Er verliert alle Zuversicht, so dass er für den Rest des Tages einen
-Malus in Höhe von 3 Punkten auf alle seine Proben erhält.`
+Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
                 } else if (itemData._id === "endurance") {
-                    data.degreeOfSuccessMessage += ` Der Abenteurer ist völlig erschöpft. Er erhält den Zustand @Item[Erschöpft]{Erschöpft 3}, der anhält bis er eine Ruhephase eingelegt hat.`
+                    data.degreeOfSuccessDescription += `<p>Der Abenteurer ist völlig erschöpft. Er erhält den Zustand @Item[Erschöpft]{Erschöpft 3}, der anhält bis er eine Ruhephase eingelegt hat.</p>`
                 } else {
-                    data.degreeOfSuccessMessage += " Auf Patzertabelle würfeln."
+                    data.degreeOfSuccessDescription += "<p>Auf Patzertabelle würfeln!</p>"
                     data.actions = [{
                         name: "Patzertabelle",
                         icon: "fa-dice",

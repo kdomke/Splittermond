@@ -501,9 +501,9 @@
         "exhaustedFocus": false,
         "channelizedFocus": false,
         "effectDuration": false,
-        "damage" : false,
-        "range"  : false,
-        "effectrange": false
+        "damage": false,
+        "range": false,
+        "effectArea": false
       }
     },
     "statuseffect": {
