@@ -554,10 +554,13 @@ export default class SplittermondActor extends Actor {
             if (i.data.modifier) {
                 switch (i.type) {
                     case "equipment":
+                        this._addModifier(i.name, i.data.modifier, "equipment");
+                        break;
                     case "weapon":
                     case "shield":
                     case "armor":
-                        this._addModifier(i.name, i.data.modifier, "equipment");
+                        if (i.data.equipped)
+                            this._addModifier(i.name, i.data.modifier, "equipment");
                         break;
                     case "strength":
                         this._addModifier(i.name, i.data.modifier, "misc", i.data.quantity)
