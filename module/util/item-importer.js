@@ -21,6 +21,104 @@ export default class ItemImporter {
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*)\s+([^]+)/)) {
             this.importWeapon(rawData);
         }
+
+        // Check Armor
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
+            this.importArmor(rawData);
+        }
+
+        // Check Shield
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
+            this.importShield(rawData);
+        }
+    }
+
+    static async importShield(rawData) {
+        rawData = rawData.replace(/\n/g, " ");
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
+
+        let itemData = {
+            type: "shield",
+            name: tokens[1].trim(),
+            img: CONFIG.splittermond.icons.shield[tokens[1].trim()] || CONFIG.splittermond.icons.shield.default,
+            data: {}
+        };
+
+        switch (tokens[2].trim()) {
+            case "Metropole":
+                itemData.data.availability = "metropolis";
+                break;
+            case "Kleinstadt":
+                itemData.data.availability = "town";
+                break;
+            case "Großstadt":
+                itemData.data.availability = "city";
+                break;
+            case "Dorf":
+            default:
+                itemData.data.availability = "village";
+                break;
+        }
+
+        itemData.data.price = tokens[3].trim();
+
+        itemData.data.weight = parseInt(tokens[4]);
+        itemData.data.hardness = parseInt(tokens[5]);
+        itemData.data.complexity = tokens[6].trim();
+        itemData.data.defenseBonus = tokens[7].trim();
+        itemData.data.handicap = parseInt(tokens[8]);
+        itemData.data.tickMalus = parseInt(tokens[9]);
+        itemData.data.minAttributes = tokens[10];
+        itemData.data.features = tokens[11];
+
+        Item.create(itemData);
+
+        console.log(itemData);
+    }
+
+    static async importArmor(rawData) {
+        rawData = rawData.replace(/\n/g, " ");
+
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
+
+        let itemData = {
+            type: "armor",
+            name: tokens[1].trim(),
+            img: CONFIG.splittermond.icons.armor[tokens[1].trim()] || CONFIG.splittermond.icons.armor.default,
+            data: {}
+        };
+
+        switch (tokens[2].trim()) {
+            case "Metropole":
+                itemData.data.availability = "metropolis";
+                break;
+            case "Kleinstadt":
+                itemData.data.availability = "town";
+                break;
+            case "Großstadt":
+                itemData.data.availability = "city";
+                break;
+            case "Dorf":
+            default:
+                itemData.data.availability = "village";
+                break;
+        }
+
+        itemData.data.price = tokens[3].trim();
+
+        itemData.data.weight = parseInt(tokens[4]);
+        itemData.data.hardness = parseInt(tokens[5]);
+        itemData.data.complexity = tokens[6].trim();
+        itemData.data.defenseBonus = tokens[7].trim();
+        itemData.data.damageReduction = parseInt(tokens[8]);
+        itemData.data.handicap = parseInt(tokens[9]);
+        itemData.data.tickMalus = parseInt(tokens[10]);
+        itemData.data.minStr = parseInt(tokens[11]);
+        itemData.data.features = tokens[12].trim();
+
+        Item.create(itemData);
+
+        console.log(itemData);
     }
 
     static async importWeapon(rawData) {
@@ -62,7 +160,7 @@ export default class ItemImporter {
         };
 
         itemData.data.skill = skill;
-        switch (tokens[2]) {
+        switch (tokens[2].trim()) {
             case "Metropole":
                 itemData.data.availability = "metropolis";
                 break;
@@ -71,6 +169,7 @@ export default class ItemImporter {
                 break;
             case "Großstadt":
                 itemData.data.availability = "city";
+                break;
             case "Dorf":
             default:
                 itemData.data.availability = "village";
