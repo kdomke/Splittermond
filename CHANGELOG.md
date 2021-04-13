@@ -1,3 +1,8 @@
+## 0.1.2 ##
+2021-04-13
+
+* Copy-and-Paste-Importer für Waffen, Rüstungen, Schilde und NPCs
+
 ## 0.1.1 ##
 2021-04-12
 
