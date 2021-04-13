@@ -14,7 +14,7 @@ export default class ItemImporter {
             rawData.includes("Kosten:") &&
             rawData.includes("Zauberdauer:") &&
             rawData.includes("Wirkung:")) {
-            importSpell(rawData);
+            this.importSpell(rawData);
         }
 
         // Check Weapon
