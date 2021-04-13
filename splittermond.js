@@ -8,6 +8,7 @@ import * as Dice from "./module/util/dice.js"
 import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
+import ItemImporter from "./module/util/item-importer.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -73,22 +74,7 @@ Hooks.once("init", function () {
         return accum;
     });
 
-    document.addEventListener('paste', function (e) {
-        let rawData = e.clipboardData.getData("text");
-        rawData = rawData.replace(/\r\n/g, "\n");
-        rawData = rawData.replace(/-\n/g, "");
-        rawData = rawData.replace(//g, "");
-        console.log(rawData);
-
-        if (rawData.includes("Schulen:") &&
-            rawData.includes("Schwierigkeit:") &&
-            rawData.includes("Typus:") &&
-            rawData.includes("Kosten:") &&
-            rawData.includes("Zauberdauer:") &&
-            rawData.includes("Wirkung:")) {
-            Macros.importSpell(rawData);
-        }
-    }, false);
+    document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
 
 
     console.log("Splittermond | DONE!");
