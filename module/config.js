@@ -825,7 +825,21 @@ splittermond.modifier = {
     sprinter: "GSW +1",
     focusregen: "focusRegeneration.multiplier 3",
     liferegen: "healthRegeneration.multiplier 3",
-    naturalarmor: "SR +1"
+    naturalarmor: "SR +1",
+    "schmerzimmunität": "woundMalus.mod -100",
+    "schmerzresistenz": "woundMalus.mod -1",
+    "schwächlich": "woundMalus.nbrLevels 3",
+    "erhöhte fokusregeneration": "focusRegeneration.multiplier 3",
+    "erhöhte lebensregeneration": "healthRegeneration.multiplier 3",
+    "erhöhter fokuspool": "FO +5",
+    "flink": "GSW +1",
+    "hoher geistiger widerstand": "GW +2",
+    "hoher körperlicher widerstand": "KW +2",
+    "natürlicher rüstungsschutz": "SR +1",
+    "robust": "LP +1",
+    "verbesserte initiative": "INI -3",
+    "zusätzliche splitterpunkte": "splinterpoints +2"
+
 }
 
 

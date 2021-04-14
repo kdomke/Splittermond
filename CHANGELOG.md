@@ -1,3 +1,10 @@
+## 0.1.3 ##
+2021-04-14
+
+* Copy-and-Paste-Importer für Stärken und Gegnermerkmale (Es können mehrere Merkmale/Stärken auf einmal kopiert werden. Etwaige Modifikatoren werden automatisch hinzugefügt)
+* Es können mehrere Waffen, Rüstungen, Schilde per Copy-and-Paste importiert werden wenn vorher in einem Texteditor jede Waffe/Wüstung/Schild in einer eigenen Zeile steht.
+* Fix Issue #16: Kritisch und Defensiv wird jetzt berücksichtig.
+
 ## 0.1.2 ##
 2021-04-13
 

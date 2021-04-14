@@ -89,6 +89,18 @@ export function damage(damageFormula, featureString) {
         roll._total += scharfBonus;
     }
 
+    if (feature["kritisch"]) {
+        let kritischBonus = 0;
+        roll.terms[0].results.forEach(r => {
+            if (r.active) {
+                if (r.result === roll.terms[0].faces) {
+                    kritischBonus += feature["kritisch"];
+                }
+            }
+        });
+        roll._total += kritischBonus;
+    }
+
 
     roll.toMessage(chatData)
 
