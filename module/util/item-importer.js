@@ -20,23 +20,141 @@ export default class ItemImporter {
         }
 
         // Check Weapon
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*)\s+([^]+)/)) {
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
             this.importWeapon(rawData);
+            return;
         }
 
         // Check Armor
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
             this.importArmor(rawData);
+            return;
         }
 
         // Check Shield
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
             this.importShield(rawData);
+            return;
         }
 
+        // Import NPC
         if (rawData.includes("Fertigkeiten:")) {
             this.importNpc(rawData);
+            return;
         }
+
+        // Import Strengths
+        if (rawData.match(/^(.*) \(([0-9])(\*?)\): .*/gm)) {
+            this.importStrengths(rawData);
+            return;
+        }
+
+        // Import npcfeature
+        if (rawData.match(/^(.*): .*/gm)) {
+            this.importNpcFeatures(rawData);
+            return;
+        }
+    }
+
+    static async importNpcFeatures(rawData) {
+        let folderList = game.items.directory.folders.reduce((str, folder) => {
+            return `${str} <option value="${folder._id}">${folder.name}</option>`;
+        }, "");
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: game.i18n.localize("splittermond.selectAFolder"),
+                content: `<label>Ordner</label > <select name="folder">
+                <option value="">keinen Ordner</option>
+            ${folderList}
+        </select>`,
+                buttons: {
+                    ok: {
+                        label: game.i18n.localize("splittermond.ok"),
+                        callback: html => {
+                            resolve(html.find('[name="folder"]')[0].value);
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        let folder = await p;
+
+        rawData.match(/^(.*): .*/gm).forEach((m) => {
+            let token = m.match(/(.*):/);
+
+            let itemData = {
+                type: "npcfeature",
+                name: token[1].trim(),
+                folder: folder,
+                data: {
+                    modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
+                }
+            }
+            let escapeStr = token[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            let descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+?)(?=^.*:)`, "m"));
+            if (descriptionData === null) {
+                descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
+            }
+            itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+
+            Item.create(itemData);
+
+            console.log(itemData);
+        });
+    }
+
+    static async importStrengths(rawData) {
+        let folderList = game.items.directory.folders.reduce((str, folder) => {
+            return `${str} <option value="${folder._id}">${folder.name}</option>`;
+        }, "");
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: game.i18n.localize("splittermond.selectAFolder"),
+                content: `<label>Ordner</label > <select name="folder">
+                <option value="">keinen Ordner</option>
+            ${folderList}
+        </select>`,
+                buttons: {
+                    ok: {
+                        label: game.i18n.localize("splittermond.ok"),
+                        callback: html => {
+                            resolve(html.find('[name="folder"]')[0].value);
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        let folder = await p;
+        rawData.match(/^(.*) \(([0-9])(\*?)\): .*/gm).forEach((m) => {
+            let token = m.match(/(.*) \(([0-9])(\*?)\):/);
+            let itemData = {
+                type: "strength",
+                name: token[1].trim(),
+                folder: folder,
+                data: {
+                    quantity: 1,
+                    level: parseInt(token[2]),
+                    onCreationOnly: token[3] === "*",
+                    modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
+                }
+            }
+            let escapeStr = token[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            let descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+?)(?=^.* \\([0-9]\\*?\\):)`, "m"));
+            if (descriptionData === null) {
+                descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
+            }
+            itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+
+            Item.create(itemData);
+
+            console.log(itemData);
+        })
     }
 
     static async importShield(rawData) {
@@ -132,14 +250,14 @@ export default class ItemImporter {
 
         let optionsList = CONFIG.splittermond.skillGroups.fighting.reduce((str, skill) => {
             let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-            return `${str}<option value="${skill}">${skillLabel}</option>`;
+            return `${str} <option value="${skill}">${skillLabel}</option>`;
         }, "");
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: "Waffenimport",
-                content: `<label>Kampffertigkeit</label> <select name="skill">
-                        ${optionsList}
-                        </select>`,
+                content: `<labe >Kampffertigkeit</label > <select name="skill">
+            ${optionsList}
+        </select>`,
                 buttons: {
                     ok: {
                         label: game.i18n.localize("splittermond.ok"),
@@ -156,7 +274,7 @@ export default class ItemImporter {
 
         let isRanged = ["throwing", "longrange"].includes(skill);
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9],?\s*)*)\s+(.+)/);
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9],?\s*)*|–)\s+(.+)/);
 
         let itemData = {
             type: "weapon",
@@ -247,15 +365,15 @@ export default class ItemImporter {
             data: {}
         };
         let nameData = rawData.match(/([^(]+)\s(\(.*\))/);
-        spellData.name = `${nameData[1]} ${nameData[2]}`;
+        spellData.name = `${nameData[1]} ${nameData[2]} `;
 
         let skillsData = rawData.match(/Schulen: ([^:]+?)\n[^ ]+:/);
         spellData.data.availableIn = skillsData[1].split(",").map(s => {
             let data = s.match(/([^ ]+)\s([0-5])/);
-            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
+            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase().startsWith(data[1].toLowerCase()));
             spellData.data.skill = skill;
             spellData.data.skillLevel = parseInt(data[2]);
-            return `${skill} ${data[2]}`;
+            return `${skill} ${data[2]} `;
         }).join(", ");
 
         let typeData = rawData.match(/Typus: ([^:]+?)\n[^ ]+:/);
@@ -309,7 +427,7 @@ export default class ItemImporter {
 
         let egData = rawData.match(/Erfolgsgrade:\n([^]+)/);
         let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-        spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
+        spellData.data.enhancementCosts = `${enhancementData[1]} /${enhancementData[2]}`;
         spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
         spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
         spellData.data.degreeOfSuccessOptions = {
