@@ -1315,7 +1315,7 @@ export default class SplittermondActor extends Actor {
 
         if (data.succeeded) {
             defenseValue = defenseValue + 1 + data.degreeOfSuccess;
-            data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}</strong></p>`;
+
             let feature = {};
             itemData.features?.toLowerCase().split(',').forEach(feat => {
                 let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
@@ -1327,6 +1327,9 @@ export default class SplittermondActor extends Actor {
             if (feature["defensiv"]) {
                 defenseValue += feature["defensiv"];
             }
+
+            data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + `: ${defenseValue}</strong></p>`;
+
 
             if (data.degreeOfSuccess >= 5) {
                 data.degreeOfSuccessDescription += `<p>Die Aktion dauert nur 2 Tick.</p>`
