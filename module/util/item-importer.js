@@ -69,6 +69,7 @@ export default class ItemImporter {
             rawData.includes("Zauberdauer:") &&
             rawData.includes("Wirkung:")) {
             this.importSpell(rawData);
+            return;
         }
 
         // Check multiple Weapons
