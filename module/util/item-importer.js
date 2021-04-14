@@ -9,7 +9,7 @@ export default class ItemImporter {
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: game.i18n.localize("splittermond.selectAFolder"),
-                content: `<label>Ordner</label > <select name="folder">
+                content: `<label>Ordner</label> <select name="folder">
                 <option value="">keinen Ordner</option>
             ${folderList}
         </select>`,
@@ -36,7 +36,7 @@ export default class ItemImporter {
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: "Waffenimport",
-                content: `<labe >Kampffertigkeit</label > <select name="skill">
+                content: `<label>Kampffertigkeit</label> <select name="skill">
             ${optionsList}
         </select>`,
                 buttons: {
@@ -146,29 +146,7 @@ export default class ItemImporter {
     }
 
     static async importNpcFeatures(rawData) {
-        let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder._id}">${folder.name}</option>`;
-        }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: game.i18n.localize("splittermond.selectAFolder"),
-                content: `<label>Ordner</label > <select name="folder">
-                <option value="">keinen Ordner</option>
-            ${folderList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: game.i18n.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="folder"]')[0].value);
-                        }
-                    }
-                }
-            });
-            dialog.render(true);
-        });
-
-        let folder = await p;
+        let folder = await this._folderDialog();
 
         rawData.match(/^(.*): .*/gm).forEach((m) => {
             let token = m.match(/(.*):/);
@@ -196,29 +174,7 @@ export default class ItemImporter {
     }
 
     static async importStrengths(rawData) {
-        let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder._id}">${folder.name}</option>`;
-        }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: game.i18n.localize("splittermond.selectAFolder"),
-                content: `<label>Ordner</label > <select name="folder">
-                <option value="">keinen Ordner</option>
-            ${folderList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: game.i18n.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="folder"]')[0].value);
-                        }
-                    }
-                }
-            });
-            dialog.render(true);
-        });
-
-        let folder = await p;
+        let folder = await this._folderDialog();
         rawData.match(/^(.*) \(([0-9])(\*?)\): .*/gm).forEach((m) => {
             let token = m.match(/(.*) \(([0-9])(\*?)\):/);
             let itemData = {
@@ -339,29 +295,7 @@ export default class ItemImporter {
     static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         if (skill === "") {
-            let optionsList = CONFIG.splittermond.skillGroups.fighting.reduce((str, skill) => {
-                let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-                return `${str} <option value="${skill}">${skillLabel}</option>`;
-            }, "");
-            let p = new Promise((resolve, reject) => {
-                let dialog = new Dialog({
-                    title: "Waffenimport",
-                    content: `<labe >Kampffertigkeit</label > <select name="skill">
-            ${optionsList}
-        </select>`,
-                    buttons: {
-                        ok: {
-                            label: game.i18n.localize("splittermond.ok"),
-                            callback: html => {
-                                resolve(html.find('[name="skill"]')[0].value);
-                            }
-                        }
-                    }
-                });
-                dialog.render(true);
-            });
-
-            skill = await p;
+            skill = this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
         }
 
 
