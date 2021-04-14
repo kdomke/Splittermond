@@ -2,7 +2,59 @@ import SplittermondCompendium from "./compendium.js"
 
 export default class ItemImporter {
 
-    static pasteEventhandler(e) {
+    static async _folderDialog() {
+        let folderList = game.items.directory.folders.reduce((str, folder) => {
+            return `${str} <option value="${folder._id}">${folder.name}</option>`;
+        }, "");
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: game.i18n.localize("splittermond.selectAFolder"),
+                content: `<label>Ordner</label > <select name="folder">
+                <option value="">keinen Ordner</option>
+            ${folderList}
+        </select>`,
+                buttons: {
+                    ok: {
+                        label: game.i18n.localize("splittermond.ok"),
+                        callback: html => {
+                            resolve(html.find('[name="folder"]')[0].value);
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        return p;
+    }
+
+    static async _skillDialog(skillOptions) {
+        let optionsList = skillOptions.reduce((str, skill) => {
+            let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
+            return `${str} <option value="${skill}">${skillLabel}</option>`;
+        }, "");
+        let p = new Promise((resolve, reject) => {
+            let dialog = new Dialog({
+                title: "Waffenimport",
+                content: `<labe >Kampffertigkeit</label > <select name="skill">
+            ${optionsList}
+        </select>`,
+                buttons: {
+                    ok: {
+                        label: game.i18n.localize("splittermond.ok"),
+                        callback: html => {
+                            resolve(html.find('[name="skill"]')[0].value);
+                        }
+                    }
+                }
+            });
+            dialog.render(true);
+        });
+
+        return p;
+    }
+
+    static async pasteEventhandler(e) {
         let rawData = e.clipboardData.getData("text");
         rawData = rawData.replace(/\r\n/g, "\n");
         rawData = rawData.replace(/-\n/g, "");
@@ -19,16 +71,53 @@ export default class ItemImporter {
             this.importSpell(rawData);
         }
 
+        // Check multiple Weapons
+        let test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +(?:([0-9]+ [LST])(?: *\/ *[0-9]+ [LST])?) +([0-9]+) +([0-9]+) +([UGFMA]) +([0-9+\-W]+) +([0-9]+) +((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3}) +(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],? *)*|–) +(.+)/g);
+        if (test) {
+            if (test.length > 1) {
+                let skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+                let folder = await this._folderDialog();
+
+                test.forEach(m => {
+                    this.importWeapon(m, skill, folder);
+                });
+                return;
+            }
+        }
         // Check Weapon
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
             this.importWeapon(rawData);
             return;
         }
 
+        // Check multiple Armor
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
+        if (test) {
+            if (test.length > 1) {
+                let folder = await this._folderDialog();
+                test.forEach(m => {
+                    this.importArmor(m, folder)
+                });
+                return;
+            }
+        }
+
         // Check Armor
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
             this.importArmor(rawData);
             return;
+        }
+
+        // Check multiple Shield
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9]) +(.+)/g);
+        if (test) {
+            if (test.length > 1) {
+                let folder = await this._folderDialog();
+                test.forEach(m => {
+                    this.importShield(m, folder);
+                });
+                return;
+            }
         }
 
         // Check Shield
@@ -157,13 +246,14 @@ export default class ItemImporter {
         })
     }
 
-    static async importShield(rawData) {
+    static async importShield(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
 
         let itemData = {
             type: "shield",
             name: tokens[1].trim(),
+            folder: folder,
             img: CONFIG.splittermond.icons.shield[tokens[1].trim()] || CONFIG.splittermond.icons.shield.default,
             data: {}
         };
@@ -200,7 +290,7 @@ export default class ItemImporter {
         console.log(itemData);
     }
 
-    static async importArmor(rawData) {
+    static async importArmor(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
 
         let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
@@ -208,6 +298,7 @@ export default class ItemImporter {
         let itemData = {
             type: "armor",
             name: tokens[1].trim(),
+            folder: folder,
             img: CONFIG.splittermond.icons.armor[tokens[1].trim()] || CONFIG.splittermond.icons.armor.default,
             data: {}
         };
@@ -245,32 +336,34 @@ export default class ItemImporter {
         console.log(itemData);
     }
 
-    static async importWeapon(rawData) {
+    static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
-
-        let optionsList = CONFIG.splittermond.skillGroups.fighting.reduce((str, skill) => {
-            let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-            return `${str} <option value="${skill}">${skillLabel}</option>`;
-        }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: "Waffenimport",
-                content: `<labe >Kampffertigkeit</label > <select name="skill">
+        if (skill === "") {
+            let optionsList = CONFIG.splittermond.skillGroups.fighting.reduce((str, skill) => {
+                let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
+                return `${str} <option value="${skill}">${skillLabel}</option>`;
+            }, "");
+            let p = new Promise((resolve, reject) => {
+                let dialog = new Dialog({
+                    title: "Waffenimport",
+                    content: `<labe >Kampffertigkeit</label > <select name="skill">
             ${optionsList}
         </select>`,
-                buttons: {
-                    ok: {
-                        label: game.i18n.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="skill"]')[0].value);
+                    buttons: {
+                        ok: {
+                            label: game.i18n.localize("splittermond.ok"),
+                            callback: html => {
+                                resolve(html.find('[name="skill"]')[0].value);
+                            }
                         }
                     }
-                }
+                });
+                dialog.render(true);
             });
-            dialog.render(true);
-        });
 
-        let skill = await p;
+            skill = await p;
+        }
+
 
         let isRanged = ["throwing", "longrange"].includes(skill);
 
@@ -280,6 +373,7 @@ export default class ItemImporter {
             type: "weapon",
             name: tokens[1].trim(),
             img: CONFIG.splittermond.icons.weapon[tokens[1].trim()] || CONFIG.splittermond.icons.weapon.default,
+            folder: folder,
             data: {}
         };
 
