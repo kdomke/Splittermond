@@ -93,7 +93,7 @@ export default class ItemImporter {
         }
 
         // Check multiple Armor
-        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
         if (test) {
             if (test.length > 1) {
                 let folder = await this._folderDialog();
@@ -105,13 +105,13 @@ export default class ItemImporter {
         }
 
         // Check Armor
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
             this.importArmor(rawData);
             return;
         }
 
         // Check multiple Shield
-        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9]) +(.+)/g);
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9]) +(.+)/g);
         if (test) {
             if (test.length > 1) {
                 let folder = await this._folderDialog();
@@ -123,7 +123,7 @@ export default class ItemImporter {
         }
 
         // Check Shield
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
             this.importShield(rawData);
             return;
         }
@@ -208,7 +208,7 @@ export default class ItemImporter {
 
     static async importShield(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
 
         let itemData = {
             type: "shield",
@@ -254,7 +254,7 @@ export default class ItemImporter {
     static async importArmor(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
 
         let itemData = {
             type: "armor",
@@ -301,7 +301,7 @@ export default class ItemImporter {
     static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         if (skill === "") {
-            skill = this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+            skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
         }
 
 
@@ -430,36 +430,36 @@ export default class ItemImporter {
             spellData.data.difficulty = "VTD";
         }
 
-        let costsData = rawData.match(/Kosten: ([^:]+?)\n[^\s]+:/);
+        let costsData = rawData.match(/Kosten:\s*([^:]+?)\n[^\s]+:/);
         spellData.data.costs = costsData[1];
 
-        let castDurationData = rawData.match(/Zauberdauer: ([^:]+?)[^\s]+:/);
+        let castDurationData = rawData.match(/Zauberdauer:\s*([^:]+?)[^\s]+:/);
         spellData.data.castDuration = castDurationData[1].trim();
 
-        let descriptionData = rawData.match(/Wirkung: ([^]+?)\n[^\s]+:/);
+        let descriptionData = rawData.match(/Wirkung:\s*([^]+?)\n[^\s]+:/);
         spellData.data.description = descriptionData[1];
         spellData.data.description = spellData.data.description.replace(/\n/g, " ");
         spellData.data.description = spellData.data.description.replace(/  /g, " ");
 
-        let effectDurationData = rawData.match(/Wirkungsdauer: ([^:]+?)[^\s]+:/);
+        let effectDurationData = rawData.match(/Wirkungsdauer:\s*([^:]+?)[^\s]+:/);
         if (effectDurationData)
             spellData.data.effectDuration = effectDurationData[1].trim();
         else
             spellData.data.effectDuration = "";
 
-        let effectAreaData = rawData.match(/Wirkungsbereich: ([^:]+?)[^\s]+:/);
+        let effectAreaData = rawData.match(/Wirkungsbereich:\s*([^:]+?)[^\s]+:/);
         if (effectAreaData)
             spellData.data.effectArea = effectAreaData[1].trim();
         else
             spellData.data.effectArea = "";
 
-        let rangeData = rawData.match(/Reichweite: ([^:]+?)[^\s]+:/);
+        let rangeData = rawData.match(/Reichweite:\s*([^:]+?)[^\s]+:/);
         if (rangeData)
             spellData.data.range = rangeData[1];
         else
             spellData.data.range = "";
 
-        let egData = rawData.match(/Erfolgsgrade:\n([^]+)/);
+        let egData = rawData.match(/Erfolgsgrade:\s*([^]+)/);
         let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
         spellData.data.enhancementCosts = `${enhancementData[1]} /${enhancementData[2]}`;
         spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
