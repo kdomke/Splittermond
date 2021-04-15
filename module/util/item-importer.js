@@ -69,6 +69,7 @@ export default class ItemImporter {
             rawData.includes("Zauberdauer:") &&
             rawData.includes("Wirkung:")) {
             this.importSpell(rawData);
+
             return;
         }
 
@@ -171,6 +172,7 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeNpcfeature") }));
         });
     }
 
@@ -200,7 +202,8 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
-        })
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeStrength") }));
+        });
     }
 
     static async importShield(rawData, folder = "") {
@@ -245,6 +248,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeShield") }));
     }
 
     static async importArmor(rawData, folder = "") {
@@ -291,6 +295,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeArmor") }));
     }
 
     static async importWeapon(rawData, skill = "", folder = "") {
@@ -383,7 +388,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeWeapon") }));
     }
 
     static async importSpell(rawData) {
@@ -479,6 +484,8 @@ export default class ItemImporter {
 
         Item.create(spellData);
 
+
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: spellData.name, type: game.i18n.localize("ITEM.TypeSpell") }));
         console.log(spellData);
     }
 
@@ -901,6 +908,7 @@ export default class ItemImporter {
 
 
 
+                        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: name, type: game.i18n.localize(`ACTOR.TypeNpc`) }));
 
                         return Actor.create({
                             name: name,

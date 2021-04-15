@@ -197,6 +197,9 @@
         "status": "Status",
         "throwing": "werfen",
         "masteries": "Meisterschaften",
+        "message": {
+            "itemImported": "Das Item \"{name}\" wurde als \"{type}\" importiert!"
+        },
         "masteryItem": {
             "level": "Schwelle"
         },
