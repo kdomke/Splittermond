@@ -396,20 +396,20 @@ export default class ItemImporter {
         let nameData = rawData.match(/([^(]+)\s(\(.*\))/);
         spellData.name = `${nameData[1]} ${nameData[2]} `;
 
-        let skillsData = rawData.match(/Schulen: ([^:]+?)\n[^ ]+:/);
-        spellData.data.availableIn = skillsData[1].split(",").map(s => {
+        let skillsData = rawData.match(/Schulen: ([^:]+?)[^\s]+:/);
+        spellData.data.availableIn = skillsData[1].trim().split(",").map(s => {
             let data = s.match(/([^ ]+)\s([0-5])/);
-            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase().startsWith(data[1].toLowerCase()));
+            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
             spellData.data.skill = skill;
             spellData.data.skillLevel = parseInt(data[2]);
             return `${skill} ${data[2]} `;
         }).join(", ");
 
-        let typeData = rawData.match(/Typus: ([^:]+?)\n[^ ]+:/);
-        spellData.data.spellType = typeData[1];
+        let typeData = rawData.match(/Typus: ([^:]+?)[^\s]+:/);
+        spellData.data.spellType = typeData[1].trim();
 
-        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)\n[^ ]+:/);
-        spellData.data.difficulty = difficultyData[1];
+        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)[^ ]+:/);
+        spellData.data.difficulty = difficultyData[1].trim();
 
         if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
             spellData.data.difficulty.search("Geist") >= 0) {
@@ -425,30 +425,30 @@ export default class ItemImporter {
             spellData.data.difficulty = "VTD";
         }
 
-        let costsData = rawData.match(/Kosten: ([^:]+?)\n[^ ]+:/);
+        let costsData = rawData.match(/Kosten: ([^:]+?)\n[^\s]+:/);
         spellData.data.costs = costsData[1];
 
-        let castDurationData = rawData.match(/Zauberdauer: ([^:]+?)\n[^ ]+:/);
-        spellData.data.castDuration = castDurationData[1];
+        let castDurationData = rawData.match(/Zauberdauer: ([^:]+?)[^\s]+:/);
+        spellData.data.castDuration = castDurationData[1].trim();
 
-        let descriptionData = rawData.match(/Wirkung: ([^]+?)\n[^ ]+:/);
+        let descriptionData = rawData.match(/Wirkung: ([^]+?)\n[^\s]+:/);
         spellData.data.description = descriptionData[1];
         spellData.data.description = spellData.data.description.replace(/\n/g, " ");
         spellData.data.description = spellData.data.description.replace(/  /g, " ");
 
-        let effectDurationData = rawData.match(/Wirkungsdauer: ([^:]+?)\n[^ ]+:/);
+        let effectDurationData = rawData.match(/Wirkungsdauer: ([^:]+?)[^\s]+:/);
         if (effectDurationData)
-            spellData.data.effectDuration = effectDurationData[1];
+            spellData.data.effectDuration = effectDurationData[1].trim();
         else
             spellData.data.effectDuration = "";
 
-        let effectAreaData = rawData.match(/Wirkungsbereich: ([^:]+?)\n[^ ]+:/);
+        let effectAreaData = rawData.match(/Wirkungsbereich: ([^:]+?)[^\s]+:/);
         if (effectAreaData)
-            spellData.data.effectArea = effectAreaData[1];
+            spellData.data.effectArea = effectAreaData[1].trim();
         else
             spellData.data.effectArea = "";
 
-        let rangeData = rawData.match(/Reichweite: ([^:]+?)\n[^ ]+:/);
+        let rangeData = rawData.match(/Reichweite: ([^:]+?)[^\s]+:/);
         if (rangeData)
             spellData.data.range = rangeData[1];
         else
