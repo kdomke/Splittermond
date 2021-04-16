@@ -7,6 +7,7 @@
 * Min. Attribute für Waffen, Rüstungen und Schilde werden für die Behinderung, Tick-Zuschlag bzw. WGS berücksichtigt
 * Der Fertigkeitswert für eine einzelne Waffe kann mittels Modifiaktor angepasst werden
 * Notifications beim Import mittels Copy-Paste-Importer
+* Fertigkeit-IDs in JournalEntry hinzugefügt (Issue #18)
 
 ## 0.1.3 ##
 2021-04-14
