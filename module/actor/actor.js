@@ -104,6 +104,7 @@ export default class SplittermondActor extends Actor {
         if (actorData.type === "npc") {
             data.bonusCap = 6;
         }
+        this._prepareAttributes();
         this._prepareArmor();
         this._prepareModifier();
         this._prepareDerivedAttributes();
@@ -261,6 +262,7 @@ export default class SplittermondActor extends Actor {
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
                 item: null,
                 skillId: "melee",
+                skillMod: 0,
                 attribute1: "agility",
                 attribute2: "strength",
                 weaponSpeed: 5,
@@ -271,15 +273,32 @@ export default class SplittermondActor extends Actor {
         }
         actorData.items.forEach(item => {
             if (item.type === "weapon") {
-                let itemData = duplicate(item.data);
-                if (itemData.equipped) {
-
+                if (item.data.equipped) {
+                    (item.data.minAttributes || "").split(",").forEach(aStr => {
+                        let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
+                        if (temp) {
+                            let attr = CONFIG.splittermond.attributes.find((a) => {
+                                return temp[1] === game.i18n.localize(`splittermond.attribute.${a}.short`);
+                            });
+                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                            if (diff < 0) {
+                                item.data.skillMod = diff;
+                                item.data.weaponSpeed -= diff;
+                                if (item.data.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
+                                    item.data.secondaryAttack.skillMod = diff;
+                                    item.data.secondaryAttack.weaponSpeed -= diff;
+                                }
+                            }
+                        }
+                    });
+                    let itemData = duplicate(item.data);
                     attacks.push({
                         _id: item._id,
                         name: item.name,
                         img: item.img,
                         item: item,
                         skillId: itemData.skill,
+                        skillMod: itemData.skillMod,
                         attribute1: itemData.attribute1,
                         attribute2: itemData.attribute2,
                         weaponSpeed: parseInt(itemData.weaponSpeed),
@@ -296,6 +315,7 @@ export default class SplittermondActor extends Actor {
                                 img: item.img,
                                 item: item,
                                 skillId: itemData.skill,
+                                skillMod: itemData.skillMod,
                                 attribute1: itemData.attribute1,
                                 attribute2: itemData.attribute2,
                                 weaponSpeed: parseInt(itemData.weaponSpeed),
@@ -318,6 +338,7 @@ export default class SplittermondActor extends Actor {
                         img: item.img,
                         item: item,
                         skillId: itemData.skill,
+                        skillMod: 0,
                         attribute1: "agility",
                         attribute2: "strength",
                         weaponSpeed: 7,
@@ -337,8 +358,9 @@ export default class SplittermondActor extends Actor {
         attacks.forEach(attack => {
             if (attack.skillId) {
                 attack.skill = duplicate(data.skills[attack.skillId]);
-                attack.skill.value += parseInt(data.attributes[attack.attribute1].value || 0)
-                attack.skill.value += parseInt(data.attributes[attack.attribute2].value || 0)
+                attack.skill.value += parseInt(attack.skillMod || 0);
+                attack.skill.value += parseInt(data.attributes[attack.attribute1].value || 0);
+                attack.skill.value += parseInt(data.attributes[attack.attribute2].value || 0);
                 attack.skill.baseValue += parseInt(data.attributes[attack.attribute1].value || 0)
                 attack.skill.baseValue += parseInt(data.attributes[attack.attribute2].value || 0)
                 if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skillId))
@@ -608,6 +630,32 @@ export default class SplittermondActor extends Actor {
         const actorData = this.data;
         const data = actorData.data;
 
+        actorData.items.forEach(i => {
+            if (i.type === "armor" && i.data.equipped) {
+                let diff = parseInt(actorData.data.attributes.strength.value) - parseInt(i.data.minStr || 0);
+                if (diff < 0) {
+                    i.data.handicap -= diff;
+                    i.data.tickMalus -= diff;
+                }
+            }
+
+            if (i.type === "shield" && i.data.equipped) {
+                (i.data.minAttributes || "").split(",").forEach(aStr => {
+                    let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
+                    if (temp) {
+                        let attr = CONFIG.splittermond.attributes.find(a => {
+                            return temp[1] === game.i18n.localize(`splittermond.attribute.${a}.short`)
+                        });
+                        let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                        if (diff < 0) {
+                            i.data.handicap -= diff;
+                            i.data.tickMalus -= diff;
+                        }
+                    }
+                });
+            }
+        })
+
         data.handicap = {
             shield: {
                 value: actorData.items.reduce((acc, i) => ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc, 0)
@@ -645,6 +693,22 @@ export default class SplittermondActor extends Actor {
 
     }
 
+    _prepareAttributes() {
+        const actorData = this.data;
+        const data = actorData.data;
+        if (actorData.type === "character") {
+            CONFIG.splittermond.attributes.forEach(attr => {
+                data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
+                    + parseInt(data.attributes[attr].species || 0)
+                    + parseInt(data.attributes[attr].advances || 0);
+            });
+        } else {
+            CONFIG.splittermond.attributes.forEach(attr => {
+                data.attributes[attr].value = parseInt(data.attributes[attr].value || 0);
+            });
+        }
+    }
+
 
 
     _prepareDerivedAttributes() {
@@ -652,12 +716,6 @@ export default class SplittermondActor extends Actor {
         const data = actorData.data;
 
         if (actorData.type === "character") {
-            CONFIG.splittermond.attributes.forEach(attr => {
-                data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
-                    + parseInt(data.attributes[attr].species || 0)
-                    + parseInt(data.attributes[attr].advances || 0);
-            });
-
             data.derivedAttributes.size.value = parseInt(data.species.size);
             data.derivedAttributes.speed.value = parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value);
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
@@ -666,15 +724,7 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value)) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
-
-        } else {
-            CONFIG.splittermond.attributes.forEach(attr => {
-                data.attributes[attr].value = parseInt(data.attributes[attr].value || 0);
-            });
         }
-
-
-
 
         let _sumAllHelper = (acc, current) => acc + current.value;
         let _sumEquipmentBonus = (acc, current) => current.value > 0 && current.source === "equipment" ? acc + current.value : acc;

@@ -69,6 +69,8 @@ export default class ItemImporter {
             rawData.includes("Zauberdauer:") &&
             rawData.includes("Wirkung:")) {
             this.importSpell(rawData);
+
+            return;
         }
 
         // Check multiple Weapons
@@ -91,7 +93,7 @@ export default class ItemImporter {
         }
 
         // Check multiple Armor
-        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
         if (test) {
             if (test.length > 1) {
                 let folder = await this._folderDialog();
@@ -103,13 +105,13 @@ export default class ItemImporter {
         }
 
         // Check Armor
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
             this.importArmor(rawData);
             return;
         }
 
         // Check multiple Shield
-        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+) +([0-9]+) +([0-9]+) +((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9]) +(.+)/g);
+        test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9]) +(.+)/g);
         if (test) {
             if (test.length > 1) {
                 let folder = await this._folderDialog();
@@ -121,7 +123,7 @@ export default class ItemImporter {
         }
 
         // Check Shield
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
+        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+([^]+)/)) {
             this.importShield(rawData);
             return;
         }
@@ -170,6 +172,7 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeNpcfeature") }));
         });
     }
 
@@ -199,12 +202,13 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
-        })
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeStrength") }));
+        });
     }
 
     static async importShield(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9])\s+(.+)/);
 
         let itemData = {
             type: "shield",
@@ -244,12 +248,13 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeShield") }));
     }
 
     static async importArmor(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
 
         let itemData = {
             type: "armor",
@@ -290,12 +295,13 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeArmor") }));
     }
 
     static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         if (skill === "") {
-            skill = this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+            skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
         }
 
 
@@ -382,7 +388,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeWeapon") }));
     }
 
     static async importSpell(rawData) {
@@ -395,20 +401,20 @@ export default class ItemImporter {
         let nameData = rawData.match(/([^(]+)\s(\(.*\))/);
         spellData.name = `${nameData[1]} ${nameData[2]} `;
 
-        let skillsData = rawData.match(/Schulen: ([^:]+?)\n[^ ]+:/);
-        spellData.data.availableIn = skillsData[1].split(",").map(s => {
+        let skillsData = rawData.match(/Schulen: ([^:]+?)[^\s]+:/);
+        spellData.data.availableIn = skillsData[1].trim().split(",").map(s => {
             let data = s.match(/([^ ]+)\s([0-5])/);
-            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase().startsWith(data[1].toLowerCase()));
+            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
             spellData.data.skill = skill;
             spellData.data.skillLevel = parseInt(data[2]);
             return `${skill} ${data[2]} `;
         }).join(", ");
 
-        let typeData = rawData.match(/Typus: ([^:]+?)\n[^ ]+:/);
-        spellData.data.spellType = typeData[1];
+        let typeData = rawData.match(/Typus: ([^:]+?)[^\s]+:/);
+        spellData.data.spellType = typeData[1].trim();
 
-        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)\n[^ ]+:/);
-        spellData.data.difficulty = difficultyData[1];
+        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)[^\s]+:/);
+        spellData.data.difficulty = difficultyData[1].trim();
 
         if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
             spellData.data.difficulty.search("Geist") >= 0) {
@@ -424,38 +430,38 @@ export default class ItemImporter {
             spellData.data.difficulty = "VTD";
         }
 
-        let costsData = rawData.match(/Kosten: ([^:]+?)\n[^ ]+:/);
+        let costsData = rawData.match(/Kosten:\s*([^:]+?)\s*[^\s]+:/);
         spellData.data.costs = costsData[1];
 
-        let castDurationData = rawData.match(/Zauberdauer: ([^:]+?)\n[^ ]+:/);
-        spellData.data.castDuration = castDurationData[1];
+        let castDurationData = rawData.match(/Zauberdauer:\s*([^:]+?)[^\s]+:/);
+        spellData.data.castDuration = castDurationData[1].trim();
 
-        let descriptionData = rawData.match(/Wirkung: ([^]+?)\n[^ ]+:/);
+        let descriptionData = rawData.match(/Wirkung:\s*([^]+?)\n[^\s]+:/);
         spellData.data.description = descriptionData[1];
         spellData.data.description = spellData.data.description.replace(/\n/g, " ");
         spellData.data.description = spellData.data.description.replace(/  /g, " ");
 
-        let effectDurationData = rawData.match(/Wirkungsdauer: ([^:]+?)\n[^ ]+:/);
+        let effectDurationData = rawData.match(/Wirkungsdauer:\s*([^:]+?)[^\s]+:/);
         if (effectDurationData)
-            spellData.data.effectDuration = effectDurationData[1];
+            spellData.data.effectDuration = effectDurationData[1].trim();
         else
             spellData.data.effectDuration = "";
 
-        let effectAreaData = rawData.match(/Wirkungsbereich: ([^:]+?)\n[^ ]+:/);
+        let effectAreaData = rawData.match(/Wirkungsbereich:\s*([^:]+?)[^\s]+:/);
         if (effectAreaData)
-            spellData.data.effectArea = effectAreaData[1];
+            spellData.data.effectArea = effectAreaData[1].trim();
         else
             spellData.data.effectArea = "";
 
-        let rangeData = rawData.match(/Reichweite: ([^:]+?)\n[^ ]+:/);
+        let rangeData = rawData.match(/Reichweite:\s*([^:]+?)[^\s]+:/);
         if (rangeData)
             spellData.data.range = rangeData[1];
         else
             spellData.data.range = "";
 
-        let egData = rawData.match(/Erfolgsgrade:\n([^]+)/);
+        let egData = rawData.match(/Erfolgsgrade:\s*([^]+)/);
         let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-        spellData.data.enhancementCosts = `${enhancementData[1]} /${enhancementData[2]}`;
+        spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
         spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
         spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
         spellData.data.degreeOfSuccessOptions = {
@@ -478,6 +484,8 @@ export default class ItemImporter {
 
         Item.create(spellData);
 
+
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: spellData.name, type: game.i18n.localize("ITEM.TypeSpell") }));
         console.log(spellData);
     }
 
@@ -513,7 +521,7 @@ export default class ItemImporter {
                         let importData = html.find('[name="data"]')[0].value;
                         let name = html.find('[name="name"]')[0].value;
                         let description = html.find('[name="description"]')[0].value;
-                        let parsedData = /AUS BEW INT KON MYS STÄ VER WIL\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
+                        let parsedData = /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
                         let AUS = 0;
                         let BEW = 0;
                         let INT = 0;
@@ -523,14 +531,18 @@ export default class ItemImporter {
                         let VER = 0;
                         let WIL = 0;
                         if (parsedData) {
-                            AUS = parseInt(parsedData[1]);
-                            BEW = parseInt(parsedData[2]);
-                            INT = parseInt(parsedData[3]);
-                            KON = parseInt(parsedData[4]);
-                            MYS = parseInt(parsedData[5]);
-                            STÄ = parseInt(parsedData[6]);
-                            VER = parseInt(parsedData[7]);
-                            WIL = parseInt(parsedData[8]);
+                            let offset = 0;
+                            if (parsedData[9]) {
+                                offset = 8;
+                            }
+                            AUS = parseInt(parsedData[offset + 1]);
+                            BEW = parseInt(parsedData[offset + 2]);
+                            INT = parseInt(parsedData[offset + 3]);
+                            KON = parseInt(parsedData[offset + 4]);
+                            MYS = parseInt(parsedData[offset + 5]);
+                            STÄ = parseInt(parsedData[offset + 6]);
+                            VER = parseInt(parsedData[offset + 7]);
+                            WIL = parseInt(parsedData[offset + 8]);
                         }
 
                         let importantAttributesData = importData.match(/Wichtige Attribute: ([^:]+)[^\s]:/);
@@ -567,7 +579,7 @@ export default class ItemImporter {
                             })
                         }
 
-                        parsedData = /GK GSW LP FO VTD SR KW GW\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
+                        parsedData = /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*([0-9]+)\s*([0-9]+|[0-9]+\s*\/\s*[0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)|GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*([0-9]+)\s*([0-9]+|[0-9]+\s*\/\s*[0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
                         let GK = 0;
                         let GSW = 0;
                         let LP = 0;
@@ -578,14 +590,18 @@ export default class ItemImporter {
                         let INI = 0;
                         let SR = 0;
                         if (parsedData) {
-                            GK = parseInt(parsedData[1]);
-                            GSW = parseInt(parsedData[2]);
-                            LP = parseInt(parsedData[3]);
-                            FO = parseInt(parsedData[4]);
-                            VTD = parseInt(parsedData[5]);
-                            SR = parseInt(parsedData[6]);
-                            KW = parseInt(parsedData[7]);
-                            GW = parseInt(parsedData[8]);
+                            let offset = 0;
+                            if (parsedData[9]) {
+                                offset = 8;
+                            }
+                            GK = parseInt(parsedData[offset + 1]);
+                            GSW = parsedData[offset + 2].trim();
+                            LP = parseInt(parsedData[offset + 3]);
+                            FO = parseInt(parsedData[offset + 4]);
+                            VTD = parseInt(parsedData[offset + 5]);
+                            SR = parseInt(parsedData[offset + 6]);
+                            KW = parseInt(parsedData[offset + 7]);
+                            GW = parseInt(parsedData[offset + 8]);
                         }
 
 
@@ -699,16 +715,16 @@ export default class ItemImporter {
                         let weapons = [];
                         if (weaponData) {
                             if (weaponData[1].match(/Reichw/)) {
-                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+\s+Tick[s]?\s+[0-9\-]+\-1?W6\s+[0-9\-–]*\s+.*/g).forEach(weaponStr => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+) Tick[s]?\s+([0-9\-]+)\-1?W6\s+([0-9\-–]*)\s+(.*)/);
+                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\-1?W6\s+[0-9\-–]*\s+.*/g).forEach(weaponStr => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-]+)\-1?W6\s+([0-9\-–]*)\s+(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = SplittermondCompendium.findItem("weapon", weaponName) || {
+                                    let weaponData = duplicate(SplittermondCompendium.findItem("weapon", weaponName) || {
                                         type: "weapon",
                                         name: weaponName,
                                         img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
                                         data: {}
-                                    }
+                                    })
                                     weaponData.data.damage = weaponDataRaw[3].trim();
                                     weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
                                     weaponData.data.range = parseInt(weaponDataRaw[6].trim()) || 0;
@@ -728,16 +744,16 @@ export default class ItemImporter {
                                     weapons.push(weaponData)
                                 });
                             } else {
-                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+ Tick[s]?\s+[0-9\-–]+\-1?W6\s+.*/g).forEach(weaponStr => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)\s+Tick[s]?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
+                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s+.*/g).forEach(weaponStr => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = SplittermondCompendium.findItem("weapon", weaponName) || {
+                                    let weaponData = duplicate(SplittermondCompendium.findItem("weapon", weaponName) || {
                                         type: "weapon",
                                         name: weaponName,
                                         img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
                                         data: {}
-                                    }
+                                    });
                                     weaponData.data.damage = weaponDataRaw[3].trim();
                                     weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
                                     weaponData.data.range = 0;
@@ -762,7 +778,7 @@ export default class ItemImporter {
                         let masteriesData = /Meisterschaften: ([^]*?)\n(Merkmale|Zauber|Beute|Fertigkeiten):/g.exec(importData);
                         let masteries = [];
                         if (masteriesData[1]) {
-                            masteriesData[1].match(/[^(]+ \([^)]+\),?/g).forEach(skillEntryStr => {
+                            masteriesData[1].match(/[^(]+ \([^)]+\),?/g)?.forEach(skillEntryStr => {
                                 let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
                                 let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
                                 let level = 1;
@@ -778,11 +794,11 @@ export default class ItemImporter {
                                         level = 4;
                                     } else {
                                         let masteryName = masteryStr.trim();
-                                        let masteryData = SplittermondCompendium.findItem("mastery", masteryName) || {
+                                        let masteryData = duplicate(SplittermondCompendium.findItem("mastery", masteryName) || {
                                             type: "mastery",
                                             name: masteryName,
                                             data: {}
-                                        };
+                                        });
                                         masteryData.data.skill = skill;
                                         masteryData.data.level = level;
                                         masteries.push(masteryData)
@@ -801,11 +817,13 @@ export default class ItemImporter {
                             featuresData[1].split(/,/).forEach(f => {
                                 if (f.trim()) {
                                     let featureName = f.trim();
-                                    let featureData = SplittermondCompendium.findItem("npcfeature", featureName) || {
+
+                                    let featureData = duplicate(SplittermondCompendium.findItem("npcfeature", featureName.split(" ")[0]) || {
                                         type: "npcfeature",
                                         name: featureName,
                                         data: {}
-                                    };
+                                    });
+                                    featureData.name = featureName;
                                     features.push(featureData);
                                 }
 
@@ -813,7 +831,7 @@ export default class ItemImporter {
                         }
 
 
-                        let typeData = /Typus: ([^:]*)\n[^:\s]+:/g.exec(importData);
+                        let typeData = /Typus: ([^:]*)(\n[^:\s]+|Übliche Anzahl):/g.exec(importData);
                         let type = "";
                         if (typeData) {
                             type = typeData[1];
@@ -829,7 +847,7 @@ export default class ItemImporter {
                         let spells = [];
                         if (spellsData) {
                             let skill = ""
-                            spellsData[1].split(";").forEach(skillEntryStr => {
+                            spellsData[1].split(";")?.forEach(skillEntryStr => {
                                 let spellEntryData = skillEntryStr.trim().match(/([^ ]*)\s*([0IV]+):\s+([^]+)/);
                                 if (spellEntryData[1]) {
                                     skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[1].toLowerCase()));
@@ -874,7 +892,7 @@ export default class ItemImporter {
 
 
 
-                        let lootData = /Beute: ([^]*)\n(Anmerkung:)?/g.exec(importData);
+                        let lootData = /Beute: ([^]*)\n(Anmerkung:|Kampfweise:)?/g.exec(importData);
                         let equipment = [];
                         if (lootData) {
                             lootData[1].match(/[^(,]+\([^)]+\)/g).forEach(lootEntryStr => {
@@ -900,6 +918,7 @@ export default class ItemImporter {
 
 
 
+                        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: name, type: game.i18n.localize(`ACTOR.TypeNpc`) }));
 
                         return Actor.create({
                             name: name,

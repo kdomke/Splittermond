@@ -469,6 +469,11 @@ splittermond.itemSheetProperties.weapon = [
                 choices: splittermond.fightingSkillOptions
             },
             {
+                field: "data.skillMod",
+                label: "splittermond.skillMod",
+                template: "input"
+            },
+            {
                 field: "data.attribute1",
                 label: "splittermond.attributes",
                 template: "select",
@@ -515,6 +520,11 @@ splittermond.itemSheetProperties.weapon = [
                 label: "splittermond.fightingSkill",
                 template: "select",
                 choices: { none: "splittermond.skillLabel.none", ...splittermond.fightingSkillOptions }
+            },
+            {
+                field: "data.secondaryAttack.skillMod",
+                label: "splittermond.skillMod",
+                template: "input"
             },
             {
                 field: "data.secondaryAttack.attribute1",

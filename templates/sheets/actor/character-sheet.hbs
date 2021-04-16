@@ -92,21 +92,13 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab general" data-group="primary" data-tab="general">
-            {{#each attributes as |attribute attributeId|}}
-            <div class="attribute" id="{{attributeId}}">
-                <label for="data.attributes.{{attributeId}}.value" title="{{localize attribute.label.long}}">{{localize
-                    attribute.label.short}}</label>
-                <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
-                    data-dtype="Number">
-            </div>
-            {{/each}}
             <div class="list" data-item-type="strength">
                 <div class="list-header">
                     <h3>{{localize "splittermond.attributes"}}</h3>
                 </div>
                 <ul class="strengths">
                     {{#each data.attributes as |attribute attributeId|}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item tooltip-activator attribute" data-item-id="{{this._id}}">
                         <label for="data.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
                             attribute.label.long}}</label>

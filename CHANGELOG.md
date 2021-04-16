@@ -1,3 +1,14 @@
+## 0.1.4 ##
+2021-04-16
+
+* Fixed: Bug in der Eingabe von Attributen
+* Fixed: Bezeichner für "Willenskraft"
+* Robusterer Copy-Paste-Importer (Nun auch Kreaturimport von B&U möglich, Issue #17)
+* Min. Attribute für Waffen, Rüstungen und Schilde werden für die Behinderung, Tick-Zuschlag bzw. WGS berücksichtigt
+* Der Fertigkeitswert für eine einzelne Waffe kann mittels Modifiaktor angepasst werden
+* Notifications beim Import mittels Copy-Paste-Importer
+* Fertigkeit-IDs in JournalEntry hinzugefügt (Issue #18)
+
 ## 0.1.3 ##
 2021-04-14
 
