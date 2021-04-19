@@ -25,6 +25,10 @@
         "TypeCharacter": "Spielercharakter",
         "TypeNpc": "NSC"
     },
+    "SETTINGS": {
+        "HGMultiplierN": "Heldengrad-Multiplikator",
+        "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
+    },
     "splittermond": {
         "heroLevel": "Heldengrad",
         "name": "Name",

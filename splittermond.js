@@ -9,6 +9,7 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
+import { registerSystemSettings } from "./module/settings.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -24,6 +25,7 @@ Hooks.once("init", function () {
     CONFIG.ui.combat = SplittermondCombatTracker;
     CONFIG.splittermond = splittermond;
 
+    registerSystemSettings();
 
     game.splittermond = {
         skillCheck: Macros.skillCheck,
