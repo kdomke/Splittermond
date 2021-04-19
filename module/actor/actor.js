@@ -724,6 +724,8 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value)) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
+
+            data.splinterpoints.max = data.splinterpoints.max + (data.experience.heroLevel - 1);
         }
 
         let _sumAllHelper = (acc, current) => acc + current.value;

@@ -1,3 +1,13 @@
+## 0.1.5 ##
+2021-04-19
+
+* Fixed: Auswahl der Fertigkeit wenn Meisterschaft über Drag-and-Drop hinzugefügt
+* Fixed: "Sterbend" war im "Zustand"-Kompendium als Waffe gelistet
+* Fixed: max. Splitterpunkte abhängig von Heldengrad (Issue #23)
+* Fixed: Meisterschaft konnte nicht direkt im Sheet erstellt werden (Issue #22)
+* Neuer Meisterschafts Copy-and-Paste-Importer (Funktioniert nur mit der Formatierung des GRWs)
+* Robusterer NPC-Copy-and-Paste-Importer
+
 ## 0.1.4 ##
 2021-04-16
 

@@ -164,7 +164,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             };
 
             if (itemType === "mastery") {
-                const skill = $(event.currentTarget).vlosestData('skill');
+                const skill = $(event.currentTarget).closestData('skill');
                 if (skill) {
                     itemData.data = {
                         skill: skill
@@ -419,9 +419,12 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                         availableIn.split(",").forEach(item => {
                             let data = item.trim().toLowerCase().split(" ");
-                            if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
+                            if (data.length < 2) {
+                                data[1] = itemData.data.level;
+                            }
+                            if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(data[0])) {
                                 buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`) + " " + data[1],
+                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`),
                                     callback: html => {
                                         resolve(data[0] + " " + data[1])
                                     }
@@ -451,7 +454,11 @@ export default class SplittermondActorSheet extends ActorSheet {
 
 
                 if (selectedSkill) {
-                    itemData.data.skill = selectedSkill;
+                    let skillData = selectedSkill.split(" ");
+                    itemData.data.skill = skillData[0];
+                    if (skillData.length > 1) {
+                        itemData.data.level = skillData[1];
+                    }
                 }
             }
         }
