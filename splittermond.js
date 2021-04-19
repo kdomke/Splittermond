@@ -33,7 +33,8 @@ Hooks.once("init", function () {
         itemCheck: Macros.itemCheck,
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
-        magicFumble: Macros.magicFumble
+        magicFumble: Macros.magicFumble,
+        heroLevel: CONFIG.splittermond.heroLevel.map(function(x) {return x * game.settings.get("splittermond", "HGMultiplier") })
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
