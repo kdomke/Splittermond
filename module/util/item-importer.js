@@ -140,11 +140,69 @@ export default class ItemImporter {
             return;
         }
 
+        // Import mastery
+        if (rawData.match(/Schwelle [0-9]/gm)) {
+            this.importMastery(rawData);
+            return;
+        }
+
         // Import npcfeature
         if (rawData.match(/^(.*): .*/gm)) {
             this.importNpcFeatures(rawData);
             return;
         }
+    }
+
+    static async importMastery(rawData) {
+        let folder = await this._folderDialog();
+        let skill = await this._skillDialog([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic]);
+
+        rawData.match(/Schwelle\s+[0-9]\n.+/gm).forEach((s) => {
+
+            let token = s.match(/(Schwelle\s+([0-9]))\n.+/);
+            let level = parseInt(token[2]);
+            let escapeStr = token[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            let levelData = rawData.match(new RegExp(`${escapeStr}\n([^]+?)\nSchwelle +[0-9]`));
+            if (levelData === null) {
+                levelData = rawData.match(new RegExp(`${escapeStr}\n([^]+)`));
+            }
+
+
+            levelData[1].match(/^(.*): .*/gm).forEach((m) => {
+                let token = m.match(/(.*):/);
+
+                if (token[1].includes("Voraussetzung")) {
+                    return;
+                }
+
+                let itemData = {
+                    type: "mastery",
+                    name: token[1].trim(),
+                    folder: folder,
+                    data: {
+                        skill: skill,
+                        availableIn: skill,
+                        level: level,
+                        modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
+                    }
+                }
+                let escapeStr = token[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let descriptionData = levelData[1].match(new RegExp(`${escapeStr} ([^]+?(?:Voraussetzung:[^]+?))(?=^.*:)`, "m"));
+                if (descriptionData === null) {
+                    descriptionData = levelData[1].match(new RegExp(`${escapeStr} ([^]+?)(?=^.*:)`, "m"));
+                }
+                if (descriptionData === null) {
+                    descriptionData = levelData[1].match(new RegExp(`${escapeStr} ([^]+)`));
+                }
+                itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+
+                Item.create(itemData);
+
+                console.log(itemData);
+                ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeMastery") }));
+            });
+
+        });
     }
 
     static async importNpcFeatures(rawData) {
@@ -794,7 +852,8 @@ export default class ItemImporter {
                                         level = 4;
                                     } else {
                                         let masteryName = masteryStr.trim();
-                                        let masteryData = duplicate(SplittermondCompendium.findItem("mastery", masteryName) || {
+                                        let searchString = masteryName.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
+                                        let masteryData = duplicate(SplittermondCompendium.findItem("mastery", searchString[1].trim()) || {
                                             type: "mastery",
                                             name: masteryName,
                                             data: {}
@@ -808,17 +867,22 @@ export default class ItemImporter {
                             })
                         }
 
-                        let featuresData = /Merkmale: ([^]*)(?:\nBeute:)/g.exec(importData);
+                        let featuresData = /Merkmale: ([^]+?)(?:\nBeute:|\nKampfweise:)/g.exec(importData);
                         if (featuresData === null) {
-                            featuresData = /Merkmale: (.*)/g.exec(importData);
+                            featuresData = /Merkmale: ([^]*)/g.exec(importData);
                         }
                         let features = [];
                         if (featuresData) {
-                            featuresData[1].split(/,/).forEach(f => {
+                            featuresData[1].match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach(f => {
                                 if (f.trim()) {
                                     let featureName = f.trim();
 
-                                    let featureData = duplicate(SplittermondCompendium.findItem("npcfeature", featureName.split(" ")[0]) || {
+                                    let searchString = featureName.match(/([^(,0-9]+)(?:\s*[0-9]+)?(?:\s*\([^)]+?\))?/);
+                                    if (searchString[1].split(" ").length > 2) {
+                                        searchString[1] = searchString[1].split(" ")[0];
+                                    }
+
+                                    let featureData = duplicate(SplittermondCompendium.findItem("npcfeature", searchString[1].trim()) || {
                                         type: "npcfeature",
                                         name: featureName,
                                         data: {}
@@ -878,7 +942,8 @@ export default class ItemImporter {
 
                                 spellEntryData[3].split(",").forEach(s => {
                                     let spellName = s.trim().replace(/\n/, " ");
-                                    let spellData = SplittermondCompendium.findItem("spell", spellName) || {
+                                    let searchString = spellName.match(/([^\[]+)(?:\[[\[]+\])?/)
+                                    let spellData = SplittermondCompendium.findItem("spell", searchString[1].trim()) || {
                                         type: "spell",
                                         name: spellName,
                                         data: {}
