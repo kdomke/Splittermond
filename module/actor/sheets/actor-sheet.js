@@ -164,7 +164,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             };
 
             if (itemType === "mastery") {
-                const skill = $(event.currentTarget).vlosestData('skill');
+                const skill = $(event.currentTarget).closestData('skill');
                 if (skill) {
                     itemData.data = {
                         skill: skill
