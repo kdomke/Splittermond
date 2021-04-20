@@ -92,9 +92,9 @@ export default class SplittermondActor extends Actor {
             };
 
 
-            data.experience.heroLevel = CONFIG.splittermond.heroLevel.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
-            data.experience.nextLevelValue = CONFIG.splittermond.heroLevel[Math.min(data.experience.heroLevel, 3)];
-            data.experience.percentage = data.experience.spent - CONFIG.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
+            data.experience.heroLevel = game.splittermond.heroLevel.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
+            data.experience.nextLevelValue = game.splittermond.heroLevel[Math.min(data.experience.heroLevel, 3)];
+            data.experience.percentage = data.experience.spent - game.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
             data.experience.percentage /= data.experience.nextLevelValue;
             data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
             data.bonusCap = data.experience.heroLevel + 2;
