@@ -351,6 +351,7 @@
             "risk": "Risikowurf",
             "safety": "Sicherheitswurf"
         },
+        "skillCheck": "Fertigkeitsprobe",
         "successMessage": [
             "(Knapp) gelungen",
             "Gelungen",
