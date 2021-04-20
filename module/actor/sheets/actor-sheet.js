@@ -193,10 +193,14 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find('[data-field]').change(event => {
-            const element = event.currentTarget
+            const element = event.currentTarget;
+            let value = element.value;
+            if (element.type === "checkbox") {
+                value = element.checked;
+            }
             const itemId = this._getClosestData($(event.currentTarget), 'item-id');
             const field = element.dataset.field;
-            this.actor.getOwnedItem(itemId).update({ [field]: element.value });
+            this.actor.getOwnedItem(itemId).update({ [field]: value });
         });
 
         html.find('[data-array-field]').change(event => {

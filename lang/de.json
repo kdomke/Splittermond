@@ -25,6 +25,10 @@
         "TypeCharacter": "Spielercharakter",
         "TypeNpc": "NSC"
     },
+    "SETTINGS": {
+        "HGMultiplierN": "Heldengrad-Multiplikator",
+        "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
+    },
     "splittermond": {
         "heroLevel": "Heldengrad",
         "name": "Name",
@@ -52,6 +56,9 @@
         "spellEffect": "Zaubereffekt",
         "spellEffects": "Zaubereffekte",
         "furtherActions": "Weitere Aktionen",
+        "update": "Aktualisieren",
+        "overwrite": "Überschreiben",
+        "updateOrOverwriteActor": "Charakterdaten aktualisieren oder überschreiben?",
         "fumble": "Patzer",
         "critical": "Triumph",
         "modifier": "Modifikator",
@@ -69,6 +76,7 @@
         "character": "Spieler-Charakter",
         "save": "Speichern",
         "ok": "OK",
+        "active": "Aktiviert",
         "cancel": "Abbrechen",
         "versus": "gegen",
         "versusAbbrev": "gg.",
@@ -219,7 +227,7 @@
             },
             "agility": {
                 "short": "BEW",
-                "long": "Bewegung"
+                "long": "Beweglichkeit"
             },
             "intuition": {
                 "short": "INT",
@@ -343,6 +351,7 @@
             "risk": "Risikowurf",
             "safety": "Sicherheitswurf"
         },
+        "skillCheck": "Fertigkeitsprobe",
         "successMessage": [
             "(Knapp) gelungen",
             "Gelungen",

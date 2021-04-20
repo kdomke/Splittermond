@@ -1,4 +1,15 @@
 ## 0.1.5 ##
+2021-04-??
+
+* fixed: Attribut "Bewegung" zu "Beweglichkeit"
+* fixed: Die Last von Gegenständen werden im Inventar angezeigt
+* Beim Import eines Charakters aus Genesis kann nun ausgewählt werden, ob alle Daten überschrieben oder aktualisiert werden sollen. (Issue #28)
+* Die Ticks-Schaltfläche einer Chatnachricht ändert nun die Ticks des "Speakers" der Nachricht und nicht die des ausgewählten Tokens. (Issue #26)
+* Zaubereffekte können nun seperat ein- und ausgeschaltete werden (Issue #21)
+* Multiplikator für Erfahrungspunkteschwellen für Heldengrade hinzugefügt
+* Fehlende Übersetzung hinzugefügt
+
+## 0.1.5 ##
 2021-04-19
 
 * Fixed: Auswahl der Fertigkeit wenn Meisterschaft über Drag-and-Drop hinzugefügt

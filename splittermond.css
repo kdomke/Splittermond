@@ -480,6 +480,12 @@
   margin-top: -3px;
   margin-bottom: -3px;
 }
+.splittermond .list > ul > li input[type="checkbox"],
+.splittermond .list > ol > li input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+}
 .splittermond .list > ul > li > *,
 .splittermond .list > ol > li > * {
   border-left: 2px groove rgba(255, 255, 255, 0.3);

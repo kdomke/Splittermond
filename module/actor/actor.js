@@ -92,9 +92,9 @@ export default class SplittermondActor extends Actor {
             };
 
 
-            data.experience.heroLevel = CONFIG.splittermond.heroLevel.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
-            data.experience.nextLevelValue = CONFIG.splittermond.heroLevel[Math.min(data.experience.heroLevel, 3)];
-            data.experience.percentage = data.experience.spent - CONFIG.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
+            data.experience.heroLevel = game.splittermond.heroLevel.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
+            data.experience.nextLevelValue = game.splittermond.heroLevel[Math.min(data.experience.heroLevel, 3)];
+            data.experience.percentage = data.experience.spent - game.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
             data.experience.percentage /= data.experience.nextLevelValue;
             data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
             data.bonusCap = data.experience.heroLevel + 2;
@@ -591,7 +591,9 @@ export default class SplittermondActor extends Actor {
                         this._addModifier(i.name, i.data.modifier, "misc", i.data.level);
                         break;
                     case "spelleffect":
-                        this._addModifier(i.name, i.data.modifier, "magic");
+                        if (i.data.active) {
+                            this._addModifier(i.name, i.data.modifier, "magic");
+                        }
                         break
                     default:
                         this._addModifier(i.name, i.data.modifier);
@@ -843,7 +845,7 @@ export default class SplittermondActor extends Actor {
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
             let newData = {};
-            newData.items = [];
+            let newItems = [];
             newData.data = {};
             newData.name = data.name;
             newData.data.species = {
@@ -875,23 +877,23 @@ export default class SplittermondActor extends Actor {
                     moonsignObj._id = moonsignIds[0];
                 }
             }
-            newData.items.push(moonsignObj);
+            newItems.push(moonsignObj);
 
 
             data.weaknesses.forEach((w) => {
-                newData.items.push({
+                newItems.push({
                     type: "weakness",
                     name: w
                 })
             });
             data.languages.forEach((w) => {
-                newData.items.push({
+                newItems.push({
                     type: "language",
                     name: w
                 })
             });
             data.cultureLores.forEach((w) => {
-                newData.items.push({
+                newItems.push({
                     type: "culturelore",
                     name: w
                 })
@@ -928,7 +930,7 @@ export default class SplittermondActor extends Actor {
                             }
                         }
 
-                        newData.items.push(newMastership);
+                        newItems.push(newMastership);
                     })
                 } else {
                     console.log("undefined Skill:" + id);
@@ -937,7 +939,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.powers.forEach((s) => {
-                newData.items.push({
+                newItems.push({
                     type: "strength",
                     name: s.name,
                     data: {
@@ -949,7 +951,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.resources.forEach((r) => {
-                newData.items.push({
+                newItems.push({
                     type: "resource",
                     name: r.name,
                     data: {
@@ -976,7 +978,7 @@ export default class SplittermondActor extends Actor {
                 }
 
 
-                newData.items.push({
+                newItems.push({
                     type: "spell",
                     name: s.name,
                     img: CONFIG.splittermond.icons.spell[s.id] || CONFIG.splittermond.icons.spell.default,
@@ -1007,7 +1009,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.armors.forEach((a) => {
-                newData.items.push({
+                newItems.push({
                     type: "armor",
                     name: a.name,
                     img: CONFIG.splittermond.icons.armor[a.name] || CONFIG.splittermond.icons.armor.default,
@@ -1022,7 +1024,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.shields.forEach((s) => {
-                newData.items.push({
+                newItems.push({
                     type: "shield",
                     name: s.name,
                     img: CONFIG.splittermond.icons.shield[s.name] || CONFIG.splittermond.icons.shield.default,
@@ -1041,7 +1043,7 @@ export default class SplittermondActor extends Actor {
 
             data.meleeWeapons.forEach((w) => {
                 if (w.name !== "Waffenlos") {
-                    newData.items.push({
+                    newItems.push({
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
@@ -1061,7 +1063,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.longRangeWeapons.forEach((w) => {
-                const itemData = newData.items.find(i => i.name === w.name && i.type === "weapon");
+                const itemData = newItems.find(i => i.name === w.name && i.type === "weapon");
                 if (itemData) {
                     itemData.data.secondaryAttack = {
                         skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
@@ -1075,7 +1077,7 @@ export default class SplittermondActor extends Actor {
                         range: w.range
                     }
                 } else {
-                    newData.items.push({
+                    newItems.push({
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
@@ -1096,7 +1098,7 @@ export default class SplittermondActor extends Actor {
             });
 
             data.items.forEach((e) => {
-                newData.items.push({
+                newItems.push({
                     type: "equipment",
                     name: e.name,
                     img: CONFIG.splittermond.icons.equipment[e.name] || CONFIG.splittermond.icons.equipment.default,
@@ -1106,7 +1108,55 @@ export default class SplittermondActor extends Actor {
                 });
             });
 
+            let p = new Promise((resolve, reject) => {
+                let dialog = new Dialog({
+                    title: "Import",
+                    content: "<p>" + game.i18n.localize("splittermond.updateOrOverwriteActor") + "</p>",
+                    buttons: {
+                        overwrite: {
+                            label: game.i18n.localize("splittermond.overwrite"),
+                            callback: html => {
+                                resolve(false);
+                            }
+                        },
+                        update: {
+                            label: game.i18n.localize("splittermond.update"),
+                            callback: html => {
+                                resolve(true);
+                            }
+                        }
+                    }
+                });
+                dialog.render(true);
+            });
+
+            let updateActor = await p;
+
+            if (updateActor) {
+                let updateItems = [];
+
+                newItems = newItems.filter((i) => {
+                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name === i.name);
+                    if (foundItem) {
+                        i._id = foundItem._id;
+                        delete i.img;
+                        updateItems.push(duplicate(i));
+                        return false;
+                    }
+                    return true;
+                });
+
+                this.update(newData);
+                await this.updateEmbeddedEntity("OwnedItem", updateItems);
+                await this.createEmbeddedEntity("OwnedItem", newItems);
+
+                return this.update(newData);
+
+            }
+
+            newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
+
         }
 
 
@@ -1454,7 +1504,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
 
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
-                title: "Ticks",
+                title: this.data.name + " - Ticks",
                 content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
                 buttons: {
                     ok: {

@@ -9,6 +9,7 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
+import { registerSystemSettings } from "./module/settings.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -24,6 +25,7 @@ Hooks.once("init", function () {
     CONFIG.ui.combat = SplittermondCombatTracker;
     CONFIG.splittermond = splittermond;
 
+    registerSystemSettings();
 
     game.splittermond = {
         skillCheck: Macros.skillCheck,
@@ -31,7 +33,8 @@ Hooks.once("init", function () {
         itemCheck: Macros.itemCheck,
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
-        magicFumble: Macros.magicFumble
+        magicFumble: Macros.magicFumble,
+        heroLevel: CONFIG.splittermond.heroLevel.map(function(x) {return x * game.settings.get("splittermond", "HGMultiplier") })
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -199,8 +202,9 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     html.find(".add-tick").click(event => {
         let value = $(event.currentTarget).closestData("ticks");
         let message = $(event.currentTarget).closestData("message");
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
 
-        const speaker = ChatMessage.getSpeaker();
+        const speaker = game.messages.get(chatMessageId).data.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);

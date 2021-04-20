@@ -388,6 +388,11 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
+                    field: "data.active",
+                    label: "splittermond.active",
+                    template: "bool"
+                },
+                {
                     field: "data.modifier",
                     label: "splittermond.modifier",
                     template: "input"
