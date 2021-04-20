@@ -199,8 +199,9 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     html.find(".add-tick").click(event => {
         let value = $(event.currentTarget).closestData("ticks");
         let message = $(event.currentTarget).closestData("message");
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
 
-        const speaker = ChatMessage.getSpeaker();
+        const speaker = game.messages.get(chatMessageId).data.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);

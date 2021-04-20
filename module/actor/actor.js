@@ -1502,7 +1502,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
 
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
-                title: "Ticks",
+                title: this.data.name + " - Ticks",
                 content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
                 buttons: {
                     ok: {
