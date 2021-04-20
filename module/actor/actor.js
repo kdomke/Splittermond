@@ -591,7 +591,9 @@ export default class SplittermondActor extends Actor {
                         this._addModifier(i.name, i.data.modifier, "misc", i.data.level);
                         break;
                     case "spelleffect":
-                        this._addModifier(i.name, i.data.modifier, "magic");
+                        if (i.data.active) {
+                            this._addModifier(i.name, i.data.modifier, "magic");
+                        }
                         break
                     default:
                         this._addModifier(i.name, i.data.modifier);

@@ -519,7 +519,8 @@
       "templates": [
         "description",
         "modifier"
-      ]
+      ],
+      "active": true
     },
     "mastery": {
       "templates": [
