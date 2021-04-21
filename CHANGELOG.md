@@ -1,5 +1,11 @@
-## 0.1.5 ##
+## 0.1.7 ##
 2021-04-??
+
+* Waffen können nun auch aus dem Inventar per Drag-and-Dop in die Makroleiste gezogen werden
+* In der Chatnachricht der Aktiven Abwehr ist nun auch eine "Ticks"-Schaltfläche vorhanden.
+
+## 0.1.6 ##
+2021-04-20
 
 * fixed: Attribut "Bewegung" zu "Beweglichkeit"
 * fixed: Die Last von Gegenständen werden im Inventar angezeigt

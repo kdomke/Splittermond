@@ -50,7 +50,7 @@
             </div>
             <ol>
                 {{#each statuseffects}}
-                <li data-item-id="{{this._id}}">
+                <li class="draggable" data-item-id="{{this._id}}">
                     <input class="name tooltip-activator" type="text" data-field="name" value="{{this.name}}">
                     <div class="tooltip">{{{this.data.description}}}</div>
                     <div class="value">
@@ -79,7 +79,7 @@
             </div>
             <ol>
                 {{#each spelleffects}}
-                <li data-item-id="{{this._id}}">
+                <li class="draggable" data-item-id="{{this._id}}">
                     <div>
                         <input data-field="data.active" type="checkbox" value="true" {{#if
                             this.data.active}}checked{{/if}} />
