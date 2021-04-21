@@ -1479,7 +1479,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
             classes: "add-tick",
             data: {
                 ticks: 3,
-                message: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short` + "): " + data.title)
+                message: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + "): " + data.title
             }
         });
 
