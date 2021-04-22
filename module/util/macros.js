@@ -39,7 +39,7 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
             }
 
             if (item.type === "weapon") {
-                actor.rollAttack(item);
+                actor.rollAttack(item._id);
             }
         } else {
             ui.notifications.error(game.i18n.localize("splittermond.invalidItem"));

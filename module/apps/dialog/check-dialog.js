@@ -23,6 +23,12 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "risk";
+                            fd.modifier = parseInt(fd.modifier) || 0;
+                            html.find("[name='emphasis']").each(e => {
+                                if (e.checked) {
+                                    fd.modifier += parseInt(e.value) || 0;
+                                }
+                            });
                             resolve(fd);
                         }
                     },
@@ -32,6 +38,12 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "standard";
+                            fd.modifier = parseInt(fd.modifier) || 0;
+                            $(html).find("[name='emphasis']").each(function () {
+                                if (this.checked) {
+                                    fd.modifier += parseInt(this.value) || 0;
+                                }
+                            });
                             resolve(fd);
                         }
                     },
@@ -41,6 +53,13 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "safety";
+                            fd.modifier = parseInt(fd.modifier) || 0;
+                            html.find("[name='emphasis']").each(e => {
+                                if (e.checked) {
+                                    fd.modifier += parseInt(e.value) || 0;
+                                }
+
+                            });
                             resolve(fd);
                         }
                     },

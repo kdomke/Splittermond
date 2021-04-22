@@ -3,5 +3,17 @@
     <input name="difficulty" value="{{difficulty}}" data-dtype="Number">
 
     <label>{{localize "splittermond.modifier"}}</label>
-    <input name="modifier" value="{{modifier}}" data-dtype="Number">
+    <div><input name="modifier" value="{{modifier}}" data-dtype="Number">
+        {{#if emphasis}}
+        <ul class="checkbox-list">
+            {{#each emphasis}}
+            <li>
+                <input type="checkbox" name="emphasis" id="emphasis_{{@index}}" value="{{this.value}}" {{#if
+                    this.active}}checked{{/if}}><label for="emphasis_{{@index}}">{{this.label}}</label>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </div>
+
 </form>
