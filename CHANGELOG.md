@@ -1,5 +1,5 @@
 ## 0.1.7 ##
-2021-04-??
+2021-04-22
 
 * fixed: Zaubereffekte sind nun Drag-and-Dropable (Issue 30)
 * Waffen können nun auch aus dem Inventar per Drag-and-Dop in die Makroleiste gezogen werden
