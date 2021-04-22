@@ -349,6 +349,100 @@
 .splittermond .bonus-malus .value {
   font-weight: bold;
 }
+.splittermond .solars,
+.splittermond .lunars,
+.splittermond .telars {
+  display: inline-block;
+  border-radius: 3px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+  margin-left: 0.5em;
+  padding-right: 0.2em;
+}
+.splittermond .solars::before,
+.splittermond .lunars::before,
+.splittermond .telars::before {
+  display: inline-block;
+  content: " ";
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.2em;
+  background-size: contain;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+.splittermond .solars::after,
+.splittermond .lunars::after,
+.splittermond .telars::after {
+  display: inline;
+}
+.splittermond .solars input,
+.splittermond .lunars input,
+.splittermond .telars input {
+  text-align: right;
+  width: 3em;
+}
+.splittermond .solars::after {
+  content: " S ";
+}
+.splittermond .lunars::after {
+  content: " L ";
+}
+.splittermond .telars::after {
+  content: " T ";
+}
+.splittermond .solars::before {
+  background-image: url(../../icons/commodities/currency/coins-assorted-mix-copper.webp);
+}
+.splittermond .lunars::before {
+  background-image: url(../../icons/commodities/currency/coins-assorted-mix-silver.webp);
+}
+.splittermond .telars::before {
+  background-image: url(../../icons/commodities/currency/coins-assorted-mix-platinum.webp);
+}
+.splittermond ul.checkbox-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.splittermond ul.checkbox-list li {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+.splittermond ul.checkbox-list li input {
+  display: none;
+}
+.splittermond ul.checkbox-list li label {
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  padding: 3px;
+  border-radius: 3px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+  white-space: nowrap;
+}
+.splittermond ul.checkbox-list li input ~ label {
+  opacity: 0.7;
+}
+.splittermond ul.checkbox-list li input ~ label::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 12px;
+  padding: 2px 6px 2px 2px;
+  content: "\f067";
+}
+.splittermond ul.checkbox-list li input:checked ~ label {
+  opacity: 1;
+}
+.splittermond ul.checkbox-list li input:checked ~ label::before {
+  content: "\f00c";
+}
 .splittermond input[type="text"],
 .splittermond #autoexpanddummy {
   font-variant-numeric: lining-nums;
@@ -952,6 +1046,16 @@
 }
 .splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level:first-child {
   border-right: none;
+}
+.splittermond.sheet.actor .window-content .currency {
+  text-align: center;
+  padding: 3px;
+}
+.splittermond.sheet.actor .window-content .currency .solars::before,
+.splittermond.sheet.actor .window-content .currency .lunars::before,
+.splittermond.sheet.actor .window-content .currency .telars::before {
+  width: 1.8em;
+  height: 1.8em;
 }
 .splittermond.sheet.actor .window-content .attributes {
   display: grid;

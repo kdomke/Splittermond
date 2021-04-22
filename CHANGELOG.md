@@ -1,8 +1,11 @@
 ## 0.1.7 ##
 2021-04-??
 
+* fixed: Zaubereffekte sind nun Drag-and-Dropable (Issue 30)
 * Waffen können nun auch aus dem Inventar per Drag-and-Dop in die Makroleiste gezogen werden
 * In der Chatnachricht der Aktiven Abwehr ist nun auch eine "Ticks"-Schaltfläche vorhanden.
+* Situative Boni (Meisterschaften) können nun als Modifikator angegeben werden als `<skillId>/<Situation> <Bonus>`. Diese situativen Modifikatoren werden als Liste im Probendialog aufgeführt und können durch anklicken aktiviert werden Bei Zaubern kann als Situation der Zaubertypus angegeben werden. In diesem Fall wird im Probendialog beim entsprechenden Zauber der Modifikator automatisch aktiviert. Wird bei einer Kampffertigkeit ein Angriffsname (Waffenname) angegeben, wird dieser Modifikator beim entsprechenden Probendialog automatisch aktiviert.
+* Felder für Geld im Charakterbogen verfügbar.
 
 ## 0.1.6 ##
 2021-04-20

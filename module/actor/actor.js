@@ -472,24 +472,34 @@ export default class SplittermondActor extends Actor {
 
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.split(' ');
-            temp[0] = temp[0].trim();
-            let value = parseFloat(temp[1]);
+            let temp = str.match(/(.*?)\s+([+\-0-9]+)/);
+            console.log(temp);
+            let modifierLabel = temp[1].trim();
+            let value = parseFloat(temp[2]);
 
-            let addModifierHelper = (dataset) => {
+            let addModifierHelper = (dataset, emphasis = "") => {
                 if (!dataset.mod) {
                     dataset.mod = {
                         value: 0,
-                        sources: []
+                        sources: [],
                     }
                 }
-
+                if (!dataset.emphasis) {
+                    dataset.emphasis = {}
+                }
                 if (value * multiplier != 0) {
-                    dataset.mod.sources.push({ value: value * multiplier, description: name, source: type });
+                    if (emphasis) {
+                        if (!dataset.emphasis[emphasis]) {
+                            dataset.emphasis[emphasis] = 0
+                        }
+                        dataset.emphasis[emphasis] += value * multiplier;
+                    } else {
+                        dataset.mod.sources.push({ value: value * multiplier, description: name, source: type });
+                    }
                 }
             }
 
-            switch (temp[0]) {
+            switch (modifierLabel) {
                 case "GSW.mult":
                     data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
                     break;
@@ -548,19 +558,24 @@ export default class SplittermondActor extends Actor {
                     break;
                 default:
                     let dataset;
+                    let emphasis;
                     let element = CONFIG.splittermond.derivedAttributes.find(attr => {
-                        return temp[0] === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
+                        return modifierLabel === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
                     });
                     if (element) {
                         dataset = data.derivedAttributes[element];
                     } else {
-                        if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].includes(temp[0])) {
-                            dataset = data.skills[temp[0]];
+                        let modifierLabelParts = modifierLabel.split("/");
+                        if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].includes(modifierLabelParts[0])) {
+                            dataset = data.skills[modifierLabelParts[0]];
+                            if (modifierLabelParts[1]) {
+                                emphasis = modifierLabelParts[1];
+                            }
                         };
                     }
 
                     if (dataset) {
-                        addModifierHelper(dataset);
+                        addModifierHelper(dataset, emphasis);
                     }
                     break;
 
@@ -806,9 +821,22 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSkill(skill, options = {}) {
+        let emphasisData = [];
+        if (this.data.data.skills[skill].emphasis) {
+            emphasisData = Object.entries(this.data.data.skills[skill].emphasis).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: false
+                }
+            });
+        }
+
         let checkData = await CheckDialog.create({
             difficulty: options.difficulty || 15,
-            modifier: options.modifier || 0
+            modifier: options.modifier || 0,
+            emphasis: emphasisData
         });
         if (!checkData) return;
 
@@ -1178,9 +1206,23 @@ export default class SplittermondActor extends Actor {
             vtdValue = target.actor.data.data.derivedAttributes.defense.value;
         }
 
+        let emphasisData = [];
+
+        if (weaponData.skill.emphasis) {
+            emphasisData = Object.entries(weaponData.skill.emphasis).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: key.toLowerCase().trim() === weaponData.name.toLowerCase().trim()
+                }
+            });
+        }
+
         let checkData = await CheckDialog.create({
             difficulty: vtdValue,
-            modifier: 0
+            modifier: 0,
+            emphasis: emphasisData
         });
 
         if (!checkData) return;
@@ -1262,15 +1304,27 @@ export default class SplittermondActor extends Actor {
                     break;
             }
         }
+        const actorData = this.data.data;
+        let emphasisData = [];
+        if (actorData.skills[spellData.data.skill].emphasis) {
+            emphasisData = Object.entries(actorData.skills[spellData.data.skill].emphasis).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: (spellData.data.spellType + "").toLowerCase().includes(key.toLocaleLowerCase().trim())
+                }
+            });
+        }
 
         let checkData = await CheckDialog.create({
             difficulty: difficulty,
-            modifier: 0
+            modifier: 0,
+            emphasis: emphasisData
         });
 
         if (!checkData) return;
 
-        const actorData = this.data.data;
 
         let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
         let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
@@ -1390,20 +1444,31 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollActiveDefense(defenseType, itemData) {
+        const actorData = this.data.data;
+        let emphasisData = [];
+        if (itemData.skill.emphasis) {
+            emphasisData = Object.entries(itemData.skill.emphasis).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: itemData.name.toLowerCase().trim() === key.toLowerCase().trim()
+                }
+            });
+        }
 
         let checkData = await CheckDialog.create({
             difficulty: 15,
-            modifier: 0
+            modifier: 0,
+            emphasis: emphasisData
         });
 
         if (!checkData) return;
 
 
-        const actorData = this.data.data;
+
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);
-        //skillValue += parseInt(actorData.attributes[itemData.data.attribute1].value);
-        //skillValue += parseInt(actorData.attributes[itemData.data.attribute2].value);
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
