@@ -290,6 +290,13 @@
             "entries": []
           }
         }
+      },
+      "currency": {
+        "currency": {
+          "S": 0,
+          "L": 0,
+          "T": 0
+        }
       }
     },
     "character": {
@@ -298,7 +305,8 @@
         "skills",
         "biography",
         "health",
-        "focus"
+        "focus",
+        "currency"
       ],
       "splinterpoints": {
         "value": 3,
@@ -325,7 +333,8 @@
         "skills",
         "biography",
         "health",
-        "focus"
+        "focus",
+        "currency"
       ],
       "derivedAttributes": {
         "size": {
@@ -487,7 +496,7 @@
       "availableIn": "",
       "skill": "",
       "skillLevel": 0,
-      "spellType": [],
+      "spellType": "",
       "costs": "",
       "difficulty": "",
       "damage": "",

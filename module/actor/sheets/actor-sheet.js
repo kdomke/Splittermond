@@ -148,7 +148,8 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('input.autoexpand').on('input', function () {
             let dummyElement = $('<span id="autoexpanddummy"/>').hide();
             $(this).after(dummyElement);
-            dummyElement.text($(this).val() || $(this).text() || $(this).attr('placeholder'));
+            let text = $(this).val() || $(this).text() || $(this).attr('placeholder');
+            $(dummyElement).text(text);
             $(this).css({
                 width: dummyElement.width()
             })
