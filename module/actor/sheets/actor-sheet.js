@@ -9,6 +9,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     getData() {
         const sheetData = super.getData();
+        if (game.data.version.startsWith("0.8.")) {
+            sheetData.data = sheetData.data.data;
+        }
+
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
@@ -89,6 +93,7 @@ export default class SplittermondActorSheet extends ActorSheet {
     }
 
     _prepareItems(data) {
+
         data.itemsByType = data.items.reduce((result, item) => {
             if (!(item.type in result)) {
                 result[item.type] = [];
@@ -188,9 +193,14 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            const item = this.actor.getOwnedItem(itemId);
+            if (game.data.version.startsWith("0.8.")) {
+                const item = this.actor.items.get(itemId);
+                item.update({ "data.equipped": !item.data.data.equipped });
+            } else {
+                const item = this.actor.getOwnedItem(itemId);
+                item.update({ "data.equipped": !item.data.data.equipped });
+            }
 
-            item.update({ "data.equipped": !item.data.data.equipped });
         });
 
         html.find('[data-field]').change(event => {

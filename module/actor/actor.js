@@ -124,14 +124,19 @@ export default class SplittermondActor extends Actor {
         const actorData = this.data;
         const data = actorData.data;
 
+
         actorData.items.forEach(item => {
+            if (game.data.version.startsWith("0.8.")) {
+                item = item.data;
+            }
             if (item.type === "spell") {
                 let costData = this._parseCostsString(item.data.costs);
                 let costTotal = costData.channeled + costData.exhausted + costData.consumed;
                 item.enoughFocus = costTotal <= data.focus.available.value;
             }
-
         });
+
+
     }
 
     _prepareHealthFocus() {
@@ -272,6 +277,9 @@ export default class SplittermondActor extends Actor {
             });
         }
         actorData.items.forEach(item => {
+            if (game.data.version.startsWith("0.8.")) {
+                item = item.data
+            }
             if (item.type === "weapon") {
                 if (item.data.equipped) {
                     (item.data.minAttributes || "").split(",").forEach(aStr => {
@@ -292,6 +300,7 @@ export default class SplittermondActor extends Actor {
                         }
                     });
                     let itemData = duplicate(item.data);
+
                     attacks.push({
                         _id: item._id,
                         name: item.name,
@@ -407,6 +416,9 @@ export default class SplittermondActor extends Actor {
 
 
         actorData.items.forEach(item => {
+            if (game.data.version.startsWith("0.8.")) {
+                item = item.data
+            }
             if (item.type === "weapon") {
                 if (["melee", "slashing", "chains", "blades", "staffs"].includes(item.data.skill)) {
                     if (item.data.equipped) {
@@ -532,7 +544,7 @@ export default class SplittermondActor extends Actor {
                     data.health.woundMalus.levelMod += value * multiplier;
                     break;
                 case "splinterpoints":
-                    data.splinterpoints.max = parseInt(data.splinterpoints.max) + value * multiplier;
+                    data.splinterpoints.max = parseInt(data.splinterpoints?.max || 3) + value * multiplier;
                     break;
                 case "healthRegeneration.multiplier":
                     actorData.healthRegeneration.multiplier = value * multiplier;
@@ -587,6 +599,9 @@ export default class SplittermondActor extends Actor {
         const data = actorData.data;
 
         actorData.items.forEach(i => {
+            if (game.data.version.startsWith("0.8.")) {
+                i = i.data;
+            }
             if (i.data.modifier) {
                 switch (i.type) {
                     case "weapon":
@@ -647,6 +662,9 @@ export default class SplittermondActor extends Actor {
         const data = actorData.data;
 
         actorData.items.forEach(i => {
+            if (game.data.version.startsWith("0.8.")) {
+                i = i.data;
+            }
             if (i.type === "armor" && i.data.equipped) {
                 let diff = parseInt(actorData.data.attributes.strength.value) - parseInt(i.data.minStr || 0);
                 if (diff < 0) {
@@ -674,19 +692,39 @@ export default class SplittermondActor extends Actor {
 
         data.handicap = {
             shield: {
-                value: actorData.items.reduce((acc, i) => ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc, 0)
+                value: actorData.items.reduce((acc, i) => {
+                    if (game.data.version.startsWith("0.8.")) {
+                        i = i.data;
+                    }
+                    return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
+                }, 0)
             },
             armor: {
-                value: actorData.items.reduce((acc, i) => ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc, 0)
+                value: actorData.items.reduce((acc, i) => {
+                    if (game.data.version.startsWith("0.8.")) {
+                        i = i.data;
+                    }
+                    return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
+                }, 0)
             }
         }
 
         data.tickMalus = {
             shield: {
-                value: actorData.items.reduce((acc, i) => ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc, 0)
+                value: actorData.items.reduce((acc, i) => {
+                    if (game.data.version.startsWith("0.8.")) {
+                        i = i.data;
+                    }
+                    return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
+                }, 0)
             },
             armor: {
-                value: actorData.items.reduce((acc, i) => ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc, 0)
+                value: actorData.items.reduce((acc, i) => {
+                    if (game.data.version.startsWith("0.8.")) {
+                        i = i.data;
+                    }
+                    return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
+                }, 0)
             }
         };
 
@@ -700,6 +738,9 @@ export default class SplittermondActor extends Actor {
         data.damageReduction.value += actorData.items.reduce((acc, i) => ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.damageReduction || 0) : acc, 0);
 
         actorData.items.forEach(i => {
+            if (game.data.version.startsWith("0.8.")) {
+                i = i.data;
+            }
             if (i.type === "armor" || i.type === "shield") {
                 if (i.data.equipped && i.data.defenseBonus != 0) {
                     this._addModifier(i.name, `VTD ${i.data.defenseBonus}`, "equipment");
@@ -741,7 +782,7 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
 
-            data.splinterpoints.max = data.splinterpoints.max + (data.experience.heroLevel - 1);
+            data.splinterpoints.max = (data.splinterpoints?.max || 3) + (data.experience.heroLevel - 1);
         }
 
         let _sumAllHelper = (acc, current) => acc + current.value;
@@ -898,7 +939,13 @@ export default class SplittermondActor extends Actor {
                     description: moonSignDescription
                 }
             }
-            let moonsignIds = this.items.filter(i => i.type === "moonsign")?.map(i => i._id);
+            let moonsignIds = this.items.filter(i => i.type === "moonsign")?.map(i => {
+                if (game.data.version.startsWith("0.8.")) {
+                    return i.data._id;
+                }
+
+                return i._id
+            });
             if (moonsignIds) {
                 if (moonsignIds.length > 0) {
                     moonsignObj._id = moonsignIds[0];
@@ -1286,6 +1333,10 @@ export default class SplittermondActor extends Actor {
 
     async rollSpell(spellData, options = {}) {
         let target = Array.from(game.user.targets)[0];
+
+        if (game.data.version.startsWith("0.8.")) {
+            spellData = spellData.data;
+        }
 
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
         if (target) {

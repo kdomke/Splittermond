@@ -34,7 +34,7 @@ Hooks.once("init", function () {
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
         magicFumble: Macros.magicFumble,
-        heroLevel: CONFIG.splittermond.heroLevel.map(function(x) {return x * game.settings.get("splittermond", "HGMultiplier") })
+        heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") })
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -149,11 +149,18 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
 
 Hooks.on('preCreateActor', (actor) => {
     if (actor.type === 'character') {
-        actor.token = {
-            vision: true,
-            actorLink: true,
-            name: actor.name
-        };
+        if (game.data.version.startsWith("0.8.")) {
+            actor.data.token.vision = true;
+            actor.data.token.actorLink = true;
+            actor.data.token.name = actor.name;
+        } else {
+            actor.token = {
+                vision: true,
+                actorLink: true,
+                name: actor.name
+            };
+        }
+
     }
 });
 
