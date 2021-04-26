@@ -473,7 +473,6 @@ export default class SplittermondActor extends Actor {
         str.split(',').forEach(str => {
             str = str.trim();
             let temp = str.match(/(.*?)\s+([+\-0-9]+)/);
-            console.log(temp);
             let modifierLabel = temp[1].trim();
             let value = parseFloat(temp[2]);
 
