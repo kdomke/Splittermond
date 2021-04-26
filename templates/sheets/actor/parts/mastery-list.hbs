@@ -8,10 +8,10 @@
         </div>
     </div>
     <ol class="mastery-list">
-        {{#each masteriesBySkill}}
-        <li data-skill="{{@key}}"><label>{{localize this.label}}</label>
+        {{#*inline "masteriesBySkill"}}
+        <li data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
             <ol class="taglist">
-                {{#each this.masteries}}
+                {{#each skill.masteries}}
                 <li class="draggable" class="tooltip-activator" data-item-id="{{this._id}}">
                     <div class="name"><a class="tooltip-activator" data-action="edit-item">{{this.name}}</a>
                         <div class="tooltip">{{{this.data.description}}}</div>
@@ -24,6 +24,7 @@
                     </div>
                 </li>
                 {{/each}}
+
                 <li class="actions">
                     <button class="button-inline" type="button" data-action="add-item" data-render-sheet="true">
                         <i class="fa fa-plus-square" aria-hidden="true"></i>
@@ -31,6 +32,28 @@
                 </li>
             </ol>
         </li>
+        {{/inline}}
+
+        {{#with masteriesBySkill.none}}
+        {{>masteriesBySkill skillId="none" skill=this}}
+        {{/with}}
+
+        {{#each generalSkills}}
+        {{#with (lookup ../masteriesBySkill @key)}}
+        {{>masteriesBySkill skillId=@key skill=this}}
+        {{/with}}
+        {{/each}}
+
+        {{#each fightingSkills}}
+        {{#with (lookup ../masteriesBySkill @key)}}
+        {{>masteriesBySkill skillId=@key skill=this}}
+        {{/with}}
+        {{/each}}
+
+        {{#each magicSkills}}
+        {{#with (lookup ../masteriesBySkill @key)}}
+        {{>masteriesBySkill skillId=@key skill=this}}
+        {{/with}}
         {{/each}}
     </ol>
 

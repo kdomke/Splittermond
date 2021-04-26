@@ -303,7 +303,7 @@
                 </div>
                 <ol class="skill-list">
                     {{#each data.fightingSkills as |skill skillId|}}
-                    <li>
+                    <li data-skill="{{skillId}}">
                         <label>
                             {{localize skill.label}}
                         </label>
@@ -343,7 +343,8 @@
                 </ol>
             </div>
             {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
-            masteriesBySkill=masteriesBySkill}}
+            masteriesBySkill=masteriesBySkill generalSkills=data.generalSkills fightingSkills=data.fightingSkills
+            magicSkills=data.magicSkills}}
         </section>
         <section class="tab spells" data-group="primary" data-tab="spells">
             <div>
