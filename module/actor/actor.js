@@ -485,6 +485,14 @@ export default class SplittermondActor extends Actor {
                 .replace("WIL", data.attributes.willpower.value + "");
             console.log(modifierLabel + " " + value)
             value = parseFloat(value);
+            let emphasis = "";
+            let modifierLabelParts = modifierLabel.split("/");
+            if (modifierLabelParts[1]) {
+                modifierLabel = modifierLabelParts[0];
+                if (modifierLabelParts[1]) {
+                    emphasis = modifierLabelParts[1];
+                }
+            };
 
 
 
@@ -554,35 +562,28 @@ export default class SplittermondActor extends Actor {
                     break;
                 case "generalSkills":
                     CONFIG.splittermond.skillGroups.general.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 case "magicSkills":
                     CONFIG.splittermond.skillGroups.magic.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 case "fightingSkills":
                     CONFIG.splittermond.skillGroups.fighting.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 default:
                     let dataset;
-                    let emphasis;
                     let element = CONFIG.splittermond.derivedAttributes.find(attr => {
                         return modifierLabel === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
                     });
                     if (element) {
                         dataset = data.derivedAttributes[element];
                     } else {
-                        let modifierLabelParts = modifierLabel.split("/");
-                        if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].includes(modifierLabelParts[0])) {
-                            dataset = data.skills[modifierLabelParts[0]];
-                            if (modifierLabelParts[1]) {
-                                emphasis = modifierLabelParts[1];
-                            }
-                        };
+                        dataset = data.skills[modifierLabel];
                     }
 
                     if (dataset) {
