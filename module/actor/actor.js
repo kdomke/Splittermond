@@ -472,9 +472,21 @@ export default class SplittermondActor extends Actor {
 
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.match(/(.*?)\s+([+\-0-9]+)/);
+            console.log(str)
+            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
             let modifierLabel = temp[1].trim();
-            let value = parseFloat(temp[2]);
+            let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
+                .replace("BEW", data.attributes.agility.value + "")
+                .replace("INT", data.attributes.intuition.value + "")
+                .replace("KON", data.attributes.constitution.value + "")
+                .replace("MYS", data.attributes.mystic.value + "")
+                .replace("STÄ", data.attributes.strength.value + "")
+                .replace("VER", data.attributes.mind.value + "")
+                .replace("WIL", data.attributes.willpower.value + "");
+            console.log(modifierLabel + " " + value)
+            value = parseFloat(value);
+
+
 
             let addModifierHelper = (dataset, emphasis = "") => {
                 if (!dataset.mod) {
@@ -1638,10 +1650,13 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
     async shortRest() {
         const actorData = this.data;
         const data = actorData.data;
-        data.focus.exhausted.value = 0;
-        data.health.exhausted.value = 0;
 
-        return this.update({ "data.focus": data.focus, "data.health": data.health });
+        let focusData = duplicate(data.focus);
+        let healthData = duplicate(data.health);
+        focusData.exhausted.value = 0;
+        healthData.exhausted.value = 0;
+
+        return this.update({ "data.focus": focusData, "data.health": healthData });
     }
 
     async longRest() {
@@ -1669,19 +1684,23 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
             dialog.render(true);
         });
 
+        let focusData = duplicate(data.focus);
+        let healthData = duplicate(data.focus);
+
+
         if (await p) {
-            data.focus.channeled.entries = [];
+            focusData.channeled.entries = [];
         }
 
-        data.health.channeled.entries = [];
+        healthData.channeled.entries = [];
 
-        data.focus.exhausted.value = 0;
-        data.health.exhausted.value = 0;
+        focusData.exhausted.value = 0;
+        healthData.exhausted.value = 0;
 
-        data.focus.consumed.value = Math.max(data.focus.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
-        data.health.consumed.value = Math.max(data.health.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
+        focusData.consumed.value = Math.max(focusData.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
+        healthData.consumed.value = Math.max(healthData.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
 
-        return this.update({ "data.focus": data.focus, "data.health": data.health });
+        return this.update({ "data.focus": focusData, "data.health": healthData });
     }
 
     consumeCost(type, valueStr, description) {
@@ -1691,36 +1710,42 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
 
         if (type === "focus") {
 
+            let focusData = duplicate(data.focus);
+
             if (costData.channeled) {
-                if (!data.focus.channeled.hasOwnProperty("entries")) {
-                    data.focus.channeled = {
+                if (!focusData.channeled.hasOwnProperty("entries")) {
+                    focusData.channeled = {
                         value: 0,
                         entries: []
                     }
                 }
 
-                data.focus.channeled.entries.push({
+                focusData.channeled.entries.push({
                     description: description,
                     costs: costData.channeled,
                 });
 
             }
-            if (!data.focus.exhausted.value) {
-                data.focus.exhausted = {
+            if (!focusData.exhausted.value) {
+                focusData.exhausted = {
                     value: 0
                 }
             }
 
-            if (!data.focus.consumed.value) {
-                data.focus.consumed = {
+            if (!focusData.consumed.value) {
+                focusData.consumed = {
                     value: 0
                 }
             }
 
-            data.focus.exhausted.value += costData.exhausted;
-            data.focus.consumed.value += costData.consumed;
+            focusData.exhausted.value += costData.exhausted;
+            focusData.consumed.value += costData.consumed;
 
-            this.update({ "data.focus": data.focus });
+            this.update({
+                "data": {
+                    "focus": focusData
+                }
+            });
 
         }
 
