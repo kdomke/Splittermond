@@ -11,7 +11,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             classes: ["splittermond", "sheet", "actor"],
             tabs: [{ navSelector: ".tabs[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".tabs[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
-            scrollY: [, ".tab.general", ".tab.skills", ".tab.spells", ".tab.inventory"]
+            scrollY: [, ".tab.general", ".list.skills", ".list.masteries", ".tab.spells", ".tab.inventory"]
         });
     }
 
