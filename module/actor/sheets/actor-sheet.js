@@ -460,7 +460,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
 
 
-                if (selectedSkill) {
+                if (selectedSkill && [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(selectedSkill)) {
                     let skillData = selectedSkill.split(" ");
                     itemData.data.skill = skillData[0];
                     if (skillData.length > 1) {
