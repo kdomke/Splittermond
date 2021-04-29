@@ -212,14 +212,14 @@ export default class SplittermondActorSheet extends ActorSheet {
             let newValue = [];
             if (!(idx >= 0 && array !== "")) return;
             if (field) {
-                newValue = array.split('.').reduce(function (prev, curr) {
+                newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.data);
+                }, this.actor.data));
                 newValue[idx][field] = element.value;
             } else {
-                newValue = array.split('.').reduce(function (prev, curr) {
+                newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.data);
+                }, this.actor.data));
                 newValue[idx] = element.value;
             }
             this.actor.update({ [array]: newValue });
@@ -230,13 +230,13 @@ export default class SplittermondActorSheet extends ActorSheet {
             const idx = parseInt($(event.currentTarget).closestData('index', "0"));
             const array = $(event.currentTarget).closestData('array');
             if (!(idx >= 0 && array !== "")) return;
-            let arrayData = array.split('.').reduce(function (prev, curr) {
+            let arrayData = duplicate(array.split('.').reduce(function (prev, curr) {
                 return prev ? prev[curr] : null
-            }, this.actor.data);
+            }, this.actor.data));
             let updateData = {}
             if (array === "data.focus.channeled.entries") {
-                this.actor.data.data.focus.exhausted.value = parseInt(this.actor.data.data.focus.exhausted.value) + parseInt(arrayData[idx].costs);
-                updateData["data.focus.exhausted.value"] = this.actor.data.data.focus.exhausted.value;
+                let tempValue = parseInt(this.actor.data.data.focus.exhausted.value) + parseInt(arrayData[idx].costs);
+                updateData["data.focus.exhausted.value"] = tempValue;
             }
 
             arrayData.splice(idx, 1);
@@ -245,19 +245,21 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find('[data-action="add-channeled-focus"]').click(event => {
-            this.actor.data.data.focus.channeled.entries.push({
+            let channeledEntries = duplicate(this.actor.data.data.focus.channeled.entries);
+            channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.focus.channeled.entries": this.actor.data.data.focus.channeled.entries });
+            this.actor.update({ "data.focus.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="add-channeled-health"]').click(event => {
-            this.actor.data.data.health.channeled.entries.push({
+            let channeledEntries = duplicate(this.actor.data.data.health.channeled.entries);
+            channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.health.channeled.entries": this.actor.data.data.health.channeled.entries });
+            this.actor.update({ "data.health.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="long-rest"]').click(event => {
@@ -458,7 +460,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
 
 
-                if (selectedSkill) {
+                if (selectedSkill && [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(selectedSkill)) {
                     let skillData = selectedSkill.split(" ");
                     itemData.data.skill = skillData[0];
                     if (skillData.length > 1) {

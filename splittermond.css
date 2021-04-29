@@ -562,11 +562,15 @@
   background-color: rgba(48, 51, 54, 0.05);
 }
 .splittermond .list > ul > li:hover,
-.splittermond .list > ol > li:hover {
+.splittermond .list > ol > li:hover,
+.splittermond .list > ul > li.hover,
+.splittermond .list > ol > li.hover {
   background-color: rgba(45, 128, 225, 0.1);
 }
 .splittermond .list > ul > li:hover > .actions > button,
-.splittermond .list > ol > li:hover > .actions > button {
+.splittermond .list > ol > li:hover > .actions > button,
+.splittermond .list > ul > li.hover > .actions > button,
+.splittermond .list > ol > li.hover > .actions > button {
   display: inline-block;
 }
 .splittermond .list > ul > li input,
@@ -1400,6 +1404,18 @@
   flex: 1;
   justify-self: stretch;
   align-self: stretch;
+}
+.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills {
+  overflow-y: hidden;
+  position: relative;
+  height: 100%;
+}
+.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills .list.skills,
+.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills .list.masteries {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  display: block;
 }
 .splittermond.sheet.actor.npc .window-content main .tab.general.active {
   grid-template-columns: 200px 1fr;

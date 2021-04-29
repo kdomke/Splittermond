@@ -11,7 +11,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             classes: ["splittermond", "sheet", "actor"],
             tabs: [{ navSelector: ".tabs[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".tabs[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
-            scrollY: [, ".tab.general", ".tab.skills", ".tab.spells", ".tab.inventory"]
+            scrollY: [, ".tab.general", ".list.skills", ".list.masteries", ".tab.spells", ".tab.inventory"]
         });
     }
 
@@ -67,6 +67,32 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
 
         html.find('.attribute input').change(this._onChangeAttribute.bind(this));
+
+        $(html).find('.tab.skills [data-skill]').mouseenter((e) => {
+            const skill = $(e.currentTarget).closestData('skill');
+            let list = "skills";
+            if ($(e.currentTarget).parent().hasClass("skill-list")) {
+                list = "masteries";
+            }
+            let listElement = $(html).find(`.tab.skills .list.${list}`)[0];
+            let listItemElement = $(listElement).find(`[data-skill= "${skill}"]`)[0];
+            if (listItemElement) {
+                $(listElement).animate({
+                    scrollTop: $(listItemElement).offset().top - $(listElement).offset().top + $(listElement).scrollTop() - 24
+                }, 200);
+                $(listItemElement).addClass("hover");
+            }
+
+        }).mouseleave((e) => {
+            const skill = $(e.currentTarget).closestData('skill');
+            let list = "skills";
+            if ($(e.currentTarget).parent().hasClass("skill-list")) {
+                list = "masteries";
+            }
+            let listElement = $(html).find(`.tab.skills .list.${list}`)[0];
+            let listItemElement = $(listElement).find(`[data-skill= "${skill}"]`)[0];
+            $(listItemElement).removeClass("hover");
+        });
 
         super.activateListeners(html);
     }
