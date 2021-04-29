@@ -1,3 +1,14 @@
+## 0.1.8 ##
+2021-04-29
+
+* fixed: Fokuskosten und kanalisierter Schaden konnte für "unlinked Actors" nicht abgerechnet werden.
+* fixed: Tippfehler in "Modifikatoren"-JournalEntry
+* Meisterschaften werden nach Fertigkeit in der selben Reihenfolge dargestellt, wie in der Fertigkeitsliste
+* Geht man mit der Maus über eine Fertigkeit in der Fertigkeits- oder Meisterschaftsliste, wird in der jeweils anderen Liste (Meisterschafts-/Fertigkeitsliste) zu dieser Fertigkeit gescrollt und hervorgehoben. Dadurch lassen sich die Fertigkeiten leichter einsehen bevor eine Probe durchgeführt wird.
+* Kompatibilität mit dem "VTTA Tokenizer"-Modul. (Dank an Kristian Domke)
+* Meisterschaften lassen sich per Drag-n-Drop aus dem Bogen in das ItemDirectory ziehen.
+
+
 ## 0.1.7 ##
 2021-04-22
 
