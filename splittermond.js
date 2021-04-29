@@ -34,7 +34,7 @@ Hooks.once("init", function () {
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
         magicFumble: Macros.magicFumble,
-        heroLevel: CONFIG.splittermond.heroLevel.map(function(x) {return x * game.settings.get("splittermond", "HGMultiplier") })
+        heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") })
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -198,6 +198,10 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         }
 
     });
+
+    if (!game.user.isGM) {
+        html.find(".gm-only").remove();
+    }
 
     html.find(".add-tick").click(event => {
         let value = $(event.currentTarget).closestData("ticks");

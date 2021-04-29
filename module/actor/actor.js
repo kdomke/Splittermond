@@ -850,6 +850,8 @@ export default class SplittermondActor extends Actor {
         });
         if (!checkData) return;
 
+        checkData.difficulty = parseInt(checkData.difficulty);
+
         let data = Dice.check(
             this.data.data.skills[skill].value,
             this.data.data.skills[skill].points,
@@ -1210,12 +1212,6 @@ export default class SplittermondActor extends Actor {
 
         if (!weaponData) return;
 
-        let target = Array.from(game.user.targets)[0];
-        let vtdValue = "VTD";
-        if (target) {
-            vtdValue = target.actor.data.data.derivedAttributes.defense.value;
-        }
-
         let emphasisData = [];
 
         if (weaponData.skill.emphasis) {
@@ -1230,15 +1226,34 @@ export default class SplittermondActor extends Actor {
         }
 
         let checkData = await CheckDialog.create({
-            difficulty: vtdValue,
+            difficulty: "VTD",
             modifier: 0,
             emphasis: emphasisData
         });
 
         if (!checkData) return;
 
+        let target = Array.from(game.user.targets)[0];
+        let hideDifficulty = false;
+        if (target) {
+            switch (checkData.difficulty) {
+                case "VTD":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    hideDifficulty = true;
+                    break;
+                case "KW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    hideDifficulty = true;
+                    break;
+                case "GW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    hideDifficulty = true;
+                    break;
+            }
+        }
 
 
+        checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(weaponData.skill.points);
         let skillValue = weaponData.skill.value;
 
@@ -1280,6 +1295,7 @@ export default class SplittermondActor extends Actor {
 
         let templateContext = {
             ...data,
+            hideDifficulty: hideDifficulty,
             tooltip: await data.roll.getTooltip()
         };
 
@@ -1296,24 +1312,8 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
-        let target = Array.from(game.user.targets)[0];
-
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
-        if (target) {
-            switch (difficulty) {
-                case "VTD":
-                    difficulty = target.actor.data.data.derivedAttributes.defense.value;
-                    break;
-                case "GW":
-                    difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
-                    break;
-                case "KW":
-                    difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
-                    break;
-                default:
-                    break;
-            }
-        }
+
         const actorData = this.data.data;
         let emphasisData = [];
         if (actorData.skills[spellData.data.skill].emphasis) {
@@ -1335,7 +1335,26 @@ export default class SplittermondActor extends Actor {
 
         if (!checkData) return;
 
+        let target = Array.from(game.user.targets)[0];
+        let hideDifficulty = false;
+        if (target) {
+            switch (checkData.difficulty) {
+                case "VTD":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    hideDifficulty = true;
+                    break;
+                case "KW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    hideDifficulty = true;
+                    break;
+                case "GW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    hideDifficulty = true;
+                    break;
+            }
+        }
 
+        checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
         let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
 
@@ -1430,6 +1449,7 @@ export default class SplittermondActor extends Actor {
 
         let templateContext = {
             ...data,
+            hideDifficulty: hideDifficulty,
             item: spellData,
             tooltip: await data.roll.getTooltip()
         };
@@ -1475,7 +1495,7 @@ export default class SplittermondActor extends Actor {
 
         if (!checkData) return;
 
-
+        checkData.difficulty = parseInt(checkData.difficulty);
 
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);

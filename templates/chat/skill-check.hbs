@@ -8,7 +8,9 @@
             <h2>{{title}}</h2>
             <span class="roll-type">{{rollType}}</span>
             {{#if difficulty}}
-            &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
+            <span class="{{#if hideDifficulty}}gm-only{{/if}}">
+                &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
+            </span>
             {{/if}}
         </div>
     </header>
