@@ -99,6 +99,7 @@ export default class SplittermondActor extends Actor {
             data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
             data.bonusCap = data.experience.heroLevel + 2;
 
+
         }
 
         if (actorData.type === "npc") {
@@ -596,6 +597,11 @@ export default class SplittermondActor extends Actor {
     _prepareModifier() {
         const actorData = this.data;
         const data = actorData.data;
+        if (actorData.type === "character") {
+            ["VTD", "KW", "GW"].forEach(d => {
+                this._addModifier(game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), d + " +" + (2 * (data.experience.heroLevel - 1)));
+            });
+        }
 
         actorData.items.forEach(i => {
             if (i.data.modifier) {
@@ -748,9 +754,9 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
             data.derivedAttributes.healthpoints.value = parseInt(data.derivedAttributes.size.value) + parseInt(data.attributes.constitution.value);
             data.derivedAttributes.focuspoints.value = 2 * (parseInt(data.attributes.mystic.value) + parseInt(data.attributes.willpower.value));
-            data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value)) + 2 * (data.experience.heroLevel - 1);
-            data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
-            data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
+            data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value));
+            data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value);
+            data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value);
 
             data.splinterpoints.max = data.splinterpoints.max + (data.experience.heroLevel - 1);
         }

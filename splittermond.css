@@ -323,7 +323,56 @@
 }
 .splittermond .tooltip-activator:hover + .tooltip,
 .splittermond .tooltip-activator:hover > .tooltip {
+  display: block;
+}
+.splittermond #tooltip {
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  padding: 7px;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 100000;
+}
+.splittermond #tooltip p {
+  max-width: 400px;
+}
+.splittermond #tooltip p:first-child {
+  margin-top: 0;
+}
+.splittermond #tooltip p:last-child {
+  margin-bottom: 0;
+}
+.splittermond #tooltip .formula {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+.splittermond #tooltip .formula > * {
+  margin: 3px;
+}
+.splittermond #tooltip .formula .formula-part {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.splittermond #tooltip .formula .formula-part .description {
+  font-family: 'Signika';
+  font-size: 10px;
+}
+.splittermond #tooltip .formula .formula-part .value {
+  font-weight: bold;
+}
+.splittermond #tooltip .formula .formula-part.malus {
+  color: #892100;
+}
+.splittermond #tooltip .formula .formula-part.bonus {
+  color: #458900;
 }
 .splittermond .tooltip {
   display: none;

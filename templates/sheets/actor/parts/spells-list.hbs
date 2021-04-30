@@ -41,12 +41,10 @@
     </div>
     <ol>
         {{#each this.spells}}
-        <li class="draggable tooltip-activator {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
-            data-item-id="{{this._id}}">
+        <li class="draggable {{#if this.enoughFocus}}available{{else}}not-available{{/if}}" data-item-id="{{this._id}}">
             <label>
                 <a class="rollable">{{localize this.name}}</a>
             </label>
-            <div class="tooltip">{{{this.data.description}}}</div>
             <div class="difficulty">{{this.data.difficulty}}</div>
             <div class="costs" data-type="focus" data-description="{{this.name}}">
                 <a class="consume" data-value="{{this.data.costs}}">{{this.data.costs}}</a>
