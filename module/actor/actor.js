@@ -523,6 +523,7 @@ export default class SplittermondActor extends Actor {
                     break;
                 case "SR":
                     addModifierHelper(data.damageReduction);
+                    break;
                 case "handicap.shield.mod":
                     addModifierHelper(data.handicap.shield);
                     break;
