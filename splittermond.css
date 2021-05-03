@@ -1223,6 +1223,16 @@
   gap: 3px;
   align-items: start;
 }
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li > * {
+  border: none;
+}
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li > label {
+  font-weight: bold;
+}
 .splittermond.sheet.actor .window-content main section.skills.active {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -1253,16 +1263,6 @@
 .splittermond.sheet.actor .window-content main section.skills.active .list .value,
 .splittermond.sheet.actor .window-content main section.skills.active .list input {
   text-align: center;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li > * {
-  border: none;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li > label {
-  font-weight: bold;
 }
 .splittermond.sheet.actor .window-content .list.inventory img,
 .splittermond.sheet.actor .window-content .list.attack img,
@@ -1638,4 +1638,11 @@
 }
 .splittermond.wizard.species .window-content footer {
   display: flex;
+}
+.splittermond.compendium-browser .window-content main {
+  overflow: hidden;
+  min-height: 100px;
+}
+.splittermond.compendium-browser .window-content main .tab {
+  overflow-y: auto;
 }

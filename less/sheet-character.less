@@ -450,6 +450,24 @@
             align-items: start;
         }
 
+        .list {
+            ol.mastery-list {
+                >li {
+                    flex-direction: column;
+                    align-items: flex-start;
+
+                    >* {
+                        border: none;
+                    }
+
+                    >label {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+
+
         main section.skills.active {
 
             grid-template-columns: repeat(2, 1fr);
@@ -494,20 +512,7 @@
             }
         }
 
-        ol.mastery-list {
-            >li {
-                flex-direction: column;
-                align-items: flex-start;
 
-                >* {
-                    border: none;
-                }
-
-                >label {
-                    font-weight: bold;
-                }
-            }
-        }
 
 
         .list.inventory,
