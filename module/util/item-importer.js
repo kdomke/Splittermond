@@ -575,7 +575,8 @@ export default class ItemImporter {
                 import: {
                     icon: '<i class="fas fa-check"></i>',
                     label: "Import",
-                    callback: (html) => {
+                    callback: async (html) => {
+                        await SplittermondCompendium.updateIndex();
                         let importData = html.find('[name="data"]')[0].value;
                         let name = html.find('[name="name"]')[0].value;
                         let description = html.find('[name="description"]')[0].value;

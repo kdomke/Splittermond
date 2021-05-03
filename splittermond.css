@@ -323,7 +323,56 @@
 }
 .splittermond .tooltip-activator:hover + .tooltip,
 .splittermond .tooltip-activator:hover > .tooltip {
+  display: block;
+}
+.splittermond #tooltip {
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  padding: 7px;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  text-shadow: none;
+  z-index: 100000;
+}
+.splittermond #tooltip p {
+  max-width: 400px;
+}
+.splittermond #tooltip p:first-child {
+  margin-top: 0;
+}
+.splittermond #tooltip p:last-child {
+  margin-bottom: 0;
+}
+.splittermond #tooltip .formula {
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+.splittermond #tooltip .formula > * {
+  margin: 3px;
+}
+.splittermond #tooltip .formula .formula-part {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.splittermond #tooltip .formula .formula-part .description {
+  font-family: 'Signika';
+  font-size: 10px;
+}
+.splittermond #tooltip .formula .formula-part .value {
+  font-weight: bold;
+}
+.splittermond #tooltip .formula .formula-part.malus {
+  color: #892100;
+}
+.splittermond #tooltip .formula .formula-part.bonus {
+  color: #458900;
 }
 .splittermond .tooltip {
   display: none;
@@ -558,8 +607,14 @@
   border: 1px solid transparent;
 }
 .splittermond .list > ul > li:nth-child(odd),
-.splittermond .list > ol > li:nth-child(odd) {
+.splittermond .list > ol > li:nth-child(odd),
+.splittermond .list > ul > li.odd,
+.splittermond .list > ol > li.odd {
   background-color: rgba(48, 51, 54, 0.05);
+}
+.splittermond .list > ul > li.even,
+.splittermond .list > ol > li.even {
+  background-color: unset;
 }
 .splittermond .list > ul > li:hover,
 .splittermond .list > ol > li:hover,
@@ -1174,6 +1229,16 @@
   gap: 3px;
   align-items: start;
 }
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li > * {
+  border: none;
+}
+.splittermond.sheet.actor .window-content .list ol.mastery-list > li > label {
+  font-weight: bold;
+}
 .splittermond.sheet.actor .window-content main section.skills.active {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -1204,16 +1269,6 @@
 .splittermond.sheet.actor .window-content main section.skills.active .list .value,
 .splittermond.sheet.actor .window-content main section.skills.active .list input {
   text-align: center;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li > * {
-  border: none;
-}
-.splittermond.sheet.actor .window-content ol.mastery-list > li > label {
-  font-weight: bold;
 }
 .splittermond.sheet.actor .window-content .list.inventory img,
 .splittermond.sheet.actor .window-content .list.attack img,
@@ -1589,4 +1644,80 @@
 }
 .splittermond.wizard.species .window-content footer {
   display: flex;
+}
+.splittermond.compendium-browser .window-content {
+  overflow: hidden;
+}
+.splittermond.compendium-browser .window-content form {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.compendium-browser .window-content form main {
+  overflow: hidden;
+  min-height: 100px;
+  flex: 1;
+}
+.splittermond.compendium-browser .window-content form main .tab {
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  margin: 3px;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div {
+  display: flex;
+  align-items: center;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div > * {
+  margin-right: 3px;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div > *:last-child {
+  margin-right: 0;
+}
+.splittermond.compendium-browser .window-content form main .tab .list {
+  overflow-y: auto;
+  align-items: stretch;
+}
+.splittermond.compendium-browser .window-content form main .tab .list label {
+  font-weight: bold;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .level {
+  width: 80px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .skill {
+  width: 100px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .damage {
+  width: 60px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .features {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .compendium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px;
+  width: 160px;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .compendium .id {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .window-content form main .tab .taglist li {
+  padding-left: 3px;
+  padding-right: 3px;
+  font-family: "Signika";
+  font-size: 10px;
 }

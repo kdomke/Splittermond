@@ -30,6 +30,8 @@
         "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
     },
     "splittermond": {
+        "showWorldItems": "Zeige Welt-Items",
+        "compendiumBrowser": "Browser",
         "heroLevel": "Heldengrad",
         "name": "Name",
         "sex": "Geschlecht",
@@ -62,6 +64,7 @@
         "fumble": "Patzer",
         "critical": "Triumph",
         "modifier": "Modifikator",
+        "modifiers": "Modifikatoren",
         "minStrength": "min. Stärke",
         "generalSkills": "Allgemeine Fertigkeiten",
         "magicSkills": "Magieschulen",
@@ -100,6 +103,8 @@
         "weapons": "Waffen",
         "equipment": "Ausrüstung",
         "skillValue": "Fertigkeitswert",
+        "skillPoints": "Fertigkeitspunkte",
+        "skillPointsAbbrev": "FP",
         "skillValueAbbrev": "FW",
         "spellLevel": "Grad",
         "level": "Stufe",

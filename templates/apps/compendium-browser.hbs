@@ -1,0 +1,144 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <nav class="tabs" data-group="primary">
+        <a class="item active" data-tab="spell">{{ localize "splittermond.spells" }}</a>
+        <a class="item" data-tab="mastery">{{ localize "splittermond.masteries" }}</a>
+        <a class="item" data-tab="weapon">{{ localize "splittermond.weapon" }}</a>
+
+    </nav>
+    <main class="tab-list">
+        <section class="tab" data-group="primary" data-tab="spell">
+            <div class="filter">
+                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+
+                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
+                        for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+                </div>
+                <div>
+                    <select name="skill">
+                        {{selectOptions spellFilter.skills selected="none" localize=true}}
+                    </select>
+                    <label>{{localize "splittermond.spellLevel"}}</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-0"><label
+                        for="skill-level-spell-0"> 0</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-1"><label
+                        for="skill-level-spell-1">1</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-2"><label
+                        for="skill-level-spell-2"> 2</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-3"><label
+                        for="skill-level-spell-3"> 3</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-4"><label
+                        for="skill-level-spell-4"> 4</label>
+                    <input type="checkbox" value="true" name="skill-level-spell" id="skill-level-spell-5"><label
+                        for="skill-level-spell-5"> 5</label>
+                </div>
+            </div>
+            <div class="list">
+                <ol>
+                    {{#each items.spell}}
+                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                        data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
+                        data-skill-level="this.data.skillLevel">
+                        <div><label>{{this.name}}</label>
+                            <div class="available-in">
+                                <ul class="taglist">
+                                    {{#each this.data.availableInArray}}
+                                    <li>{{this}}</li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
+                                class="id">{{this.compendiumPackage}}</span></span></div>
+
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+
+        </section>
+        <section class="tab" data-group="primary" data-tab="mastery">
+            <div class="filter">
+                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+
+                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
+                        for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+                </div>
+                <div>
+                    <select name="skill">
+                        {{selectOptions masteryFilter.skills selected="none" localize=true}}
+                    </select>
+                    <label>{{localize "splittermond.masteryItem.level"}}</label>
+                    <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-1"><label
+                        for="skill-level-mastery-1">1</label>
+                    <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-2"><label
+                        for="skill-level-mastery-2"> 2</label>
+                    <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-3"><label
+                        for="skill-level-mastery-3"> 3</label>
+                    <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-4"><label
+                        for="skill-level-mastery-4"> 4</label>
+                </div>
+            </div>
+            <div class="list">
+                <ol>
+                    {{#each items.mastery}}
+                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                        data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
+                        data-level="{{this.data.level}}">
+                        <div><label>{{this.name}}</label>
+                            <div class="available-in">
+                                <ul class="taglist">
+                                    {{#each this.data.availableInArray}}
+                                    <li>{{this}}</li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="level">
+                            {{localize "splittermond.masteryItem.level"}}&nbsp;{{this.data.level}}
+                        </div>
+                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
+                                class="id">{{this.compendiumPackage}}</span></span></div>
+
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+        </section>
+        <section class="tab" data-group="primary" data-tab="weapon">
+            <div class="filter">
+                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+
+                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
+                        for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+                    <select name="skill">
+                        {{selectOptions weaponFilter.skills selected="none" localize=true}}
+                    </select>
+                </div>
+            </div>
+            <div class="list">
+                <ol>
+                    {{#each items.weapon}}
+                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                        data-skill="{{this.data.skill}}" data-secondary-skill="{{this.data.secondaryAttack.skill}}"
+                        data-features="{{this.data.features}}" data-damage="{{this.data.damage}}"
+                        data-secondary-damage="{{this.data.secondaryAttack.damage}}"
+                        data-secondary-features="{{this.data.secondaryAttack.features}}">
+                        <div>
+                            <label>{{this.name}}</label>
+                            <div class="features">{{this.data.features}}</div>
+                        </div>
+                        <div class="skill">
+                            {{this.data.skillLabel}}
+                        </div>
+                        <div class="damage">
+                            {{this.data.damage}}
+                        </div>
+                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
+                                class="id">{{this.compendiumPackage}}</span></span></div>
+                    </li>
+                    {{/each}}
+                </ol>
+            </div>
+        </section>
+    </main>
+</form>

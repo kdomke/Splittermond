@@ -12,10 +12,8 @@
         <li data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
             <ol class="taglist">
                 {{#each skill.masteries}}
-                <li class="draggable" class="tooltip-activator" data-item-id="{{this._id}}">
-                    <div class="name"><a class="tooltip-activator" data-action="edit-item">{{this.name}}</a>
-                        <div class="tooltip">{{{this.data.description}}}</div>
-                    </div>
+                <li class="draggable" data-item-id="{{this._id}}">
+                    <div class="name"><a data-action="edit-item">{{this.name}}</a></div>
 
                     <div class="actions">
                         <button class="button-inline" type="button" data-action="delete-item">

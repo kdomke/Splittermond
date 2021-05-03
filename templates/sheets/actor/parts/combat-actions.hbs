@@ -25,7 +25,7 @@
                     <label>
                         <a class="rollable">{{localize this.name}}</a>
                     </label>
-                    <div class="value tooltip-activator">
+                    <div class="value">
                         {{#if this.skill.editable}}
                         <input name="data.skills.{{this.skillId}}.value" type="text"
                             data-skill-value="{{this.skill.value}}" value="{{this.skill.value}}" data-dtype="Number">
@@ -72,7 +72,7 @@
             </div>
             <ol data-defense-type="defense">
                 {{#each activeDefense.defense}}
-                <li data-item-id="{{this._id}}">
+                <li data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -90,7 +90,7 @@
             </div>
             <ol data-defense-type="mindresist">
                 {{#each activeDefense.mindresist}}
-                <li data-item-id="{{this._id}}">
+                <li data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -107,7 +107,7 @@
             </div>
             <ol data-defense-type="bodyresist">
                 {{#each activeDefense.bodyresist}}
-                <li data-item-id="{{this._id}}">
+                <li data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
