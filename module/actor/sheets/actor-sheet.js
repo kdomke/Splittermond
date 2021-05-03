@@ -316,7 +316,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
         })
 
-        $(".draggable").on("dragstart", event => {
+        html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
             if (attackId) {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
@@ -631,7 +631,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (itemData.data.availableIn) {
                 let availableIn = itemData.data.availableIn.trim().toLowerCase();
                 CONFIG.splittermond.skillGroups.magic.forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase(), i);
+                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
                 });
                 let selectedSkill = "";
                 if (availableIn.split(",").length > 1) {
@@ -643,7 +643,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                             let data = item.trim().toLowerCase().split(" ");
                             if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
                                 buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]} `) + " " + data[1],
+                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
                                     callback: html => {
                                         resolve(data[0] + " " + data[1])
                                     }
@@ -668,7 +668,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                     selectedSkill = await p;
                 } else {
-                    selectedSkill = availableIn;
+                    if (availableIn.trim())
+                        selectedSkill = availableIn;
                 }
 
 
@@ -676,6 +677,10 @@ export default class SplittermondActorSheet extends ActorSheet {
                     let skillData = selectedSkill.split(" ");
                     itemData.data.skill = skillData[0];
                     itemData.data.skillLevel = skillData[1];
+                }
+
+                if (!itemData.data.skill) {
+                    return;
                 }
             }
         }
@@ -686,7 +691,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
                     availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase(), i);
                 });
-                let selectedSkill = "";
+                let selectedSkill = itemData.data.skill;
                 if (availableIn.split(",").length > 1) {
                     let p = new Promise((resolve, reject) => {
                         let buttons = {};
@@ -699,7 +704,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                             }
                             if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(data[0])) {
                                 buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]} `),
+                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`),
                                     callback: html => {
                                         resolve(data[0] + " " + data[1])
                                     }
@@ -724,16 +729,19 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                     selectedSkill = await p;
                 } else {
-                    selectedSkill = availableIn;
+                    if (availableIn)
+                        selectedSkill = availableIn;
                 }
 
 
-                if (selectedSkill && [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(selectedSkill)) {
+                if (selectedSkill !== "" && selectedSkill !== "none" && [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(selectedSkill)) {
                     let skillData = selectedSkill.split(" ");
                     itemData.data.skill = skillData[0];
                     if (skillData.length > 1) {
                         itemData.data.level = skillData[1];
                     }
+                } else {
+                    return;
                 }
             }
         }

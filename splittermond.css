@@ -607,8 +607,14 @@
   border: 1px solid transparent;
 }
 .splittermond .list > ul > li:nth-child(odd),
-.splittermond .list > ol > li:nth-child(odd) {
+.splittermond .list > ol > li:nth-child(odd),
+.splittermond .list > ul > li.odd,
+.splittermond .list > ol > li.odd {
   background-color: rgba(48, 51, 54, 0.05);
+}
+.splittermond .list > ul > li.even,
+.splittermond .list > ol > li.even {
+  background-color: unset;
 }
 .splittermond .list > ul > li:hover,
 .splittermond .list > ol > li:hover,
@@ -1639,10 +1645,79 @@
 .splittermond.wizard.species .window-content footer {
   display: flex;
 }
-.splittermond.compendium-browser .window-content main {
+.splittermond.compendium-browser .window-content {
+  overflow: hidden;
+}
+.splittermond.compendium-browser .window-content form {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.splittermond.compendium-browser .window-content form main {
   overflow: hidden;
   min-height: 100px;
+  flex: 1;
 }
-.splittermond.compendium-browser .window-content main .tab {
+.splittermond.compendium-browser .window-content form main .tab {
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  margin: 3px;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div {
+  display: flex;
+  align-items: center;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div > * {
+  margin-right: 3px;
+}
+.splittermond.compendium-browser .window-content form main .tab .filter > div > *:last-child {
+  margin-right: 0;
+}
+.splittermond.compendium-browser .window-content form main .tab .list {
   overflow-y: auto;
+  align-items: stretch;
+}
+.splittermond.compendium-browser .window-content form main .tab .list label {
+  font-weight: bold;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .level {
+  width: 80px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .skill {
+  width: 100px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .damage {
+  width: 60px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .features {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .compendium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px;
+  width: 160px;
+}
+.splittermond.compendium-browser .window-content form main .tab .list .compendium .id {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .window-content form main .tab .taglist li {
+  padding-left: 3px;
+  padding-right: 3px;
+  font-family: "Signika";
+  font-size: 10px;
 }
