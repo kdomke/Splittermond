@@ -409,6 +409,27 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 }
                 content += '</span>';
+
+                let masteryList = html.find(`.mastery-list li[data-skill="${skillId}"]`);
+
+
+                if (masteryList.html()) {
+                    let posLeft = masteryList.offset().left;
+                    let width = masteryList.outerWidth();
+                    masteryList = masteryList.clone();
+
+                    masteryList.find("button").remove();
+                    masteryList = masteryList.wrapAll(`<div class="list tooltip" />`).wrapAll(`<ol class="mastery-list" />`).parent().parent();
+                    masteryList.css({
+                        position: "fixed",
+                        left: posLeft,
+                        top: $(event.currentTarget).offset().top,
+                        width: width,
+                        padding: 0,
+                        border: "none"
+                    })
+                    content += masteryList.wrapAll("<div />").parent().html();
+                }
             }
 
             if ($(event.currentTarget).closestData('attack-id')) {
@@ -582,7 +603,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                 let tooltipElement = $(`<div id="tooltip">${content}</div>`);
                 html.append(tooltipElement);
                 if (skillId) {
-                    css.left += $(event.currentTarget).outerWidth() - tooltipElement.width();
+                    css.left += $(event.currentTarget).outerWidth() - tooltipElement.outerWidth();
+                    css.top = $(event.currentTarget).offset().top - $(tooltipElement).outerHeight();
                 }
 
                 if (event.currentTarget.classList.contains("attribute") || $(event.currentTarget).closestData('attack-id') || $(event.currentTarget).closestData('defense-id')) {
