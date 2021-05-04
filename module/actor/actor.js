@@ -760,6 +760,15 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value);
 
             data.splinterpoints.max = data.splinterpoints.max + (data.experience.heroLevel - 1);
+        } else {
+            data.derivedAttributes.size.value = parseInt(data.derivedAttributes.size.value) || 0;
+            data.derivedAttributes.speed.value = parseInt(data.derivedAttributes.speed.value) || 0;
+            data.derivedAttributes.initiative.value = parseInt(data.derivedAttributes.initiative.value) || 0;
+            data.derivedAttributes.healthpoints.value = parseInt(data.derivedAttributes.healthpoints.value) || 0;
+            data.derivedAttributes.focuspoints.value = parseInt(data.derivedAttributes.focuspoints.value) || 0;
+            data.derivedAttributes.defense.value = parseInt(data.derivedAttributes.defense.value) || 0;
+            data.derivedAttributes.bodyresist.value = parseInt(data.derivedAttributes.bodyresist.value) || 0;
+            data.derivedAttributes.mindresist.value = parseInt(data.derivedAttributes.mindresist.value) || 0;
         }
 
         let _sumAllHelper = (acc, current) => acc + current.value;
@@ -1270,6 +1279,8 @@ export default class SplittermondActor extends Actor {
         data.img = weaponData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
 
+        let ticks = ["longrange", "throwing"].includes(weaponData.skillId) ? 3 : weaponData.weaponSpeed;
+
         data.actions = [{
             name: game.i18n.localize(`splittermond.damage`) + " (" + weaponData.damage + ")",
             icon: "fa-heart-broken",
@@ -1280,11 +1291,11 @@ export default class SplittermondActor extends Actor {
                 features: weaponData.features
             }
         }, {
-            name: `${weaponData.weaponSpeed} ` + game.i18n.localize(`splittermond.ticks`),
+            name: `${ticks} ` + game.i18n.localize(`splittermond.ticks`),
             icon: "fa-stopwatch",
             classes: "add-tick",
             data: {
-                ticks: weaponData.weaponSpeed,
+                ticks: ticks,
                 message: weaponData.name
             }
         }];
