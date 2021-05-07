@@ -735,6 +735,9 @@ export default class SplittermondActor extends Actor {
                 data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
                     + parseInt(data.attributes[attr].species || 0)
                     + parseInt(data.attributes[attr].advances || 0);
+                data.attributes[attr].start = parseInt(data.attributes[attr].initial || 0)
+                    + parseInt(data.attributes[attr].species || 0);
+                data.attributes[attr].max = data.attributes[attr].start + data.experience.heroLevel;
             });
         } else {
             CONFIG.splittermond.attributes.forEach(attr => {

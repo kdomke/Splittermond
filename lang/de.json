@@ -30,6 +30,9 @@
         "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
     },
     "splittermond": {
+        "start": "Start",
+        "value": "Wert",
+        "max": "Max",
         "showWorldItems": "Zeige Welt-Items",
         "compendiumBrowser": "Browser",
         "heroLevel": "Heldengrad",
