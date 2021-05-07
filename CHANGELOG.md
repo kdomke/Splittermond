@@ -1,3 +1,12 @@
+## 0.2.1 ##
+2021-05-07
+
+* fixed: Fehler bei der Berechnung der abgeleiteten Werte für NSCs (Issue #38)
+* fixed: Für Fernkampfwaffen werden im "Ticks"-Button "3 Ticks" zum Auslösen verwendet.  (Issue #41)
+* Für jedes Attribut kann nun der Startwert angegeben werden. Der maximal mögliche Wert wird mit der Heldenstufe berechnet (Issue #42)
+* Klickt man im Combat-Tracker auf den Initiativwert, kann man eine Tickdauer hinzufügen, auch wenn man nicht im Zug ist. Dies kann nur der "Owner" (Besitzer des Charakters oder GM).
+
+
 ## 0.2.0 ##
 2021-05-03
 

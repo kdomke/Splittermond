@@ -1224,6 +1224,16 @@
   width: 2em;
   text-align: center;
 }
+.splittermond.sheet.actor .window-content main section.general .list .start,
+.splittermond.sheet.actor .window-content main section.general .list .value,
+.splittermond.sheet.actor .window-content main section.general .list .max {
+  width: 35px;
+  text-align: center;
+}
+.splittermond.sheet.actor .window-content main section.general .list .start input,
+.splittermond.sheet.actor .window-content main section.general .list .max input {
+  font-weight: normal;
+}
 .splittermond.sheet.actor .window-content main section.active {
   display: grid;
   gap: 3px;

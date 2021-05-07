@@ -26,6 +26,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             }
         })
 
+
         //this._prepareItems(sheetData);
 
         //sheetData.config = CONFIG.splittermond;
@@ -66,7 +67,18 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
     activateListeners(html) {
 
 
-        html.find('.attribute input').change(this._onChangeAttribute.bind(this));
+        html.find('.attribute input[name$="value"]').change(this._onChangeAttribute.bind(this));
+        html.find('.attribute input[name$="start"]').change((event) => {
+            event.preventDefault();
+
+            const input = event.currentTarget;
+            const value = parseInt(input.value);
+            const attrBaseName = input.name.split('.')[2];
+            const speciesValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.species`));
+            this.actor.update({
+                [`data.attributes.${attrBaseName}.initial`]: value - speciesValue
+            });
+        });
 
         super.activateListeners(html);
     }

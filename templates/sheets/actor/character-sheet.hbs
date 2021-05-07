@@ -81,18 +81,29 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab general" data-group="primary" data-tab="general">
-            <div class="list" data-item-type="strength">
+            <div class="list">
                 <div class="list-header">
                     <h3>{{localize "splittermond.attributes"}}</h3>
+                    <div class="start">{{localize "splittermond.start"}}</div>
+                    <div class="value">{{localize "splittermond.value"}}</div>
+                    <div class="max">{{localize "splittermond.max"}}</div>
                 </div>
-                <ul class="strengths">
+                <ul>
                     {{#each data.attributes as |attribute attributeId|}}
-                    <li class="item attribute" data-item-id="{{this._id}}">
+                    <li class="item attribute">
                         <label for="data.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
                             attribute.label.long}}</label>
-                        <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
-                            data-dtype="Number">
+                        <div class="start">
+                            <input name="data.attributes.{{attributeId}}.start" type="text" value="{{attribute.start}}"
+                                data-dtype="Number">
+                        </div>
+                        <div class="value">
+                            <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                                data-dtype="Number">
+                        </div>
+                        <div class="max"><input name="data.attributes.{{attributeId}}.max" type="text"
+                                value="{{attribute.max}}" data-dtype="Number" disabled></div>
                     </li>
                     {{/each}}
                 </ul>
