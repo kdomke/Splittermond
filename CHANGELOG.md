@@ -1,3 +1,9 @@
+## 0.2.2 ##
+2021-05-12
+
+* fixed: Kompendium Browser wurde nicht richtig geladen, wenn Zauber aber keine Meisterschaften und/oder Waffen angelegt wurden.
+* fixed: Beim Drag-and-Drop einer Meisterschaft auf den Charakterbogen wurde die Fertigkeit nicht richtig augewählt.
+
 ## 0.2.1 ##
 2021-05-07
 

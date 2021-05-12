@@ -733,9 +733,13 @@ export default class SplittermondActorSheet extends ActorSheet {
                         selectedSkill = availableIn;
                 }
 
+                if (selectedSkill === "" || selectedSkill === "none") {
+                    return;
+                }
 
-                if (selectedSkill !== "" && selectedSkill !== "none" && [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(selectedSkill)) {
-                    let skillData = selectedSkill.split(" ");
+                let skillData = selectedSkill.split(" ");
+                itemData.data.skill = skillData[0];
+                if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(skillData[0])) {
                     itemData.data.skill = skillData[0];
                     if (skillData.length > 1) {
                         itemData.data.level = skillData[1];
@@ -743,6 +747,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 } else {
                     return;
                 }
+
             }
         }
 
