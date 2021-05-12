@@ -66,7 +66,9 @@ export default class SplittermondCompendiumBrowser extends Application {
                     return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1];
                 });
             });
+        }
 
+        if (this.allItems.mastery) {
             this.allItems.mastery.forEach(i => {
                 let availableIn = i.data.availableIn;
                 [...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
@@ -78,7 +80,9 @@ export default class SplittermondCompendiumBrowser extends Application {
                     return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`);
                 });
             });
+        }
 
+        if (this.allItems.weapon) {
             this.allItems.weapon.forEach(i => {
                 i.data.skillLabel = game.i18n.localize(`splittermond.skillLabel.${i.data.skill}`);
             });
