@@ -9,6 +9,7 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
+import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
 
 
@@ -34,7 +35,8 @@ Hooks.once("init", function () {
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
         magicFumble: Macros.magicFumble,
-        heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") })
+        heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") }),
+        compendiumBrowser: new SplittermondCompendiumBrowser()
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -206,6 +208,10 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 
     });
 
+    if (!game.user.isGM) {
+        html.find(".gm-only").remove();
+    }
+
     html.find(".add-tick").click(event => {
         let value = $(event.currentTarget).closestData("ticks");
         let message = $(event.currentTarget).closestData("message");
@@ -220,3 +226,8 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     });
 
 });
+
+Hooks.on("renderCompendiumDirectory", (app, html, data) => {
+    const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
+    html.find(".header-actions").append(compendiumBrowserButton);
+})

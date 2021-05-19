@@ -51,8 +51,7 @@
             <ol>
                 {{#each statuseffects}}
                 <li class="draggable" data-item-id="{{this._id}}">
-                    <input class="name tooltip-activator" type="text" data-field="name" value="{{this.name}}">
-                    <div class="tooltip">{{{this.data.description}}}</div>
+                    <input class="name" type="text" data-field="name" value="{{this.name}}">
                     <div class="value">
                         <input type="text" data-field="data.level" value="{{this.data.level}}" data-dtype="Number">
                     </div>
@@ -84,8 +83,7 @@
                         <input data-field="data.active" type="checkbox" value="true" {{#if
                             this.data.active}}checked{{/if}} />
                     </div>
-                    <input class="name tooltip-activator" type="text" data-field="name" value="{{this.name}}">
-                    <div class="tooltip">{{{this.data.description}}}</div>
+                    <input class="name" type="text" data-field="name" value="{{this.name}}">
                     <div class="actions">
                         <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                 aria-hidden="true"></i></button>

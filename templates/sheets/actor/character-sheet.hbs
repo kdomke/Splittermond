@@ -2,7 +2,8 @@
     <header>
         <section>
             <div>
-                <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="92" width="92" />
+                <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="92" width="92"
+                    class="profile-img" />
             </div>
             <div class="details">
                 <h1>
@@ -51,19 +52,7 @@
                 </div>
                 {{#each itemsByType.moonsign}}
                 <img src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
-                <label class="tooltip-activator"><a data-action="edit-item"
-                        data-item-id="{{this._id}}">{{this.name}}</a></label>
-                <div class="tooltip">
-                    {{{this.data.description}}}
-                    {{#if this.data.enhancement}}
-                    <h3>{{localize "splittermond.enhancementDescription"}}</h3>
-                    <p>{{this.data.enhancement}}</p>
-                    {{/if}}
-                    {{#if this.data.secretGift}}
-                    <h3>{{localize "splittermond.secretGift"}}</h3>
-                    <p>{{this.data.secretGift}}</p>
-                    {{/if}}
-                </div>
+                <label><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
                 {{/each}}
 
             </div>
@@ -92,18 +81,29 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab general" data-group="primary" data-tab="general">
-            <div class="list" data-item-type="strength">
+            <div class="list">
                 <div class="list-header">
                     <h3>{{localize "splittermond.attributes"}}</h3>
+                    <div class="start">{{localize "splittermond.start"}}</div>
+                    <div class="value">{{localize "splittermond.value"}}</div>
+                    <div class="max">{{localize "splittermond.max"}}</div>
                 </div>
-                <ul class="strengths">
+                <ul>
                     {{#each data.attributes as |attribute attributeId|}}
-                    <li class="item tooltip-activator attribute" data-item-id="{{this._id}}">
+                    <li class="item attribute">
                         <label for="data.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
                             attribute.label.long}}</label>
-                        <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
-                            data-dtype="Number">
+                        <div class="start">
+                            <input name="data.attributes.{{attributeId}}.start" type="text" value="{{attribute.start}}"
+                                data-dtype="Number">
+                        </div>
+                        <div class="value">
+                            <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                                data-dtype="Number">
+                        </div>
+                        <div class="max"><input name="data.attributes.{{attributeId}}.max" type="text"
+                                value="{{attribute.max}}" data-dtype="Number" disabled></div>
                     </li>
                     {{/each}}
                 </ul>
@@ -119,17 +119,12 @@
                 </div>
                 <ul class="strengths">
                     {{#each itemsByType.strength}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}
                             {{#if this.multiple}}
                             (x{{this.data.quantity}})
                             {{/if}}
                         </div>
-                        {{#if this.data.description}}
-                        <div class="tooltip">
-                            {{{this.data.description}}}
-                        </div>
-                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -153,13 +148,8 @@
                 </div>
                 <ul class="weaknesses">
                     {{#each itemsByType.weakness}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        {{#if this.data.description}}
-                        <div class="tooltip">
-                            {{{this.data.description}}}
-                        </div>
-                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -184,14 +174,9 @@
                 </div>
                 <ul class="resources">
                     {{#each itemsByType.resource}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
                         <input type="text" data-field="data.value" value="{{this.data.value}}" data-dtype="Number">
-                        {{#if this.data.description}}
-                        <div class="tooltip">
-                            {{{this.data.description}}}
-                        </div>
-                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                     aria-hidden="true"></i></button>
@@ -215,13 +200,8 @@
                 </div>
                 <ul class="languages">
                     {{#each itemsByType.language}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        {{#if this.data.description}}
-                        <div class="tooltip">
-                            {{{this.data.description}}}
-                        </div>
-                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -245,13 +225,8 @@
                 </div>
                 <ul class="culturelores">
                     {{#each itemsByType.culturelore}}
-                    <li class="item tooltip-activator" data-item-id="{{this._id}}">
+                    <li class="item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        {{#if this.data.description}}
-                        <div class="tooltip">
-                            {{{this.data.description}}}
-                        </div>
-                        {{/if}}
                         <div class="actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
@@ -284,17 +259,7 @@
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
-                        <div class="value tooltip-activator">{{skill.value}}</div>
-                        {{#if skill.mod}}
-                        <div class="bonus-malus tooltip">
-                            <label>{{localize "splittermond.skillValue"}}</label>
-                            <div class="value">{{this.baseValue}}</div>
-                            {{#each skill.mod.sources}}
-                            <label>{{this.description}}</label>
-                            <div class="value">{{modifierFormat this.value}}</div>
-                            {{/each}}
-                        </div>
-                        {{/if}}
+                        <div class="value">{{skill.value}}</div>
                     </li>
                     {{/each}}
                 </ol>
@@ -327,17 +292,7 @@
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
-                        <div class="value tooltip-activator">{{skill.value}}</div>
-                        {{#if skill.mod}}
-                        <div class="bonus-malus tooltip">
-                            <label>{{localize "splittermond.skillValue"}}</label>
-                            <div class="value">{{this.baseValue}}</div>
-                            {{#each skill.mod.sources}}
-                            <label>{{this.description}}</label>
-                            <div class="value">{{modifierFormat this.value}}</div>
-                            {{/each}}
-                        </div>
-                        {{/if}}
+                        <div class="value">{{skill.value}}</div>
                     </li>
                     {{/each}}
                 </ol>

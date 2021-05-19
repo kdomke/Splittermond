@@ -99,6 +99,7 @@ export default class SplittermondActor extends Actor {
             data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
             data.bonusCap = data.experience.heroLevel + 2;
 
+
         }
 
         if (actorData.type === "npc") {
@@ -484,9 +485,27 @@ export default class SplittermondActor extends Actor {
 
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.match(/(.*?)\s+([+\-0-9]+)/);
+            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
             let modifierLabel = temp[1].trim();
-            let value = parseFloat(temp[2]);
+            let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
+                .replace("BEW", data.attributes.agility.value + "")
+                .replace("INT", data.attributes.intuition.value + "")
+                .replace("KON", data.attributes.constitution.value + "")
+                .replace("MYS", data.attributes.mystic.value + "")
+                .replace("STÄ", data.attributes.strength.value + "")
+                .replace("VER", data.attributes.mind.value + "")
+                .replace("WIL", data.attributes.willpower.value + "");
+            value = parseFloat(value);
+            let emphasis = "";
+            let modifierLabelParts = modifierLabel.split("/");
+            if (modifierLabelParts[1]) {
+                modifierLabel = modifierLabelParts[0];
+                if (modifierLabelParts[1]) {
+                    emphasis = modifierLabelParts[1];
+                }
+            };
+
+
 
             let addModifierHelper = (dataset, emphasis = "") => {
                 if (!dataset.mod) {
@@ -516,6 +535,7 @@ export default class SplittermondActor extends Actor {
                     break;
                 case "SR":
                     addModifierHelper(data.damageReduction);
+                    break;
                 case "handicap.shield.mod":
                     addModifierHelper(data.handicap.shield);
                     break;
@@ -554,35 +574,28 @@ export default class SplittermondActor extends Actor {
                     break;
                 case "generalSkills":
                     CONFIG.splittermond.skillGroups.general.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 case "magicSkills":
                     CONFIG.splittermond.skillGroups.magic.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 case "fightingSkills":
                     CONFIG.splittermond.skillGroups.fighting.forEach((skill) => {
-                        addModifierHelper(data.skills[skill]);
+                        addModifierHelper(data.skills[skill], emphasis);
                     });
                     break;
                 default:
                     let dataset;
-                    let emphasis;
                     let element = CONFIG.splittermond.derivedAttributes.find(attr => {
                         return modifierLabel === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
                     });
                     if (element) {
                         dataset = data.derivedAttributes[element];
                     } else {
-                        let modifierLabelParts = modifierLabel.split("/");
-                        if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].includes(modifierLabelParts[0])) {
-                            dataset = data.skills[modifierLabelParts[0]];
-                            if (modifierLabelParts[1]) {
-                                emphasis = modifierLabelParts[1];
-                            }
-                        };
+                        dataset = data.skills[modifierLabel];
                     }
 
                     if (dataset) {
@@ -597,6 +610,11 @@ export default class SplittermondActor extends Actor {
     _prepareModifier() {
         const actorData = this.data;
         const data = actorData.data;
+        if (actorData.type === "character") {
+            ["VTD", "KW", "GW"].forEach(d => {
+                this._addModifier(game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), d + " +" + (2 * (data.experience.heroLevel - 1)));
+            });
+        }
 
         actorData.items.forEach(i => {
             if (game.data.version.startsWith("0.8.")) {
@@ -758,6 +776,9 @@ export default class SplittermondActor extends Actor {
                 data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
                     + parseInt(data.attributes[attr].species || 0)
                     + parseInt(data.attributes[attr].advances || 0);
+                data.attributes[attr].start = parseInt(data.attributes[attr].initial || 0)
+                    + parseInt(data.attributes[attr].species || 0);
+                data.attributes[attr].max = data.attributes[attr].start + data.experience.heroLevel;
             });
         } else {
             CONFIG.splittermond.attributes.forEach(attr => {
@@ -778,11 +799,20 @@ export default class SplittermondActor extends Actor {
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
             data.derivedAttributes.healthpoints.value = parseInt(data.derivedAttributes.size.value) + parseInt(data.attributes.constitution.value);
             data.derivedAttributes.focuspoints.value = 2 * (parseInt(data.attributes.mystic.value) + parseInt(data.attributes.willpower.value));
-            data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value)) + 2 * (data.experience.heroLevel - 1);
-            data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value) + 2 * (data.experience.heroLevel - 1);
-            data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value) + 2 * (data.experience.heroLevel - 1);
+            data.derivedAttributes.defense.value = 12 + parseInt(data.attributes.agility.value) + parseInt(data.attributes.strength.value) + 2 * (5 - parseInt(data.derivedAttributes.size.value));
+            data.derivedAttributes.bodyresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.constitution.value);
+            data.derivedAttributes.mindresist.value = 12 + parseInt(data.attributes.willpower.value) + parseInt(data.attributes.mind.value);
 
-            data.splinterpoints.max = (data.splinterpoints?.max || 3) + (data.experience.heroLevel - 1);
+            data.splinterpoints.max = data.splinterpoints.max + (data.experience.heroLevel - 1);
+        } else {
+            data.derivedAttributes.size.value = parseInt(data.derivedAttributes.size.value) || 0;
+            data.derivedAttributes.speed.value = parseInt(data.derivedAttributes.speed.value) || 0;
+            data.derivedAttributes.initiative.value = parseInt(data.derivedAttributes.initiative.value) || 0;
+            data.derivedAttributes.healthpoints.value = parseInt(data.derivedAttributes.healthpoints.value) || 0;
+            data.derivedAttributes.focuspoints.value = parseInt(data.derivedAttributes.focuspoints.value) || 0;
+            data.derivedAttributes.defense.value = parseInt(data.derivedAttributes.defense.value) || 0;
+            data.derivedAttributes.bodyresist.value = parseInt(data.derivedAttributes.bodyresist.value) || 0;
+            data.derivedAttributes.mindresist.value = parseInt(data.derivedAttributes.mindresist.value) || 0;
         }
 
         let _sumAllHelper = (acc, current) => acc + current.value;
@@ -879,6 +909,8 @@ export default class SplittermondActor extends Actor {
             emphasis: emphasisData
         });
         if (!checkData) return;
+
+        checkData.difficulty = parseInt(checkData.difficulty);
 
         let data = Dice.check(
             this.data.data.skills[skill].value,
@@ -1246,12 +1278,6 @@ export default class SplittermondActor extends Actor {
 
         if (!weaponData) return;
 
-        let target = Array.from(game.user.targets)[0];
-        let vtdValue = "VTD";
-        if (target) {
-            vtdValue = target.actor.data.data.derivedAttributes.defense.value;
-        }
-
         let emphasisData = [];
 
         if (weaponData.skill.emphasis) {
@@ -1266,15 +1292,34 @@ export default class SplittermondActor extends Actor {
         }
 
         let checkData = await CheckDialog.create({
-            difficulty: vtdValue,
+            difficulty: "VTD",
             modifier: 0,
             emphasis: emphasisData
         });
 
         if (!checkData) return;
 
+        let target = Array.from(game.user.targets)[0];
+        let hideDifficulty = false;
+        if (target) {
+            switch (checkData.difficulty) {
+                case "VTD":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    hideDifficulty = true;
+                    break;
+                case "KW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    hideDifficulty = true;
+                    break;
+                case "GW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    hideDifficulty = true;
+                    break;
+            }
+        }
 
 
+        checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(weaponData.skill.points);
         let skillValue = weaponData.skill.value;
 
@@ -1283,6 +1328,8 @@ export default class SplittermondActor extends Actor {
         data.title = weaponData.name;
         data.img = weaponData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
+
+        let ticks = ["longrange", "throwing"].includes(weaponData.skillId) ? 3 : weaponData.weaponSpeed;
 
         data.actions = [{
             name: game.i18n.localize(`splittermond.damage`) + " (" + weaponData.damage + ")",
@@ -1294,11 +1341,11 @@ export default class SplittermondActor extends Actor {
                 features: weaponData.features
             }
         }, {
-            name: `${weaponData.weaponSpeed} ` + game.i18n.localize(`splittermond.ticks`),
+            name: `${ticks} ` + game.i18n.localize(`splittermond.ticks`),
             icon: "fa-stopwatch",
             classes: "add-tick",
             data: {
-                ticks: weaponData.weaponSpeed,
+                ticks: ticks,
                 message: weaponData.name
             }
         }];
@@ -1316,6 +1363,7 @@ export default class SplittermondActor extends Actor {
 
         let templateContext = {
             ...data,
+            hideDifficulty: hideDifficulty,
             tooltip: await data.roll.getTooltip()
         };
 
@@ -1332,28 +1380,8 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
-        let target = Array.from(game.user.targets)[0];
-
-        if (game.data.version.startsWith("0.8.")) {
-            spellData = spellData.data;
-        }
-
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
-        if (target) {
-            switch (difficulty) {
-                case "VTD":
-                    difficulty = target.actor.data.data.derivedAttributes.defense.value;
-                    break;
-                case "GW":
-                    difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
-                    break;
-                case "KW":
-                    difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
-                    break;
-                default:
-                    break;
-            }
-        }
+
         const actorData = this.data.data;
         let emphasisData = [];
         if (actorData.skills[spellData.data.skill].emphasis) {
@@ -1375,7 +1403,26 @@ export default class SplittermondActor extends Actor {
 
         if (!checkData) return;
 
+        let target = Array.from(game.user.targets)[0];
+        let hideDifficulty = false;
+        if (target) {
+            switch (checkData.difficulty) {
+                case "VTD":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    hideDifficulty = true;
+                    break;
+                case "KW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    hideDifficulty = true;
+                    break;
+                case "GW":
+                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    hideDifficulty = true;
+                    break;
+            }
+        }
 
+        checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
         let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
 
@@ -1470,6 +1517,7 @@ export default class SplittermondActor extends Actor {
 
         let templateContext = {
             ...data,
+            hideDifficulty: hideDifficulty,
             item: spellData,
             tooltip: await data.roll.getTooltip()
         };
@@ -1515,7 +1563,7 @@ export default class SplittermondActor extends Actor {
 
         if (!checkData) return;
 
-
+        checkData.difficulty = parseInt(checkData.difficulty);
 
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);
@@ -1689,10 +1737,13 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
     async shortRest() {
         const actorData = this.data;
         const data = actorData.data;
-        data.focus.exhausted.value = 0;
-        data.health.exhausted.value = 0;
 
-        return this.update({ "data.focus": data.focus, "data.health": data.health });
+        let focusData = duplicate(data.focus);
+        let healthData = duplicate(data.health);
+        focusData.exhausted.value = 0;
+        healthData.exhausted.value = 0;
+
+        return this.update({ "data.focus": focusData, "data.health": healthData });
     }
 
     async longRest() {
@@ -1720,19 +1771,23 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
             dialog.render(true);
         });
 
+        let focusData = duplicate(data.focus);
+        let healthData = duplicate(data.focus);
+
+
         if (await p) {
-            data.focus.channeled.entries = [];
+            focusData.channeled.entries = [];
         }
 
-        data.health.channeled.entries = [];
+        healthData.channeled.entries = [];
 
-        data.focus.exhausted.value = 0;
-        data.health.exhausted.value = 0;
+        focusData.exhausted.value = 0;
+        healthData.exhausted.value = 0;
 
-        data.focus.consumed.value = Math.max(data.focus.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
-        data.health.consumed.value = Math.max(data.health.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
+        focusData.consumed.value = Math.max(focusData.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
+        healthData.consumed.value = Math.max(healthData.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
 
-        return this.update({ "data.focus": data.focus, "data.health": data.health });
+        return this.update({ "data.focus": focusData, "data.health": healthData });
     }
 
     consumeCost(type, valueStr, description) {
@@ -1742,36 +1797,42 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
 
         if (type === "focus") {
 
+            let focusData = duplicate(data.focus);
+
             if (costData.channeled) {
-                if (!data.focus.channeled.hasOwnProperty("entries")) {
-                    data.focus.channeled = {
+                if (!focusData.channeled.hasOwnProperty("entries")) {
+                    focusData.channeled = {
                         value: 0,
                         entries: []
                     }
                 }
 
-                data.focus.channeled.entries.push({
+                focusData.channeled.entries.push({
                     description: description,
                     costs: costData.channeled,
                 });
 
             }
-            if (!data.focus.exhausted.value) {
-                data.focus.exhausted = {
+            if (!focusData.exhausted.value) {
+                focusData.exhausted = {
                     value: 0
                 }
             }
 
-            if (!data.focus.consumed.value) {
-                data.focus.consumed = {
+            if (!focusData.consumed.value) {
+                focusData.consumed = {
                     value: 0
                 }
             }
 
-            data.focus.exhausted.value += costData.exhausted;
-            data.focus.consumed.value += costData.consumed;
+            focusData.exhausted.value += costData.exhausted;
+            focusData.consumed.value += costData.consumed;
 
-            this.update({ "data.focus": data.focus });
+            this.update({
+                "data": {
+                    "focus": focusData
+                }
+            });
 
         }
 

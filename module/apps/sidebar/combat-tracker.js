@@ -27,14 +27,32 @@ export default class SplittermondCombatTracker extends CombatTracker {
     }
 
     activateListeners(html) {
-        html.find('.combatant .combatant-controls').prepend(`<a class="combatant-control" title="" data-control="togglePause">
+        const combat = this.combat;
+
+        $(html.find('.combatant')).each(function () {
+            const cid = $(this).closestData("combatant-id");
+            const c = combat.getCombatant(cid);
+            if (c.owner) {
+                if (c.initiative < 10000) {
+                    $(".token-initiative .initiative", this).wrap('<a class="combatant-control" title="" data-control="addTicks"/>');
+                    $('.combatant-controls', this).prepend(`<a class="combatant-control" title="" data-control="togglePause">
             <i class= "fas fa-pause-circle" ></i></a>`);
+                } else {
+                    $('.combatant-controls', this).prepend(`<a class="combatant-control" title="" data-control="togglePause">
+            <i class= "fas fa-play-circle" ></i></a>`);
+                }
+
+
+            }
+
+        });
+
         html.find('[data-control="togglePause"]').on("click", (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             const btn = ev.currentTarget;
             const li = btn.closest(".combatant");
-            const c = this.combat.getCombatant(li.dataset.combatantId);
+            const c = combat.getCombatant(li.dataset.combatantId);
 
             if (c.initiative < 10000) {
 
@@ -74,6 +92,35 @@ export default class SplittermondCombatTracker extends CombatTracker {
                 }
             }
 
+        });
+
+
+
+        html.find('[data-control="addTicks"]').on("click", (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const btn = ev.currentTarget;
+            const li = btn.closest(".combatant");
+            const c = combat.getCombatant(li.dataset.combatantId);
+
+            let dialog = new Dialog({
+                title: "Ticks",
+                content: "<input type='text' class='ticks' value='3'>",
+                buttons: {
+                    ok: {
+                        label: "Ok",
+                        callback: html => {
+                            let nTicks = parseInt(html.find(".ticks")[0].value);
+                            let newInitiative = Math.round(c.initiative) + nTicks;
+
+                            combat.setInitiative(c._id, newInitiative);
+                        }
+                    },
+                    cancel: {
+                        label: "Cancel",
+                    }
+                }
+            }).render(true);
         });
 
         super.activateListeners(html);

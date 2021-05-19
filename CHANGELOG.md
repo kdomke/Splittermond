@@ -1,3 +1,38 @@
+## 0.2.2 ##
+2021-05-12
+
+* fixed: Kompendium Browser wurde nicht richtig geladen, wenn Zauber aber keine Meisterschaften und/oder Waffen angelegt wurden.
+* fixed: Beim Drag-and-Drop einer Meisterschaft auf den Charakterbogen wurde die Fertigkeit nicht richtig augewählt.
+
+## 0.2.1 ##
+2021-05-07
+
+* fixed: Fehler bei der Berechnung der abgeleiteten Werte für NSCs (Issue #38)
+* fixed: Für Fernkampfwaffen werden im "Ticks"-Button "3 Ticks" zum Auslösen verwendet.  (Issue #41)
+* Für jedes Attribut kann nun der Startwert angegeben werden. Der maximal mögliche Wert wird mit der Heldenstufe berechnet (Issue #42)
+* Klickt man im Combat-Tracker auf den Initiativwert, kann man eine Tickdauer hinzufügen, auch wenn man nicht im Zug ist. Dies kann nur der "Owner" (Besitzer des Charakters oder GM).
+
+
+## 0.2.0 ##
+2021-05-03
+
+* fixed: Bei SR-Modifikator wurde zusätzlich die Behinderung modifiziert (Issue #36)
+* Automatisches Scrollen der Fertigkeitsliste wurde wieder entfernt. Stattdessen ausführlicher Tooltip
+* Ausführlichere Tooltips
+* Verteidigungswerte (VTD, KW, GW) von Gegnern werden nicht mehr im Probendialog und in der Ergebnisnachricht für die Spieler angezeigt. Es kann weiterhin ein Ziel selektiert werden. Im Probendialog steht dann VTD/KW/GW (abhängig vom Wurf), der Zahlenwert wird aber nicht mehr angezeigt. Trotzdem werden die Erfolgsgrade berechnet. Der GM sieht die angesetzte Schwierigkeit
+* Neuer Kompendiumbrowser hinzugefügt. Aktuell sind nur Zauber, Meisterschaften und Waffen enthalten. Dies wird später noch erweitert.
+
+## 0.1.8 ##
+2021-04-29
+
+* fixed: Fokuskosten und kanalisierter Schaden konnte für "unlinked Actors" nicht abgerechnet werden.
+* fixed: Tippfehler in "Modifikatoren"-JournalEntry
+* Meisterschaften werden nach Fertigkeit in der selben Reihenfolge dargestellt, wie in der Fertigkeitsliste
+* Geht man mit der Maus über eine Fertigkeit in der Fertigkeits- oder Meisterschaftsliste, wird in der jeweils anderen Liste (Meisterschafts-/Fertigkeitsliste) zu dieser Fertigkeit gescrollt und hervorgehoben. Dadurch lassen sich die Fertigkeiten leichter einsehen bevor eine Probe durchgeführt wird.
+* Kompatibilität mit dem "VTTA Tokenizer"-Modul. (Dank an Kristian Domke)
+* Meisterschaften lassen sich per Drag-n-Drop aus dem Bogen in das ItemDirectory ziehen.
+
+
 ## 0.1.7 ##
 2021-04-22
 

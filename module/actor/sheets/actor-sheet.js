@@ -209,7 +209,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (element.type === "checkbox") {
                 value = element.checked;
             }
-            const itemId = this._getClosestData($(event.currentTarget), 'item-id');
+            const itemId = $(event.currentTarget).closestData('item-id');
             const field = element.dataset.field;
             this.actor.getOwnedItem(itemId).update({ [field]: value });
         });
@@ -222,14 +222,14 @@ export default class SplittermondActorSheet extends ActorSheet {
             let newValue = [];
             if (!(idx >= 0 && array !== "")) return;
             if (field) {
-                newValue = array.split('.').reduce(function (prev, curr) {
+                newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.data);
+                }, this.actor.data));
                 newValue[idx][field] = element.value;
             } else {
-                newValue = array.split('.').reduce(function (prev, curr) {
+                newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.data);
+                }, this.actor.data));
                 newValue[idx] = element.value;
             }
             this.actor.update({ [array]: newValue });
@@ -240,13 +240,13 @@ export default class SplittermondActorSheet extends ActorSheet {
             const idx = parseInt($(event.currentTarget).closestData('index', "0"));
             const array = $(event.currentTarget).closestData('array');
             if (!(idx >= 0 && array !== "")) return;
-            let arrayData = array.split('.').reduce(function (prev, curr) {
+            let arrayData = duplicate(array.split('.').reduce(function (prev, curr) {
                 return prev ? prev[curr] : null
-            }, this.actor.data);
+            }, this.actor.data));
             let updateData = {}
             if (array === "data.focus.channeled.entries") {
-                this.actor.data.data.focus.exhausted.value = parseInt(this.actor.data.data.focus.exhausted.value) + parseInt(arrayData[idx].costs);
-                updateData["data.focus.exhausted.value"] = this.actor.data.data.focus.exhausted.value;
+                let tempValue = parseInt(this.actor.data.data.focus.exhausted.value) + parseInt(arrayData[idx].costs);
+                updateData["data.focus.exhausted.value"] = tempValue;
             }
 
             arrayData.splice(idx, 1);
@@ -255,19 +255,21 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find('[data-action="add-channeled-focus"]').click(event => {
-            this.actor.data.data.focus.channeled.entries.push({
+            let channeledEntries = duplicate(this.actor.data.data.focus.channeled.entries);
+            channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.focus.channeled.entries": this.actor.data.data.focus.channeled.entries });
+            this.actor.update({ "data.focus.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="add-channeled-health"]').click(event => {
-            this.actor.data.data.health.channeled.entries.push({
+            let channeledEntries = duplicate(this.actor.data.data.health.channeled.entries);
+            channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.health.channeled.entries": this.actor.data.data.health.channeled.entries });
+            this.actor.update({ "data.health.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="long-rest"]').click(event => {
@@ -302,7 +304,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (type === "activeDefense") {
-                const itemId = $(event.currentTarget).closestData('item-id');
+                const itemId = $(event.currentTarget).closestData('defense-id');
                 const defenseType = $(event.currentTarget).closestData('defense-type');
                 this.actor.rollActiveDefense(defenseType, this.actor.data.data.activeDefense[defenseType].find(el => el._id === itemId));
             }
@@ -324,7 +326,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
         })
 
-        $(".draggable").on("dragstart", event => {
+        html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
             if (attackId) {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
@@ -362,6 +364,274 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         }).attr('draggable', true);
 
+        html.find("[data-item-id], .list.skills [data-skill], .derived-attributes .attribute, .list.attack .value, .list.active-defense .value").hover(event => {
+            const itemId = event.currentTarget.dataset.itemId;
+            let content = "";
+            let css = {
+                top: $(event.currentTarget).offset().top + $(event.currentTarget).outerHeight(),
+                left: $(event.currentTarget).offset().left,
+                display: "none"
+            }
+            if (itemId) {
+                const itemData = this.actor.data.items.find(el => el._id === itemId);
+
+                if (itemData.data.description) {
+                    content = TextEditor.enrichHTML(itemData.data.description);
+                    if (!content.startsWith("<p>")) {
+                        content = `<p>${content}</p>`;
+                    }
+                }
+                if (itemData.type === "spell") {
+                    content += `<p><strong>` + game.i18n.localize("splittermond.enhancementDescription") + ` (${itemData.data.enhancementCosts}):</strong> ${itemData.data.enhancementDescription}</p>`;
+                }
+            }
+
+            const skillId = event.currentTarget.dataset.skill;
+
+            if (skillId) {
+                const skillData = this.actor.data.data.skills[skillId];
+                content += '<span class="formula">';
+                if (CONFIG.splittermond.skillAttributes[skillId]) {
+                    let a = CONFIG.splittermond.skillAttributes[skillId][0];
+                    content += `<span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
+                    a = CONFIG.splittermond.skillAttributes[skillId][1];
+                    content += `<span class="operator">+</span>
+                        <span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
+                        <span class="operator">+</span>`;
+                }
+                content += `<span class="formula-part"><span class="value">${skillData.points}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
+
+                if (skillData.mod) {
+                    skillData.mod.sources.forEach(e => {
+                        let val = e.value;
+                        let cls = "malus";
+                        if (val > 0) {
+                            val = "+" + val;
+                            cls = "bonus";
+                        }
+
+                        content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
+                        <span class="description">${e.description}</span></span>`
+                    });
+
+                }
+                content += '</span>';
+
+                let masteryList = html.find(`.mastery-list li[data-skill="${skillId}"]`);
+
+
+                if (masteryList.html()) {
+                    let posLeft = masteryList.offset().left;
+                    let width = masteryList.outerWidth();
+                    masteryList = masteryList.clone();
+
+                    masteryList.find("button").remove();
+                    masteryList = masteryList.wrapAll(`<div class="list tooltip" />`).wrapAll(`<ol class="mastery-list" />`).parent().parent();
+                    masteryList.css({
+                        position: "fixed",
+                        left: posLeft,
+                        top: $(event.currentTarget).offset().top,
+                        width: width,
+                        padding: 0,
+                        border: "none"
+                    })
+                    content += masteryList.wrapAll("<div />").parent().html();
+                }
+            }
+
+            if ($(event.currentTarget).closestData('attack-id')) {
+                let attackId = $(event.currentTarget).closestData('attack-id');
+                if (this.actor.data.data.attacks.find(a => a._id === attackId)) {
+                    let attack = this.actor.data.data.attacks.find(a => a._id === attackId);
+                    content += '<span class="formula">';
+                    let a = attack.attribute1;
+                    content += `<span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
+                    a = attack.attribute2;
+                    content += `<span class="operator">+</span>
+                        <span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
+                        <span class="operator">+</span>`;
+
+                    content += `<span class="formula-part"><span class="value">${attack.skill.points}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
+                    if (attack.skill.mod) {
+                        attack.skill.mod.sources.forEach(e => {
+                            let val = e.value;
+                            let cls = "malus";
+                            if (val > 0) {
+                                val = "+" + val;
+                                cls = "bonus";
+                            }
+
+                            content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
+                        <span class="description">${e.description}</span></span>`
+                        });
+
+                    }
+                    content += '</span>';
+                }
+            }
+
+            if ($(event.currentTarget).closestData('defense-id')) {
+                let defenseId = $(event.currentTarget).closestData('defense-id');
+                let defenseData = {}
+                if (this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)
+
+                }
+
+                if (this.actor.data.data.activeDefense.mindresist.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)
+
+                }
+
+
+                if (this.actor.data.data.activeDefense.bodyresist.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)
+
+                }
+
+
+                content += '<span class="formula">';
+                if (defenseData.skill?.mod) {
+                    defenseData.skill.mod.sources.forEach(e => {
+                        let val = e.value;
+                        let cls = "malus";
+                        if (val > 0) {
+                            val = "+" + val;
+                            cls = "bonus";
+                        }
+
+                        content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
+                        <span class="description">${e.description}</span></span>`
+                    });
+
+                }
+                content += '</span>';
+            }
+
+            if (event.currentTarget.classList.contains("attribute")) {
+                let attribute = event.currentTarget.id;
+                if (this.actor.data.data.derivedAttributes[attribute]) {
+                    content += '<span class="formula">';
+                    switch (attribute) {
+                        case "size":
+                            content += `<span class="formula-part"><span class="value">${this.actor.data.data.derivedAttributes.size.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>`
+                            break;
+                        case "speed":
+                            content += `<span class="formula-part"><span class="value">${this.actor.data.data.attributes.agility.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.agility.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.derivedAttributes.size.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>`
+                            break;
+                        case "initiative":
+                            content += `<span class="operator">10 -</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.intuition.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.intuition.short`) + `</span></span>`
+                            break;
+                        case "healthpoints":
+                            content += `<span class="formula-part"><span class="value">${this.actor.data.data.derivedAttributes.size.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>`
+                            break;
+                        case "focuspoints":
+                            content += `<span class="operator">2 &times; (</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mystic.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mystic.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
+                                <span class="operator">)</span>`
+                            break;
+                        case "defense":
+                            content += `<span class="operator">12 +</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.agility.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.agility.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.strength.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.strength.short`) + `</span></span>
+                                <span class="operator">+ 2 &times;(5 -</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.derivedAttributes.size.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>
+                                <span class="operator">)</span >`
+                            break;
+                        case "mindresist":
+                            content += `<span class="operator">12 +</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
+                                `
+                            break;
+                        case "bodyresist":
+                            content += `<span class="operator">12 +</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
+                                <span class="operator">+</span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mind.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
+                                `
+                            break;
+                    }
+
+                    if (this.actor.data.data.derivedAttributes[attribute].mod) {
+                        this.actor.data.data.derivedAttributes[attribute].mod.sources.forEach(e => {
+                            let val = e.value;
+                            let cls = "malus";
+                            if (attribute === "initiative") {
+                                cls = "bonus"
+                            }
+                            if (val > 0) {
+                                val = "+" + val;
+                                cls = "bonus";
+                                if (attribute === "initiative") {
+                                    cls = "malus"
+                                }
+                            }
+
+                            content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
+                                <span class="description">${e.description}</span></span>`
+                        });
+
+                    }
+
+                    content += '</span>';
+                }
+
+            }
+
+            if (content) {
+                let tooltipElement = $(`<div id="tooltip">${content}</div>`);
+                html.append(tooltipElement);
+                if (skillId) {
+                    css.left += $(event.currentTarget).outerWidth() - tooltipElement.outerWidth();
+                    css.top = $(event.currentTarget).offset().top - $(tooltipElement).outerHeight();
+                }
+
+                if (event.currentTarget.classList.contains("attribute") || $(event.currentTarget).closestData('attack-id') || $(event.currentTarget).closestData('defense-id')) {
+                    css.left -= tooltipElement.outerWidth() / 2 - $(event.currentTarget).outerWidth() / 2;
+                }
+                /*
+                if (event.currentTarget.classList.contains("attribute")) {
+                    css.left += $(event.currentTarget).outerWidth();
+                }
+                */
+                tooltipElement.css(css).fadeIn();
+
+            }
+        }, event => {
+            html.find("div#tooltip").remove();
+        })
+
 
         super.activateListeners(html);
     }
@@ -383,7 +653,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                             let data = item.trim().toLowerCase().split(" ");
                             if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
                                 buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`) + " " + data[1],
+                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
                                     callback: html => {
                                         resolve(data[0] + " " + data[1])
                                     }
@@ -408,7 +678,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                     selectedSkill = await p;
                 } else {
-                    selectedSkill = availableIn;
+                    if (availableIn.trim())
+                        selectedSkill = availableIn;
                 }
 
 
@@ -417,6 +688,10 @@ export default class SplittermondActorSheet extends ActorSheet {
                     itemData.data.skill = skillData[0];
                     itemData.data.skillLevel = skillData[1];
                 }
+
+                if (!itemData.data.skill) {
+                    return;
+                }
             }
         }
 
@@ -424,9 +699,9 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (itemData.data.availableIn) {
                 let availableIn = itemData.data.availableIn.trim().toLowerCase();
                 [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
+                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i} `).toLowerCase(), i);
                 });
-                let selectedSkill = "";
+                let selectedSkill = itemData.data.skill;
                 if (availableIn.split(",").length > 1) {
                     let p = new Promise((resolve, reject) => {
                         let buttons = {};
@@ -464,17 +739,25 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                     selectedSkill = await p;
                 } else {
-                    selectedSkill = availableIn;
+                    if (availableIn)
+                        selectedSkill = availableIn;
                 }
 
+                if (selectedSkill === "" || selectedSkill === "none") {
+                    return;
+                }
 
-                if (selectedSkill) {
-                    let skillData = selectedSkill.split(" ");
+                let skillData = selectedSkill.split(" ");
+                itemData.data.skill = skillData[0];
+                if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(skillData[0])) {
                     itemData.data.skill = skillData[0];
                     if (skillData.length > 1) {
                         itemData.data.level = skillData[1];
                     }
+                } else {
+                    return;
                 }
+
             }
         }
 

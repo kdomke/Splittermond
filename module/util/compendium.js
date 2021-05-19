@@ -8,4 +8,10 @@ export default class SplittermondCompendium {
         }
         return item;
     }
+
+    static updateIndex() {
+        return Promise.all(game.packs.map((pack) => {
+            return pack.getIndex();
+        }));
+    }
 }

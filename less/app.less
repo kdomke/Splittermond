@@ -260,9 +260,70 @@
 
         &:hover+.tooltip,
         &:hover>.tooltip {
-            display: flex;
+            display: block;
         }
 
+
+    }
+
+    #tooltip {
+        display: block;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        padding: @paddingMedium;
+        background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        border-radius: 0.5rem;
+        text-shadow: none;
+        z-index: 100000;
+
+        p {
+            max-width: 400px;
+
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .formula {
+            display: inline-flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+
+            >* {
+                margin: @paddingSmall;
+            }
+
+            .formula-part {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .description {
+                    font-family: 'Signika';
+                    font-size: 10px;
+                }
+
+                .value {
+                    font-weight: bold;
+                }
+
+                &.malus {
+                    color: @colorFail;
+                }
+
+                &.bonus {
+                    color: @colorSuccess;
+                }
+            }
+        }
 
     }
 
@@ -565,9 +626,15 @@
                 padding: @paddingSmall;
                 border: 1px solid transparent;
 
-                &:nth-child(odd) {
+                &:nth-child(odd),
+                &.odd {
                     background-color: fade(@textColor, 5%);
                 }
+
+                &.even {
+                    background-color: unset;
+                }
+
 
                 &:hover,
                 &.hover {

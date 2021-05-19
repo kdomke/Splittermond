@@ -439,6 +439,20 @@
                 text-align: center;
             }
 
+            .list {
+
+                .start,
+                .value,
+                .max {
+                    width: 35px;
+                    text-align: center;
+                }
+
+                .start input,
+                .max input {
+                    font-weight: normal;
+                }
+            }
 
 
         }
@@ -449,6 +463,24 @@
 
             align-items: start;
         }
+
+        .list {
+            ol.mastery-list {
+                >li {
+                    flex-direction: column;
+                    align-items: flex-start;
+
+                    >* {
+                        border: none;
+                    }
+
+                    >label {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+
 
         main section.skills.active {
 
@@ -494,20 +526,7 @@
             }
         }
 
-        ol.mastery-list {
-            >li {
-                flex-direction: column;
-                align-items: flex-start;
 
-                >* {
-                    border: none;
-                }
-
-                >label {
-                    font-weight: bold;
-                }
-            }
-        }
 
 
         .list.inventory,
