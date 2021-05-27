@@ -58,10 +58,10 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
 
         }
 
-        if (["mastery", "strength", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign", "culturelore", "statuseffect", "spelleffect"].includes(itemData.type)) {
+        if (["mastery", "strength", "weakness", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign", "culturelore", "statuseffect", "spelleffect"].includes(itemData.type)) {
             return super._onDropItemCreate(itemData);
         }
-
+        W
     }
 
     activateListeners(html) {
