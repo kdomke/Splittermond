@@ -117,6 +117,11 @@ export default class SplittermondActorSheet extends ActorSheet {
         }
         data.spellsBySkill = {};
         if (data.itemsByType.spell) {
+            data.itemsByType.spell.forEach(item => {
+                let costData = this.actor._parseCostsString(item.data.costs);
+                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+                item.enoughFocus = costTotal <= data.data.focus.available.value;
+            });
             data.spellsBySkill = data.itemsByType.spell.reduce((result, item) => {
                 let skill = item.data.skill || "none";
                 if (!(skill in result)) {
@@ -352,7 +357,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = this.actor.data.items.find(el => el._id === itemId);
+                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,
@@ -373,7 +378,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 display: "none"
             }
             if (itemId) {
-                const itemData = this.actor.data.items.find(el => el._id === itemId);
+                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
 
                 if (itemData.data.description) {
                     content = TextEditor.enrichHTML(itemData.data.description);

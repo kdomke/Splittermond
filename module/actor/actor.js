@@ -119,30 +119,9 @@ export default class SplittermondActor extends Actor {
         this._prepareSkills();
 
         this._prepareAttacks();
-        this._prepareSpells();
-
 
         this._prepareActiveDefense();
         data.derivedAttributes.speed.value *= data.derivedAttributes.speed.multiplier;
-
-    }
-
-    _prepareSpells() {
-        const actorData = this.data;
-        const data = actorData.data;
-
-
-        actorData.items.forEach(item => {
-            if (game.data.version.startsWith("0.8.")) {
-                item = item.data;
-            }
-            if (item.type === "spell") {
-                let costData = this._parseCostsString(item.data.costs);
-                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-                item.enoughFocus = costTotal <= data.focus.available.value;
-            }
-        });
-
 
     }
 
@@ -1387,6 +1366,9 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
+        if (game.data.version.startsWith("0.8.")) {
+            spellData = spellData.data;
+        }
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
 
         const actorData = this.data.data;
