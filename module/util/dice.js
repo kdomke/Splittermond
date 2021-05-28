@@ -1,6 +1,7 @@
 export function check(skillValue, skillPoints, difficulty = 15, rollType = "standard", modifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
+
     if (modifier) {
         rollFormula += " + @modifier";
     }
@@ -43,12 +44,15 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
     };
 }
 
-export function damage(damageFormula, featureString) {
+export async function damage(damageFormula, featureString) {
     let feature = {};
-    featureString.toLowerCase().split(',').forEach(feat => {
+    featureString.split(',').forEach(feat => {
         let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
         if (temp[1]) {
-            feature[temp[1]] = parseInt(temp[2] || 1);
+            feature[temp[1].toLowerCase()] = {
+                name: temp[0],
+                value: temp[2] || 1
+            };
         }
     });
     // sanatize String
@@ -62,7 +66,8 @@ export function damage(damageFormula, featureString) {
 
     damageFormula = `${nDices}d${nFaces}`;
     if (feature["exakt"]) {
-        let temp = nDices + feature["exakt"]
+        feature["exakt"].active = true;
+        let temp = nDices + feature["exakt"].value
         damageFormula = `${temp}d${nFaces}kh${nDices}`;
     }
 
@@ -70,19 +75,14 @@ export function damage(damageFormula, featureString) {
         damageFormula += damageModifier;
     }
 
-    let chatData = {
-        title: game.i18n.localize("splittermond.damage"),
-        user: game.user._id,
-        speaker: ChatMessage.getSpeaker(),
-    };
-
     const roll = new Roll(damageFormula, {}).roll();
     if (feature["scharf"]) {
         let scharfBonus = 0;
         roll.terms[0].results.forEach(r => {
             if (r.active) {
-                if (r.result < feature["scharf"]) {
-                    scharfBonus += feature["scharf"] - r.result;
+                if (r.result < feature["scharf"].value) {
+                    feature["scharf"].active = true;
+                    scharfBonus += feature["scharf"].value - r.result;
                 }
             }
         });
@@ -94,15 +94,33 @@ export function damage(damageFormula, featureString) {
         roll.terms[0].results.forEach(r => {
             if (r.active) {
                 if (r.result === roll.terms[0].faces) {
-                    kritischBonus += feature["kritisch"];
+                    feature["kritisch"].active = true;
+                    kritischBonus += feature["kritisch"].value;
                 }
             }
         });
         roll._total += kritischBonus;
     }
 
+    let templateContext = {
+        roll: roll,
+        features: feature,
+        formula: damageFormula,
+        tooltip: await roll.getTooltip()
+    };
 
-    roll.toMessage(chatData)
+    let chatData = {
+        user: game.user._id,
+        roll: roll,
+        content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
+        sound: CONFIG.sounds.dice,
+        type: CONST.CHAT_MESSAGE_TYPES.ROLL
+    };
+
+    ChatMessage.create(chatData);
+
+
+    //roll.toMessage(chatData)
 
 }
 

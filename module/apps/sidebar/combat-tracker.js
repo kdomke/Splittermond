@@ -27,7 +27,7 @@ export default class SplittermondCombatTracker extends CombatTracker {
     }
 
     activateListeners(html) {
-        const combat = this.combat;
+        const combat = game.data.version.startsWith("0.8.") ? this.viewed : this.combat;
 
         $(html.find('.combatant')).each(function () {
             const cid = $(this).closestData("combatant-id");
@@ -67,13 +67,13 @@ export default class SplittermondCombatTracker extends CombatTracker {
                         keepReady: {
                             label: game.i18n.localize("splittermond.keepReady"),
                             callback: html => {
-                                this.combat.setInitiative(c._id, 20000);
+                                combat.setInitiative(c._id, 20000);
                             }
                         },
                         wait: {
                             label: game.i18n.localize("splittermond.wait"),
                             callback: html => {
-                                this.combat.setInitiative(c._id, 10000);
+                                combat.setInitiative(c._id, 10000);
                             }
                         }
                     }
@@ -82,10 +82,10 @@ export default class SplittermondCombatTracker extends CombatTracker {
             } else {
                 switch (c.initiative) {
                     case 10000:
-                        this.combat.setInitiative(c._id, parseInt(this.combat.round));
+                        combat.setInitiative(c._id, parseInt(combat.round));
                         break;
                     case 20000:
-                        this.combat.setInitiative(c._id, parseInt(this.combat.round), true);
+                        combat.setInitiative(c._id, parseInt(combat.round), true);
                         break;
                     default:
                         break;
