@@ -1,6 +1,7 @@
 export function check(skillValue, skillPoints, difficulty = 15, rollType = "standard", modifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
+
     if (modifier) {
         rollFormula += " + @modifier";
     }

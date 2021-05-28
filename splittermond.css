@@ -346,32 +346,39 @@
 .splittermond #tooltip p:last-child {
   margin-bottom: 0;
 }
-.splittermond #tooltip .formula {
+.splittermond #tooltip .formula,
+.splittermond .tooltip-part .formula {
   display: inline-flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
 }
-.splittermond #tooltip .formula > * {
+.splittermond #tooltip .formula > *,
+.splittermond .tooltip-part .formula > * {
   margin: 3px;
 }
-.splittermond #tooltip .formula .formula-part {
+.splittermond #tooltip .formula .formula-part,
+.splittermond .tooltip-part .formula .formula-part {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.splittermond #tooltip .formula .formula-part .description {
+.splittermond #tooltip .formula .formula-part .description,
+.splittermond .tooltip-part .formula .formula-part .description {
   font-family: 'Signika';
   font-size: 10px;
 }
-.splittermond #tooltip .formula .formula-part .value {
+.splittermond #tooltip .formula .formula-part .value,
+.splittermond .tooltip-part .formula .formula-part .value {
   font-weight: bold;
 }
-.splittermond #tooltip .formula .formula-part.malus {
+.splittermond #tooltip .formula .formula-part.malus,
+.splittermond .tooltip-part .formula .formula-part.malus {
   color: #892100;
 }
-.splittermond #tooltip .formula .formula-part.bonus {
+.splittermond #tooltip .formula .formula-part.bonus,
+.splittermond .tooltip-part .formula .formula-part.bonus {
   color: #458900;
 }
 .splittermond .tooltip {

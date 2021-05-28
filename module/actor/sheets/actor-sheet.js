@@ -9,6 +9,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     getData() {
         const sheetData = super.getData();
+        if (game.data.version.startsWith("0.8.")) {
+            sheetData.data = sheetData.data.data;
+        }
+
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
@@ -89,6 +93,7 @@ export default class SplittermondActorSheet extends ActorSheet {
     }
 
     _prepareItems(data) {
+
         data.itemsByType = data.items.reduce((result, item) => {
             if (!(item.type in result)) {
                 result[item.type] = [];
@@ -112,6 +117,11 @@ export default class SplittermondActorSheet extends ActorSheet {
         }
         data.spellsBySkill = {};
         if (data.itemsByType.spell) {
+            data.itemsByType.spell.forEach(item => {
+                let costData = this.actor._parseCostsString(item.data.costs);
+                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+                item.enoughFocus = costTotal <= data.data.focus.available.value;
+            });
             data.spellsBySkill = data.itemsByType.spell.reduce((result, item) => {
                 let skill = item.data.skill || "none";
                 if (!(skill in result)) {
@@ -188,9 +198,14 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            const item = this.actor.getOwnedItem(itemId);
+            if (game.data.version.startsWith("0.8.")) {
+                const item = this.actor.items.get(itemId);
+                item.update({ "data.equipped": !item.data.data.equipped });
+            } else {
+                const item = this.actor.getOwnedItem(itemId);
+                item.update({ "data.equipped": !item.data.data.equipped });
+            }
 
-            item.update({ "data.equipped": !item.data.data.equipped });
         });
 
         html.find('[data-field]').change(event => {
@@ -342,7 +357,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = this.actor.data.items.find(el => el._id === itemId);
+                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,
@@ -363,7 +378,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 display: "none"
             }
             if (itemId) {
-                const itemData = this.actor.data.items.find(el => el._id === itemId);
+                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
 
                 if (itemData.data.description) {
                     content = TextEditor.enrichHTML(itemData.data.description);

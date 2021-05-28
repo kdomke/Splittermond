@@ -23,12 +23,23 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "risk";
-                            fd.modifier = parseInt(fd.modifier) || 0;
-                            html.find("[name='emphasis']").each(e => {
-                                if (e.checked) {
-                                    fd.modifier += parseInt(e.value) || 0;
+                            fd.modifierElements = [];
+                            if (parseInt(fd.modifier) || 0) {
+                                fd.modifierElements.push({
+                                    value: parseInt(fd.modifier) || 0,
+                                    description: game.i18n.localize("splittermond.modifier")
+                                });
+                            }
+                            $(html).find("[name='emphasis']").each(function () {
+                                if (this.checked) {
+                                    fd.modifierElements.push({
+                                        value: parseInt(this.value) || 0,
+                                        description: this.dataset.name
+                                    });
                                 }
                             });
+
+                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
                             resolve(fd);
                         }
                     },
@@ -38,12 +49,23 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "standard";
-                            fd.modifier = parseInt(fd.modifier) || 0;
+                            fd.modifierElements = [];
+                            if (parseInt(fd.modifier) || 0) {
+                                fd.modifierElements.push({
+                                    value: parseInt(fd.modifier) || 0,
+                                    description: game.i18n.localize("splittermond.modifier")
+                                });
+                            }
                             $(html).find("[name='emphasis']").each(function () {
                                 if (this.checked) {
-                                    fd.modifier += parseInt(this.value) || 0;
+                                    fd.modifierElements.push({
+                                        value: parseInt(this.value) || 0,
+                                        description: this.dataset.name
+                                    });
                                 }
                             });
+
+                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
                             resolve(fd);
                         }
                     },
@@ -53,13 +75,24 @@ export default class CheckDialog extends Dialog {
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
                             fd.rollType = "safety";
-                            fd.modifier = parseInt(fd.modifier) || 0;
-                            html.find("[name='emphasis']").each(e => {
-                                if (e.checked) {
-                                    fd.modifier += parseInt(e.value) || 0;
+                            fd.modifierElements = [];
+                            if (parseInt(fd.modifier) || 0) {
+                                fd.modifierElements.push({
+                                    value: parseInt(fd.modifier) || 0,
+                                    description: game.i18n.localize("splittermond.modifier")
+                                });
+                            }
+                            $(html).find("[name='emphasis']").each(function () {
+                                if (this.checked) {
+                                    fd.modifierElements.push({
+                                        value: parseInt(this.value) || 0,
+                                        description: this.dataset.name
+                                    });
                                 }
-
                             });
+
+                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
+                            resolve(fd);
                             resolve(fd);
                         }
                     },

@@ -90,7 +90,7 @@ export default class SplittermondCombat extends Combat {
 
     async nextRound() {
         //await super.nextRound();
-        return this.update({ round: this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999), turn: 0 });
+        return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
     }
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
