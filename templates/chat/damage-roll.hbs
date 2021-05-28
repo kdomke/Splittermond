@@ -1,0 +1,22 @@
+<div class="splittermond damage">
+    <header>
+        <div style="font-size: 32px; width: 36px; margin-right: 7px; text-align: center; vertical-align: bottom">
+            <i class="fas fa-heart-broken"></i>
+        </div>
+        <div>
+            <h2>{{localize "splittermond.damage"}}</h2>
+            {{#if features}}
+            <ul class="features">
+                {{#each features}}
+                <li class="{{#if this.active}}active{{/if}}">{{this.name}}</li>
+                {{/each}}
+            </ul>
+            {{/if}}
+        </div>
+    </header>
+    <div class="roll-summary dice-roll">
+        <div class="dice-formula">{{formula}}</div>
+        <div class="roll-total">{{roll.total}}</div>
+        {{{tooltip}}}
+    </div>
+</div>

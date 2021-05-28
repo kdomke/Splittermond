@@ -751,21 +751,28 @@
 #combat #combat-controls [data-control="nextRound"] {
   display: none;
 }
-.splittermond.check {
+.splittermond.check,
+.splittermond.damage {
   flex-direction: column;
 }
-.splittermond.check header {
+.splittermond.check header,
+.splittermond.damage header {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
-.splittermond.check header img {
+.splittermond.check header img,
+.splittermond.damage header img {
   margin-right: 7px;
 }
 .splittermond.check .roll-type,
-.splittermond.check .difficulty {
+.splittermond.damage .roll-type,
+.splittermond.check .difficulty,
+.splittermond.damage .difficulty {
   font-weight: bold;
 }
-.splittermond.check .roll-total {
+.splittermond.check .roll-total,
+.splittermond.damage .roll-total {
   display: block;
   text-align: center;
   font-size: 20px;
@@ -781,7 +788,8 @@
   margin-bottom: 3px;
   text-shadow: 0px 0px 5px #FFFFFF;
 }
-.splittermond.check .degree-of-success {
+.splittermond.check .degree-of-success,
+.splittermond.damage .degree-of-success {
   display: block;
   text-align: center;
   line-height: 24px;
@@ -789,28 +797,59 @@
   color: #892100;
   font-variant-numeric: lining-nums;
 }
-.splittermond.check .degree-of-success .stars {
+.splittermond.check .degree-of-success .stars,
+.splittermond.damage .degree-of-success .stars {
   color: #FFB800;
   filter: drop-shadow(0px 0px 10px #FFEFC7);
 }
-.splittermond.check.fumble .roll-total {
+.splittermond.check.fumble .roll-total,
+.splittermond.damage.fumble .roll-total {
   background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(239, 58, 0, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
 }
 .splittermond.check.success .degree-of-success,
-.splittermond.check.success .roll-total {
+.splittermond.damage.success .degree-of-success,
+.splittermond.check.success .roll-total,
+.splittermond.damage.success .roll-total {
   color: #458900;
 }
-.splittermond.check.critical .roll-total {
+.splittermond.check.critical .roll-total,
+.splittermond.damage.critical .roll-total {
   background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(120, 239, 0, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
 }
-.splittermond.check .actions {
+.splittermond.check .actions,
+.splittermond.damage .actions {
   display: flex;
   flex-direction: column;
 }
-.splittermond.check h3 {
+.splittermond.check h3,
+.splittermond.damage h3 {
   font-family: Signika;
   font-size: 14px;
   font-weight: bold;
+}
+.splittermond.check ul.features,
+.splittermond.damage ul.features {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 3px;
+  font-family: Signika;
+  font-size: 12px;
+}
+.splittermond.check ul.features li,
+.splittermond.damage ul.features li {
+  display: inline-block;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+.splittermond.check ul.features li.active,
+.splittermond.damage ul.features li.active {
+  background-color: #143a66;
+  color: white;
 }
 .splittermond.sheet .window-content {
   overflow-y: hidden;

@@ -1,3 +1,14 @@
+## 0.3.0 ##
+2021-05-12
+
+* added: Kompatibilität mit Foundry VTT 0.8.x
+* added: Journal Style überarbeitet
+* added: Mehr Informationen über einen Fertigkeitswurf (Fertigkeit, Angriff oder Zauberspruch) bei Klick auf das Ergebnis in der Chantnachricht
+* added: Erweiterte Chatnachricht für Schadenswürfe
+* added: Beim Import von Genesis-Daten werden die Schwerpunktmeisterschaften automatisch als Modifikator 
+* fixed: Schwächen lassen sich nun auf den Charakterbogen ziehen
+* fixed: Fehlerbehandlung bei fehlerhafter Modifikatoreingabe
+
 ## 0.2.2 ##
 2021-05-12
 
