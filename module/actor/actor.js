@@ -1794,13 +1794,13 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
     }
 
     async addTicks(value = 3, message = "") {
-
+        const combat = game.combat;
         value = parseInt(value);
         if (!value) return;
-        if (!game.combat) return;
+        if (!combat) return;
 
         // Find combatant
-        let combatant = game.combat.combatants.find((c) => c.actor === this);
+        let combatant = combat.combatants.find((c) => c.actor === this);
 
         if (!combatant) return;
 
@@ -1822,14 +1822,10 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
 
         let nTicks = await p;
 
-        let newInitiative = combatant.initiative + parseInt(nTicks);
-        combatant.flags.relativeTickPosition = game.combat.combatants.reduce((acc, c) => {
-            return acc + (c.initiative == newInitiative) ? 1 : 0;
-        }, 0);
+        let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
 
-        game.combat.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
 
-        return game.combat.setInitiative(combatant._id, newInitiative);
+        return combat.setInitiative(combatant._id, newInitiative);
     }
 
 
