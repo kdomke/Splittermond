@@ -1208,8 +1208,8 @@ export default class SplittermondActor extends Actor {
                 });
 
                 this.update(newData);
-                await this.updateEmbeddedEntity("OwnedItem", updateItems);
-                await this.createEmbeddedEntity("OwnedItem", newItems);
+                await this.updateOwnedItem(updateItems);
+                await this.createOwnedItem(newItems);
 
                 return this.update(newData);
 
