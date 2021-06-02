@@ -836,7 +836,7 @@ export default class ItemImporter {
 
                         let masteriesData = /Meisterschaften: ([^]*?)\n(Merkmale|Zauber|Beute|Fertigkeiten):/g.exec(importData);
                         let masteries = [];
-                        if (masteriesData[1]) {
+                        if (masteriesData) {
                             masteriesData[1].match(/[^(]+ \([^)]+\),?/g)?.forEach(skillEntryStr => {
                                 let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
                                 let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
