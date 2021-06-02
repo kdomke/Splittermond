@@ -1,5 +1,13 @@
+## 0.3.1 ##
+2021-06-02
+
+* fixed: Tick-Button in Chat-Nachricht hat nicht funktioniert
+* fixed: NPC-Importer stürzt ab wenn keine Meisterschaft angegeben ist
+* fixed: Kompatibilitätsprobleme (0.8.6) in NPC-Importer bei Kompendium-Lookup für Zauber, Meisterschaften etc.
+* fixed: Kompatibilitätsprobleme (0.8.6) in Genesis-Import 
+
 ## 0.3.0 ##
-2021-05-12
+2021-05-28
 
 * added: Kompatibilität mit Foundry VTT 0.8.x
 * added: Journal Style überarbeitet
