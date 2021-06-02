@@ -774,70 +774,70 @@ export default class ItemImporter {
                         let weapons = [];
                         if (weaponData) {
                             if (weaponData[1].match(/Reichw/)) {
-                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\-1?W6\s+[0-9\-–]*\s+.*/g).forEach(weaponStr => {
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\-1?W6\s+[0-9\-–]*\s+.*/g).map(async (weaponStr) => {
                                     let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-]+)\-1?W6\s+([0-9\-–]*)\s+(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = duplicate(SplittermondCompendium.findItem("weapon", weaponName) || {
-                                        type: "weapon",
-                                        name: weaponName,
-                                        img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
-                                        data: {}
-                                    })
-                                    weaponData.data.damage = weaponDataRaw[3].trim();
-                                    weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
-                                    weaponData.data.range = parseInt(weaponDataRaw[6].trim()) || 0;
-                                    weaponData.data.features = weaponDataRaw[7].trim();
-                                    if (!weaponData.data.skill) {
-                                        weaponData.data.skill = "melee";
-                                        weaponData.data.attribute1 = "agility";
-                                        weaponData.data.attribute2 = "strength";
-                                    }
-                                    if (!skillObj[weaponData.data.skill]) {
-                                        let val = parseInt(weaponDataRaw[2]) || 0;
-                                        skillObj[weaponData.data.skill] = {
-                                            value: val,
-                                            points: val - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
-                                        };
-                                    }
-                                    weapons.push(weaponData)
-                                });
-                            } else {
-                                weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s+.*/g).forEach(weaponStr => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
-                                    INI = parseInt(weaponDataRaw[5].trim()) || 0;
-                                    let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = duplicate(SplittermondCompendium.findItem("weapon", weaponName) || {
+                                    let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
                                         type: "weapon",
                                         name: weaponName,
                                         img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
                                         data: {}
                                     });
+                                    delete weaponData._id;
+                                    weaponData.data.damage = weaponDataRaw[3].trim();
+                                    weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
+                                    weaponData.data.range = parseInt(weaponDataRaw[6].trim()) || 0;
+                                    weaponData.data.features = weaponDataRaw[7].trim();
+                                    weaponData.skillValue = parseInt(weaponDataRaw[2]) || 0;
+                                    return weaponData;
+                                });
+                            } else {
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s+.*/g).map(async (weaponStr) => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
+                                    INI = parseInt(weaponDataRaw[5].trim()) || 0;
+                                    let weaponName = weaponDataRaw[1].trim();
+                                    let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
+                                        type: "weapon",
+                                        name: weaponName,
+                                        img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
+                                        data: {}
+                                    });
+                                    delete weaponData._id;
                                     weaponData.data.damage = weaponDataRaw[3].trim();
                                     weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
                                     weaponData.data.range = 0;
                                     weaponData.data.features = weaponDataRaw[6].trim();
-                                    if (!weaponData.data.skill) {
-                                        weaponData.data.skill = "melee";
-                                        weaponData.data.attribute1 = "agility";
-                                        weaponData.data.attribute2 = "strength";
-                                    }
-                                    let val = parseInt(weaponDataRaw[2]) || 0;
-                                    skillObj[weaponData.data.skill] = {
-                                        value: val,
-                                        points: val - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
-                                    };
-                                    weapons.push(weaponData);
+                                    weaponData.skillValue = parseInt(weaponDataRaw[2]) || 0;
+
+                                    return weaponData;
                                 });
                             }
+                            weapons = await Promise.all(weapons);
+
+                            weapons.forEach(weaponData => {
+                                if (!weaponData.data.skill) {
+                                    weaponData.data.skill = "melee";
+                                    weaponData.data.attribute1 = "agility";
+                                    weaponData.data.attribute2 = "strength";
+                                }
+                                skillObj[weaponData.data.skill] = {
+                                    value: weaponData.skillValue,
+                                    points: weaponData.skillValue - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
+                                };
+
+                                delete weaponData.skillValue;
+                            });
+
                         }
+
 
 
 
                         let masteriesData = /Meisterschaften: ([^]*?)\n(Merkmale|Zauber|Beute|Fertigkeiten):/g.exec(importData);
                         let masteries = [];
-                        if (masteriesData[1]) {
-                            masteriesData[1].match(/[^(]+ \([^)]+\),?/g)?.forEach(skillEntryStr => {
+                        if (masteriesData) {
+                            masteriesData[1].match(/[^(]+ \([^)]+\),?/g)?.forEach((skillEntryStr) => {
                                 let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
                                 let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
                                 let level = 1;
@@ -853,19 +853,31 @@ export default class ItemImporter {
                                         level = 4;
                                     } else {
                                         let masteryName = masteryStr.trim();
-                                        let searchString = masteryName.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
-                                        let masteryData = duplicate(SplittermondCompendium.findItem("mastery", searchString[1].trim()) || {
+                                        let masteryData = {
                                             type: "mastery",
                                             name: masteryName,
                                             data: {}
-                                        });
+                                        };
                                         masteryData.data.skill = skill;
                                         masteryData.data.level = level;
                                         masteries.push(masteryData)
                                     }
 
                                 });
-                            })
+                            });
+                            masteries = await Promise.all(masteries.map(async (masteryData) => {
+                                let searchString = masteryData.name.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
+                                cMasteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
+                                if (cMasteryData) {
+                                    cMasteryData = duplicate(cMasteryData);
+                                    delete cMasteryData._id;
+                                    cMasteryData.data.skill = masteryData.data.skill;
+                                    cMasteryData.data.level = masteryData.data.level;
+                                } else {
+                                    cMasteryData = masteryData;
+                                }
+                                return cMasteryData;
+                            }));
                         }
 
                         let featuresData = /Merkmale: ([^]+?)(?:\nBeute:|\nKampfweise:)/g.exec(importData);
@@ -874,25 +886,35 @@ export default class ItemImporter {
                         }
                         let features = [];
                         if (featuresData) {
-                            featuresData[1].match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach(f => {
+                            featuresData[1].match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach((f) => {
                                 if (f.trim()) {
                                     let featureName = f.trim();
-
-                                    let searchString = featureName.match(/([^(,0-9]+)(?:\s*[0-9]+)?(?:\s*\([^)]+?\))?/);
-                                    if (searchString[1].split(" ").length > 2) {
-                                        searchString[1] = searchString[1].split(" ")[0];
+                                    let featureData = {
+                                        name: featureName,
+                                        type: "npcfeature",
+                                        data: {}
                                     }
 
-                                    let featureData = duplicate(SplittermondCompendium.findItem("npcfeature", searchString[1].trim()) || {
-                                        type: "npcfeature",
-                                        name: featureName,
-                                        data: {}
-                                    });
-                                    featureData.name = featureName;
                                     features.push(featureData);
                                 }
-
                             });
+
+                            features = await Promise.all(features.map(async (featureData) => {
+                                let searchString = featureData.name.match(/([^(,0-9]+)(?:\s*[0-9]+)?(?:\s*\([^)]+?\))?/);
+                                if (searchString[1].split(" ").length > 2) {
+                                    searchString[1] = searchString[1].split(" ")[0];
+                                }
+
+                                let cFeatureData = await SplittermondCompendium.findItem("npcfeature", searchString[1].trim());
+                                if (cFeatureData) {
+                                    cFeatureData = duplicate(cFeatureData);
+                                    delete cFeatureData._id;
+                                    cFeatureData.name = featureData.name;
+                                } else {
+                                    cFeatureData = featureData;
+                                }
+                                return cFeatureData;
+                            }));
                         }
 
 
@@ -915,7 +937,10 @@ export default class ItemImporter {
                             spellsData[1].split(";")?.forEach(skillEntryStr => {
                                 let spellEntryData = skillEntryStr.trim().match(/([^ ]*)\s*([0IV]+):\s+([^]+)/);
                                 if (spellEntryData[1]) {
-                                    skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[1].toLowerCase()));
+                                    let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[1].toLowerCase()));
+                                    if (newSkill) {
+                                        skill = newSkill;
+                                    }
                                 }
                                 let level = 0;
                                 switch (spellEntryData[2]) {
@@ -941,19 +966,33 @@ export default class ItemImporter {
                                         level = 0;
                                 }
 
-                                spellEntryData[3].split(",").forEach(s => {
+                                spellEntryData[3].split(",").forEach((s) => {
                                     let spellName = s.trim().replace(/\n/, " ");
-                                    let searchString = spellName.match(/([^\[]+)(?:\[[\[]+\])?/)
-                                    let spellData = SplittermondCompendium.findItem("spell", searchString[1].trim()) || {
+                                    let spellData = {
                                         type: "spell",
                                         name: spellName,
                                         data: {}
                                     };
+
                                     spellData.data.skill = skill;
                                     spellData.data.skillLevel = level;
                                     spells.push(spellData);
                                 })
                             });
+
+                            spells = await Promise.all(spells.map(async (spellData) => {
+                                let searchString = spellData.name.match(/([^\[]+)(?:\[[\[]+\])?/)
+                                let cSpellData = await SplittermondCompendium.findItem("spell", searchString[1]);
+                                if (cSpellData) {
+                                    cSpellData = duplicate(cSpellData);
+                                    delete cSpellData._id;
+                                    cSpellData.data.skill = spellData.data.skill;
+                                    cSpellData.data.skillLevel = spellData.data.skillLevel;
+                                } else {
+                                    cSpellData = spellData;
+                                }
+                                return cSpellData;
+                            }));
                         }
 
 
