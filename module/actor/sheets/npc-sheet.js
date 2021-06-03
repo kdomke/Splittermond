@@ -17,7 +17,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             classes: ["splittermond", "sheet", "actor", "npc"],
             tabs: [{ navSelector: ".tabs[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".tabs[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
-            scrollY: [".tab.general", ".tab.spells", ".tab.inventory"]
+            scrollY: [".tab.general", ".tab.spells", ".tab.inventory"],
+            submitOnClose: false
         });
     }
 
