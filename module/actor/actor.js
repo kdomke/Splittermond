@@ -747,8 +747,6 @@ export default class SplittermondActor extends Actor {
         }
 
 
-        data.damageReduction.value += actorData.items.reduce((acc, i) => ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.damageReduction || 0) : acc, 0);
-
         actorData.items.forEach(i => {
             if (game.data.version.startsWith("0.8.")) {
                 i = i.data;
@@ -756,6 +754,12 @@ export default class SplittermondActor extends Actor {
             if (i.type === "armor" || i.type === "shield") {
                 if (i.data.equipped && i.data.defenseBonus != 0) {
                     this._addModifier(i.name, `VTD ${i.data.defenseBonus}`, "equipment");
+                }
+            }
+
+            if (i.type === "armor") {
+                if (i.data.equipped && i.data.damageReduction != 0) {
+                    data.damageReduction.value += i.data.damageReduction;
                 }
             }
         });
