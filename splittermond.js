@@ -181,6 +181,8 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
 })
 
 Hooks.on('renderChatMessage', function (app, html, data) {
+    let actor = game.actors.get(data.message.speaker.actor);
+
     html.find(".rollable").click(event => {
         const type = $(event.currentTarget).closestData("roll-type");
 
@@ -206,10 +208,14 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 
         }
 
-    });
+    })
 
     if (!game.user.isGM) {
         html.find(".gm-only").remove();
+    }
+
+    if (!((actor && actor.isOwner) || game.user.isGM || (data.author.id === game.user.id))) {
+        html.find(".actions").remove();
     }
 
     html.find(".add-tick").click(event => {
@@ -223,7 +229,7 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         actor.addTicks(value, message);
-    });
+    })
 
 });
 
