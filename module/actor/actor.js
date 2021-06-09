@@ -758,8 +758,8 @@ export default class SplittermondActor extends Actor {
             }
 
             if (i.type === "armor") {
-                if (i.data.equipped && i.data.damageReduction != 0) {
-                    data.damageReduction.value += i.data.damageReduction;
+                if (i.data.equipped && parseInt(i.data.damageReduction) != 0) {
+                    data.damageReduction.value += parseInt(i.data.damageReduction);
                 }
             }
         });
