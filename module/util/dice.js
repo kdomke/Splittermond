@@ -51,7 +51,7 @@ export async function damage(damageFormula, featureString) {
         if (temp[1]) {
             feature[temp[1].toLowerCase()] = {
                 name: temp[0],
-                value: temp[2] || 1
+                value: parseÍnt(temp[2]) || 1
             };
         }
     });
