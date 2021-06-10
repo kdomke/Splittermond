@@ -516,6 +516,9 @@ export default class SplittermondActor extends Actor {
                 }
 
                 switch (modifierLabel) {
+                    case "bonusCap":
+                        data.bonusCap = parseInt(data.bonusCap) + value;
+                        break;
                     case "GSW.mult":
                         data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
                         break;
