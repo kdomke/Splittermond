@@ -1,3 +1,10 @@
+## 0.3.3 ##
+2021-06-09
+
+* added: Der Wurfmodus (Sichtbarkeit des Wurfes) kann im Wurfdialog direkt angegeben werden
+* added: Der maximale Bonus aus Ausrüstung und Zauber kann per Modifikator (z.B. `bonusCap +1`) verändert werden (Issue #40)
+* fixed: Probleme bei der Darstellung der Schadensreduktion (Issue #44)
+
 ## 0.3.2 ##
 2021-06-09
 

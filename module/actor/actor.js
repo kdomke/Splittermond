@@ -516,6 +516,9 @@ export default class SplittermondActor extends Actor {
                 }
 
                 switch (modifierLabel) {
+                    case "bonusCap":
+                        data.bonusCap = parseInt(data.bonusCap) + value;
+                        break;
                     case "GSW.mult":
                         data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
                         break;
@@ -758,8 +761,8 @@ export default class SplittermondActor extends Actor {
             }
 
             if (i.type === "armor") {
-                if (i.data.equipped && i.data.damageReduction != 0) {
-                    data.damageReduction.value += i.data.damageReduction;
+                if (i.data.equipped && parseInt(i.data.damageReduction) != 0) {
+                    data.damageReduction.value = parseInt(data.damageReduction.value) + parseInt(i.data.damageReduction);
                 }
             }
         });
@@ -1373,7 +1376,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1494,7 +1498,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1666,7 +1671,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1791,7 +1797,8 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);

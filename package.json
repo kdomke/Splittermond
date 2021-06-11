@@ -1,0 +1,20 @@
+{
+  "name": "splittermond",
+  "version": "1.0.0",
+  "description": "A system for playing the german pen and paper RPG Splittermond.",
+  "main": "splittermond.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/rpgframework-cloud/splittermond-fvtt.git"
+  },
+  "author": "simon",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-less": "^4.0.1"
+  }
+}
