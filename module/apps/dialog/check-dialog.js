@@ -8,7 +8,8 @@ export default class CheckDialog extends Dialog {
 
     static async create(checkData) {
 
-
+        checkData.rollMode = game.settings.get("core", "rollMode");
+        checkData.rollModes = CONFIG.Dice.rollModes;
 
         const html = await renderTemplate("systems/splittermond/templates/apps/dialog/check-dialog.hbs", checkData);
 

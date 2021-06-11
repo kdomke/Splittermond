@@ -262,8 +262,9 @@
 }
 .splittermond button:hover,
 .splittermond button:focus,
+.splittermond select,
 .splittermond.dialog button:hover,
-.splittermond.dialog button.default:hover {
+.splittermond.dialog button.default:hover .splittermond.dialog select {
   box-shadow: 0 0 14px inset white;
   text-shadow: 0 0 8px #2D80E1;
 }
@@ -686,6 +687,7 @@
   grid-template-columns: 1fr 1fr;
   grid-gap: 7px;
   padding: 7px;
+  align-items: center;
 }
 .splittermond.dialog form label {
   text-align: right;

@@ -384,7 +384,8 @@
             "Wanderer",
             "Veteran",
             "Heroe"
-        ]
+        ],
+        "rollMode": "Wurfmodus"
     },
     "COMBAT": {
         "Round": "Tick"

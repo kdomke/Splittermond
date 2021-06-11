@@ -184,8 +184,10 @@
 
     button:hover,
     button:focus,
+    select,
     &.dialog button:hover,
-    &.dialog button.default:hover {
+    &.dialog button.default:hover
+    &.dialog select {
         box-shadow: 0 0 @paddingLarge inset white;
         text-shadow: 0 0 8px @highlightTextColor;
     }
@@ -700,7 +702,7 @@
         border-radius: 4px;
         background-color: transparent;
 
-        box-shadow: none;
+        box-shadow: none; 
         margin-bottom: 14px;
         border: none;
     }
@@ -711,6 +713,7 @@
             grid-template-columns: 1fr 1fr;
             grid-gap: @paddingMedium;
             padding: @paddingMedium;
+            align-items: center;
 
             label {
                 text-align: right;

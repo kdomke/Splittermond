@@ -1376,7 +1376,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1497,7 +1498,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1669,7 +1671,8 @@ export default class SplittermondActor extends Actor {
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);
@@ -1794,7 +1797,8 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            rollMode: checkData.rollMode
         };
 
         ChatMessage.create(chatData);

@@ -3,18 +3,26 @@
     <input name="difficulty" value="{{difficulty}}">
 
     <label>{{localize "splittermond.modifier"}}</label>
-    <div><input name="modifier" value="{{modifier}}" data-dtype="Number">
-        {{#if emphasis}}
-        <ul class="checkbox-list">
-            {{#each emphasis}}
-            <li>
-                <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}"
-                    value="{{this.value}}" {{#if this.active}}checked{{/if}}><label
-                    for="emphasis_{{@index}}">{{this.label}}</label>
-            </li>
-            {{/each}}
-        </ul>
-        {{/if}}
-    </div>
+    <input name="modifier" value="{{modifier}}" data-dtype="Number">
+    {{#if emphasis}}
+    <label></label>
+    <ul class="checkbox-list">
+        {{#each emphasis}}
+        <li>
+            <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}"
+                value="{{this.value}}" {{#if this.active}}checked{{/if}}><label
+                for="emphasis_{{@index}}">{{this.label}}</label>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    <label>{{localize "splittermond.rollMode"}}</label>
+    <select name="rollMode">
+        {{#select rollMode}}
+        {{#each rollModes as |name rt|}}
+        <option value="{{rt}}">{{localize name}}</option>
+        {{/each}}
+        {{/select}}
+    </select>
 
 </form>
