@@ -9,9 +9,9 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         return mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/actor/character-sheet.hbs",
             classes: ["splittermond", "sheet", "actor"],
-            tabs: [{ navSelector: ".tabs[data-group='primary']", contentSelector: "main", initial: "general" },
-            { navSelector: ".tabs[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
-            scrollY: [, ".tab.general", ".list.skills", ".list.masteries", ".tab.spells", ".tab.inventory"]
+            tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },
+            { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
+            scrollY: [, ".tab[data-tab='general']", ".list.skills", ".list.masteries", ".tab[data-tab='spells']", ".tab[data-tab='inventory']", ".tab[data-tab='status']"]
         });
     }
 
@@ -79,6 +79,8 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
                 [`data.attributes.${attrBaseName}.initial`]: value - speciesValue
             });
         });
+
+        
 
         super.activateListeners(html);
     }

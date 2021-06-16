@@ -12,7 +12,7 @@ export default class SplittermondCompendiumBrowser extends Application {
         return mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/compendium-browser.hbs",
             classes: ["splittermond", "compendium-browser"],
-            tabs: [{ navSelector: ".tabs", contentSelector: "main", initial: "spell" }],
+            tabs: [{ navSelector: ".sheet-navigation", contentSelector: "main", initial: "spell" }],
             width: 600,
             top: 70,
             left: 120,

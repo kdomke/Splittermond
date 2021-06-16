@@ -1,16 +1,14 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <header>
-        <section>
-            <div>
+    <header class="column flex-gap">
+        <section class="row flex-gap">
+            <div class="character-image">
                 <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="92" width="92"
                     class="profile-img" />
             </div>
-            <div class="details">
-                <h1>
-                    <input name="name" type="text" value="{{actor.name}}"
+            <div class="column stretch">
+                <input  class="character-name" name="name" type="text" value="{{actor.name}}"
                         placeholder="{{localize 'splittermond.name' }}" />
-                </h1>
-                <div class="description">
+                <div>
                     <input class="autoexpand" name="data.type" type="text" value="{{data.type}}"
                         placeholder="{{localize 'splittermond.opponenttype'}}" />
                     {{#unless this.limited}}
@@ -20,23 +18,22 @@
                     <input class="autoexpand" name="data.sex" type="text" value="{{data.sex}}"
                         placeholder="{{localize 'splittermond.sex'}}" />
                     {{/unless}}
-
                 </div>
                 {{#unless limited}}
                 <ul class="npcfeatures taglist" data-item-type="npcfeature">
                     {{#each itemsByType.npcfeature}}
-                    <li class="item" data-item-id="{{this._id}}">
-                        <div class="name">
+                    <li class="taglist-item" data-item-id="{{this._id}}">
+                        <div class="taglist-item-name">
                             <a data-action="edit-item">{{this.name}}</a>
                         </div>
-                        <div class="actions">
+                        <div class="taglist-item-actions">
                             <button class="button-inline" data-action="delete-item" type="button">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>
                     </li>
                     {{/each}}
-                    <li class="actions"><button class="button-inline" type="button" data-action="add-item"
+                    <li class="taglist-actions"><button class="button-inline" type="button" data-action="add-item"
                             data-render-sheet="true">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button></li>
@@ -45,7 +42,7 @@
             {{/unless}}
         </section>
         {{#unless limited}}
-        <section>
+        <section class="row">
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
             derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
@@ -54,24 +51,24 @@
         {{/unless}}
     </header>
     {{#unless limited}}
-    <nav class="sheet-navigation tabs" data-group="primary">
-        <a class="item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
-        <a class="item" data-tab="general">{{ localize "splittermond.general" }}</a>
-        <a class="item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
-        <a class="item" data-tab="inventory">{{ localize "splittermond.inventory" }}</a>
-        <a class="item" data-tab="status">{{ localize "splittermond.status" }}</a>
+    <nav class="sheet-navigation" data-group="primary">
+        <a class="sheet-navigation-item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
+        <a class="sheet-navigation-item" data-tab="general">{{ localize "splittermond.general" }}</a>
+        <a class="sheet-navigation-item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
+        <a class="sheet-navigation-item" data-tab="inventory">{{ localize "splittermond.inventory" }}</a>
+        <a class="sheet-navigation-item" data-tab="status">{{ localize "splittermond.status" }}</a>
     </nav>
-    <main class="tab-list">
-        <section class="tab biography" data-group="primary" data-tab="biography">
+    <main>
+        <section class="tab" data-group="primary" data-tab="biography">
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
-        <section class="tab general" data-group="primary" data-tab="general">
+        <section class="tab" data-group="primary" data-tab="general">
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
             <div data-roll-type="skill">
                 <div class="list skills">
                     <div class="list-header">
                         <h3>{{localize "splittermond.generalSkills"}}</h3>
-                        <div class="actions">
+                        <div class="list-actions">
                             <button class="button-inline" data-action="show-hide-skills" type="button">
                                 {{#if hideSkills}}
                                 <i class="fa fa-eye" aria-hidden="true"></i>
@@ -81,10 +78,10 @@
                             </button>
                         </div>
                     </div>
-                    <ol class="skill-list">
+                    <ol class="list-body skill-list">
                         {{#each data.generalSkills as |skill skillId|}}
                         {{#if skill.isVisible}}
-                        <li class="draggable" data-skill="{{skillId}}">
+                        <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
                                 <a class="rollable">
                                     {{localize skill.label}}
@@ -114,10 +111,10 @@
                             </button>
                         </div>
                     </div>
-                    <ol class="skill-list">
+                    <ol class="list-body skill-list">
                         {{#each data.magicSkills as |skill skillId|}}
                         {{#if skill.isVisible}}
-                        <li class="draggable" data-skill="{{skillId}}">
+                        <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
                                 <a class="rollable">{{localize skill.label}}</a>
                             </label>
@@ -142,18 +139,18 @@
             </div>
 
         </section>
-        <section class="tab spells" data-group="primary" data-tab="spells">
+        <section class="tab" data-group="primary" data-tab="spells">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
                 channeledSpells=data.focus.channeled.entries}}
             </div>
         </section>
-        <section class="tab inventory" data-group="primary" data-tab="inventory">
+        <section class="tab" data-group="primary" data-tab="inventory">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType}}
             </div>
         </section>
-        <section class="tab status" data-group="primary" data-tab="status">
+        <section class="tab" data-group="primary" data-tab="status">
             {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
             channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
             spelleffects=itemsByType.spelleffect

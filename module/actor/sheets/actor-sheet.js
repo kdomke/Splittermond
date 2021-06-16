@@ -166,6 +166,18 @@ export default class SplittermondActorSheet extends ActorSheet {
             dummyElement.remove();
         }).trigger('input');
 
+        html.find('[data-action="inc-value"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value+1).change();
+        });
+
+        html.find('[data-action="dec-value"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value-1).change();
+        });
+
         html.find('[data-action="add-item"]').click(event => {
             const itemType = $(event.currentTarget).closestData('item-type');
             const renderSheet = Boolean((event.currentTarget.dataset.renderSheet || "true") === "true");
@@ -369,7 +381,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         }).attr('draggable', true);
 
-        html.find("[data-item-id], .list.skills [data-skill], .derived-attributes .attribute, .list.attack .value, .list.active-defense .value").hover(event => {
+        html.find("[data-item-id], .list.skills [data-skill], .derived-attribute, .list.attack .value, .list.active-defense .value").hover(event => {
             const itemId = event.currentTarget.dataset.itemId;
             let content = "";
             let css = {
@@ -425,7 +437,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
                 content += '</span>';
 
-                let masteryList = html.find(`.mastery-list li[data-skill="${skillId}"]`);
+                let masteryList = html.find(`.list.masteries li[data-skill="${skillId}"]`);
 
 
                 if (masteryList.html()) {
@@ -434,7 +446,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList = masteryList.clone();
 
                     masteryList.find("button").remove();
-                    masteryList = masteryList.wrapAll(`<div class="list tooltip" />`).wrapAll(`<ol class="mastery-list" />`).parent().parent();
+                    masteryList = masteryList.wrapAll(`<div class="list tooltip masteries" />`).wrapAll(`<ol class="list-body" />`).parent().parent();
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
@@ -519,7 +531,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 content += '</span>';
             }
 
-            if (event.currentTarget.classList.contains("attribute")) {
+            if (event.currentTarget.classList.contains("derived-attribute")) {
                 let attribute = event.currentTarget.id;
                 if (this.actor.data.data.derivedAttributes[attribute]) {
                     content += '<span class="formula">';

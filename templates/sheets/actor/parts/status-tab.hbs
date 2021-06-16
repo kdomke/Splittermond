@@ -1,6 +1,6 @@
 <div>
     {{#if hasRestActions}}
-    <div class="actions">
+    <div class="row">
         <button type="button" data-action="short-rest">
             {{localize "splittermond.shortRest"}}
         </button>
@@ -13,21 +13,21 @@
         <div class="list">
             <div class="list-header">
                 <h3>{{localize "splittermond.channeledDamage"}}</h3>
-                <div class="actions">
+                <div class="list-actions">
                     <button class="button-inline" type="button" data-action="add-channeled-health"
                         data-render-sheet="0">
                         <i class="fa fa-plus-square" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
-            <ol data-array="data.health.channeled.entries">
+            <ol class="list-body" data-array="data.health.channeled.entries">
                 {{#each channeledHealthEntries}}
-                <li data-index="{{@index}}">
+                <li class="list-item" data-index="{{@index}}">
                     <input data-array-field="description" type="text" value="{{this.description}}">
 
                     <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
                             data-dtype="Number"></div>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="delete-array-element">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
@@ -42,20 +42,20 @@
         <div class="list" data-item-type="statuseffect">
             <div class="list-header">
                 <h3>{{localize "splittermond.statusEffects"}}</h3>
-                <div class="actions">
+                <div class="list-actions">
                     <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
                         <i class="fa fa-plus-square" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
-            <ol>
+            <ol class="list-body">
                 {{#each statuseffects}}
-                <li class="draggable" data-item-id="{{this._id}}">
+                <li class="list-item draggable" data-item-id="{{this._id}}">
                     <input class="name" type="text" data-field="name" value="{{this.name}}">
                     <div class="value">
                         <input type="text" data-field="data.level" value="{{this.data.level}}" data-dtype="Number">
                     </div>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                 aria-hidden="true"></i></button>
                         <button class="button-inline" type="button" data-action="delete-item"><i class="fas fa-trash"
@@ -70,21 +70,21 @@
         <div class="list" data-item-type="spelleffect">
             <div class="list-header">
                 <h3>{{localize "splittermond.spellEffects"}}</h3>
-                <div class="actions">
+                <div class="list-actions">
                     <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
                         <i class="fa fa-plus-square" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
-            <ol>
+            <ol class="list-body">
                 {{#each spelleffects}}
-                <li class="draggable" data-item-id="{{this._id}}">
+                <li class="list-item draggable" data-item-id="{{this._id}}">
                     <div>
                         <input data-field="data.active" type="checkbox" value="true" {{#if
                             this.data.active}}checked{{/if}} />
                     </div>
                     <input class="name" type="text" data-field="name" value="{{this.name}}">
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                 aria-hidden="true"></i></button>
                         <button class="button-inline" type="button" data-action="delete-item"><i class="fas fa-trash"

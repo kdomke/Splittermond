@@ -1,21 +1,21 @@
 <div class="list masteries" data-item-type="mastery">
     <div class="list-header">
         <h3>{{localize "splittermond.masteries"}}</h3>
-        <div class="actions">
+        <div class="list-actions">
             <button class="button-inline" type="button" data-action="add-item" data-render-sheet="true">
                 <i class="fa fa-plus-square" aria-hidden="true"></i>
             </button>
         </div>
     </div>
-    <ol class="mastery-list">
+    <ol class="list-body">
         {{#*inline "masteriesBySkill"}}
-        <li data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
-            <ol class="taglist">
+        <li class="list-item" data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
+            <ul class="taglist">
                 {{#each skill.masteries}}
-                <li class="draggable" data-item-id="{{this._id}}">
-                    <div class="name"><a data-action="edit-item">{{this.name}}</a></div>
+                <li class="taglist-item draggable" data-item-id="{{this._id}}">
+                    <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
 
-                    <div class="actions">
+                    <div class="taglist-item-actions">
                         <button class="button-inline" type="button" data-action="delete-item">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </button>
@@ -23,12 +23,12 @@
                 </li>
                 {{/each}}
 
-                <li class="actions">
+                <li class="taglist-actions">
                     <button class="button-inline" type="button" data-action="add-item" data-render-sheet="true">
                         <i class="fa fa-plus-square" aria-hidden="true"></i>
                     </button>
                 </li>
-            </ol>
+            </ul>
         </li>
         {{/inline}}
 

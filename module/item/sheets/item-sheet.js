@@ -3,8 +3,8 @@ export default class SplittermondItemSheet extends ItemSheet {
         return mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/item/item-sheet.hbs",
             classes: ["splittermond", "sheet", "item"],
-            tabs: [{ navSelector: ".tabs", contentSelector: "main", initial: "description" }],
-            scrollY: [".tab.properties"]
+            tabs: [{ navSelector: ".sheet-navigation", contentSelector: "main", initial: "description" }],
+            scrollY: [".tab[data-tab='properties']"]
         });
     }
 

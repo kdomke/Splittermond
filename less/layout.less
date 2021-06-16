@@ -1,0 +1,130 @@
+.splittermond {
+    .row {
+        display: flex;
+        flex-direction: row;
+
+        &.flex-gap {
+            > *:not(:last-child) {
+                margin-right: @paddingMedium
+            }
+        }
+
+        &.flex-gap-large {
+            > *:not(:last-child) {
+                margin-right: @paddingLarge
+            }
+        }
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+
+        &.flex-gap {
+            > *:not(:last-child) {
+                margin-bottom: @paddingMedium
+            }
+        }
+
+        &.flex-gap-large {
+            > *:not(:last-child) {
+                margin-bottom: @paddingLarge
+            }
+        }
+    }
+
+    
+
+    .stretch {
+        flex: 1;
+    }
+
+    header {
+        padding: @paddingMedium;
+    }
+
+    main {
+        padding: @paddingMedium;
+    }
+
+    .window-content {
+        overflow-y: hidden;
+        form {
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+    
+            main {
+                overflow: hidden;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+            }
+    
+        }
+              
+    }
+    main>section {
+        min-height: 100px;
+        &.tab.active[data-tab] {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100%;
+        }
+    }
+
+    &.sheet main>section {
+        &.tab.active[data-tab] {
+            display: grid;
+            grid-gap:@paddingMedium;
+            overflow-y: auto;
+            height: 100%;
+        }
+    }
+    section[data-tab="general"] {
+        z-index: 0;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        align-items: start;
+        align-content: start;
+        grid-gap: @paddingMedium;
+    }
+
+    &.npc section[data-tab="general"] {
+        grid-template-columns: 200px 1fr;
+    }
+
+    section[data-tab="skills"] {
+        grid-template-columns: repeat(2, 1fr);
+        align-items: start;
+        align-content: start;
+        height: 100%;
+        overflow-y: hidden;
+        .skills {
+            overflow-y: auto;
+        }
+
+        .masteries {
+            overflow-y: auto;
+        }
+    }
+
+    &.sheet.item header {
+        align-items: center;
+    }
+
+
+    &.compendium-browser .list {
+        overflow-y: auto;
+    }
+
+    &.compendium-browser main > section.tab.active {
+        overflow-y: hidden;
+    }
+
+
+    
+
+}

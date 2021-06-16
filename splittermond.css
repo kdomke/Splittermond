@@ -33,107 +33,19 @@
   font-style: normal;
 }
 /*
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-Regular.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-}
+@import "./app.less";
+@import "./chat.less";
 
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-Italic.otf') format('opentype');
-    font-weight: 400;
-    font-style: italic;
-}
+@import "./sheet.less";
+@import "./sheet-item.less";
+@import "./sheet-character.less";
+@import "./sheet-journal.less";
 
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-Medium.otf') format('opentype');
-    font-weight: 500;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-MediumItalic.otf') format('opentype');
-    font-weight: 500;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-SemiBold.otf') format('opentype');
-    font-weight: 600;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-SemiBoldItalic.otf') format('opentype');
-    font-weight: 600;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-Bold.otf') format('opentype');
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-BoldItalic.otf') format('opentype');
-    font-weight: 700;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-ExtraBold.otf') format('opentype');
-    font-weight: 800;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-ExtraBoldItalic.otf') format('opentype');
-    font-weight: 800;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-Black.otf') format('opentype');
-    font-weight: 900;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Vollkorn';
-    src: url('./fonts/Vollkorn-BlackItalic.otf') format('opentype');
-    font-weight: 900;
-    font-style: italic;
-}
+@import "./wizard-species.less";
+@import "./compendium-browser.less";
 */
 .splittermond {
-  /*
-    .window-content:after {
-        position: absolute;
-        left: 0;
-        top: 0;
-        content: " ";
-        height: 100%;
-        width: 100%;
-        box-sizing: border-box;
-        border: 16px solid transparent;
-        border-image:url(./images/frame2.png) 16 16 repeat;
-        border-image-repeat: round;
-        opacity: 0.2;
-        z-index: -1;
-    }
-*/
+  color: #303336;
 }
 .splittermond.window-app {
   background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background7.jpg);
@@ -154,20 +66,20 @@
   display: block;
   content: "";
   position: absolute;
-  width: 200px;
+  width: 170px;
   height: 60px;
   left: 50%;
   top: -32px;
-  margin-left: -100px;
-  background: url(../../systems/splittermond/images/splittermond-logo.png);
+  margin-left: -85px;
+  background: url(../../systems/splittermond/images/splittermond-logo-h60.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center top;
   filter: drop-shadow(0 0 5px #86b6ee);
 }
 .splittermond.window-app.minimized .window-header::after {
-  width: 100px;
-  margin-left: -50px;
+  width: 85px;
+  margin-left: -43px;
   height: 30px;
   top: -16px;
 }
@@ -183,6 +95,7 @@
   padding: 0em;
   z-index: 0;
   background: unset;
+  border-radius: 6px;
 }
 .splittermond .window-resizable-handle {
   z-index: 0;
@@ -190,13 +103,488 @@
   border: none;
   color: #303336;
 }
+.splittermond img {
+  border: none;
+}
+.splittermond input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+.splittermond input[type="text"],
+.splittermond input[type="number"],
+.splittermond #autoexpanddummy {
+  font-family: 'Vollkorn';
+  font-variant-numeric: lining-nums;
+  border: none;
+  background: none;
+  color: #143a66;
+  height: unset;
+  padding: 3px;
+  padding-bottom: 3px;
+  margin: 0;
+  border-radius: 3px;
+  vertical-align: baseline;
+  display: inline-block;
+  font-weight: bold;
+}
+.splittermond input[type="text"]:disabled,
+.splittermond input[type="number"]:disabled,
+.splittermond #autoexpanddummy:disabled {
+  color: #303336;
+}
+.splittermond input[type="text"]:hover,
+.splittermond input[type="number"]:hover,
+.splittermond #autoexpanddummy:hover {
+  text-shadow: 0 0 0.3em white;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.25);
+}
+.splittermond input[type="text"]:focus,
+.splittermond input[type="number"]:focus,
+.splittermond #autoexpanddummy:focus {
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 0.3em white;
+}
+.splittermond input[type="text"].autoexpand,
+.splittermond input[type="number"].autoexpand,
+.splittermond #autoexpanddummy.autoexpand {
+  box-sizing: content-box;
+}
+.splittermond a:hover,
+.splittermond a:active {
+  text-shadow: 0 0 8px #2D80E1;
+}
+.splittermond button,
+.splittermond button.dialog-button,
+.splittermond select {
+  background: none;
+  border: 2px groove rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  border-radius: 3px;
+  font-family: "Vollkorn";
+  text-shadow: 0 0 3px white;
+  margin: 3px;
+  font-size: inherit;
+  color: inherit;
+}
+.splittermond select {
+  font-weight: 900;
+}
+.splittermond button:hover,
+.splittermond button.dialog-button:hover,
+.splittermond button:focus,
+.splittermond button.dialog-button:focus,
+.splittermond button.dialog-button.default,
+.splittermond select:hover,
+.splittermond select:focus {
+  box-shadow: 0 0 14px inset white;
+  text-shadow: 0 0 8px #2D80E1;
+  border: 2px groove rgba(255, 255, 255, 0.3);
+}
+.splittermond button:active,
+.splittermond select:active {
+  box-shadow: 0 0 14px inset rgba(0, 0, 0, 0.2);
+  border: 2px inset rgba(255, 255, 255, 0.3);
+}
+.splittermond h1,
+.splittermond h2,
+.splittermond h3,
+.splittermond h4,
+.splittermond h5 {
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+.splittermond h1 {
+  font-family: 'Vollkorn SC';
+  font-size: 24px;
+}
+.splittermond h2 {
+  font-family: 'Vollkorn SC';
+  font-size: 18px;
+}
+.splittermond h3 {
+  font-family: 'Vollkorn SC';
+  font-size: 14px;
+}
+.splittermond h4 {
+  font-family: 'Vollkorn';
+  font-size: 14px;
+}
+.splittermond ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.splittermond ::-webkit-scrollbar-thumb {
+  outline: none;
+  border-radius: 3px;
+  background: rgba(20, 58, 102, 0.5);
+  border: 1px outset rgba(255, 255, 255, 0.3);
+}
+.splittermond ::-webkit-scrollbar-track {
+  border-radius: 4px;
+  background-color: transparent;
+  box-shadow: none;
+  margin-bottom: 14px;
+  border: none;
+}
+.splittermond .row {
+  display: flex;
+  flex-direction: row;
+}
+.splittermond .row.flex-gap > *:not(:last-child) {
+  margin-right: 7px;
+}
+.splittermond .row.flex-gap-large > *:not(:last-child) {
+  margin-right: 14px;
+}
+.splittermond .column {
+  display: flex;
+  flex-direction: column;
+}
+.splittermond .column.flex-gap > *:not(:last-child) {
+  margin-bottom: 7px;
+}
+.splittermond .column.flex-gap-large > *:not(:last-child) {
+  margin-bottom: 14px;
+}
+.splittermond .stretch {
+  flex: 1;
+}
+.splittermond header {
+  padding: 7px;
+}
 .splittermond main {
   padding: 7px;
-  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
-  border-top: 1px outset rgba(255, 255, 255, 0.3);
 }
-.splittermond .tabs {
+.splittermond .window-content {
+  overflow-y: hidden;
+}
+.splittermond .window-content form {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.splittermond .window-content form main {
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.splittermond main > section {
+  min-height: 100px;
+}
+.splittermond main > section.tab.active[data-tab] {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+.splittermond.sheet main > section.tab.active[data-tab] {
+  display: grid;
+  grid-gap: 7px;
+  overflow-y: auto;
+  height: 100%;
+}
+.splittermond section[data-tab="general"] {
+  z-index: 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: start;
+  align-content: start;
+  grid-gap: 7px;
+}
+.splittermond.npc section[data-tab="general"] {
+  grid-template-columns: 200px 1fr;
+}
+.splittermond section[data-tab="skills"] {
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
+  align-content: start;
+  height: 100%;
+  overflow-y: hidden;
+}
+.splittermond section[data-tab="skills"] .skills {
+  overflow-y: auto;
+}
+.splittermond section[data-tab="skills"] .masteries {
+  overflow-y: auto;
+}
+.splittermond.sheet.item header {
+  align-items: center;
+}
+.splittermond.compendium-browser .list {
+  overflow-y: auto;
+}
+.splittermond.compendium-browser main > section.tab.active {
+  overflow-y: hidden;
+}
+.splittermond .bar {
+  width: 100%;
+  height: 5px;
+  background-color: rgba(48, 51, 54, 0.3);
+  display: flex;
+  overflow: hidden;
+}
+.splittermond .bar > div {
+  width: 0%;
+  height: 100%;
+  background-color: #2D80E1;
+}
+.splittermond .bar > .channeled {
+  background: repeating-linear-gradient(45deg, rgba(45, 128, 225, 0.3), rgba(45, 128, 225, 0.3) 5px, #2D80E1 5px, #2D80E1 10px);
+}
+.splittermond .bar > .exhausted {
+  opacity: 0.5;
+}
+.splittermond .bar-health,
+.splittermond .bar-focus {
+  height: 10px;
+  box-shadow: 0 0 10px inset rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+}
+.splittermond .bar-health > div,
+.splittermond .bar-focus > div {
+  box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.3);
+}
+.splittermond .bar-health > div {
+  background-color: #892100;
+}
+.splittermond .bar-health > .channeled {
+  background: repeating-linear-gradient(45deg, rgba(137, 33, 0, 0.3), rgba(137, 33, 0, 0.3) 5px, #892100 5px, #892100 10px);
+}
+.splittermond .bar-with-value {
+  position: relative;
+  margin-right: 10px;
+}
+.splittermond .bar-with-value .value {
+  font-family: "Signika";
+  font-size: 14px;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  border-radius: 10px;
+  text-align: center;
+  top: 50%;
+  vertical-align: middle;
+  line-height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  color: white;
+  left: 12.5%;
+  z-index: 2;
+  background-color: #2D80E1;
+}
+.splittermond .bar-with-value-health .value {
+  background-color: #892100;
+}
+.splittermond input[type="text"].character-name,
+.splittermond input[type="text"].item-name {
+  font-size: 24px;
+  font-family: 'Vollkorn SC';
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+.splittermond .item-name,
+.splittermond.npc .character-name {
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.splittermond .experience {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+.splittermond .experience .bar {
+  flex-basis: 100%;
+}
+.splittermond .experience-label {
+  flex: 1;
+}
+.splittermond .experience-value {
+  flex: 1;
+  text-align: right;
+}
+.splittermond .moonsign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  position: relative;
+  margin: auto;
+}
+.splittermond .moonsign-splinterpoints {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  font-size: 24px;
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+.splittermond .moonsign-splinterpoints input {
+  width: 30px;
+  text-align: right;
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+.splittermond .moonsign-splinterpoints input:disabled {
+  color: white;
+}
+.splittermond .moonsign-splinterpoints input:hover {
+  text-shadow: 0 0 5px black;
+}
+.splittermond .moonsign-splinterpoints input:focus {
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 5px black;
+}
+.splittermond .moonsign-splinterpoints input.autoexpand {
+  box-sizing: content-box;
+}
+.splittermond .moonsign-splinterpoints span {
+  display: block;
+  width: 40px;
+}
+.splittermond .moonsign-splinterpoints button {
+  opacity: 0;
+}
+.splittermond .moonsign-splinterpoints:hover button {
+  opacity: 1;
+}
+.splittermond .moonsign-image {
+  width: 48px;
+  height: 48px;
+  filter: drop-shadow(0 0 5px white) opacity(0.3);
+}
+.splittermond .moonsign-label {
+  text-align: center;
+  text-shadow: 0 0 5px white;
+  font-weight: bold;
+}
+.splittermond .derived-attribute-list {
+  display: grid;
+  grid-template-columns: repeat(4, 3em);
+  gap: 0.5em;
+}
+.splittermond .derived-attribute {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.splittermond .derived-attribute label {
+  font-weight: 900;
+}
+.splittermond .derived-attribute span,
+.splittermond .derived-attribute input {
+  font-weight: 700;
+  font-size: 18px;
+  height: auto;
+}
+.splittermond .derived-attribute input {
+  margin: -3px;
+}
+.splittermond .derived-attribute > * {
+  width: 100%;
+  text-align: center;
+}
+.splittermond header .damage-reduction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url(../../icons/svg/shield.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  justify-content: center;
+  width: 60px;
+  margin: 3px;
+  padding: 3px;
+  border-right: 2px groove rgba(255, 255, 255, 0.3);
+  border-left: 2px groove rgba(255, 255, 255, 0.3);
+}
+.splittermond header .damage-reduction label {
+  font-weight: 900;
+}
+.splittermond header .damage-reduction span,
+.splittermond header .damage-reduction input {
+  font-weight: 700;
+  font-size: 18px;
+  height: auto;
+}
+.splittermond header .damage-reduction input {
+  margin: -3px;
+}
+.splittermond header .damage-reduction > * {
+  width: 100%;
+  text-align: center;
+}
+.splittermond .health-focus-headline {
+  display: flex;
+}
+.splittermond .health-focus-headline > label {
+  display: inline-block;
+  font-weight: 900;
+  align-self: center;
+  flex: 1;
+}
+.splittermond .health-focus-data {
+  display: grid;
+  grid-template-columns: 25px 60px;
+  gap: 3px;
+}
+.splittermond .health-focus-data label {
+  text-align: right;
+}
+.splittermond .health-focus-data .value {
+  text-align: center;
+  display: flex;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.splittermond .health-focus-data .value span {
+  display: block;
+  flex: 1;
+  text-align: center;
+}
+.splittermond .health-focus-data input {
+  margin: -3px;
+}
+.splittermond .health-focus-data button {
+  opacity: 0;
+}
+.splittermond .health-focus-data:hover button {
+  opacity: 1;
+}
+.splittermond .wound-malus {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  width: 100%;
+  padding-right: 10px;
+}
+.splittermond .wound-malus-level {
+  border-right: 2px groove rgba(255, 255, 255, 0.5);
+  padding-top: 12px;
+  position: relative;
+  top: -10px;
+  text-align: center;
+  flex: 1;
+}
+.splittermond .wound-malus-level:first-child {
+  border-right: none;
+}
+.splittermond .sheet-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
   font-family: 'Vollkorn SC';
   font-weight: 600;
   text-transform: lowercase;
@@ -206,7 +594,7 @@
   z-index: 10;
   justify-content: stretch;
 }
-.splittermond .tabs .item {
+.splittermond .sheet-navigation-item {
   position: relative;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -217,114 +605,25 @@
   padding-left: 7px;
   padding-right: 7px;
   flex: 1;
+  text-align: center;
 }
-.splittermond .tabs .item.active,
-.splittermond .tabs .item:hover {
+.splittermond .sheet-navigation-item.active,
+.splittermond .sheet-navigation-item:hover {
   text-shadow: 0 0 0.5em #2D80E1;
   color: #143a66;
 }
-.splittermond .tabs .item.active {
+.splittermond .sheet-navigation-item.active {
   background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
   box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
   border: 1px outset rgba(255, 255, 255, 0.3);
   border-bottom: none;
   top: 1px;
 }
-.splittermond .tab[data-tab].active {
-  display: flex;
-}
-.splittermond a:hover,
-.splittermond a:active {
-  text-shadow: 0 0 8px #2D80E1;
-}
-.splittermond .tab {
-  flex-direction: column;
-}
-.splittermond .tab .tabs {
-  border-radius: 3px;
-  font-size: 14px;
-  border: 1px inset rgba(255, 255, 255, 0.3);
-  align-self: start;
-  overflow: hidden;
-  margin-bottom: 7px;
-}
-.splittermond .tab .tabs .item {
-  text-transform: none;
-  border-radius: 0;
-  border: 1px outset rgba(255, 255, 255, 0.3);
-}
-.splittermond .tab .tabs .item.active {
-  background: none;
-  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
-  border: none;
-  top: 0px;
-  border-radius: 0;
-}
-.splittermond button:hover,
-.splittermond button:focus,
-.splittermond select,
-.splittermond.dialog button:hover,
-.splittermond.dialog button.default:hover .splittermond.dialog select {
-  box-shadow: 0 0 14px inset white;
-  text-shadow: 0 0 8px #2D80E1;
-}
-.splittermond button:active {
-  box-shadow: 0 0 14px inset rgba(0, 0, 0, 0.2);
-}
-.splittermond button,
-.splittermond.dialog button,
-.splittermond.dialog button.default {
-  background: none;
-  border: 2px groove rgba(255, 255, 255, 0.3);
-  box-shadow: none;
-  border-radius: 3px;
-  font-family: "Vollkorn";
-  text-shadow: 0 0 3px white;
-  margin: 3px;
-}
-.splittermond.dialog button,
-.splittermond.dialog button.default {
-  margin: 0;
-}
-.splittermond .actions {
-  display: flex;
-}
-.splittermond img {
-  border: none;
-}
-.splittermond h1,
-.splittermond h2,
-.splittermond h3,
-.splittermond h4,
-.splittermond h5,
-.splittermond h6 {
-  color: #303336;
-  font-weight: bold;
-  font-family: 'Vollkorn SC';
-  border: none;
-  margin-block-start: 0em;
-  margin-block-end: 0em;
-}
-.splittermond h1 {
-  font-size: 24px;
-  font-weight: 400;
-  font-variant: small-caps;
-  font-variant-caps: small-caps;
-}
-.splittermond h2 {
-  font-size: 18px;
-  font-weight: 600;
-}
-.splittermond h3 {
-  font-size: 14px;
-  font-weight: 700;
-}
-.splittermond .tooltip-activator {
-  position: relative;
-}
-.splittermond .tooltip-activator:hover + .tooltip,
-.splittermond .tooltip-activator:hover > .tooltip {
-  display: block;
+.splittermond.sheet main,
+.splittermond.compendium-browser main {
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+  box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.2);
+  border-top: 1px outset rgba(255, 255, 255, 0.3);
 }
 .splittermond #tooltip {
   display: block;
@@ -394,17 +693,405 @@
   text-shadow: none;
   z-index: 1000;
 }
-.splittermond .tooltip-activator:hover + .bonus-malus.tooltip,
-.splittermond .tooltip-activator:hover > .bonus-malus.tooltip {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 3px;
+.splittermond .button-inline {
+  padding: 0px;
+  margin: 0px;
+  background: none;
+  border: none;
+  display: inline-block;
+  width: unset;
+  box-shadow: none;
+  line-height: unset;
+  color: rgba(48, 51, 54, 0.7);
 }
-.splittermond .bonus-malus label {
+.splittermond .button-inline:hover {
+  text-shadow: none;
+  color: #303336;
+  box-shadow: none;
+  border: none;
+}
+.splittermond .button-inline[disabled] {
+  color: rgba(48, 51, 54, 0.2);
+}
+.splittermond .button-inline[disabled]:hover {
+  text-shadow: none;
+  box-shadow: none;
+  color: rgba(48, 51, 54, 0.2);
+}
+.splittermond .button-inline:active,
+.splittermond .button-inline:focus {
+  box-shadow: none;
+  border: none;
+}
+.splittermond .list {
+  display: flex;
+  flex-direction: column;
+  border: 1px inset rgba(255, 255, 255, 0.3);
+  margin-bottom: 7px;
+  position: relative;
+  border-radius: 3px;
+}
+.splittermond .list:hover > .list-header > .actions > button {
+  display: inline-block;
+}
+.splittermond .list-actions {
+  width: 4em;
+  text-align: center;
+}
+.splittermond .list-header {
+  display: flex;
+  width: 100%;
+  border: 1px outset rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  align-items: center;
+  padding: 3px;
+  position: sticky;
+  top: 0;
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+  z-index: 10;
+  overflow: hidden;
+}
+.splittermond .list-header *:not(:first-child) {
+  border-left: 2px groove rgba(255, 255, 255, 0.3);
+  color: rgba(48, 51, 54, 0.7);
+}
+.splittermond .list-header > *:first-child {
+  flex-grow: 1;
+}
+.splittermond .list-header > .list-actions button {
+  display: none;
+}
+.splittermond .list-header:hover > .list-actions > button {
+  display: inline-block;
+}
+.splittermond .list-body {
+  display: block;
+  flex-basis: 100%;
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0px;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.splittermond .list-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 3px;
+  border: 1px solid transparent;
+}
+.splittermond .list-item:nth-child(odd),
+.splittermond .list-item.odd {
+  background-color: rgba(48, 51, 54, 0.05);
+}
+.splittermond .list-item.even {
+  background-color: unset;
+}
+.splittermond .list-item:hover,
+.splittermond .list-item.hover {
+  background-color: rgba(45, 128, 225, 0.1);
+}
+.splittermond .list-item:hover > .list-actions > button,
+.splittermond .list-item.hover > .list-actions > button {
+  display: inline-block;
+}
+.splittermond .list-item input {
+  margin-top: -3px;
+  margin-bottom: -3px;
+}
+.splittermond .list-item input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+}
+.splittermond .list-item > * {
+  border-left: 2px groove rgba(255, 255, 255, 0.3);
+}
+.splittermond .list-item > *:first-child {
+  flex: 1;
+  border-left: none;
+}
+.splittermond .list-item > .list-actions button {
+  display: none;
+}
+.splittermond .list.spells img,
+.splittermond .list.inventory img,
+.splittermond .list.attack img,
+.splittermond .list.active-defense img {
+  width: 32;
+  height: 32;
+  flex: none;
+  margin: -3px;
+}
+.splittermond .list.spells .list,
+.splittermond .list.inventory .list,
+.splittermond .list.attack .list,
+.splittermond .list.active-defense .list {
+  margin-bottom: 7px;
+}
+.splittermond .list.spells label,
+.splittermond .list.inventory label,
+.splittermond .list.attack label,
+.splittermond .list.active-defense label {
+  flex: 1;
+  padding-left: 7px;
+  border-left: none;
+}
+.splittermond .list.spells .qty,
+.splittermond .list.inventory .qty,
+.splittermond .list.attack .qty,
+.splittermond .list.active-defense .qty,
+.splittermond .list.spells .load,
+.splittermond .list.inventory .load,
+.splittermond .list.attack .load,
+.splittermond .list.active-defense .load,
+.splittermond .list.spells .weapon-speed,
+.splittermond .list.inventory .weapon-speed,
+.splittermond .list.attack .weapon-speed,
+.splittermond .list.active-defense .weapon-speed,
+.splittermond .list.spells .tick-malus,
+.splittermond .list.inventory .tick-malus,
+.splittermond .list.attack .tick-malus,
+.splittermond .list.active-defense .tick-malus,
+.splittermond .list.spells .defense-bonus,
+.splittermond .list.inventory .defense-bonus,
+.splittermond .list.attack .defense-bonus,
+.splittermond .list.active-defense .defense-bonus,
+.splittermond .list.spells .damage-reduction,
+.splittermond .list.inventory .damage-reduction,
+.splittermond .list.attack .damage-reduction,
+.splittermond .list.active-defense .damage-reduction,
+.splittermond .list.spells .handicap,
+.splittermond .list.inventory .handicap,
+.splittermond .list.attack .handicap,
+.splittermond .list.active-defense .handicap,
+.splittermond .list.spells .range,
+.splittermond .list.inventory .range,
+.splittermond .list.attack .range,
+.splittermond .list.active-defense .range,
+.splittermond .list.spells .value,
+.splittermond .list.inventory .value,
+.splittermond .list.attack .value,
+.splittermond .list.active-defense .value,
+.splittermond .list.spells .difficulty,
+.splittermond .list.inventory .difficulty,
+.splittermond .list.attack .difficulty,
+.splittermond .list.active-defense .difficulty {
+  width: 3em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond .list.spells .damage,
+.splittermond .list.inventory .damage,
+.splittermond .list.attack .damage,
+.splittermond .list.active-defense .damage,
+.splittermond .list.spells .costs,
+.splittermond .list.inventory .costs,
+.splittermond .list.attack .costs,
+.splittermond .list.active-defense .costs,
+.splittermond .list.spells .cast-duration,
+.splittermond .list.inventory .cast-duration,
+.splittermond .list.attack .cast-duration,
+.splittermond .list.active-defense .cast-duration,
+.splittermond .list.spells .effect-duration,
+.splittermond .list.inventory .effect-duration,
+.splittermond .list.attack .effect-duration,
+.splittermond .list.active-defense .effect-duration {
+  width: 6em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond .list.spells .costs,
+.splittermond .list.inventory .costs,
+.splittermond .list.attack .costs,
+.splittermond .list.active-defense .costs {
+  width: 9em;
+}
+.splittermond .list.spells .features,
+.splittermond .list.inventory .features,
+.splittermond .list.attack .features,
+.splittermond .list.active-defense .features {
+  width: 15em;
+  padding-left: 3px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.splittermond .list-attributes .start,
+.splittermond .list-attributes .value,
+.splittermond .list-attributes .max {
+  width: 35px;
+  text-align: center;
+}
+.splittermond .list-attributes .start input,
+.splittermond .list-attributes .max input {
   font-weight: normal;
 }
-.splittermond .bonus-malus .value {
+.splittermond .list-resources .value {
+  width: 35px;
+  text-align: center;
+}
+.splittermond .attributes {
+  display: grid;
+  grid-column: 1 / end;
+  grid-row: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-content: stretch;
+  padding-top: 3px;
+  align-items: center;
+  gap: 0.5em;
+}
+.splittermond .attributes .attribute {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  border-right: 2px groove rgba(255, 255, 255, 0.3);
   font-weight: bold;
+}
+.splittermond .attributes .attribute input {
+  font-size: 18px;
+  max-width: 2em;
+  width: 2em;
+  margin: 0;
+  height: auto;
+  text-align: center;
+}
+.splittermond .attributes .attribute label {
+  width: auto;
+  margin-right: 3px;
+}
+.splittermond .list.skills {
+  max-width: 480px;
+  position: relative;
+}
+.splittermond .list.skills label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.splittermond .list.skills .attribute,
+.splittermond .list.skills .value,
+.splittermond .list.skills input {
+  width: 3em;
+}
+.splittermond .list.skills .attribute {
+  text-align: center;
+  color: rgba(48, 51, 54, 0.5);
+  font-weight: 500;
+}
+.splittermond .list.skills .value,
+.splittermond .list.skills input {
+  text-align: center;
+}
+.splittermond .list.skills,
+.splittermond .list.masteries {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  display: block;
+}
+.splittermond .list.masteries .list-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.splittermond .list.masteries .list-item > * {
+  border: none;
+}
+.splittermond .list.masteries .list-item > label {
+  font-weight: bold;
+}
+.splittermond .list.masteries.tooltip {
+  height: unset;
+}
+.splittermond .taglist {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  list-style-type: none;
+}
+.splittermond .taglist-actions {
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 3px;
+}
+.splittermond li.taglist-item {
+  display: flex;
+  align-items: center;
+  margin-right: 3px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  line-height: 22px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+  position: relative;
+  border-radius: 7px;
+}
+.splittermond li.taglist-item:hover {
+  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
+}
+.splittermond li.taglist-item:hover .taglist-item-actions {
+  opacity: 1;
+}
+.splittermond .taglist-item-name {
+  padding-left: 3px;
+  padding-right: 3px;
+  flex: 1;
+}
+.splittermond .taglist-item-actions {
+  padding-left: 3px;
+  padding-right: 3px;
+  display: inline-block;
+  opacity: 0;
+}
+.splittermond .subnav {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  border-radius: 3px;
+  font-size: 14px;
+  border: 1px inset rgba(255, 255, 255, 0.3);
+  align-self: start;
+  overflow: hidden;
+  margin-bottom: 7px;
+  font-family: 'Vollkorn SC';
+  font-weight: 600;
+  text-transform: lowercase;
+  color: #303336;
+}
+.splittermond .subnav-item {
+  padding: 3px;
+  padding-left: 7px;
+  padding-right: 7px;
+  flex: 1;
+  text-align: center;
+  text-transform: none;
+  border-radius: 0;
+  border: 1px outset rgba(255, 255, 255, 0.3);
+}
+.splittermond .subnav-item.active {
+  background: none;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
+  border: none;
+  top: 0px;
+  border-radius: 0;
 }
 .splittermond .solars,
 .splittermond .lunars,
@@ -456,302 +1143,100 @@
 .splittermond .telars::before {
   background-image: url(../../icons/commodities/currency/coins-assorted-mix-platinum.webp);
 }
-.splittermond ul.checkbox-list {
-  display: block;
-  margin: 0;
-  padding: 0;
-}
-.splittermond ul.checkbox-list li {
-  display: inline;
-  margin: 0;
-  padding: 0;
-}
-.splittermond ul.checkbox-list li input {
-  display: none;
-}
-.splittermond ul.checkbox-list li label {
-  cursor: pointer;
-  display: inline-block;
-  margin-right: 3px;
-  margin-bottom: 3px;
-  margin-top: 3px;
+.splittermond .currency {
+  text-align: center;
   padding: 3px;
-  border-radius: 3px;
-  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
-  white-space: nowrap;
 }
-.splittermond ul.checkbox-list li input ~ label {
-  opacity: 0.7;
+.splittermond .currency .solars::before,
+.splittermond .currency .lunars::before,
+.splittermond .currency .telars::before {
+  width: 1.8em;
+  height: 1.8em;
 }
-.splittermond ul.checkbox-list li input ~ label::before {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: 12px;
-  padding: 2px 6px 2px 2px;
-  content: "\f067";
-}
-.splittermond ul.checkbox-list li input:checked ~ label {
-  opacity: 1;
-}
-.splittermond ul.checkbox-list li input:checked ~ label::before {
-  content: "\f00c";
-}
-.splittermond input[type="text"],
-.splittermond #autoexpanddummy {
-  font-variant-numeric: lining-nums;
-  border: none;
-  background: none;
-  color: #143a66;
-  padding: 3px;
-  padding-bottom: 3px;
-  margin: 0;
-  vertical-align: baseline;
-  display: inline-block;
-  height: 100%;
-  border-radius: 7px;
-  font-weight: bold;
-}
-.splittermond input[type="text"]:disabled,
-.splittermond #autoexpanddummy:disabled {
-  color: #303336;
-}
-.splittermond input[type="text"]:hover,
-.splittermond #autoexpanddummy:hover {
-  text-shadow: 0 0 0.3em white;
-}
-.splittermond input[type="text"]:focus,
-.splittermond #autoexpanddummy:focus {
-  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
-  text-shadow: 0 0 0.3em white;
-}
-.splittermond input[type="text"].autoexpand,
-.splittermond #autoexpanddummy.autoexpand {
-  box-sizing: content-box;
-}
-.splittermond .button-inline {
-  padding: 0px;
-  margin: 0px;
-  background: none;
-  border: none;
-  display: inline-block;
-  width: unset;
-  box-shadow: none;
-  line-height: unset;
-  color: rgba(48, 51, 54, 0.7);
-}
-.splittermond .button-inline:hover {
-  text-shadow: none;
-  color: #303336;
-  box-shadow: none;
-}
-.splittermond .button-inline[disabled] {
-  color: rgba(48, 51, 54, 0.2);
-}
-.splittermond .button-inline[disabled]:hover {
-  text-shadow: none;
-  box-shadow: none;
-  color: rgba(48, 51, 54, 0.2);
-}
-.splittermond .button-inline:active {
-  box-shadow: none;
-}
-.splittermond .list {
-  display: flex;
-  flex-direction: column;
-  border-radius: 3px;
-  border: 1px inset rgba(255, 255, 255, 0.3);
-  margin-bottom: 7px;
-}
-.splittermond .list:hover > .list-header > .actions > button {
-  display: inline-block;
-}
-.splittermond .list .list-header {
-  display: flex;
-  width: 100%;
-  border: 1px outset rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-  align-items: center;
-  padding: 3px;
-  overflow: hidden;
-}
-.splittermond .list .list-header *:not(:first-child) {
-  border-left: 2px groove rgba(255, 255, 255, 0.3);
-  color: rgba(48, 51, 54, 0.7);
-}
-.splittermond .list .list-header > *:first-child {
-  flex: 1;
-}
-.splittermond .list .list-header > .actions {
-  width: 4em;
-  text-align: right;
-}
-.splittermond .list .list-header > .actions button {
-  display: none;
-}
-.splittermond .list > ul,
-.splittermond .list > ol {
-  display: block;
-  flex-basis: 100%;
-  padding: 0;
-  margin: 0;
-  top: 0px;
-  left: 0px;
-  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.2);
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.splittermond .list > ul > li,
-.splittermond .list > ol > li {
-  display: flex;
-  align-items: center;
-  position: relative;
-  padding: 3px;
-  border: 1px solid transparent;
-}
-.splittermond .list > ul > li:nth-child(odd),
-.splittermond .list > ol > li:nth-child(odd),
-.splittermond .list > ul > li.odd,
-.splittermond .list > ol > li.odd {
-  background-color: rgba(48, 51, 54, 0.05);
-}
-.splittermond .list > ul > li.even,
-.splittermond .list > ol > li.even {
-  background-color: unset;
-}
-.splittermond .list > ul > li:hover,
-.splittermond .list > ol > li:hover,
-.splittermond .list > ul > li.hover,
-.splittermond .list > ol > li.hover {
-  background-color: rgba(45, 128, 225, 0.1);
-}
-.splittermond .list > ul > li:hover > .actions > button,
-.splittermond .list > ol > li:hover > .actions > button,
-.splittermond .list > ul > li.hover > .actions > button,
-.splittermond .list > ol > li.hover > .actions > button {
-  display: inline-block;
-}
-.splittermond .list > ul > li input,
-.splittermond .list > ol > li input {
-  margin-top: -3px;
-  margin-bottom: -3px;
-}
-.splittermond .list > ul > li input[type="checkbox"],
-.splittermond .list > ol > li input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  margin-top: 3px;
-}
-.splittermond .list > ul > li > *,
-.splittermond .list > ol > li > * {
-  border-left: 2px groove rgba(255, 255, 255, 0.3);
-}
-.splittermond .list > ul > li > *:first-child,
-.splittermond .list > ol > li > *:first-child {
-  flex: 1;
-  border-left: none;
-}
-.splittermond .list > ul > li > .actions,
-.splittermond .list > ol > li > .actions {
-  width: 4em;
-  text-align: right;
-}
-.splittermond .list > ul > li > .actions button,
-.splittermond .list > ol > li > .actions button {
-  display: none;
-}
-.splittermond ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-.splittermond ::-webkit-scrollbar-thumb {
-  outline: none;
-  border-radius: 3px;
-  background: rgba(20, 58, 102, 0.5);
-  border: 1px outset rgba(255, 255, 255, 0.3);
-}
-.splittermond ::-webkit-scrollbar-track {
-  border-radius: 4px;
-  background-color: transparent;
-  box-shadow: none;
-  margin-bottom: 14px;
-  border: none;
-}
-.splittermond.dialog form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 7px;
-  padding: 7px;
-  align-items: center;
-}
-.splittermond.dialog form label {
-  text-align: right;
-}
-.splittermond.dialog.selection .dialog-buttons {
-  grid-template-columns: 1fr;
-}
-.taglist {
+.splittermond .status-actions {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  margin: 0;
-  padding: 0;
+}
+.splittermond .editor {
   flex: 1;
+  justify-self: stretch;
+  align-self: stretch;
+  height: 100%;
+  min-height: 100px;
 }
-.taglist li {
-  display: flex;
-  align-items: center;
-  margin-right: 3px;
-  margin-top: 3px;
-  margin-bottom: 3px;
-  line-height: 22px;
-  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
-  position: relative;
-  border-radius: 7px;
-}
-.taglist li .name {
-  padding-left: 3px;
-  padding-right: 3px;
-  flex: 1;
-}
-.taglist li .actions {
-  padding-left: 3px;
-  padding-right: 3px;
-  display: inline-block;
-  opacity: 0;
-}
-.taglist li .tooltip {
-  width: 20em;
-}
-.taglist li:hover {
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
-}
-.taglist li:hover .actions {
-  opacity: 1;
-}
-.taglist li.actions {
-  box-shadow: none;
-  padding: 0;
-  margin: 0;
-  margin-left: 3px;
-}
-.dialog .dialog-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
-  grid-gap: 7px;
+.splittermond .item-type {
+  font-family: "Vollkorn SC";
+  font-weight: bold;
+  text-transform: lowercase;
   padding: 3px;
 }
-#combat #combat-controls [data-control="previousRound"] {
-  display: none;
+.splittermond .properties-editor {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3px;
+  padding: 7px;
+  align-items: baseline;
+  width: 100%;
+  min-height: 100px;
+  justify-self: start;
+  align-self: start;
 }
-#combat #combat-controls [data-control="nextRound"] {
-  display: none;
+.splittermond .properties-editor h3 {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+.splittermond .properties-editor > label {
+  font-weight: 600;
+  text-align: right;
+  justify-items: start;
+  border-right: 2px groove rgba(255, 255, 255, 0.3);
+  padding-right: 7px;
+}
+.splittermond .filter {
+  align-content: center;
+}
+.splittermond .filter .row {
+  align-items: center;
+}
+.splittermond.compendium-browser .list {
+  align-items: stretch;
+}
+.splittermond.compendium-browser .list label {
+  font-weight: bold;
+}
+.splittermond.compendium-browser .list .level {
+  width: 80px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .list .skill {
+  width: 100px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .list .damage {
+  width: 60px;
+  text-align: center;
+  height: 100%;
+}
+.splittermond.compendium-browser .list .features {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .list .compendium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px;
+  width: 160px;
+}
+.splittermond.compendium-browser .list .compendium .id {
+  font-family: "Signika";
+  font-size: 10px;
+}
+.splittermond.compendium-browser .list .taglist li {
+  font-family: "Signika";
+  font-size: 10px;
 }
 .splittermond.check,
 .splittermond.damage {
@@ -759,6 +1244,7 @@
 }
 .splittermond.check header,
 .splittermond.damage header {
+  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -853,685 +1339,82 @@
   background-color: #143a66;
   color: white;
 }
-.splittermond.sheet .window-content {
-  overflow-y: hidden;
+.splittermond.wizard.species .window-content .properties-editor {
+  padding-bottom: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
-.splittermond.sheet .window-content form {
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.splittermond.sheet .window-content form header {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 6px;
-}
-.splittermond.sheet .window-content form header h1 {
-  margin: 6px;
-  line-height: 1.2;
-}
-.splittermond.sheet .window-content form main {
-  overflow: hidden auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.3);
-  position: relative;
-}
-.splittermond.sheet.item .window-content header > div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-.splittermond.sheet.item .window-content header h1 {
-  margin-top: 0px;
-  width: 100%;
-}
-.splittermond.sheet.item .window-content header .type {
-  font-family: "Vollkorn SC";
-  font-weight: bold;
-  margin-left: 10px;
-  text-transform: lowercase;
-}
-.splittermond.sheet.item .window-content main {
-  overflow: hidden;
-  min-height: 100px;
-}
-.splittermond.sheet.item .window-content main .tab {
-  overflow-y: auto;
-}
-.splittermond.sheet.item .window-content main .properties.active {
+.splittermond.wizard.species .window-content .properties-editor div {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 3px;
-  padding: 7px;
+  grid-template-columns: 2em 2em 2em;
+  gap: 0.2em;
   align-items: baseline;
 }
-.splittermond.sheet.item .window-content main .properties.active label {
-  font-weight: 600;
-  text-align: right;
-  justify-items: start;
-  border-right: 2px groove rgba(255, 255, 255, 0.3);
-  padding-right: 7px;
-}
-.splittermond.sheet.item .window-content main .properties.active input[type="checkbox"] {
-  align-self: center;
-}
-.splittermond.sheet.item .window-content main .properties.active h3 {
-  grid-column-start: 1;
-  grid-column-end: 3;
-}
-.splittermond.sheet.item .window-content main .description {
-  flex: 1;
-  justify-self: stretch;
-  align-self: stretch;
-  padding: 7px;
-}
-.splittermond.sheet.item .window-content main .description .editor {
-  flex: 1;
-  justify-self: stretch;
-  align-self: stretch;
-}
-.splittermond.sheet.actor .window-content header {
-  flex-direction: column;
-  align-items: stretch;
-}
-.splittermond.sheet.actor .window-content header img {
-  max-width: unset;
-  max-height: unset;
-}
-.splittermond.sheet.actor .window-content header section {
-  display: flex;
-}
-.splittermond.sheet.actor .window-content header .moonsign {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 180px;
-  position: relative;
-}
-.splittermond.sheet.actor .window-content header .moonsign .tooltip {
-  right: 160px;
-  top: unset;
-  width: 300px;
-  left: unset;
-  flex-direction: column;
-  z-index: 1000;
-}
-.splittermond.sheet.actor .window-content header .moonsign label {
+.splittermond.wizard.species .window-content .properties-editor div .value {
   text-align: center;
-  text-shadow: 0 0 5px white;
-  font-weight: bold;
 }
-.splittermond.sheet.actor .window-content header .moonsign img {
-  width: 48px;
-  height: 48px;
-  filter: drop-shadow(0 0 5px white) opacity(0.3);
-}
-.splittermond.sheet.actor .window-content header .splinterpoints {
+.splittermond.wizard.species .window-content footer {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: absolute;
-  z-index: 10;
-  top: 10px;
-  font-size: 24px;
-  color: white;
-  text-shadow: 0 0 3px black;
 }
-.splittermond.sheet.actor .window-content header .splinterpoints input {
-  width: 30px;
-  text-align: right;
-  color: white;
-  text-shadow: 0 0 3px black;
-}
-.splittermond.sheet.actor .window-content header .splinterpoints input:disabled {
-  color: white;
-}
-.splittermond.sheet.actor .window-content header .splinterpoints input:hover {
-  text-shadow: 0 0 5px black;
-}
-.splittermond.sheet.actor .window-content header .splinterpoints input:focus {
-  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
-  text-shadow: 0 0 5px black;
-}
-.splittermond.sheet.actor .window-content header .splinterpoints input.autoexpand {
-  box-sizing: content-box;
-}
-.splittermond.sheet.actor .window-content header .splinterpoints span {
+.splittermond ul.checkbox-list {
   display: block;
-  width: 40px;
-}
-.splittermond.sheet.actor .window-content header .details {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-  width: 100%;
-  flex-grow: 1;
-}
-.splittermond.sheet.actor .window-content header .details h1 {
   margin: 0;
+  padding: 0;
 }
-.splittermond.sheet.actor .window-content header .details h1 input {
-  width: 100%;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-  padding-bottom: none;
-  height: 1.4em;
+.splittermond ul.checkbox-list li {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
-.splittermond.sheet.actor .window-content header .details > * {
-  width: 100%;
+.splittermond ul.checkbox-list li input {
+  display: none;
 }
-.splittermond.sheet.actor .window-content header .details .experience {
-  display: flex;
-  flex-wrap: wrap;
-}
-.splittermond.sheet.actor .window-content header .details .experience .bar {
-  flex-basis: 100%;
-}
-.splittermond.sheet.actor .window-content header .details .experience .label {
-  flex-grow: 1;
-}
-.splittermond.sheet.actor .window-content header .details .experience .value {
-  text-align: right;
-  flex-grow: 1;
-  margin-top: -3px;
-}
-.splittermond.sheet.actor .window-content header .details .description {
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-.splittermond.sheet.actor .window-content header .focus-health {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding-left: 7px;
-  padding-right: 7px;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus,
-.splittermond.sheet.actor .window-content header .focus-health .health {
-  position: relative;
-  margin-bottom: 14px;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline {
-  display: flex;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline > label,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline > label {
+.splittermond ul.checkbox-list li label {
+  cursor: pointer;
   display: inline-block;
-  font-weight: 900;
-  align-self: center;
-  flex: 1;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data {
-  display: grid;
-  grid-template-columns: 25px 25px;
-  gap: 3px;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data label,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data label {
-  text-align: right;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data .value,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data .value {
-  text-align: center;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .headline > .data input,
-.splittermond.sheet.actor .window-content header .focus-health .health .headline > .data input {
-  margin: -3px;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value {
-  position: relative;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .value,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .value {
-  font-family: "Signika";
-  font-size: 14px;
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  border-radius: 10px;
-  text-align: center;
-  top: -5px;
-  vertical-align: middle;
-  line-height: 20px;
-  margin-left: -12px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  color: white;
-  left: 12.5%;
-  z-index: 2;
-  background-color: #2D80E1;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .bar,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .bar {
-  grid-column-start: 1;
-  grid-column-end: end;
-  position: relative;
-  height: 10px;
-  box-shadow: 0 0 10px inset rgba(0, 0, 0, 0.5);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.splittermond.sheet.actor .window-content header .focus-health .focus .bar-with-value > .bar div,
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value > .bar div {
-  box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.3);
-}
-.splittermond.sheet.actor .window-content header .focus-health .health {
-  margin-bottom: 0;
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .value {
-  background-color: #892100;
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar div {
-  background-color: #892100;
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar .channeled {
-  background: repeating-linear-gradient(45deg, rgba(137, 33, 0, 0.3), rgba(137, 33, 0, 0.3) 5px, #892100 5px, #892100 10px);
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .bar-with-value .bar .exhausted {
-  background: rgba(137, 33, 0, 0.3);
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus {
-  position: relative;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: stretch;
-  width: 100%;
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level {
-  border-right: 2px groove rgba(255, 255, 255, 0.5);
-  padding-top: 12px;
-  position: relative;
-  top: -10px;
-  text-align: center;
-  flex: 1;
-}
-.splittermond.sheet.actor .window-content header .focus-health .health .wound-malus .level:first-child {
-  border-right: none;
-}
-.splittermond.sheet.actor .window-content .currency {
-  text-align: center;
-  padding: 3px;
-}
-.splittermond.sheet.actor .window-content .currency .solars::before,
-.splittermond.sheet.actor .window-content .currency .lunars::before,
-.splittermond.sheet.actor .window-content .currency .telars::before {
-  width: 1.8em;
-  height: 1.8em;
-}
-.splittermond.sheet.actor .window-content .attributes {
-  display: grid;
-  grid-template-columns: repeat(4, 3em);
-  gap: 0.5em;
-}
-.splittermond.sheet.actor .window-content .damage-reduction,
-.splittermond.sheet.actor .window-content .attributes .attribute {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.splittermond.sheet.actor .window-content .damage-reduction label,
-.splittermond.sheet.actor .window-content .attributes .attribute label {
-  font-weight: 900;
-}
-.splittermond.sheet.actor .window-content .damage-reduction span,
-.splittermond.sheet.actor .window-content .attributes .attribute span,
-.splittermond.sheet.actor .window-content .damage-reduction input,
-.splittermond.sheet.actor .window-content .attributes .attribute input {
-  font-weight: 700;
-  font-size: 18px;
-  height: auto;
-}
-.splittermond.sheet.actor .window-content .damage-reduction input,
-.splittermond.sheet.actor .window-content .attributes .attribute input {
-  margin: -3px;
-}
-.splittermond.sheet.actor .window-content .damage-reduction > *,
-.splittermond.sheet.actor .window-content .attributes .attribute > * {
-  width: 100%;
-  text-align: center;
-}
-.splittermond.sheet.actor .window-content header .damage-reduction {
-  background-image: url(../../icons/svg/shield.svg);
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  justify-content: center;
-  width: 60px;
-  margin: 3px;
-  padding: 3px;
-  border-right: 2px groove rgba(255, 255, 255, 0.3);
-  border-left: 2px groove rgba(255, 255, 255, 0.3);
-}
-.splittermond.sheet.actor .window-content main {
-  overflow: hidden;
-}
-.splittermond.sheet.actor .window-content main .tab {
-  flex: 1;
-  overflow-y: auto;
-}
-.splittermond.sheet.actor .window-content main .tab .tab {
-  overflow: unset;
-}
-.splittermond.sheet.actor .window-content main section .attributes {
-  grid-column: 1 / end;
-  grid-row: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-content: stretch;
-  padding-top: 3px;
-}
-.splittermond.sheet.actor .window-content main section .attributes .attribute {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex: 1;
-  border-right: 2px groove rgba(255, 255, 255, 0.3);
-}
-.splittermond.sheet.actor .window-content main section .attributes .attribute label {
-  width: auto;
   margin-right: 3px;
-}
-.splittermond.sheet.actor .window-content main section .attributes .attribute input {
-  max-width: 2em;
-  width: 2em;
-  margin: 0;
-}
-.splittermond.sheet.actor .window-content main section .attributes .attribute:last-child {
-  border-right: 2px transparent;
-}
-.splittermond.sheet.actor .window-content main section.general {
-  z-index: 0;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  align-items: start;
-  align-content: start;
-  grid-gap: 6px;
-  /*
-        > div {
-            display: flex;
-            align-items: center;
-            flex-flow: row wrap;
-
-            
-        }
-        */
-}
-.splittermond.sheet.actor .window-content main section.general.active {
-  display: grid;
-}
-.splittermond.sheet.actor .window-content main section.general .name {
-  text-align: left;
-}
-.splittermond.sheet.actor .window-content main section.general input {
-  width: 2em;
-  text-align: center;
-}
-.splittermond.sheet.actor .window-content main section.general .list .start,
-.splittermond.sheet.actor .window-content main section.general .list .value,
-.splittermond.sheet.actor .window-content main section.general .list .max {
-  width: 35px;
-  text-align: center;
-}
-.splittermond.sheet.actor .window-content main section.general .list .start input,
-.splittermond.sheet.actor .window-content main section.general .list .max input {
-  font-weight: normal;
-}
-.splittermond.sheet.actor .window-content main section.active {
-  display: grid;
-  gap: 3px;
-  align-items: start;
-}
-.splittermond.sheet.actor .window-content .list ol.mastery-list > li {
-  flex-direction: column;
-  align-items: flex-start;
-}
-.splittermond.sheet.actor .window-content .list ol.mastery-list > li > * {
-  border: none;
-}
-.splittermond.sheet.actor .window-content .list ol.mastery-list > li > label {
-  font-weight: bold;
-}
-.splittermond.sheet.actor .window-content main section.skills.active {
-  grid-template-columns: repeat(2, 1fr);
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list {
-  max-width: 480px;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list .list-header {
-  position: sticky;
-  top: 0;
-  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
-  z-index: 10;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list label {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 3px;
+  margin-top: 3px;
+  padding: 3px;
+  border-radius: 3px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3), 0 0px 3px inset white;
   white-space: nowrap;
 }
-.splittermond.sheet.actor .window-content main section.skills.active .list .attribute,
-.splittermond.sheet.actor .window-content main section.skills.active .list .value,
-.splittermond.sheet.actor .window-content main section.skills.active .list input {
-  width: 3em;
+.splittermond ul.checkbox-list li input ~ label {
+  opacity: 0.7;
 }
-.splittermond.sheet.actor .window-content main section.skills.active .list .attribute {
-  text-align: center;
-  color: rgba(48, 51, 54, 0.5);
-  font-weight: 500;
-}
-.splittermond.sheet.actor .window-content main section.skills.active .list .value,
-.splittermond.sheet.actor .window-content main section.skills.active .list input {
-  text-align: center;
-}
-.splittermond.sheet.actor .window-content .list.inventory img,
-.splittermond.sheet.actor .window-content .list.attack img,
-.splittermond.sheet.actor .window-content .list.active-defense img,
-.splittermond.sheet.actor .window-content .list.spells img {
-  width: 32;
-  height: 32;
-  flex: none;
-  margin: -3px;
-}
-.splittermond.sheet.actor .window-content .list.inventory .list,
-.splittermond.sheet.actor .window-content .list.attack .list,
-.splittermond.sheet.actor .window-content .list.active-defense .list,
-.splittermond.sheet.actor .window-content .list.spells .list {
-  margin-bottom: 7px;
-}
-.splittermond.sheet.actor .window-content .list.inventory label,
-.splittermond.sheet.actor .window-content .list.attack label,
-.splittermond.sheet.actor .window-content .list.active-defense label,
-.splittermond.sheet.actor .window-content .list.spells label {
-  flex: 1;
-  padding-left: 7px;
-  border-left: none;
-}
-.splittermond.sheet.actor .window-content .list.inventory .qty,
-.splittermond.sheet.actor .window-content .list.attack .qty,
-.splittermond.sheet.actor .window-content .list.active-defense .qty,
-.splittermond.sheet.actor .window-content .list.spells .qty,
-.splittermond.sheet.actor .window-content .list.inventory .load,
-.splittermond.sheet.actor .window-content .list.attack .load,
-.splittermond.sheet.actor .window-content .list.active-defense .load,
-.splittermond.sheet.actor .window-content .list.spells .load,
-.splittermond.sheet.actor .window-content .list.inventory .weapon-speed,
-.splittermond.sheet.actor .window-content .list.attack .weapon-speed,
-.splittermond.sheet.actor .window-content .list.active-defense .weapon-speed,
-.splittermond.sheet.actor .window-content .list.spells .weapon-speed,
-.splittermond.sheet.actor .window-content .list.inventory .tick-malus,
-.splittermond.sheet.actor .window-content .list.attack .tick-malus,
-.splittermond.sheet.actor .window-content .list.active-defense .tick-malus,
-.splittermond.sheet.actor .window-content .list.spells .tick-malus,
-.splittermond.sheet.actor .window-content .list.inventory .defense-bonus,
-.splittermond.sheet.actor .window-content .list.attack .defense-bonus,
-.splittermond.sheet.actor .window-content .list.active-defense .defense-bonus,
-.splittermond.sheet.actor .window-content .list.spells .defense-bonus,
-.splittermond.sheet.actor .window-content .list.inventory .damage-reduction,
-.splittermond.sheet.actor .window-content .list.attack .damage-reduction,
-.splittermond.sheet.actor .window-content .list.active-defense .damage-reduction,
-.splittermond.sheet.actor .window-content .list.spells .damage-reduction,
-.splittermond.sheet.actor .window-content .list.inventory .handicap,
-.splittermond.sheet.actor .window-content .list.attack .handicap,
-.splittermond.sheet.actor .window-content .list.active-defense .handicap,
-.splittermond.sheet.actor .window-content .list.spells .handicap,
-.splittermond.sheet.actor .window-content .list.inventory .range,
-.splittermond.sheet.actor .window-content .list.attack .range,
-.splittermond.sheet.actor .window-content .list.active-defense .range,
-.splittermond.sheet.actor .window-content .list.spells .range,
-.splittermond.sheet.actor .window-content .list.inventory .value,
-.splittermond.sheet.actor .window-content .list.attack .value,
-.splittermond.sheet.actor .window-content .list.active-defense .value,
-.splittermond.sheet.actor .window-content .list.spells .value,
-.splittermond.sheet.actor .window-content .list.inventory .difficulty,
-.splittermond.sheet.actor .window-content .list.attack .difficulty,
-.splittermond.sheet.actor .window-content .list.active-defense .difficulty,
-.splittermond.sheet.actor .window-content .list.spells .difficulty {
-  width: 3em;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.splittermond.sheet.actor .window-content .list.inventory .damage,
-.splittermond.sheet.actor .window-content .list.attack .damage,
-.splittermond.sheet.actor .window-content .list.active-defense .damage,
-.splittermond.sheet.actor .window-content .list.spells .damage,
-.splittermond.sheet.actor .window-content .list.inventory .costs,
-.splittermond.sheet.actor .window-content .list.attack .costs,
-.splittermond.sheet.actor .window-content .list.active-defense .costs,
-.splittermond.sheet.actor .window-content .list.spells .costs,
-.splittermond.sheet.actor .window-content .list.inventory .cast-duration,
-.splittermond.sheet.actor .window-content .list.attack .cast-duration,
-.splittermond.sheet.actor .window-content .list.active-defense .cast-duration,
-.splittermond.sheet.actor .window-content .list.spells .cast-duration,
-.splittermond.sheet.actor .window-content .list.inventory .effect-duration,
-.splittermond.sheet.actor .window-content .list.attack .effect-duration,
-.splittermond.sheet.actor .window-content .list.active-defense .effect-duration,
-.splittermond.sheet.actor .window-content .list.spells .effect-duration {
-  width: 6em;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.splittermond.sheet.actor .window-content .list.inventory .costs,
-.splittermond.sheet.actor .window-content .list.attack .costs,
-.splittermond.sheet.actor .window-content .list.active-defense .costs,
-.splittermond.sheet.actor .window-content .list.spells .costs {
-  width: 9em;
-}
-.splittermond.sheet.actor .window-content .list.inventory .features,
-.splittermond.sheet.actor .window-content .list.attack .features,
-.splittermond.sheet.actor .window-content .list.active-defense .features,
-.splittermond.sheet.actor .window-content .list.spells .features {
-  width: 15em;
-  padding-left: 3px;
-  text-align: left;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.splittermond ul.checkbox-list li input ~ label::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
   font-size: 12px;
+  padding: 2px 6px 2px 2px;
+  content: "\f067";
 }
-.splittermond.sheet.actor .window-content .status .damage {
-  grid-column-start: 1;
-  grid-column-end: end;
-  display: flex;
-  flex-direction: column;
-}
-.splittermond.sheet.actor .window-content .status .damage .general-damage {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 7px;
-}
-.splittermond.sheet.actor .window-content .status .damage .general-damage label {
-  flex: 0;
-  white-space: nowrap;
-  padding-right: 3px;
-  padding-left: 7px;
-}
-.splittermond.sheet.actor .window-content .status .damage .general-damage .value {
-  justify-self: center;
-  width: 40px;
-  border-right: 2px groove rgba(255, 255, 255, 0.3);
-  overflow: visible;
-}
-.splittermond.sheet.actor .window-content .status .damage .general-damage input {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  min-width: 40px;
-}
-.splittermond.sheet.actor .window-content .spells .focus-management {
-  margin-bottom: 7px;
-}
-.splittermond.sheet.actor .window-content .spells .focus-management .focus {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-.splittermond.sheet.actor .window-content .spells .focus-management .focus label {
-  flex: 0;
-  white-space: nowrap;
-  padding-right: 3px;
-}
-.splittermond.sheet.actor .window-content .spells .focus-management .focus .value {
-  justify-self: center;
-  width: 40px;
-  border-right: 2px groove rgba(255, 255, 255, 0.3);
-  overflow: visible;
-}
-.splittermond.sheet.actor .window-content .spells .focus-management .focus input {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  min-width: 40px;
-}
-.splittermond.sheet.actor .window-content .spells .available {
+.splittermond ul.checkbox-list li input:checked ~ label {
   opacity: 1;
 }
-.splittermond.sheet.actor .window-content .spells .not-available {
-  opacity: 0.5;
+.splittermond ul.checkbox-list li input:checked ~ label::before {
+  content: "\f00c";
 }
-.splittermond.sheet.actor .window-content .bar {
-  width: 100%;
-  height: 5px;
-  background-color: rgba(48, 51, 54, 0.3);
-  display: flex;
+.splittermond .dialog-buttons > button {
+  margin-right: 0;
+  margin-top: 0;
 }
-.splittermond.sheet.actor .window-content .bar div {
-  width: 0%;
-  height: 100%;
-  background-color: #2D80E1;
+.splittermond .dialog-buttons > button:last-child {
+  margin-right: 3px;
 }
-.splittermond.sheet.actor .window-content .bar .channeled {
-  background: repeating-linear-gradient(45deg, rgba(45, 128, 225, 0.3), rgba(45, 128, 225, 0.3) 5px, #2D80E1 5px, #2D80E1 10px);
+.splittermond.dialog-check input[name="difficulty"] {
+  font-size: 24px;
+  width: 2.5em;
+  text-align: center;
 }
-.splittermond.sheet.actor .window-content .bar .exhausted {
-  background: rgba(45, 128, 225, 0.3);
-}
-.splittermond.sheet.actor .window-content .editor {
-  flex: 1;
-  justify-self: stretch;
-  align-self: stretch;
-}
-.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills {
-  overflow-y: hidden;
-  position: relative;
-  height: 100%;
-}
-.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills .list.skills,
-.splittermond.sheet.actor:not(.npc) .window-content main .tab.skills .list.masteries {
-  position: relative;
-  height: 100%;
-  overflow-y: auto;
-  display: block;
-}
-.splittermond.sheet.actor.npc .window-content main .tab.general.active {
-  grid-template-columns: 200px 1fr;
+.splittermond.dialog-check input[name="modifier"] {
+  width: 2.5em;
+  text-align: center;
 }
 .app.window-app.journal-sheet:not(.dark) {
   background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background_journal.jpg);
@@ -1727,6 +1610,9 @@
   max-width: 500px;
   border-radius: 3px;
 }
+.app.window-app.journal-sheet:not(.dark) img {
+  border: none;
+}
 .app.window-app.journal-sheet:not(.dark) table {
   margin: 0 auto;
   border: none;
@@ -1789,102 +1675,4 @@
 }
 .app.window-app.journal-sheet:not(.dark) table td:last-child {
   padding-right: 7px;
-}
-.splittermond.wizard.species .window-content header {
-  padding-top: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
-}
-.splittermond.wizard.species .window-content main {
-  padding-bottom: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
-}
-.splittermond.wizard.species .window-content main .attribute {
-  display: grid;
-  grid-template-columns: 1fr 2em 2em 2em;
-  gap: 0.2em;
-  align-items: baseline;
-}
-.splittermond.wizard.species .window-content main .attribute .value {
-  text-align: center;
-}
-.splittermond.wizard.species .window-content footer {
-  display: flex;
-}
-.splittermond.compendium-browser .window-content {
-  overflow: hidden;
-}
-.splittermond.compendium-browser .window-content form {
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.splittermond.compendium-browser .window-content form main {
-  overflow: hidden;
-  min-height: 100px;
-  flex: 1;
-}
-.splittermond.compendium-browser .window-content form main .tab {
-  height: 100%;
-}
-.splittermond.compendium-browser .window-content form main .tab .filter {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  margin: 3px;
-}
-.splittermond.compendium-browser .window-content form main .tab .filter > div {
-  display: flex;
-  align-items: center;
-}
-.splittermond.compendium-browser .window-content form main .tab .filter > div > * {
-  margin-right: 3px;
-}
-.splittermond.compendium-browser .window-content form main .tab .filter > div > *:last-child {
-  margin-right: 0;
-}
-.splittermond.compendium-browser .window-content form main .tab .list {
-  overflow-y: auto;
-  align-items: stretch;
-}
-.splittermond.compendium-browser .window-content form main .tab .list label {
-  font-weight: bold;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .level {
-  width: 80px;
-  text-align: center;
-  height: 100%;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .skill {
-  width: 100px;
-  text-align: center;
-  height: 100%;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .damage {
-  width: 60px;
-  text-align: center;
-  height: 100%;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .features {
-  font-family: "Signika";
-  font-size: 10px;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .compendium {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 3px;
-  width: 160px;
-}
-.splittermond.compendium-browser .window-content form main .tab .list .compendium .id {
-  font-family: "Signika";
-  font-size: 10px;
-}
-.splittermond.compendium-browser .window-content form main .tab .taglist li {
-  padding-left: 3px;
-  padding-right: 3px;
-  font-family: "Signika";
-  font-size: 10px;
 }

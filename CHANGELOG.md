@@ -1,5 +1,12 @@
+## 0.3.4 ##
+2021-06-16
+
+* added: +/--Schaltflächen für Splitterpunkte, Schaden sowie Schwierigkeit und Modifikator im Probendialog
+* added: Icons in der Zauberliste
+* changed: Überarbeitung der CSS-Organisation
+
 ## 0.3.3 ##
-2021-06-09
+2021-06-11
 
 * added: Der Wurfmodus (Sichtbarkeit des Wurfes) kann im Wurfdialog direkt angegeben werden
 * added: Der maximale Bonus aus Ausrüstung und Zauber kann per Modifikator (z.B. `bonusCap +1`) verändert werden (Issue #40)
