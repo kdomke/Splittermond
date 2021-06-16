@@ -1,28 +1,40 @@
 <form>
-    <label>{{localize "splittermond.difficulty"}}</label>
-    <input name="difficulty" value="{{difficulty}}">
-
-    <label>{{localize "splittermond.modifier"}}</label>
-    <input name="modifier" value="{{modifier}}" data-dtype="Number">
-    {{#if emphasis}}
-    <label></label>
-    <ul class="checkbox-list">
-        {{#each emphasis}}
-        <li>
-            <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}"
-                value="{{this.value}}" {{#if this.active}}checked{{/if}}><label
-                for="emphasis_{{@index}}">{{this.label}}</label>
-        </li>
-        {{/each}}
-    </ul>
-    {{/if}}
-    <label>{{localize "splittermond.rollMode"}}</label>
-    <select name="rollMode">
-        {{#select rollMode}}
-        {{#each rollModes as |name rt|}}
-        <option value="{{rt}}">{{localize name}}</option>
-        {{/each}}
-        {{/select}}
-    </select>
-
+    <div class="properties-editor">
+        <label>{{localize "splittermond.difficulty"}}</label>
+        <div class="row">
+            <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='difficulty']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+            <input name="difficulty" value="{{difficulty}}" type="text">
+            <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='difficulty']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>
+        <label>{{localize "splittermond.modifier"}}</label>
+        <div class="row">
+            <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='modifier']">
+                <i class="fa fa-minus" aria-hidden="true"></i></button>
+            <input name="modifier" value="{{modifier}}" type="number">
+            <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='modifier']">
+                    <i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        {{#if emphasis}}
+        <label></label>
+        <ul class="checkbox-list">
+            {{#each emphasis}}
+            <li>
+                <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}"
+                    value="{{this.value}}" {{#if this.active}}checked{{/if}}><label
+                    for="emphasis_{{@index}}">{{this.label}}</label>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+        <label>{{localize "splittermond.rollMode"}}</label>
+        <select name="rollMode">
+            {{#select rollMode}}
+            {{#each rollModes as |name rt|}}
+            <option value="{{rt}}">{{localize name}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+    </div>
 </form>

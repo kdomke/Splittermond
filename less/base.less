@@ -1,0 +1,226 @@
+@import './variables.less';
+
+.splittermond {
+
+    color: @textColor;
+
+    &.window-app {
+        background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background7.jpg);
+        background-size: auto;
+        background-repeat: repeat, no-repeat;
+        background-position: top right;
+        background-blend-mode: multiply;
+        color: black;
+        box-shadow: 0 0 5px inset rgba(255, 255, 255, 0.3), 0 0 20px #000;
+    }
+
+    .window-header,
+    &.window-app.minimized .window-header {
+        color: black;
+        border: none;
+        text-shadow: 0 0 10px white;
+    }
+
+    .window-header::after {
+        display: block;
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 60px;
+        left: 50%;
+        top: -32px;
+        margin-left: -100px;
+        background: url(../../systems/splittermond/images/splittermond-logo.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center top;
+        filter: drop-shadow(0 0 5px lighten(@highlightTextColor, 20%));
+    }
+
+    &.window-app.minimized .window-header::after {
+        width: 100px;
+        margin-left: -50px;
+        height: 30px;
+        top: -16px;
+    }
+
+    .window-title {
+        color: black;
+    }
+
+
+    .window-content {
+        font-size: @fontSizeNormal;
+        color: @textColor;
+        font-family: 'Vollkorn';
+        font-variant-numeric: lining-nums;
+        position: relative;
+        //padding: 16px;
+        padding: 0em;
+        z-index: 0;
+        background: unset;
+    }
+
+    .window-resizable-handle {
+        z-index: 0;
+        background-color: transparent;
+        border: none;
+        color: @textColor;
+
+    }
+
+    img {
+        border: none;
+    }
+
+    input[type="checkbox"] {
+        width: @fontSizeNormal;
+        height: @fontSizeNormal;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    #autoexpanddummy {
+        font-family: 'Vollkorn';
+        font-variant-numeric: lining-nums;
+        border: none;
+        background: none;
+        color: @activeTextColor;
+
+        height: unset;
+        padding: @paddingSmall;
+        padding-bottom: @paddingSmall;
+        margin: 0;
+
+        border-radius: @paddingSmall;
+
+        vertical-align: baseline;
+
+        display: inline-block;
+        //border-bottom: solid 1px fade(@textColor, 30%);
+
+        font-weight: bold;
+
+        &:disabled {
+            color: @textColor;
+        }
+
+        &:hover {
+            //background-color: rgba(255,255,255,0.25);
+            text-shadow: 0 0 0.3em white;
+            box-shadow: 0px 0px @paddingSmall rgba(0, 0, 0, 0.25);
+        }
+
+        &:focus {
+            //box-shadow: 0px 0px @paddingSmall inset rgba(0,0,0,0.5);
+            box-shadow: 0px 0px @paddingSmall rgba(0, 0, 0, 0.5);
+
+            //background-color: rgba(0,0,0,0.1);
+            text-shadow: 0 0 0.3em white;
+        }
+
+        &.autoexpand {
+            box-sizing: content-box;
+        }
+    }
+
+    a {
+
+        &:hover,
+        &:active {
+            text-shadow: 0 0 8px @highlightTextColor;
+        }
+    }
+
+    
+
+    button,
+    button.dialog-button,
+    select {
+        background: none;
+        border: 2px groove rgba(255, 255, 255, 0.3);
+        box-shadow: none;
+        border-radius: @paddingSmall;
+        font-family: "Vollkorn";
+        text-shadow: 0 0 @paddingSmall white;
+        margin: 3px;
+        font-size:inherit;
+        color:inherit;
+    }
+
+    select {
+        font-weight: 900;
+    }
+
+    button:hover,
+    button.dialog-button:hover,
+    button:focus,
+    button.dialog-button:focus,
+    button.dialog-button.default,
+    select:hover,
+    select:focus {
+        box-shadow: 0 0 @paddingLarge inset white;
+        text-shadow: 0 0 8px @highlightTextColor;
+        border: 2px groove rgba(255, 255, 255, 0.3);
+    }
+
+    button:active,
+    select:active {
+        box-shadow: 0 0 @paddingLarge inset rgba(0, 0, 0, 0.2);
+        border: 2px inset rgba(255, 255, 255, 0.3);
+    }
+
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+        font-weight: bold;
+        padding: 0;
+        margin: 0;
+        border: none;
+    }
+
+    h1 {
+        font-family: 'Vollkorn SC';
+        font-size: @fontSizeLarger;
+    }
+
+    h2 {
+        font-family: 'Vollkorn SC';
+        font-size: @fontSizeLarge;
+    }
+
+    h3 {
+        font-family: 'Vollkorn SC';
+        font-size: @fontSizeNormal;
+    }
+
+    h4 {
+        font-family: 'Vollkorn';
+        font-size: @fontSizeNormal;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        outline: none;
+        border-radius: 3px;
+        background: fade(@activeTextColor, 50%);
+        border: 1px outset rgba(255, 255, 255, 0.3);
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 4px;
+        background-color: transparent;
+
+        box-shadow: none; 
+        margin-bottom: 14px;
+        border: none;
+    }
+}
+

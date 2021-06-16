@@ -1,21 +1,34 @@
-<div class="focus-health"
-    title="{{localize 'splittermond.available'}}: {{focus.available.value}} | {{localize 'splittermond.channeled'}}: {{focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
-    <div class="focus">
-        <div class="headline">
+<div class="column stretch flex-gap-large">
+    <div class="column" title="{{localize 'splittermond.available'}}: {{focus.available.value}} | {{localize 'splittermond.channeled'}}: {{focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
+        <div class="health-focus-headline">
             <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
-            <div class="data" title="{{localize 'splittermond.channeled'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.channeled'}}">
                 <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
-                <div class="value">{{focus.channeled.value}}</div>
+                <div class="value"><span>{{focus.channeled.value}}</span></div>
             </div>
-            <div class="data" title="{{localize 'splittermond.exhausted'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.exhausted'}}">
                 <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
-                <div class="value"><input class="value" name="data.focus.exhausted.value" type="text"
-                        value="{{focus.exhausted.value}}" data-dtype="Number"></div>
+                
+                <div class="value">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.focus.exhausted.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <input name="data.focus.exhausted.value" type="text"
+                        value="{{focus.exhausted.value}}" data-dtype="Number">
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.focus.exhausted.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
+               
             </div>
-            <div class="data" title="{{localize 'splittermond.consumed'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.consumed'}}">
                 <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
-                <div class="value"><input class="value" name="data.focus.consumed.value" type="text"
-                        value="{{focus.consumed.value}}" data-dtype="Number"></div>
+                <div class="value">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.focus.consumed.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <input name="data.focus.consumed.value" type="text"
+                        value="{{focus.consumed.value}}" data-dtype="Number">
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.focus.consumed.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
             </div>
         </div>
 
@@ -24,37 +37,49 @@
             <div class="value" style="left: {{focus.available.percentage}}%">
                 {{focus.available.value}}
             </div>
-            <div class="bar">
+            <div class="bar bar-focus">
                 <div class="available" style="width: {{focus.available.percentage}}%"></div>
                 <div class="channeled" style="width: {{focus.channeled.percentage}}%"></div>
                 <div class="exhausted" style="width: {{focus.exhausted.percentage}}%"></div>
             </div>
         </div>
     </div>
-    <div class="health"
+    <div class="column"
         title="{{localize 'splittermond.normalDamage'}}: {{health.consumed.value}} | {{localize 'splittermond.stunDamage'}}: {{exhausted.value}} | {{localize 'splittermond.channeledDamage'}}: {{health.channeled.value}}">
-        <div class="headline">
+        <div class="health-focus-headline">
             <label>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</label>
-            <div class="data" title="{{localize 'splittermond.channeledDamage'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.channeledDamage'}}">
                 <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
-                <div class="value">{{health.channeled.value}}</div>
+                <div class="value"><span>{{health.channeled.value}}</span></div>
             </div>
-            <div class="data" title="{{localize 'splittermond.stunDamage'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.stunDamage'}}">
                 <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
-                <div class="value"><input class="value" name="data.health.exhausted.value" type="text"
-                        value="{{health.exhausted.value}}" data-dtype="Number"></div>
+                <div class="value">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.health.exhausted.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <input name="data.health.exhausted.value" type="text"
+                        value="{{health.exhausted.value}}" data-dtype="Number">
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.health.exhausted.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
             </div>
-            <div class="data" title="{{localize 'splittermond.normalDamage'}}">
+            <div class="health-focus-data" title="{{localize 'splittermond.normalDamage'}}">
                 <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
-                <div class="value"><input class="value" name="data.health.consumed.value" type="text"
-                        value="{{health.consumed.value}}" data-dtype="Number"></div>
+                <div class="value">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.health.consumed.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <input name="data.health.consumed.value" type="text"
+                        value="{{health.consumed.value}}" data-dtype="Number">
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.health.consumed.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
             </div>
         </div>
-        <div class="bar-with-value">
+        <div class="bar-with-value bar-with-value-health">
             <div class="value" style="left: {{health.total.percentage}}%">
                 {{health.total.value}}
             </div>
-            <div class="bar">
+            <div class="bar bar-health">
                 <div class="available" style="width: {{health.available.percentage}}%"></div>
                 <div class="channeled" style="width: {{health.channeled.percentage}}%"></div>
                 <div class="exhausted" style="width: {{health.exhausted.percentage}}%"></div>
@@ -62,7 +87,7 @@
         </div>
         <div class="wound-malus">
             {{#each health.woundMalus.levels}}
-            <div class="level">{{this}}</div>
+            <div class="wound-malus-level">{{this}}</div>
             {{/each}}
         </div>
     </div>

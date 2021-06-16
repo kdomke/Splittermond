@@ -1,24 +1,22 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <header>
-        <section>
-            <div>
+    <header class="column flex-gap">
+        <section class="row flex-gap">
+            <div class="character-image">
                 <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="92" width="92"
                     class="profile-img" />
             </div>
-            <div class="details">
-                <h1>
-                    <input name="name" type="text" value="{{actor.name}}"
+            <div class="column stretch">
+                <input class="character-name" name="name" type="text" value="{{actor.name}}"
                         placeholder="{{localize 'splittermond.name' }}" />
-                </h1>
                 <div class="experience">
                     <div class="bar">
                         <div style="width: {{data.experience.percentage}}%"></div>
                     </div>
-                    <div class="label">
+                    <div class="experience-label">
                         {{localize "splittermond.heroLevel"}} {{data.experience.heroLevel}} -
                         {{data.experience.heroLevelName}}
                     </div>
-                    <div class="value">
+                    <div class="experience-value">
                         <input class="autoexpand" name="data.experience.free" type="text"
                             value="{{data.experience.free}}" placeholder="{{localize 'splittermond.xpFree'}}" /> -
                         <input class="autoexpand" name="data.experience.spent" type="text"
@@ -26,7 +24,7 @@
                         {{data.experience.nextLevelValue}}
                     </div>
                 </div>
-                <div class="description">
+                <div>
                     <input class="autoexpand" name="data.species.value" type="text" value="{{data.species.value}}"
                         placeholder="{{localize 'splittermond.species'}}" />
                     &nbsp;&middot;&nbsp;
@@ -45,20 +43,25 @@
 
             </div>
             <div class="moonsign">
-                <div class="splinterpoints" title="{{localize 'splittermond.splinterpoints'}}">
+                <div class="moonsign-splinterpoints" title="{{localize 'splittermond.splinterpoints'}}">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.splinterpoints.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i>
+                    </button>
                     <input type="text" name="data.splinterpoints.value" value="{{data.splinterpoints.value}}"
                         data-dtype="Number">
                     <span> / {{data.splinterpoints.max}}</span>
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.splinterpoints.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
                 </div>
                 {{#each itemsByType.moonsign}}
-                <img src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
-                <label><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
+                <img class="moonsign-image" src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
+                <label class="moonsign-label"><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
                 {{/each}}
-
             </div>
         </section>
         {{#unless limited}}
-        <section>
+        <section class="row">
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
             derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
@@ -67,30 +70,30 @@
         {{/unless}}
     </header>
     {{#unless limited}}
-    <nav class="sheet-navigation tabs" data-group="primary">
-        <a class="item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
-        <a class="item active" data-tab="general">{{ localize "splittermond.general" }}</a>
-        <a class="item" data-tab="skills">{{ localize "splittermond.skills" }}</a>
-        <a class="item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
-        <a class="item" data-tab="fight">{{ localize "splittermond.fight" }}</a>
-        <a class="item" data-tab="inventory">{{ localize "splittermond.inventory" }}</a>
-        <a class="item" data-tab="status">{{ localize "splittermond.status" }}</a>
+    <nav class="sheet-navigation" data-group="primary">
+        <a class="sheet-navigation-item" data-tab="biography">{{ localize "splittermond.biography" }}</a>
+        <a class="sheet-navigation-item active" data-tab="general">{{ localize "splittermond.general" }}</a>
+        <a class="sheet-navigation-item" data-tab="skills">{{ localize "splittermond.skills" }}</a>
+        <a class="sheet-navigation-item" data-tab="spells">{{ localize "splittermond.spells" }}</a>
+        <a class="sheet-navigation-item" data-tab="fight">{{ localize "splittermond.fight" }}</a>
+        <a class="sheet-navigation-item" data-tab="inventory">{{ localize "splittermond.inventory" }}</a>
+        <a class="sheet-navigation-item" data-tab="status">{{ localize "splittermond.status" }}</a>
     </nav>
-    <main class="tab-list">
-        <section class="tab biography" data-group="primary" data-tab="biography">
+    <main>
+        <section class="tab" data-group="primary" data-tab="biography">
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
-        <section class="tab general" data-group="primary" data-tab="general">
-            <div class="list">
+        <section class="tab" data-group="primary" data-tab="general">
+            <div class="list list-attributes">
                 <div class="list-header">
                     <h3>{{localize "splittermond.attributes"}}</h3>
                     <div class="start">{{localize "splittermond.start"}}</div>
                     <div class="value">{{localize "splittermond.value"}}</div>
                     <div class="max">{{localize "splittermond.max"}}</div>
                 </div>
-                <ul>
+                <ul class="list-body">
                     {{#each data.attributes as |attribute attributeId|}}
-                    <li class="item attribute">
+                    <li class="list-item attribute">
                         <label for="data.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
                             attribute.label.long}}</label>
@@ -111,21 +114,21 @@
             <div class="list" data-item-type="strength">
                 <div class="list-header">
                     <h3>{{localize "splittermond.strengths"}}</h3>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="add-item" data-render-sheet="false">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <ul class="strengths">
+                <ul class="list-body strengths">
                     {{#each itemsByType.strength}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="list-item" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}
                             {{#if this.multiple}}
                             (x{{this.data.quantity}})
                             {{/if}}
                         </div>
-                        <div class="actions">
+                        <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
                             </button>
@@ -140,17 +143,17 @@
             <div class="list" data-item-type="weakness">
                 <div class="list-header">
                     <h3>{{localize "splittermond.weaknesses"}}</h3>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="add-item" data-render-sheet="false">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <ul class="weaknesses">
+                <ul class="list-body weaknesses">
                     {{#each itemsByType.weakness}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="list-item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        <div class="actions">
+                        <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
                             </button>
@@ -166,18 +169,18 @@
             <div class="list" data-item-type="resource">
                 <div class="list-header">
                     <h3>{{localize "splittermond.resources"}}</h3>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <ul class="resources">
+                <ul class="list-body list-resources">
                     {{#each itemsByType.resource}}
-                    <li class="item" data-item-id="{{this._id}}">
-                        <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        <input type="text" data-field="data.value" value="{{this.data.value}}" data-dtype="Number">
-                        <div class="actions">
+                    <li class="list-item" data-item-id="{{this._id}}">
+                        <div><input class="name" type="text" data-field="name" value="{{this.name}}"></div>
+                        <div class="value"><input type="text" data-field="data.value" value="{{this.data.value}}" data-dtype="Number"></div>
+                        <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                     aria-hidden="true"></i></button>
                             <button class="button-inline" type="button" data-action="delete-item"><i
@@ -192,17 +195,17 @@
             <div class="list" data-item-type="language">
                 <div class="list-header">
                     <h3>{{localize "splittermond.languages"}}</h3>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <ul class="languages">
+                <ul class="list-body languages">
                     {{#each itemsByType.language}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="list-item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        <div class="actions">
+                        <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
                             </button>
@@ -217,17 +220,17 @@
             <div class="list" data-item-type="culturelore">
                 <div class="list-header">
                     <h3>{{localize "splittermond.culturelore"}}</h3>
-                    <div class="actions">
+                    <div class="list-actions">
                         <button class="button-inline" type="button" data-action="add-item" data-render-sheet="0">
                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
-                <ul class="culturelores">
+                <ul class="list-body culturelores">
                     {{#each itemsByType.culturelore}}
-                    <li class="item" data-item-id="{{this._id}}">
+                    <li class="list-item item" data-item-id="{{this._id}}">
                         <input class="name" type="text" data-field="name" value="{{this.name}}">
-                        <div class="actions">
+                        <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button">
                                 <i class="fa fa-edit" aria-hidden="true"></i>
                             </button>
@@ -240,22 +243,22 @@
                 </ul>
             </div>
         </section>
-        <section class="tab skills" data-group="primary" data-tab="skills">
+        <section class="tab" data-group="primary" data-tab="skills">
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
             <div class="list skills" data-roll-type="skill">
                 <div class="list-header">
                     <h3>{{localize "splittermond.generalSkills"}}</h3>
                 </div>
-                <ol class="skill-list">
+                <ol class="list-body skill-list">
                     {{#each data.generalSkills as |skill skillId|}}
-                    <li class="draggable" data-skill="{{skillId}}">
+                    <li class="list-item draggable" data-skill="{{skillId}}">
                         <label>
                             <a class="rollable">
                                 {{localize skill.label}}
                             </a>
                         </label>
                         <div class="points">
-                            <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                            <input class="spinner spinner-horizontal" name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label}}</div>
                         <div class="attribute">{{localize skill.attribute2.label}}</div>
@@ -266,9 +269,9 @@
                 <div class="list-header">
                     <h3>{{localize "splittermond.fightingSkills"}}</h3>
                 </div>
-                <ol class="skill-list">
+                <ol class="list-body skill-list">
                     {{#each data.fightingSkills as |skill skillId|}}
-                    <li data-skill="{{skillId}}">
+                    <li class="list-item" data-skill="{{skillId}}">
                         <label>
                             {{localize skill.label}}
                         </label>
@@ -281,9 +284,9 @@
                 <div class="list-header">
                     <h3>{{localize "splittermond.magicSkills"}}</h3>
                 </div>
-                <ol class="skill-list">
+                <ol class="list-body skill-list">
                     {{#each data.magicSkills as |skill skillId|}}
-                    <li class="draggable" data-skill="{{skillId}}">
+                    <li class="list-item draggable" data-skill="{{skillId}}">
                         <label>
                             <a class="rollable">{{localize skill.label}}</a>
                         </label>
@@ -301,25 +304,25 @@
             masteriesBySkill=masteriesBySkill generalSkills=data.generalSkills fightingSkills=data.fightingSkills
             magicSkills=data.magicSkills}}
         </section>
-        <section class="tab spells" data-group="primary" data-tab="spells">
+        <section class="tab" data-group="primary" data-tab="spells">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
                 channeledSpells=data.focus.channeled.entries}}
             </div>
         </section>
-        <section class="tab fight" data-group="primary" data-tab="fight">
+        <section class="tab" data-group="primary" data-tab="fight">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
                 activeDefense=data.activeDefense attacks=data.attacks}}
             </div>
         </section>
-        <section class="tab inventory" data-group="primary" data-tab="inventory">
+        <section class="tab" data-group="primary" data-tab="inventory">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType
                 currency=data.currency}}
             </div>
         </section>
-        <section class="tab status" data-group="primary" data-tab="status">
+        <section class="tab" data-group="primary" data-tab="status">
             {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
             channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
             spelleffects=itemsByType.spelleffect

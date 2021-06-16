@@ -1,25 +1,24 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <header>
-
-        <img src="{{item.img}}" data-edit="img" title="{{item.name}}" height="92" width="92" />
+    <header class="row flex-gap">
+        <div class="item-image">
+            <img src="{{item.img}}" data-edit="img" title="{{item.name}}" height="92" width="92" />
+        </div>
         <div>
-            <div class="type">
+            <div class="item-type">
                 {{ localize typeLabel }}
             </div>
-            <h1>
-                <input name="name" type="text" value="{{item.name}}" placeholder="{{localize 'splittermond.name' }}" />
-            </h1>
+            <input class="item-name" name="name" type="text" value="{{item.name}}" placeholder="{{localize 'splittermond.name' }}" />
         </div>
     </header>
-    <nav class="sheet-navigation tabs" data-group="primary">
-        <a class="item active" data-tab="description">{{ localize "splittermond.description" }}</a>
-        <a class="item" data-tab="properties">{{ localize "splittermond.properties" }}</a>
+    <nav class="sheet-navigation" data-group="primary">
+        <a class="sheet-navigation-item active" data-tab="description">{{ localize "splittermond.description" }}</a>
+        <a class="sheet-navigation-item" data-tab="properties">{{ localize "splittermond.properties" }}</a>
     </nav>
     <main>
-        <section class="tab description" data-group="primary" data-tab="description">
+        <section class="tab" data-group="primary" data-tab="description">
             {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
         </section>
-        <section class="tab properties" data-group="primary" data-tab="properties">
+        <section class="tab" data-group="primary" data-tab="properties">
             {{#*inline "input"}}
             <label>{{localize templateData.label}}</label>
             <input name="{{templateData.field}}" type="text" value="{{templateData.value}}"
@@ -40,6 +39,7 @@
                 {{selectOptions templateData.choices selected=templateData.value localize=true}}
             </select>
             {{/inline}}
+            <div class="properties-editor">
 
             {{#each itemProperties}}
             <h3>{{localize this.groupName}}</h3>
@@ -47,6 +47,7 @@
             {{> (lookup . 'template') templateData=this}}
             {{/each}}
             {{/each}}
+            </div>
         </section>
     </main>
 </form>

@@ -1,7 +1,7 @@
-<div class="tabs" data-group="fight-action-type">
-    <a class="item active" data-group="fight-action-type" data-tab="attack">{{ localize
+<div class="subnav" data-group="fight-action-type">
+    <a class="subnav-item active" data-group="fight-action-type" data-tab="attack">{{ localize
         "splittermond.attack" }}</a>
-    <a class="item" data-group="fight-action-type" data-tab="defense">{{ localize
+    <a class="subnav-item" data-group="fight-action-type" data-tab="defense">{{ localize
         "splittermond.activeDefense"
         }}</a>
 </div>
@@ -18,9 +18,9 @@
                     "splittermond.features"}}
                 </div>
             </div>
-            <ol>
+            <ol class="list-body">
                 {{#each attacks}}
-                <li class="draggable" data-attack-id="{{this._id}}">
+                <li class="list-item draggable" data-attack-id="{{this._id}}">
                     <img width="32" height="32" src="{{{this.img}}}">
                     <label>
                         <a class="rollable">{{localize this.name}}</a>
@@ -70,9 +70,9 @@
                     "splittermond.features"}}
                 </div>
             </div>
-            <ol data-defense-type="defense">
+            <ol class="list-body" data-defense-type="defense">
                 {{#each activeDefense.defense}}
-                <li data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -88,9 +88,9 @@
                 <h3>{{localize "splittermond.derivedAttribute.mindresist.long"}}</h3>
                 <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
             </div>
-            <ol data-defense-type="mindresist">
+            <ol class="list-body" data-defense-type="mindresist">
                 {{#each activeDefense.mindresist}}
-                <li data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -105,9 +105,9 @@
                 <h3>{{localize "splittermond.derivedAttribute.bodyresist.long"}}</h3>
                 <div class="value">{{localize "splittermond.skillValueAbbrev"}}</div>
             </div>
-            <ol data-defense-type="bodyresist">
+            <ol class="list-body" data-defense-type="bodyresist">
                 {{#each activeDefense.bodyresist}}
-                <li data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this._id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}

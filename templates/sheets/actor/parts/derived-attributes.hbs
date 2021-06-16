@@ -1,6 +1,6 @@
-<div class="attributes derived-attributes">
+<div class="derived-attribute-list">
     {{#each derivedAttributes as |attribute attributeId|}}
-    <div class="attribute" id="{{attributeId}}">
+    <div class="derived-attribute" id="{{attributeId}}">
         <label>{{localize attribute.label.short}}</label>
         {{#if attribute.editable}}
         <input name="data.derivedAttributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"

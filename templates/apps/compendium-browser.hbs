@@ -1,19 +1,18 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <nav class="tabs" data-group="primary">
-        <a class="item active" data-tab="spell">{{ localize "splittermond.spells" }}</a>
-        <a class="item" data-tab="mastery">{{ localize "splittermond.masteries" }}</a>
-        <a class="item" data-tab="weapon">{{ localize "splittermond.weapon" }}</a>
+    <nav class="sheet-navigation" data-group="primary">
+        <a class="sheet-navigation-item active" data-tab="spell">{{ localize "splittermond.spells" }}</a>
+        <a class="sheet-navigation-item" data-tab="mastery">{{ localize "splittermond.masteries" }}</a>
+        <a class="sheet-navigation-item" data-tab="weapon">{{ localize "splittermond.weapon" }}</a>
 
     </nav>
-    <main class="tab-list">
+    <main>
         <section class="tab" data-group="primary" data-tab="spell">
-            <div class="filter">
-                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
-
+            <div class="filter column">
+                <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
                     <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
                         for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
                 </div>
-                <div>
+                <div class="row">
                     <select name="skill">
                         {{selectOptions spellFilter.skills selected="none" localize=true}}
                     </select>
@@ -33,16 +32,17 @@
                 </div>
             </div>
             <div class="list">
-                <ol>
+                <ol class="list-body">
                     {{#each items.spell}}
-                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
                         data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
                         data-skill-level="this.data.skillLevel">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist">
                                     {{#each this.data.availableInArray}}
-                                    <li>{{this}}</li>
+                                    <li class="taglist-item">
+                                        <div class="taglist-item-name">{{this}}</div></li>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -54,16 +54,15 @@
                     {{/each}}
                 </ol>
             </div>
-
         </section>
         <section class="tab" data-group="primary" data-tab="mastery">
-            <div class="filter">
-                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+            <div class="filter column">
+                <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
                     <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
                         for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
                 </div>
-                <div>
+                <div class="row">
                     <select name="skill">
                         {{selectOptions masteryFilter.skills selected="none" localize=true}}
                     </select>
@@ -79,16 +78,17 @@
                 </div>
             </div>
             <div class="list">
-                <ol>
+                <ol class="list-body">
                     {{#each items.mastery}}
-                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
                         data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
                         data-level="{{this.data.level}}">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist">
                                     {{#each this.data.availableInArray}}
-                                    <li>{{this}}</li>
+                                    <li class="taglist-item">
+                                        <div class="taglist-item-name">{{this}}</div></li>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -105,8 +105,8 @@
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="weapon">
-            <div class="filter">
-                <div><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+            <div class="filter column">
+                <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
                     <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
                         for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
@@ -116,9 +116,9 @@
                 </div>
             </div>
             <div class="list">
-                <ol>
+                <ol class="list-body">
                     {{#each items.weapon}}
-                    <li class="draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
                         data-skill="{{this.data.skill}}" data-secondary-skill="{{this.data.secondaryAttack.skill}}"
                         data-features="{{this.data.features}}" data-damage="{{this.data.damage}}"
                         data-secondary-damage="{{this.data.secondaryAttack.damage}}"
