@@ -45,6 +45,7 @@
 @import "./compendium-browser.less";
 */
 .splittermond {
+  image-rendering: -webkit-optimize-contrast;
   color: #303336;
 }
 .splittermond.window-app {
@@ -71,7 +72,7 @@
   left: 50%;
   top: -32px;
   margin-left: -100px;
-  background: url(../../systems/splittermond/images/splittermond-logo.png);
+  background: url(../../systems/splittermond/images/splittermond-logo-h60.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center top;
