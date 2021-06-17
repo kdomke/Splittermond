@@ -408,7 +408,8 @@
         "availability": "",
         "quality": 0,
         "durability": 0,
-        "damageLevel": 0
+        "damageLevel": 0,
+        "sufferedDamage": 0
       },
       "defense": {
         "tickMalus": 0,

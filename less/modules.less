@@ -317,11 +317,18 @@
         position: relative;
         top: -10px;
         text-align: center;
+        color: fade(@textColor, 50%);
         flex: 1;
         &:first-child {
             border-right: none;
         }
     
+    }
+
+    .wound-malus-level-active {
+        font-weight: 900;
+        text-shadow: 0 0 3px white;
+        color: fade(@textColor, 100%);
     }
 
     .sheet-navigation {
@@ -1013,6 +1020,8 @@
         align-items: baseline;
         width: 100%;
         min-height: 100px;
+
+        font-weight: 900;
 
         justify-self: start;
         align-self: start;

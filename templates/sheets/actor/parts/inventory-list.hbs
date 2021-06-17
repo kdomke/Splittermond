@@ -25,7 +25,11 @@
         {{#each itemsByType.weapon}}
         <li class="list-item draggable" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
-            <label>{{this.name}} <button class="button-inline" type="button" data-action="toggle-equipped">
+            <label>{{this.name}}
+                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                <button class="button-inline" type="button" data-action="toggle-equipped">
                     <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
@@ -65,7 +69,11 @@
         {{#each itemsByType.armor}}
         <li class="list-item draggable" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
-            <label>{{this.name}} <button class="button-inline" type="button" data-action="toggle-equipped">
+            <label>{{this.name}}
+                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                <button class="button-inline" type="button" data-action="toggle-equipped">
                     <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
@@ -107,7 +115,11 @@
         {{#each itemsByType.shield}}
         <li class="list-item draggable" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
-            <label>{{this.name}} <button class="button-inline" type="button" data-action="toggle-equipped">
+            <label>{{this.name}}
+                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                <button class="button-inline" type="button" data-action="toggle-equipped">
                     <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
@@ -143,7 +155,11 @@
         {{#each itemsByType.equipment}}
         <li class="list-item draggable" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
-            <label>{{this.name}}</label>
+            <label>{{this.name}}
+                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+            </label>
             <div class="qty">{{this.data.quantity}}</div>
             <div class="load">{{this.data.weight}}</div>
             <div class="list-actions">

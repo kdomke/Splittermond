@@ -36,11 +36,25 @@ export default class SplittermondItem extends Item {
                     data.quantity = 1;
                 }
             }
-
-
         }
 
+        if (["weapon", "shield", "armor","equipment"].includes(itemData.type)) {
+            data.durability = parseInt(data.weight) + parseInt(data.hardness);
+            data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
 
+            if (data.durability == 0) {
+                if (data.sufferedDamage > 0) {
+                    data.damageLevel = 3;
+                } else {
+                    data.damageLevel = 0;
+                }
+            } else {
+                data.damageLevel = Math.max(Math.min(Math.floor((parseInt(data.sufferedDamage))/data.durability), 3),0);
+            }
+
+            data.damageLevelText = CONFIG.splittermond.damageLevel[data.damageLevel];
+                
+        }
 
     }
 

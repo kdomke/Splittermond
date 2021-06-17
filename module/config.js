@@ -12,16 +12,51 @@ splittermond.attributes = ["charisma", "agility", "intuition",
 splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "bodyresist", "mindresist"];
 
 splittermond.woundMalus = {
-    "5": [0, -1, -2, -4, -8],
-    "3": [0, -2, -8],
-    "1": [0],
-}
+    "5": [
+        {
+            value: 0,
+            label: "splittermond.woundMalusLevels.notinjured"
+        },
+        {
+            value: -1,
+            label: "splittermond.woundMalusLevels.battered"
+        },
+        {
+            value: -2,
+            label: "splittermond.woundMalusLevels.injured"
+        },
+        {
+            value: -4,
+            label: "splittermond.woundMalusLevels.badlyinjured"
+        },
+        {
+            value: -8,
+            label: "splittermond.woundMalusLevels.doomed"
+        }
+    ],
+    "3": [
+        {
+            value: 0,
+            label: "splittermond.woundMalusLevels.notinjured"
+        },
+        {
+            value: -2,
+            label: "splittermond.woundMalusLevels.injured"
+        },
+        {
+            value: -8,
+            label: "splittermond.woundMalusLevels.doomed"
+        }
+    ],
+    "1": [
+        {
+            value: 0,
+            label: "splittermond.woundMalusLevels.notinjured"
+        }
+    ],
+};
 
-splittermond.woundMalusText = {
-    "5": ["unverletzt", "angeschlagen", "verletzt", "schwer verletzt", "todgeweiht"],
-    "3": ["unverletzt", "verletzt", "todgeweiht"],
-    "1": ["unverletzt"],
-}
+splittermond.damageLevel = ["splittermond.damageLevels.undamaged","splittermond.damageLevels.tarnished","splittermond.damageLevels.demolished","splittermond.damageLevels.destroyed"]
 
 splittermond.skillGroups = {
     fighting: [
@@ -408,7 +443,7 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.quantity",
                     label: "splittermond.quantity",
-                    template: "input"
+                    template: "inputNumberWithSpinner"
                 },
                 {
                     field: "data.price",
@@ -418,22 +453,27 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.weight",
                     label: "splittermond.load",
-                    template: "input"
+                    template: "inputNumberWithSpinner"
                 },
                 {
                     field: "data.hardness",
                     label: "splittermond.hardness",
-                    template: "input"
+                    template: "inputNumberWithSpinner"
                 },
                 {
                     field: "data.durability",
                     label: "splittermond.durability",
-                    template: "input"
+                    template: "readonly"
                 },
                 {
-                    field: "data.damageLevel",
+                    field: "data.sufferedDamage",
+                    label: "splittermond.sufferedDamage",
+                    template: "inputNumberWithSpinner"
+                },
+                {
+                    field: "data.damageLevelText",
                     label: "splittermond.damageLevel",
-                    template: "input"
+                    template: "readonlyLocalize"
                 },
                 {
                     field: "data.complexity",
@@ -476,7 +516,7 @@ splittermond.itemSheetProperties.weapon = [
             {
                 field: "data.skillMod",
                 label: "splittermond.skillMod",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.attribute1",
@@ -503,7 +543,7 @@ splittermond.itemSheetProperties.weapon = [
             {
                 field: "data.weaponSpeed",
                 label: "splittermond.weaponSpeed",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.minAttributes",
@@ -556,7 +596,7 @@ splittermond.itemSheetProperties.weapon = [
             {
                 field: "data.secondaryAttack.weaponSpeed",
                 label: "splittermond.weaponSpeed",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.secondaryAttack.minAttributes",
@@ -580,27 +620,27 @@ splittermond.itemSheetProperties.armor = [
             {
                 field: "data.tickMalus",
                 label: "splittermond.tickMalus",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.defenseBonus",
                 label: "splittermond.defenseBonus",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.handicap",
                 label: "splittermond.handicap",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.damageReduction",
                 label: "splittermond.damageReduction",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.minStr",
                 label: "splittermond.minStrength",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.features",
@@ -625,17 +665,17 @@ splittermond.itemSheetProperties.shield = [
             {
                 field: "data.tickMalus",
                 label: "splittermond.tickMalus",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.defenseBonus",
                 label: "splittermond.defenseBonus",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.handicap",
                 label: "splittermond.handicap",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.minAttributes",
@@ -669,7 +709,7 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "data.skillLevel",
                 label: "splittermond.spellLevel",
-                template: "input"
+                template: "inputNumberWithSpinner"
             },
             {
                 field: "data.spellType",
@@ -855,6 +895,51 @@ splittermond.modifier = {
     "verbesserte initiative": "INI -3",
     "zusätzliche splitterpunkte": "splinterpoints +2"
 
+}
+
+splittermond.fumbleTable = {
+    fight: [
+        {
+            min: 1,
+            max: 1,
+            text: "SPLITTERMOND.fumbleTable.fight.result1_1"
+        },
+        {
+            min: 2,
+            max: 3,
+            text: "SPLITTERMOND.fumbleTable.fight.result2_3"
+        },
+        {
+            min: 4,
+            max: 6,
+            text: "SPLITTERMOND.fumbleTable.fight.result4_6"
+        },
+        {
+            min: 7,
+            max: 9,
+            text: "SPLITTERMOND.fumbleTable.fight.result7_8"
+        },
+        {
+            min: 10,
+            max: 12,
+            text: "SPLITTERMOND.fumbleTable.fight.result10_12"
+        },
+        {
+            min: 13,
+            max: 15,
+            text: "SPLITTERMOND.fumbleTable.fight.result13_15"
+        },
+        {
+            min: 16,
+            max: 18,
+            text: "SPLITTERMOND.fumbleTable.fight.result16_18"
+        },
+        {
+            min: 19,
+            max: 20,
+            text: "SPLITTERMOND.fumbleTable.fight.result19_20"
+        }
+    ]
 }
 
 

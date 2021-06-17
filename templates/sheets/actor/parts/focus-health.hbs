@@ -87,7 +87,7 @@
         </div>
         <div class="wound-malus">
             {{#each health.woundMalus.levels}}
-            <div class="wound-malus-level">{{this}}</div>
+            <div class="wound-malus-level{{#if (eq ../health.woundMalus.value this.value)}} wound-malus-level-active{{/if}}" title="{{localize this.label}}">{{this.value}}</div>
             {{/each}}
         </div>
     </div>

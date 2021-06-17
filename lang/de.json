@@ -385,7 +385,29 @@
             "Veteran",
             "Heroe"
         ],
-        "rollMode": "Wurfmodus"
+        "rollMode": "Wurfmodus",
+        "sufferedDamage": "erlittener Schaden",
+        "fumbleTable": {
+            "fight": {
+                "result1_1": "Nichts passiert.",
+                "result2_3": "Der Kämpfer stürzt und schlägt unglücklich mit dem Kopf auf. Er wird sofort auf dem Zeitstrahl 10 Ticks nach vorne gesetzt, gilt als liegend und erhält für 30 weitere Ticks den Zustand @Item[Benommen]{Benommen} 2 (für 30 Ticks).",
+                "result4_6": "Unbeschädigte Waffe angeschlagen (-3 auf alle Proben); angeschlagene Waffe demoliert (nicht mehr verwendbar)",
+                "result4_6": "Unbeschädigte Waffe angeschlagen (-3 auf alle Proben); angeschlagene Waffe demoliert (nicht mehr verwendbar)"
+            }
+        },
+        "woundMalusLevels": {
+            "notinjured": "unverletzt",
+            "battered": "angeschlagen",
+            "injured": "verletzt",
+            "badlyinjured": "schwer verletzt",
+            "doomed": "schwer verletzt"
+        },
+        "damageLevels": {
+            "undamaged": "unbeschädigt",
+            "tarnished": "angeschlagen",
+            "demolished": "demoliert",
+            "destroyed": "zerstört"
+        }
     },
     "COMBAT": {
         "Round": "Tick"

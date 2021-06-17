@@ -576,10 +576,16 @@
   position: relative;
   top: -10px;
   text-align: center;
+  color: rgba(48, 51, 54, 0.5);
   flex: 1;
 }
 .splittermond .wound-malus-level:first-child {
   border-right: none;
+}
+.splittermond .wound-malus-level-active {
+  font-weight: 900;
+  text-shadow: 0 0 3px white;
+  color: #303336;
 }
 .splittermond .sheet-navigation {
   display: flex;
@@ -1178,6 +1184,7 @@
   align-items: baseline;
   width: 100%;
   min-height: 100px;
+  font-weight: 900;
   justify-self: start;
   align-self: start;
 }
