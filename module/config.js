@@ -888,13 +888,25 @@ splittermond.modifier = {
     "erhöhte lebensregeneration": "healthRegeneration.multiplier 3",
     "erhöhter fokuspool": "FO +5",
     "flink": "GSW +1",
+    "sprinter": "GSW +1",
     "hoher geistiger widerstand": "GW +2",
     "hoher körperlicher widerstand": "KW +2",
     "natürlicher rüstungsschutz": "SR +1",
     "robust": "LP +1",
     "verbesserte initiative": "INI -3",
-    "zusätzliche splitterpunkte": "splinterpoints +2"
-
+    "zusätzliche splitterpunkte": "splinterpoints +2",
+    "stabile magie": "lowerFumbleResult +1",
+    "blitzreflexe": "INI -3",
+    "gute reflexe": "VTD +1",
+    "rüstungsträger i": "handicap.armor.mod -1",
+    "rüstungsträger 1": "handicap.armor.mod -1",
+    "rüstungsträger ii": "tickmalus.armor.mod -1",
+    "rüstungsträger 2": "tickmalus.armor.mod -1",
+    "schildträger i": "handicap.shield.mod -1",
+    "schildträger 1": "handicap.shield.mod -1",
+    "schildträger ii": "tickmalus.shield.mod -1",
+    "schildträger 2": "tickmalus.shield.mod -1",
+    "natürlicher rüstungsschutz": "SR +1"
 }
 
 splittermond.fumbleTable = {
@@ -902,44 +914,130 @@ splittermond.fumbleTable = {
         {
             min: 1,
             max: 1,
-            text: "SPLITTERMOND.fumbleTable.fight.result1_1"
+            text: "splittermond.fumbleTable.fight.result1_1"
         },
         {
             min: 2,
             max: 3,
-            text: "SPLITTERMOND.fumbleTable.fight.result2_3"
+            text: "splittermond.fumbleTable.fight.result2_3"
         },
         {
             min: 4,
             max: 6,
-            text: "SPLITTERMOND.fumbleTable.fight.result4_6"
+            text: "splittermond.fumbleTable.fight.result4_6"
         },
         {
             min: 7,
             max: 9,
-            text: "SPLITTERMOND.fumbleTable.fight.result7_8"
+            text: "splittermond.fumbleTable.fight.result7_8"
         },
         {
             min: 10,
             max: 12,
-            text: "SPLITTERMOND.fumbleTable.fight.result10_12"
+            text: "splittermond.fumbleTable.fight.result10_12"
         },
         {
             min: 13,
             max: 15,
-            text: "SPLITTERMOND.fumbleTable.fight.result13_15"
+            text: "splittermond.fumbleTable.fight.result13_15"
         },
         {
             min: 16,
             max: 18,
-            text: "SPLITTERMOND.fumbleTable.fight.result16_18"
+            text: "splittermond.fumbleTable.fight.result16_18"
         },
         {
             min: 19,
             max: 20,
-            text: "SPLITTERMOND.fumbleTable.fight.result19_20"
+            text: "splittermond.fumbleTable.fight.result19_20"
         }
-    ]
+    ],
+    magic: {
+        sorcerer: [
+            {
+                min: 1,
+                max: 2,
+                text: "splittermond.fumbleTable.magic.sorcerer.result1_2"
+            },
+            {
+                min: 3,
+                max: 20,
+                text: "splittermond.fumbleTable.magic.sorcerer.result3_20"
+            },
+            {
+                min: 21,
+                max: 35,
+                text: "splittermond.fumbleTable.magic.sorcerer.result21_35"
+            },
+            {
+                min: 36,
+                max: 70,
+                text: "splittermond.fumbleTable.magic.sorcerer.result36_70"
+            },
+            {
+                min: 71,
+                max: 100,
+                text: "splittermond.fumbleTable.magic.sorcerer.result71_100"
+            },
+            {
+                min: 101,
+                max: 130,
+                text: "splittermond.fumbleTable.magic.sorcerer.result101_130"
+            },
+            {
+                min: 131,
+                max: 175,
+                text: "splittermond.fumbleTable.magic.sorcerer.result131_175"
+            },
+            {
+                min: 176,
+                max: 250,
+                text: "splittermond.fumbleTable.magic.sorcerer.result176_250"
+            },
+            {
+                min: 251,
+                max: Infinity,
+                text: "splittermond.fumbleTable.magic.sorcerer.result251"
+            }
+        ],
+        priest: [
+            {
+                min: 1,
+                max: 2,
+                text: "splittermond.fumbleTable.magic.priest.result1_2"
+            },
+            {
+                min: 3,
+                max: 20,
+                text: "splittermond.fumbleTable.magic.sorcerer.result3_20"
+            },
+            {
+                min: 21,
+                max: 35,
+                text: "splittermond.fumbleTable.magic.priest.result21_35"
+            },
+            {
+                min: 36,
+                max: 70,
+                text: "splittermond.fumbleTable.magic.priest.result36_70"
+            },
+            {
+                min: 71,
+                max: 100,
+                text: "splittermond.fumbleTable.magic.priest.result71_100"
+            },
+            {
+                min: 101,
+                max: 130,
+                text: "splittermond.fumbleTable.magic.priest.result101_130"
+            },
+            {
+                min: 131,
+                max: Infinity,
+                text: "splittermond.fumbleTable.magic.priest.result131"
+            }
+        ]
+    }
 }
 
 
