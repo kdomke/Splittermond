@@ -36,11 +36,36 @@ export default class SplittermondItem extends Item {
                     data.quantity = 1;
                 }
             }
-
-
         }
 
+        if (["strength", "mastery"].includes(itemData.type)) {
+            if (!data.modifier) {
+                if (CONFIG.splittermond.modifier[itemData.name.toLowerCase()]) {
+                    data.modifier = CONFIG.splittermond.modifier[itemData.name.toLowerCase()];
+                }
+            }
+        }
 
+        if (["weapon", "shield", "armor","equipment"].includes(itemData.type)) {
+            data.durability = parseInt(data.weight) + parseInt(data.hardness);
+            data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
+
+            if (data.durability == 0) {
+                if (data.sufferedDamage > 0) {
+                    data.damageLevel = 3;
+                } else {
+                    data.damageLevel = 0;
+                }
+            } else {
+                data.damageLevel = Math.max(Math.min(Math.floor((parseInt(data.sufferedDamage)-1)/data.durability), 3),0);
+                if (data.sufferedDamage === 3*data.durability) {
+                    data.damageLevel = 3;
+                }
+            }
+
+            data.damageLevelText = CONFIG.splittermond.damageLevel[data.damageLevel];
+                
+        }
 
     }
 

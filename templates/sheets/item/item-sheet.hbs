@@ -19,6 +19,14 @@
             {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="properties">
+            {{#*inline "readonlyLocalize"}}
+            <label>{{localize templateData.label}}</label>
+            <span>{{localize templateData.value}}</span>
+            {{/inline}}
+            {{#*inline "readonly"}}
+            <label>{{localize templateData.label}}</label>
+            <span>{{templateData.value}}</span>
+            {{/inline}}
             {{#*inline "input"}}
             <label>{{localize templateData.label}}</label>
             <input name="{{templateData.field}}" type="text" value="{{templateData.value}}"
@@ -38,6 +46,17 @@
             <select name="{{templateData.field}}">
                 {{selectOptions templateData.choices selected=templateData.value localize=true}}
             </select>
+            {{/inline}}
+            {{#*inline "inputNumberWithSpinner"}}
+            <label>{{localize templateData.label}}</label>
+            <div class="row">
+                <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='{{templateData.field}}']">
+                            <i class="fa fa-minus" aria-hidden="true"></i></button>
+                <input name="{{templateData.field}}" type="number" value="{{templateData.value}}"
+                    placeholder="{{localize label}}" dtype="Number" />
+                <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='{{templateData.field}}']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+            </div>
             {{/inline}}
             <div class="properties-editor">
 

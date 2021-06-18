@@ -37,8 +37,6 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         return sheetData;
     }
 
-
-
     async _onDropItemCreate(itemData) {
 
 

@@ -1,3 +1,15 @@
+## 0.4.0 ##
+2021-06-18
+
+* added: Ausrüstungsgegenstände können Schaden annehmen. Die "Gesundheitsstufe" von Waffen beeinflusst den Fertigkeitswert. Die Haltbarkeit wird automatisch anhand der Last und Härte des Objekts bestimmt.
+* added: In "Kampf" werden nun mehr Informationen zur Kampffertigkeit im Tooltip angezeigt (Modifikatoren etc.)
+* added: +/--Schaltflächen bei numerischen Feldern
+* added: Fokuspunkte können in der entsprechenden Chatnachricht direkt verrechnet werden
+* added: Mit `@Ticks[5 Ticks,<Beschreibung>]` kann in JournalEntries und Chatnachrichten eine interaktive Schaltfläche erstellt werden, um die entsprechende Tickanzahl vorranzuschreiten. Dieser Befehl wird unteranderem in den Patzernachrichten verwendet.
+* changed: Die Patzertabellen wurde neu implementiert. Dadurch fällt die Notwendigkeit weg Macros für die Spieler freizugeben. Trotzdem gibt es weiterhin Makros, die es erlauben manuell auf die Patzertabelle würfeln zu lassen (Wenn keine Chatnachricht hierfür vorhanden ist). Mit einem Klick auf die Patzernachricht, lassen sich alle Einträge in der Patzertabelle ein- und ausblenden.
+* changed: Fertigkeitsprobeanfragen wurden neu implementiert. Auch hier müssen keine Macros mehr für die Spieler freigegeben werden. Der Chatbefehl für eine Fertigkeitsprobeanfrage lautet beispielsweise `@SkillCheck[Wahrnehmung gegen 18]`. Für den Spielleiter steht hierfür auch ein Makro (Fertigkeitsprobe anfragen) zur Verfügung. Innerhalb von JournalEntries lässt sich eine Anfrage mit `@RequestSkillCheck[Wahrnehmung gegen 18]` einfügen.
+* fixed: Wundmalus wurde falsch berechnet
+
 ## 0.3.4 ##
 2021-06-16
 

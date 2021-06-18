@@ -502,18 +502,29 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
 
                 if (this.actor.data.data.activeDefense.mindresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)
+                    defenseData = this.actor.data.data.activeDefense.mindresist.find(a => a._id === defenseId)
 
                 }
 
 
                 if (this.actor.data.data.activeDefense.bodyresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.data.data.activeDefense.defense.find(a => a._id === defenseId)
+                    defenseData = this.actor.data.data.activeDefense.bodyresist.find(a => a._id === defenseId)
 
                 }
 
 
                 content += '<span class="formula">';
+                let a = defenseData.attribute1;
+                content += `<span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
+                a = defenseData.attribute2;
+                content += `<span class="operator">+</span>
+                    <span class="formula-part"><span class="value">${this.actor.data.data.attributes[a].value}</span>
+                    <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
+                    <span class="operator">+</span>`;
+
+                content += `<span class="formula-part"><span class="value">${defenseData.skill.points}</span>
+                    <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
                 if (defenseData.skill?.mod) {
                     defenseData.skill.mod.sources.forEach(e => {
                         let val = e.value;

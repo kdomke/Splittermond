@@ -165,6 +165,7 @@
   margin: 3px;
   font-size: inherit;
   color: inherit;
+  font-variant-numeric: lining-nums;
 }
 .splittermond select {
   font-weight: 900;
@@ -576,10 +577,16 @@
   position: relative;
   top: -10px;
   text-align: center;
+  color: rgba(48, 51, 54, 0.5);
   flex: 1;
 }
 .splittermond .wound-malus-level:first-child {
   border-right: none;
+}
+.splittermond .wound-malus-level-active {
+  font-weight: 900;
+  text-shadow: 0 0 3px white;
+  color: #303336;
 }
 .splittermond .sheet-navigation {
   display: flex;
@@ -1172,12 +1179,13 @@
 }
 .splittermond .properties-editor {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 2fr 3fr;
   gap: 3px;
   padding: 7px;
   align-items: baseline;
   width: 100%;
   min-height: 100px;
+  font-weight: 900;
   justify-self: start;
   align-self: start;
 }
@@ -1415,6 +1423,37 @@
 .splittermond.dialog-check input[name="modifier"] {
   width: 2.5em;
   text-align: center;
+}
+.splittermond .fumble-table-result-item {
+  display: none;
+  padding-top: 3px;
+  margin-top: 3px;
+  opacity: 0.7;
+  border-top: 2px groove rgba(255, 255, 255, 0.3);
+}
+.splittermond .fumble-table-result-item-active {
+  display: block;
+  padding-top: 7px;
+  opacity: 1;
+}
+.splittermond .fumble-table-result-item-range {
+  float: right;
+  opacity: 0.7;
+}
+.chat-message a.rollable,
+.chat-message a.request-skill-check,
+.chat-message a.add-tick {
+  background: #DDD;
+  padding: 1px 4px;
+  border: 1px solid #4b4a44;
+  border-radius: 2px;
+  white-space: nowrap;
+  word-break: break-all;
+}
+.chat-message a.rollable i,
+.chat-message a.request-skill-check i,
+.chat-message a.add-tick i {
+  color: #7a7971;
 }
 .app.window-app.journal-sheet:not(.dark) {
   background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background_journal.jpg);
@@ -1675,4 +1714,19 @@
 }
 .app.window-app.journal-sheet:not(.dark) table td:last-child {
   padding-right: 7px;
+}
+.app.window-app.journal-sheet:not(.dark) a.rollable,
+.app.window-app.journal-sheet:not(.dark) a.request-skill-check,
+.app.window-app.journal-sheet:not(.dark) a.add-tick {
+  background: #DDD;
+  padding: 1px 4px;
+  border: 1px solid #4b4a44;
+  border-radius: 2px;
+  white-space: nowrap;
+  word-break: break-all;
+}
+.app.window-app.journal-sheet:not(.dark) a.rollable i,
+.app.window-app.journal-sheet:not(.dark) a.request-skill-check i,
+.app.window-app.journal-sheet:not(.dark) a.add-tick i {
+  color: #7a7971;
 }

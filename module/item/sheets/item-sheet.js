@@ -46,6 +46,19 @@ export default class SplittermondItemSheet extends ItemSheet {
             dummyElement.remove();
         }).trigger('input');
 
+        html.find('[data-action="inc-value"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value+1).change();
+        });
+
+        html.find('[data-action="dec-value"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value-1).change();
+        });
+
+
         super.activateListeners(html);
     }
 

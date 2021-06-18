@@ -317,11 +317,18 @@
         position: relative;
         top: -10px;
         text-align: center;
+        color: fade(@textColor, 50%);
         flex: 1;
         &:first-child {
             border-right: none;
         }
     
+    }
+
+    .wound-malus-level-active {
+        font-weight: 900;
+        text-shadow: 0 0 3px white;
+        color: fade(@textColor, 100%);
     }
 
     .sheet-navigation {
@@ -1007,12 +1014,14 @@
 
     .properties-editor {
         display: grid;
-        grid-template-columns: 1fr 2fr;
+        grid-template-columns: 2fr 3fr;
         gap: 3px;
         padding: 7px;
         align-items: baseline;
         width: 100%;
         min-height: 100px;
+
+        font-weight: 900;
 
         justify-self: start;
         align-self: start;
@@ -1296,6 +1305,44 @@
             width: 2.5em; 
             text-align: center;
         }
+    }
+
+    .fumble-table-result-item {
+        display: none;
+        padding-top: @paddingSmall;
+        margin-top: @paddingSmall;
+        opacity: 0.7;
+
+        border-top: 2px groove rgba(255, 255, 255, 0.3);
+    }
+
+    .fumble-table-result-item-active {
+        display: block;
+        padding-top: @paddingMedium;
+        opacity: 1;
+    }
+
+    .fumble-table-result-item-range {
+        float: right;
+        opacity: 0.7;
+    }
+
+    
+    
+
+}
+
+.chat-message {
+    a.rollable, a.request-skill-check, a.add-tick {
+        background: #DDD;
+        padding: 1px 4px;
+        border: 1px solid #4b4a44;
+        border-radius: 2px;
+        white-space: nowrap;
+        word-break: break-all;
+    }
+    a.rollable i, a.request-skill-check i, a.add-tick i {
+        color: #7a7971;
     }
 
 }

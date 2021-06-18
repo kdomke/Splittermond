@@ -3,12 +3,19 @@ export function skillCheck(skill, options = {}) {
     let actor;
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
+    if (!actor) {
+        ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+        return
+    };
     actor.rollSkill(skill, options);
 }
 
 export function attackCheck(actorId, attack) {
     const actor = game.actors.get(actorId);
-    if (!actor) return;
+    if (!actor) {
+        ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+        return
+    };
     actor.rollAttack(attack);
 }
 
@@ -53,44 +60,18 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
 }
 
 
-export function requestSkillCheck(skill) {
-    let skillLabel = "";
-    let difficulty = 15;
-
-    if (event) {
-        if (event.type === "click") {
-
-            let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(event.target.closest('button,a')?.textContent.trim());
-            console.log(parsedString)
-            if (parsedString) {
-                skillLabel = parsedString[0].trim().toLowerCase();
-
-                if (parsedString[3]) {
-                    skillLabel = parsedString[1].trim().toLowerCase();
-                    difficulty = parseInt(parsedString[3]);
-                }
-            }
-        }
-    }
-
-
-    let preSelectedSkill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
-
+export function requestSkillCheck(preSelectedSkill="", difficulty=15) {
     let optionsList = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].reduce((str, skill) => {
-        skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
+        let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
         let selected = (skill === preSelectedSkill ? "selected" : "");
         return `${str}<option value="${skill}" ${selected}>${skillLabel}</option>`;
     }, "");
-    console.log(optionsList)
-    skillLabel = game.i18n.localize(`splittermond.skill`);
-    let difficultyLabel = game.i18n.localize(`splittermond.difficulty`);
-    let content = `<form style='display: grid; grid-template-columns: 4fr 1fr'>
-<label>${skillLabel}</label>
-<select name="skill">
-${optionsList}
-</select>
-<label>Schwierigkeit</label><input name='difficulty' data-dtype='Number' value="${difficulty}"></form>`;
-    let versusLabel = game.i18n.localize(`splittermond.versus`);
+
+    let content = `<form><div class="properties-editor">
+        <label>${game.i18n.localize(`splittermond.skill`)}</label>
+        <select name="skill">${optionsList} </select>
+        <label>${game.i18n.localize(`splittermond.difficulty`)}</label><input name='difficulty' type="text" data-dtype='Number' value="${difficulty}">
+        </div></form>`;
     let d = new Dialog({
         title: game.i18n.localize(`splittermond.requestSkillCheck`),
         content: content,
@@ -107,16 +88,25 @@ ${optionsList}
                     let skill = html.find('[name="skill"]')[0].value;
                     let difficulty = parseInt(html.find('[name="difficulty"]')[0].value);
                     let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-                    ChatMessage.create({
-                        user: game.user._id,
-                        speaker: ChatMessage.getSpeaker(),
-                        content: `@Macro[skillCheck]{${skillLabel} ${versusLabel} ${difficulty}}`
-                    });
+                    if (difficulty) {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            speaker: ChatMessage.getSpeaker(),
+                            content: `@SkillCheck[${skillLabel} ${game.i18n.localize(`splittermond.versus`)} ${difficulty}]`
+                        });
+                    } else {
+                        ChatMessage.create({
+                            user: game.user._id,
+                            speaker: ChatMessage.getSpeaker(),
+                            content: `@SkillCheck[${skillLabel}]`
+                        });
+                    }
+                    
                 }
             },
         },
         default: "ok"
-    });
+    },{classes: ["splittermond", "dialog"]});
     d.render(true);
 }
 
@@ -444,66 +434,25 @@ export async function importNpc() {
 }
 
 export function magicFumble(eg = 0, costs = 0) {
+    const speaker = ChatMessage.getSpeaker();
+    let actor;
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    if (!actor) actor = game.actors.get(speaker.actor);
+    if (!actor) {
+        ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+        return
+    };
+    actor.rollMagicFumble(eg,costs);
+}
 
-    let d = new Dialog({
-        title: "Zauberpatzer",
-        content: `<form style='display: grid; grid-template-columns: 1fr 1fr; align-items: center'>
-        <label>Negative Erfolgsgrade</label><input name='eg' type='text' value='${eg}' data-dtype='Number'>
-        <label>Fokuskosten</label><input name='costs' type='text' value='${costs}' data-dtype='Number'></form>`,
-        buttons: {
-
-            cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize("splittermond.cancel")
-            },
-            priest: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Priester",
-                callback: (html) => {
-                    let eg = parseInt(html.find('[name=eg]')[0].value || 0);
-                    let costs = html.find('[name=costs]')[0].value;
-                    if (parseInt(costs)) {
-                        costs = parseInt(costs);
-                    } else {
-                        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(costs.toLowerCase());
-                        costs = parseInt(costDataRaw[2]);
-                    }
-
-
-                    const table = game.tables.find(t => t.name === "Patzertabelle Priester");
-                    if (table) {
-                        return table.draw({ roll: new Roll("2d10+" + (eg * costs)) });
-                    } else {
-                        ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Priester'!");
-                        return null;
-                    }
-                }
-            },
-            sorcerer: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "Zauberer",
-                callback: (html) => {
-                    let eg = parseInt(html.find('[name=eg]')[0].value);
-                    let costs = html.find('[name=costs]')[0].value;
-                    if (parseInt(costs)) {
-                        costs = parseInt(costs);
-                    } else {
-                        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(costs.toLowerCase());
-                        costs = parseInt(costDataRaw[2]);
-                    }
-
-                    const table = game.tables.find(t => t.name === "Patzertabelle Zauberer");
-                    if (table) {
-                        return table.draw({ roll: new Roll("2d10+" + (eg * costs)) });
-                    } else {
-                        ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Zauberer'!");
-                        return null;
-                    }
-
-                }
-            },
-        },
-        default: "sorcerer"
-    }, { classes: ["splittermond", "dialog"] });
-    d.render(true);
+export function attackFumble(eg = 0, costs = 0) {
+    const speaker = ChatMessage.getSpeaker();
+    let actor;
+    if (speaker.token) actor = game.actors.tokens[speaker.token];
+    if (!actor) actor = game.actors.get(speaker.actor);
+    if (!actor) {
+        ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+        return
+    };
+    actor.rollAttackFumble();
 }

@@ -35,6 +35,7 @@ Hooks.once("init", function () {
         requestSkillCheck: Macros.requestSkillCheck,
         importNpc: Macros.importNpc,
         magicFumble: Macros.magicFumble,
+        attackFumble: Macros.attackFumble,
         heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") }),
         compendiumBrowser: new SplittermondCompendiumBrowser()
     }
@@ -172,43 +173,170 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
     TextEditor.enrichHTML = function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
         content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
 
-        content = content.replace(/@Damage\[([0-9VK]+)\](?:\{([^}]*)\})?/, (match, damage, label) => {
-            return `<a class="rollable" data-roll-type="damage" data-damage="${damage}" data-features=""><i class="fas fa-heart-broken"></i> ${label}</a>`
-        })
+        content = content.replaceAll(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+            if (!label) {
+                label = options;
+            }
+            let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(options);
+            let skill = "";
+            let difficulty = 0;
+            if (parsedString) {
+                let skillLabel = parsedString[0].trim().toLowerCase();
+                if (parsedString[3]) {
+                    skillLabel = parsedString[1].trim().toLowerCase();
+                    difficulty = parseInt(parsedString[3]);
+                }
+                skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
+            }
+            if (skill) {
+                return `<a class="rollable" data-roll-type="skill" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-dice"></i> ${label}</a>`
+            } else {
+                return match;
+            }
+            
+        });
+
+        content = content.replaceAll(/@RequestSkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+            if (!label) {
+                label = options;
+            }
+            let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(options);
+            let skill = "";
+            let difficulty = 0;
+            if (parsedString) {
+                let skillLabel = parsedString[0].trim().toLowerCase();
+                if (parsedString[3]) {
+                    skillLabel = parsedString[1].trim().toLowerCase();
+                    difficulty = parseInt(parsedString[3]);
+                }
+                skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
+            }
+            if (skill) {
+                return `<a class="request-skill-check" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-comment"></i> ${label}</a>`
+            } else {
+                return match;
+            }
+            
+        });
+
+        content = content.replaceAll(/@Ticks\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+            
+            let parsedString = options.split(",");
+            let ticks = parsedString[0];
+            let message = "";
+
+            if (!label) {
+                label = ticks;
+            }
+            
+            if (parsedString[1]) {
+                message = parsedString[1];
+            }
+
+            return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
+        });
 
         return content;
     };
 })
 
+function commonEventHandler(app, html, data) {
+    
+    html.find(".rollable").click(event => {
+        
+        const type = $(event.currentTarget).closestData("roll-type");
+        if (type === "skill") {
+            event.preventDefault();
+            event.stopPropagation()
+            const difficulty = $(event.currentTarget).closestData("difficulty");
+            const skill = $(event.currentTarget).closestData("skill");
+            Macros.skillCheck(skill, {difficulty: difficulty});
+        }
+
+    });
+
+    html.find(".request-skill-check").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        const type = $(event.currentTarget).closestData("roll-type");
+
+        const difficulty = $(event.currentTarget).closestData("difficulty");
+        const skill = $(event.currentTarget).closestData("skill");
+
+        Macros.requestSkillCheck(skill,difficulty);
+
+    });
+
+    html.find(".consume").click(event => {
+        
+        const type = $(event.currentTarget).closestData('type');
+        const value = $(event.currentTarget).closestData('value');
+        if (type === "focus") {
+            event.preventDefault();
+            event.stopPropagation()
+            const description = $(event.currentTarget).closestData('description');
+            actor.consumeCost(type, value, description);
+        }
+
+        if (type === "health") {
+            event.preventDefault();
+            event.stopPropagation()
+            const description = $(event.currentTarget).closestData('description');
+            actor.consumeCost(type, value, description);
+        }
+    })
+
+}
+
+Hooks.on('renderJournalSheet',  function (app, html, data) {
+    commonEventHandler(app, html, data);
+
+    html.find(".add-tick").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        let value = $(event.currentTarget).closestData("ticks");
+        let message = $(event.currentTarget).closestData("message");
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        
+        const speaker = ChatMessage.getSpeaker();
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+        if (!actor) {
+            ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+            return
+        };
+        
+        actor.addTicks(value, message);
+    })
+});
+
 Hooks.on('renderChatMessage', function (app, html, data) {
     let actor = game.actors.get(data.message.speaker.actor);
 
+    commonEventHandler(app, html, data)
+
     html.find(".rollable").click(event => {
+        
         const type = $(event.currentTarget).closestData("roll-type");
 
-        if (type === "damage") {
-            const damage = $(event.currentTarget).closestData("damage");
-            const features = $(event.currentTarget).closestData("features");
-            Dice.damage(damage, features);
-        }
-
         if (type === "magicFumble") {
+            event.preventDefault();
+            event.stopPropagation()
             const eg = $(event.currentTarget).closestData("success");
             const costs = $(event.currentTarget).closestData("costs");
-            Macros.magicFumble(eg, costs);
+
+            actor.rollMagicFumble(eg,costs);
         }
 
         if (type === "attackFumble") {
-            const table = game.tables.find(t => t.name === "Patzertabelle Kampf");
-            if (table) {
-                table.draw();
-            } else {
-                ui.notifications.error("Bitte importiere zuerst die Würfeltabelle 'Patzertabelle Kampf'!");
-            }
-
+           event.preventDefault();
+           actor.rollAttackFumble();
         }
+    });
 
-    })
+    
+   
 
     if (!game.user.isGM) {
         html.find(".gm-only").remove();
@@ -219,17 +347,24 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     }
 
     html.find(".add-tick").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
         let value = $(event.currentTarget).closestData("ticks");
         let message = $(event.currentTarget).closestData("message");
         let chatMessageId = $(event.currentTarget).closestData("message-id");
-
+        
         const speaker = game.messages.get(chatMessageId).data.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
-
+        
         actor.addTicks(value, message);
-    })
+    });
+
+    html.find(".fumble-table-result").click(event => {
+        html.find(".fumble-table-result-item").not(".fumble-table-result-item-active").toggle(200);
+    });
+
 
 });
 

@@ -146,6 +146,8 @@
         "enhancementCosts": "Verstärkungskosten",
         "enhancementDescription": "Verstärkung",
         "degreeOfSuccessOptionsHeader": "Erfolgsgradoptionen",
+        "degreeOfSuccess": "Erfolgsgrad",
+        "degreeOfSuccessAbbrev": "EG",
         "degreeOfSuccessOptions": {
             "castDuration": "Auslösezeit verkürzen",
             "consumedFocus": "Verzehrten Fokus verringern",
@@ -157,8 +159,8 @@
             "effectArea": "Wirkungsbereich erhöhen"
         },
         "spellCheckResultDescription": {
-            "devastating": "Anzahl negativer Erfolgsgrade an Fokuspunkten <i>erschöpfen</i> und auf Patzertabelle würfeln!",
-            "failed": "Anzahl negativer Erfolgsgrade an Fokuspunkten <i>erschöpfen</i>!",
+            "devastating": "{eg} Fokuspunkte <i>erschöpfen</i> und auf Patzertabelle würfeln!",
+            "failed": "{eg} Fokuspunkte <i>erschöpfen</i>!",
             "outstanding": "Einen <i>erschöpften</i> oder <i>verzehrten Fokuspunkt</i> einsparen!"
         },
         "shield": "Schild",
@@ -216,6 +218,13 @@
         "status": "Status",
         "throwing": "werfen",
         "masteries": "Meisterschaften",
+        "negativeDegreeOfSuccess": "Negative Erfolgsgrade",
+        "lowerFumbleResult": "Verminderte Patzerauswirkung (Stufe)",
+        "lowerFumbleResultHelp": "Anzahl Stufen um die die Patzerauswirukung vermindert wird (z.B. Fokuskontrolle)",
+        "priest": "Priester",
+        "sorcerer": "Zauberer",
+        "magicFumble": "Zauberpatzer",
+        "attackFumble": "Kampfpatzer",
         "message": {
             "itemImported": "Das Item \"{name}\" wurde als \"{type}\" importiert!"
         },
@@ -385,7 +394,57 @@
             "Veteran",
             "Heroe"
         ],
-        "rollMode": "Wurfmodus"
+        "rollMode": "Wurfmodus",
+        "sufferedDamage": "erlittener Schaden",
+        "fumbleTable": {
+            "fight": {
+                "result1_1": "<h3>Nichts passiert.</h3>",
+                "result2_3": "<h3>Benommen</h3><p>Der Kämpfer stürzt und schlägt unglücklich mit dem Kopf auf. Er wird sofort auf dem Zeitstrahl 10 Ticks nach vorne gesetzt, gilt als liegend und erhält für 30 weitere Ticks den Zustand @Item[Benommen]{Benommen} 2 (für 30 Ticks).</p>",
+                "result4_6": "<h3>Beschädigte Waffe</h3><p>Unbeschädigte Waffe angeschlagen (-3 auf alle Proben); angeschlagene Waffe demoliert (nicht mehr verwendbar)</p>",
+                "result7_8": "<h3>Desorientiertheit</h3><p>Der Kämpfer ist kurz desorientiert. Er wird sofort auf dem Zeitstrahl @Ticks[3 Ticks, Patzer - Desorientiertheit] nach vorne gesetzt.</p>",
+                "result10_12": "<h3>Straucheln</h3><p>Der Kämpfer gerät aus dem Gleichgewicht. Er wird sofort auf dem Zeitstrahl @Ticks[6 Ticks, Patzer - Straucheln] nach vorne gesetzt.</p>",
+                "result13_15": "<h3>Sturz</h3><p>Der Kämpfer gerät aus dem Gleichgewicht und stürzt. Er gilt als <i>liegend</i>.</p>",
+                "result16_18": "<h3>Gelegenheitsangriff</h3><p><strong>Nahkampf</strong>: Der Kämpfer verliert durch Unachtsamkeit @Ticks[3 Ticks, Patzer - Unachtsamkeit]. Ein im Nahkampf befindlicher Gegner des Kämpfers hat sofort die Möglichkeit zu einem Gelegenheitsangriff nach den üblichen Regeln.</p><p><strong>Fernkampf</strong>: Der Kämpfer verliert durch Unachtsamkeit @Ticks[3 Ticks, Patzer - Unachtsamkeit]. Ein Gegner des Kämpfers, der nicht weiter als seine Geschwindigkeit in Metern entfernt ist, kann sofort und ohne Tickaufwand zum Kämpfer aufschließen.</p>",
+                "result19_20": "<h3>Schwere Verwundung</h3><p><strong>Nahkampf</strong>: Der Kämpfer fügt sich mit seiner eigenen Waffe eine schwere Verwundung zu, wodurch er den Zustand @Item[Blutend]{Blutend 2} erhält.</p><p><strong>Fernkampf</strong>: Eine eklatante Fehlbedienung entlädt die Wucht des Angriffs auf den Angreifer selbst und verletzt ihn. Er erhält auf diese Weise den Zustand @Item[Blutend]{Blutend 2}. </p>"
+            },
+            "magic": {
+                "priest": {
+                    "result1_2": "<h3>Nichts passiert.</h3>",
+                    "result3_20": "<h3>unangenehm</h3><p>Der Priester spürt eine tiefe seelische Erschöpfung. Er erhält den Zustand @Item[Erschöpft]{Erschöpft 2}.</p>",
+                    "result21_35": "<h3>störend</h3><p>Der Priester spürt die Verbindung zu seinem Gott leicht schwächer werden, was sein Selbstvertrauen  und seine Konzentration angreift. Er erhält die Zustände @Item[Erschöpft]{Erschöpft 2} und @Item[Glaubenskrise]{Glaubenskrise 1}.</p>",
+                    "result36_70": "<h3>beunruhigend</h3><p>Der Priester hat merkliche Schwierigkeiten, die Verbindung zu seinem Gott aufrecht zu erhalten, was  seine ganze Konzentration erfordert. Er erhält die Zustände @Item[Erschöpft]{Erschöpft 2}, @Item[Benommen]{Benommen 1} und  @Item[Glaubenskrise]{Glaubenskrise 2}.</p>",
+                    "result71_100": "<h3>bedrohlich</h3><p> Ferne zum Gott ist so stark geworden, dass der Priester nicht nur unkonzentriert ist, sondern darüber hinaus von Selbstzweifeln geplagt wird. Er erhält die Zustände @Item[Erschöpft]{Erschöpft 2}, @Item[Benommen]{Benommen 2} und  @Item[Glaubenskrise]{Glaubenskrise 3}.</p>",
+                    "result101_130": "<h3>schädlich</h3><p>Die Verbindung des Priesters zu seinem Gott wird stark beschädigt, wodurch er sich seinem Gott ferner fühlt. Er erhält die Zustände @Item[Angsterfüllt]{Angsterfüllt}, @Item[Erschöpft]{Erschöpft 3}, @Item[Benommen]{Benommen 2} und  @Item[Glaubenskrise]{Glaubenskrise 3}.</p>",
+                    "result131": "<h3>verderblich</h3><p>Die Verbindung des Priesters zu seinem Gott reißt für kurze Zeit komplett ab. Er kann bis zur nächsten  <i>Ruhephase</i> keine Zauber wirken, da er keine Magie von seinem Patron erhält. Dies ist für den Priester eine zutiefst verstörende und unbehagliche Erfahrung. Er erhält die Zustände @Item[Angsterfüllt]{Angsterfüllt}, @Item[Erschöpft]{Erschöpft 4} und @Item[Benommen]{Benommen 3}.</p>"
+                },
+                "sorcerer": {
+                    "result1_2": "<h3>Nichts passiert.</h3>",
+                    "result3_20": "<h3>unangenehm</h3><p>Der Zauberer spürt leichtes Unbehagen, das oft mit Nasenbluten oder Ähnlichem einhergeht. Er verliert [[1d6]] Lebenspunkte und erleidet den Zustand @Item[Erschöpft]{Erschöpft 1}.</p>",
+                    "result21_35": "<h3>störend</h3><p>Der Zauberer kriegt rasende Kopfschmerzen und erleidet leichte Blessuren. Er verliert [[2d6]] Lebenspunkte und erleidet den Zustand @Item[Erschöpft]{Erschöpft 2}.</p>",
+                    "result36_70": "<h3>beunruhigend</h3><p>Der Zauberer spürt nicht nur körperliches Unbehagen und erhält erste offene Wunden, sondern büßt  auch an Konzentration ein. Er verliert [[2d10]] Lebenspunkte und erleidet die Zustände @Item[Erschöpft]{Erschöpft 2} und @Item[Benommen]{Benommen 1}.</p>",
+                    "result71_100": "<h3>bedrohlich</h3><p>Der Zauberer kriegt starke Krämpfe und blutet aus Nase und Ohren. Ein unerklärliches Frösteln erfasst  ihn. Er verliert [[3d10]] Lebenspunkte und erhält die Zustände @Item[Angsterfüllt]{Angsterfüllt} und @Item[Benommen]{Benommen 1}.</p>",
+                    "result101_130": "<h3>schädlich</h3><p>Der Zauberer spürt starke Schmerzen und kann sich kaum noch konzentrieren. Er verliert[[4d10]] Lebenspunkte und erhält die Zustände @Item[Angsterfüllt]{Angsterfüllt} und @Item[Verwundet]{Verwundet 2}.</p>",
+                    "result131_175": "<h3>verderblich</h3><p>Der Zauberer siecht dahin und blutet am ganzen Körper. Er verliert [[5d10]] Lebenspunkte und erhält die  Zustände @Item[Sterbend]{Sterbend 1} und @Item[Verwundet]{Verwundet 2}.</p>",
+                    "result176_250": "<h3>tödlich</h3><p>Der Zauberer erleidet stärkste Schmerzen und blutet aus Augen, Nase, Ohren und Mund. Er verliert  [[7d10]] Lebenspunkte und erhält die Zustände @Item[Sterbend]{Sterbend 2} und @Item[Blutend]{Blutend 2}.</p>",
+                    "result251": "<h3>einäschernd</h3><p>Der Zauberer erleidet schrecklichste körperliche Schmerzen beim Verlust von [[10d10]] Lebenspunkten. Sollte er dies überleben, erhält er darüber hinaus einen der Zustände @Item[Sterbend]{Sterbend 3}, @Item[Brennend]{Brennend 5} oder @Item[Blutend]{Blutend 3}. </p>"
+                }
+            }
+        },
+        "woundMalusLevels": {
+            "notinjured": "unverletzt",
+            "battered": "angeschlagen",
+            "injured": "verletzt",
+            "badlyinjured": "schwer verletzt",
+            "doomed": "schwer verletzt"
+        },
+        "damageLevels": {
+            "undamaged": "unbeschädigt",
+            "tarnished": "angeschlagen",
+            "demolished": "demoliert",
+            "destroyed": "zerstört"
+        },
+        "requestSkillCheck": "Fertigkeitsprobe anfordern",
+        "pleaseSelectAToken": "Bitte selektiere ein Token!"
     },
     "COMBAT": {
         "Round": "Tick"
