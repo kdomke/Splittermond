@@ -3,6 +3,7 @@
 
 * added: Ausrüstungsgegenstände können Schaden annehmen. Die "Gesundheitsstufe" von Waffen beeinflusst den Fertigkeitswert. Die Haltbarkeit wird automatisch anhand der Last und Härte des Objekts bestimmt.
 * added: In "Kampf" werden nun mehr Informationen zur Kampffertigkeit im Tooltip angezeigt (Modifikatoren etc.)
+* added: +/--Schaltflächen bei numerischen Feldern
 * added: Fokuspunkte können in der entsprechenden Chatnachricht direkt verrechnet werden
 * added: Mit `@Ticks[5 Ticks,<Beschreibung>]` kann in JournalEntries und Chatnachrichten eine interaktive Schaltfläche erstellt werden, um die entsprechende Tickanzahl vorranzuschreiten. Dieser Befehl wird unteranderem in den Patzernachrichten verwendet.
 * changed: Die Patzertabellen wurde neu implementiert. Dadurch fällt die Notwendigkeit weg Macros für die Spieler freizugeben. Trotzdem gibt es weiterhin Makros, die es erlauben manuell auf die Patzertabelle würfeln zu lassen (Wenn keine Chatnachricht hierfür vorhanden ist). Mit einem Klick auf die Patzernachricht, lassen sich alle Einträge in der Patzertabelle ein- und ausblenden.
