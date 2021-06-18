@@ -1,3 +1,7 @@
+## 0.4.2 HOTFIX##
+2021-06-18
+* fixed: Schadenschaltfläche wurde in Chatnachricht nicht angezeigt
+
 ## 0.4.1 HOTFIX##
 2021-06-18
 * fixed: Fokusabrechnung in Chatnachricht funktioniert nicht

@@ -1625,7 +1625,7 @@ export default class SplittermondActor extends Actor {
 
         data.actions = [];
 
-        if (data.isSuccess) {
+        if (data.succeeded) {
             data.actions.push({
                 name: game.i18n.localize(`splittermond.damage`) + " (" + weaponData.damage + ")",
                 icon: "fa-heart-broken",
