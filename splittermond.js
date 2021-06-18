@@ -267,24 +267,7 @@ function commonEventHandler(app, html, data) {
 
     });
 
-    html.find(".consume").click(event => {
-        
-        const type = $(event.currentTarget).closestData('type');
-        const value = $(event.currentTarget).closestData('value');
-        if (type === "focus") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-
-        if (type === "health") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-    })
+    
 
 }
 
@@ -334,6 +317,25 @@ Hooks.on('renderChatMessage', function (app, html, data) {
            actor.rollAttackFumble();
         }
     });
+
+    html.find(".consume").click(event => {
+        
+        const type = $(event.currentTarget).closestData('type');
+        const value = $(event.currentTarget).closestData('value');
+        if (type === "focus") {
+            event.preventDefault();
+            event.stopPropagation()
+            const description = $(event.currentTarget).closestData('description');
+            actor.consumeCost(type, value, description);
+        }
+
+        if (type === "health") {
+            event.preventDefault();
+            event.stopPropagation()
+            const description = $(event.currentTarget).closestData('description');
+            actor.consumeCost(type, value, description);
+        }
+    })
 
     
    
