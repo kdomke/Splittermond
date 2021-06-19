@@ -1,3 +1,7 @@
+## 0.4.3 HOTFIX##
+2021-06-19
+* fixed: Schadenschaltfläche in Chatnachricht funktioniert nicht
+
 ## 0.4.2 HOTFIX##
 2021-06-18
 * fixed: Schadenschaltfläche wurde in Chatnachricht nicht angezeigt
