@@ -303,6 +303,12 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         
         const type = $(event.currentTarget).closestData("roll-type");
 
+        if (type === "damage") {
+            const damage = $(event.currentTarget).closestData("damage");
+            const features = $(event.currentTarget).closestData("features");
+            Dice.damage(damage, features);
+        }
+
         if (type === "magicFumble") {
             event.preventDefault();
             event.stopPropagation()
