@@ -1,3 +1,11 @@
+## 0.4.4##
+2021-06-21
+* added: Der Schaden von Schadenswürfen kann mit dem Button "Schaden anwenden" auf selektierte Token angewendet werden (nur GM). Dazu öffnet sich ein weiterer Dialog in dem der Schaden modifiziert werden kann.
+* added: Die Quelle des Schadens wird in der Chatnachricht des Schadenswurfs angezeigt.
+* added: Unter "Fertigkeiten" im Spielercharakterblatt werden alle Fertigkeiten ausgeblendet in denen keine Fertigkeitspunkte vergeben wurden (Gleiche Funktionalität wie bei NSCs). Durch einen Klick auf das Augesymbol lassen sich alle Fertigkeiten einblenden.
+* fixed: Fokuskostenparser hat fehlerhafte Kosten ausgegeben
+* fixed: Modifikatoren von abgeleitete Werten wurden im NSC-Sheet mehrfach angewendet
+
 ## 0.4.3 HOTFIX##
 2021-06-19
 * fixed: Schadenschaltfläche in Chatnachricht funktioniert nicht

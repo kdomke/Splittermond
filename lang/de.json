@@ -449,7 +449,8 @@
         "applyDamage": "Schaden anwenden",
         "apply": "Anwenden",
         "applyDamageOnSelectedToken": "Der Schaden wird auf alle selektierten Token angewendet!",
-        "applyDamageOnToken": "Der Schaden wird auf <a class='entity-link' draggable='false' data-entity='Actor' data-id='{_id}'><i class='fas fa-user'></i> {name}</a>"
+        "applyDamageOnSelectedTargets": "Der Schaden wird auf alle als <i>Ziel</i> markierte Token angewendet!",
+        "applyDamageOnToken": "Der Schaden wird auf <a class='entity-link' draggable='false' data-entity='Actor' data-id='{_id}'><i class='fas fa-user'></i> {name}</a> angewendet!"
     },
     "COMBAT": {
         "Round": "Tick"

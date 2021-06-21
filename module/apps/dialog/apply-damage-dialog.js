@@ -14,6 +14,8 @@ export default class ApplyDamageDialog extends Dialog {
 
         if (game.user.isGM) {
             data.message = game.i18n.localize("splittermond.applyDamageOnSelectedToken");
+        } else if(game.user.targets.size) {
+            data.message = game.i18n.localize("splittermond.applyDamageOnSelectedTargets");
         } else {
             const speaker = ChatMessage.getSpeaker();
             
@@ -22,7 +24,7 @@ export default class ApplyDamageDialog extends Dialog {
             if (!actor) {
                 return
             };
-            data.message = game.i18n.format("splittermond.applyDamageOnActor", actor.data);
+            data.message = game.i18n.format("splittermond.applyDamageOnToken", actor.data);
         }
 
         const html = await renderTemplate("systems/splittermond/templates/apps/dialog/apply-damage-dialog.hbs", data);
@@ -53,7 +55,7 @@ export default class ApplyDamageDialog extends Dialog {
                                 damageString = fd.damage+"V"+fd.damage;
                             }
 
-                            if (!actor) {
+                            if (game.user.isGM) {
                                 if (canvas.tokens.controlled) {
                                     canvas.tokens.controlled.forEach(token => {
                                         token.actor.consumeCost("health", damageString, description);
@@ -61,6 +63,10 @@ export default class ApplyDamageDialog extends Dialog {
                                 } else {
                                     game.i18n.localize("splittermond.selectAToken");
                                 }
+                            } else if(game.user.targets.size) {
+                                Array.from(game.user.targets).forEach(token => {
+                                    token.actor.consumeCost("health", damageString, description);
+                                })
                             } else {
                                 actor.consumeCost("health", damageString, description);
                             }
