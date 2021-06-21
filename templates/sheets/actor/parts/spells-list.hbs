@@ -1,7 +1,7 @@
 <div class="list channeled-spells">
     <div class="list-header">
         <h3>{{localize "splittermond.channeledSpells"}}</h3>
-        <div class="actions">
+        <div class="list-actions">
             <button class="button-inline" type="button" data-action="add-channeled-focus" data-render-sheet="0">
                 <i class="fa fa-plus-square" aria-hidden="true"></i>
             </button>
@@ -14,7 +14,7 @@
 
             <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}" data-dtype="Number">
             </div>
-            <div class="actions">
+            <div class="list-actions">
                 <button class="button-inline" type="button" data-action="delete-array-element">
                     <i class="fa fa-trash" aria-hidden="true"></i>
                 </button>
@@ -25,7 +25,6 @@
 </div>
 
 <div class="list spells" data-item-type="spell" data-roll-type="spell">
-
     {{#each spellsBySkill}}
     <div class="list-header">
         <h3>{{localize this.label}} ({{this.skillValue}})</h3>

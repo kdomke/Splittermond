@@ -1,6 +1,12 @@
 import * as Dice from "../../util/dice.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
+    constructor(...args) {
+        super(...args);
+
+        this._hideSkills = true;
+    }
+
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             classes: ["splittermond", "sheet", "actor"]
@@ -12,6 +18,8 @@ export default class SplittermondActorSheet extends ActorSheet {
         if (game.data.version.startsWith("0.8.")) {
             sheetData.data = sheetData.data.data;
         }
+
+        
 
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
@@ -33,6 +41,14 @@ export default class SplittermondActorSheet extends ActorSheet {
                 };
             }
         }
+
+        sheetData.hideSkills = this._hideSkills;
+        [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(skill => {
+            sheetData.data.skills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
+                (parseInt(sheetData.data.skills[skill].points) > 0) || !this._hideSkills;
+        });
+
+
 
         if (sheetData.data.skills) {
             for (let [skillId, skill] of Object.entries(sheetData.data.skills)) {
@@ -317,7 +333,8 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (type === "damage") {
                 const damage = event.currentTarget.dataset.damage;
                 const features = event.currentTarget.dataset.features;
-                Dice.damage(damage, features);
+                const source = event.currentTarget.dataset.source;
+                Dice.damage(damage, features, source);
             }
 
             if (type === "activeDefense") {
@@ -659,6 +676,12 @@ export default class SplittermondActorSheet extends ActorSheet {
         }, event => {
             html.find("div#tooltip").remove();
         })
+
+        html.find('[data-action="show-hide-skills"]').click(event => {
+            this._hideSkills = !this._hideSkills;
+            $(event.currentTarget).attr("data-action", "hide-skills");
+            this.render();
+        });
 
 
         super.activateListeners(html);

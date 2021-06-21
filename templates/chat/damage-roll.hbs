@@ -5,18 +5,28 @@
         </div>
         <div>
             <h2>{{localize "splittermond.damage"}}</h2>
-            {{#if features}}
-            <ul class="features">
-                {{#each features}}
-                <li class="{{#if this.active}}active{{/if}}">{{this.name}}</li>
-                {{/each}}
-            </ul>
-            {{/if}}
+            {{#if source}}<h3>{{source}}</h3>{{/if}}
         </div>
     </header>
+    {{#if features}}
+    <ul class="features">
+        {{#each features}}
+        <li class="{{#if this.active}}active{{/if}}">{{this.name}}</li>
+        {{/each}}
+    </ul>
+    {{/if}}
     <div class="roll-summary dice-roll">
         <div class="dice-formula">{{formula}}</div>
         <div class="roll-total">{{roll.total}}</div>
         {{{tooltip}}}
     </div>
+    {{#if actions}}
+    <div class="actions gm-only">
+        <h3>{{localize "splittermond.furtherActions"}}</h3>
+        {{#each actions}}
+        <button class="{{this.classes}}" {{#each this.data}}data-{{@key}}="{{this}}" {{/each}}><i
+                class="fas {{this.icon}}"></i> {{this.name}}</button>
+        {{/each}}
+    </div>
+    {{/if}}
 </div>

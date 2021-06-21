@@ -44,7 +44,7 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
     };
 }
 
-export async function damage(damageFormula, featureString) {
+export async function damage(damageFormula, featureString, damageSource="") {
     let feature = {};
     featureString.split(',').forEach(feat => {
         let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
@@ -102,11 +102,27 @@ export async function damage(damageFormula, featureString) {
         roll._total += kritischBonus;
     }
 
+    let actions = [];
+
+    actions.push({
+        name: game.i18n.localize("splittermond.applyDamage"),
+        icon: "fa-heart-broken",
+        classes: "apply-damage",
+        data: {
+            damage: roll._total,
+            source: damageSource,
+            type: "V"
+        }
+    });
+
+
     let templateContext = {
         roll: roll,
+        source: damageSource,
         features: feature,
         formula: damageFormula,
-        tooltip: await roll.getTooltip()
+        tooltip: await roll.getTooltip(),
+        actions: actions
     };
 
     let chatData = {

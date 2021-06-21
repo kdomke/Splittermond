@@ -3,7 +3,7 @@
     <div class="derived-attribute" id="{{attributeId}}">
         <label>{{localize attribute.label.short}}</label>
         {{#if attribute.editable}}
-        <input name="data.derivedAttributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+        <input name="derivedAttributes.{{attributeId}}" type="text" value="{{attribute.value}}"
             data-dtype="Number">
         {{else}}
         <span>{{attribute.value}}</span>
@@ -14,7 +14,7 @@
 <div class="damage-reduction">
     <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
     {{#if damageReduction.editable}}
-    <input name="data.damageReduction.value" type="text" value="{{damageReduction.value}}" data-dtype="Number">
+    <input name="damageReduction" type="text" value="{{damageReduction.value}}" data-dtype="Number">
     {{else}}
     <span>{{damageReduction.value}}</span>
     {{/if}}
