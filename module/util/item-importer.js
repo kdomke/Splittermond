@@ -867,7 +867,7 @@ export default class ItemImporter {
                             });
                             masteries = await Promise.all(masteries.map(async (masteryData) => {
                                 let searchString = masteryData.name.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
-                                cMasteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
+                                let cMasteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
                                 if (cMasteryData) {
                                     cMasteryData = duplicate(cMasteryData);
                                     delete cMasteryData._id;
