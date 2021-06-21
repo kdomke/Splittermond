@@ -3,6 +3,7 @@ import SplittermondItem from "./module/item/item.js";
 import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
 import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
 import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
+import ApplyDamageDialog from "./module/apps/dialog/apply-damage-dialog.js";
 import { splittermond } from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
 import * as Macros from "./module/util/macros.js"
@@ -306,7 +307,8 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         if (type === "damage") {
             const damage = $(event.currentTarget).closestData("damage");
             const features = $(event.currentTarget).closestData("features");
-            Dice.damage(damage, features);
+            const source = $(event.currentTarget).closestData("source");
+            Dice.damage(damage, features, source);
         }
 
         if (type === "magicFumble") {
@@ -367,6 +369,15 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         if (!actor) actor = game.actors.get(speaker.actor);
         
         actor.addTicks(value, message);
+    });
+
+    html.find(".apply-damage").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        let value = $(event.currentTarget).closestData("damage");
+        let type = $(event.currentTarget).closestData("type");
+        let source = $(event.currentTarget).closestData("source");
+        ApplyDamageDialog.create(value,type, source);
     });
 
     html.find(".fumble-table-result").click(event => {

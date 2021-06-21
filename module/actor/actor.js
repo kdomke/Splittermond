@@ -1633,7 +1633,8 @@ export default class SplittermondActor extends Actor {
                 data: {
                     "roll-type": "damage",
                     damage: weaponData.damage,
-                    features: weaponData.features
+                    features: weaponData.features,
+                    source: weaponData.name
                 }
             });
         }
@@ -1803,7 +1804,8 @@ export default class SplittermondActor extends Actor {
                 data: {
                     "roll-type": "damage",
                     damage: spellData.data.damage,
-                    features: ""
+                    features: "",
+                    source: spellData.name
                 }
             });
         }
@@ -2272,7 +2274,13 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         return rollData;
     }
     _parseCostsString(str) {
-        let costDataRaw = /[0-9]*[ eg\/+]*([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
+        let strParts = str.split("/");
+        if (strParts.length> 1) {
+            str = strParts[1];
+        } else {
+            str = strParts[0];
+        }
+        let costDataRaw = /([k]{0,1})([0-9]+)v{0,1}([0-9]*)/.exec(str.toLowerCase());
         if (costDataRaw) {
             return {
                 channeled: costDataRaw[1] === "k" ? parseInt(costDataRaw[2]) - parseInt(costDataRaw[3] || 0) : 0,
@@ -2349,7 +2357,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         const actorData = this.data;
         const data = actorData.data;
         let costData = this._parseCostsString(valueStr.toString());
-
+        /*
         if (type === "focus") {
 
             let focusData = duplicate(data.focus);
@@ -2390,8 +2398,48 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
             });
 
         }
+*/
+
+            let subData = duplicate(data[type]);
+
+            if (costData.channeled) {
+                if (!subData.channeled.hasOwnProperty("entries")) {
+                    subData.channeled = {
+                        value: 0,
+                        entries: []
+                    }
+                }
+
+                subData.channeled.entries.push({
+                    description: description,
+                    costs: costData.channeled,
+                });
+
+            }
+            if (!subData.exhausted.value) {
+                subData.exhausted = {
+                    value: 0
+                }
+            }
+
+            if (!subData.consumed.value) {
+                subData.consumed = {
+                    value: 0
+                }
+            }
+
+            subData.exhausted.value += costData.exhausted;
+            subData.consumed.value += costData.consumed;
+
+            this.update({
+                "data": {
+                    [type]: subData
+                }
+            });
 
 
     }
+
+    
 
 }
