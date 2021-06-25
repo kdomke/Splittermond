@@ -298,6 +298,17 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
 Hooks.on('renderChatMessage', function (app, html, data) {
     let actor = game.actors.get(data.message.speaker.actor);
 
+    if (!game.user.isGM) {
+        html.find(".gm-only").remove();
+    }
+
+    if (!((actor && actor.isOwner) || game.user.isGM || (data.author.id === game.user.id))) {
+        html.find(".actions button").not(".active-defense").remove();
+    }
+
+    
+    html.find(".actions").not(":has(button)").remove();
+
     commonEventHandler(app, html, data)
 
     html.find(".rollable").click(event => {
@@ -344,17 +355,7 @@ Hooks.on('renderChatMessage', function (app, html, data) {
             actor.consumeCost(type, value, description);
         }
     })
-
     
-   
-
-    if (!game.user.isGM) {
-        html.find(".gm-only").remove();
-    }
-
-    if (!((actor && actor.isOwner) || game.user.isGM || (data.author.id === game.user.id))) {
-        html.find(".actions").remove();
-    }
 
     html.find(".add-tick").click(event => {
         event.preventDefault();
@@ -378,6 +379,23 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         let type = $(event.currentTarget).closestData("type");
         let source = $(event.currentTarget).closestData("source");
         ApplyDamageDialog.create(value,type, source);
+    });
+
+    html.find(".active-defense").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        let type = $(event.currentTarget).closestData("type");
+        
+        const speaker = ChatMessage.getSpeaker();
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+        if (!actor) {
+            ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+            return
+        };
+
+        actor.activeDefenseDialog(type);
     });
 
     html.find(".fumble-table-result").click(event => {
