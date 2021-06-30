@@ -1,7 +1,19 @@
 export default class SplittermondCombat extends Combat {
     _sortCombatants(a, b) {
-        const iniA = parseFloat(a.initiative) || 0;
-        const iniB = parseFloat(b.initiative) || 0;
+        b.actor.data.data.attributes.intuition.value
+        let iniA = parseFloat(a.initiative);
+        let iniB = parseFloat(b.initiative);
+
+        if (iniA === iniB) {
+            iniA = -a.actor.data.data.attributes.intuition.value;
+            iniB = -b.actor.data.data.attributes.intuition.value;
+        }
+
+        if (iniA === iniB) {
+            iniA = Math.random();
+            iniB = Math.random();
+        }
+
         return (iniA + (a.defeated ? 1000 : 0)) - (iniB + (b.defeated ? 1000 : 0));
     }
 
@@ -11,8 +23,24 @@ export default class SplittermondCombat extends Combat {
 
         this.current.round = this.combatants[0].initiative;
 
-        return super.nextRound();
+        return this.nextRound();
     }
+
+    setupTurns() {
+
+        // Determine the turn order and the current turn
+        const turns = this.combatants.contents.sort(this._sortCombatants);
+    
+          // Update state tracking
+        let c = turns[0];
+        this.current = {
+          round: this.data.round,
+          turn: 0,
+          combatantId: c ? c.id : null,
+          tokenId: c ? c.data.tokenId : null
+        };
+        return this.turns = turns;
+      }
 
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
