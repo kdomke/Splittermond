@@ -1627,6 +1627,15 @@ export default class SplittermondActor extends Actor {
 
         if (data.succeeded) {
             data.actions.push({
+                name: `${game.i18n.localize("splittermond.activeDefense")} (${game.i18n.localize("splittermond.derivedAttribute.defense.short")})`,
+                icon: "fa-shield-alt",
+                classes: "active-defense",
+                data: {
+                    type: "defense"
+                }
+            });
+
+            data.actions.push({
                 name: game.i18n.localize(`splittermond.damage`) + " (" + weaponData.damage + ")",
                 icon: "fa-heart-broken",
                 classes: "rollable",
@@ -1797,6 +1806,18 @@ export default class SplittermondActor extends Actor {
 
         data.actions = [];
         if (spellData.data.damage && data.succeeded) {
+            if (["VTD","KW","GW"].includes(difficulty)) {
+                data.actions.push({
+                    name: `${game.i18n.localize("splittermond.activeDefense")} (${difficulty})`,
+                    icon: "fa-shield-alt",
+                    classes: "active-defense",
+                    data: {
+                        type: difficulty
+                    }
+                });
+            }
+            
+
             data.actions.push({
                 name: game.i18n.localize(`splittermond.damage`) + " (" + spellData.data.damage + ")",
                 icon: "fa-heart-broken",
@@ -2357,87 +2378,90 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         const actorData = this.data;
         const data = actorData.data;
         let costData = this._parseCostsString(valueStr.toString());
-        /*
-        if (type === "focus") {
 
-            let focusData = duplicate(data.focus);
+        let subData = duplicate(data[type]);
 
-            if (costData.channeled) {
-                if (!focusData.channeled.hasOwnProperty("entries")) {
-                    focusData.channeled = {
-                        value: 0,
-                        entries: []
-                    }
-                }
-
-                focusData.channeled.entries.push({
-                    description: description,
-                    costs: costData.channeled,
-                });
-
-            }
-            if (!focusData.exhausted.value) {
-                focusData.exhausted = {
-                    value: 0
+        if (costData.channeled) {
+            if (!subData.channeled.hasOwnProperty("entries")) {
+                subData.channeled = {
+                    value: 0,
+                    entries: []
                 }
             }
 
-            if (!focusData.consumed.value) {
-                focusData.consumed = {
-                    value: 0
-                }
-            }
-
-            focusData.exhausted.value += costData.exhausted;
-            focusData.consumed.value += costData.consumed;
-
-            this.update({
-                "data": {
-                    "focus": focusData
-                }
+            subData.channeled.entries.push({
+                description: description,
+                costs: costData.channeled,
             });
 
         }
-*/
+        if (!subData.exhausted.value) {
+            subData.exhausted = {
+                value: 0
+            }
+        }
 
-            let subData = duplicate(data[type]);
+        if (!subData.consumed.value) {
+            subData.consumed = {
+                value: 0
+            }
+        }
 
-            if (costData.channeled) {
-                if (!subData.channeled.hasOwnProperty("entries")) {
-                    subData.channeled = {
-                        value: 0,
-                        entries: []
+        subData.exhausted.value += costData.exhausted;
+        subData.consumed.value += costData.consumed;
+
+        this.update({
+            "data": {
+                [type]: subData
+            }
+        });
+
+
+    }
+
+    async activeDefenseDialog(type="defense") {
+        if (type.toLowerCase()=== "vtd") {
+            type = "defense";
+        }
+        if (type.toLowerCase()=== "kw") {
+            type = "bodyresist";
+        }
+        if (type.toLowerCase()=== "gw") {
+            type = "mindresist";
+        }
+
+        if (type==="defense") {
+            let content = await renderTemplate("systems/splittermond/templates/apps/dialog/active-defense.hbs", {activeDefense: this.data.data.activeDefense.defense});
+            let p = new Promise((resolve, reject) => {
+                let dialog = new Dialog({
+                    title: game.i18n.localize("splittermond.activeDefense"),
+                    content: content,
+                    buttons: {
+                        cancel: {
+                            label: game.i18n.localize("splittermond.cancel"),
+                            callback: html => {
+                                resolve(false);
+                            }
+                        }
+                    },
+                    render: (html) => {
+                        html.find(".rollable").click(event => {
+                            const type = $(event.currentTarget).closestData('roll-type');
+                            if (type === "activeDefense") {
+                                const itemId = $(event.currentTarget).closestData('defense-id');
+                                const defenseType = $(event.currentTarget).closestData('defense-type');
+                                this.rollActiveDefense(defenseType, this.data.data.activeDefense.defense.find(el => el._id === itemId));
+                                dialog.close();
+                            }
+                        });
                     }
-                }
-
-                subData.channeled.entries.push({
-                    description: description,
-                    costs: costData.channeled,
-                });
-
-            }
-            if (!subData.exhausted.value) {
-                subData.exhausted = {
-                    value: 0
-                }
-            }
-
-            if (!subData.consumed.value) {
-                subData.consumed = {
-                    value: 0
-                }
-            }
-
-            subData.exhausted.value += costData.exhausted;
-            subData.consumed.value += costData.consumed;
-
-            this.update({
-                "data": {
-                    [type]: subData
-                }
+                },{classes: ["splittermond","dialog"]});
+                dialog.render(true);
             });
-
-
+        } else {
+            this.rollActiveDefense(type,this.data.data.activeDefense[type][0]);
+        }
+        
     }
 
     

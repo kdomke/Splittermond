@@ -1,3 +1,8 @@
+## 0.4.5##
+2021-06-30
+* added: Es kann nun eine Aktive Abwehr aus der Angriffs-Chatnachricht initiiert werden.
+* changed: Combat Tracker: Bei gleicher Initiative gilt für die Kampfreihenfolge die höhere Intuition (GRW S. 157)
+
 ## 0.4.4##
 2021-06-21
 * added: Der Schaden von Schadenswürfen kann mit dem Button "Schaden anwenden" auf selektierte Token angewendet werden (nur GM). Dazu öffnet sich ein weiterer Dialog in dem der Schaden modifiziert werden kann.

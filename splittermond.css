@@ -825,6 +825,9 @@
 .splittermond .list-item > .list-actions button {
   display: none;
 }
+.splittermond.dialog .list {
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+}
 .splittermond .list.spells img,
 .splittermond .list.inventory img,
 .splittermond .list.attack img,
