@@ -644,7 +644,7 @@ export default class SplittermondActor extends Actor {
                     }
                 }
 
-                switch (modifierLabel) {
+                switch (modifierLabel.toLowerCase()) {
                     case "bonusCap":
                         data.bonusCap = parseInt(data.bonusCap) + value;
                         break;
