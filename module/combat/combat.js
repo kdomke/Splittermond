@@ -14,7 +14,7 @@ export default class SplittermondCombat extends Combat {
             iniB = Math.random();
         }
 
-        return (iniA + (a.defeated ? 1000 : 0)) - (iniB + (b.defeated ? 1000 : 0));
+        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
     }
 
     async startCombat() {
