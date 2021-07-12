@@ -676,7 +676,7 @@ export default class SplittermondActor extends Actor {
                     case "tickmalus.mod":
                         addModifierHelper(data.tickMalus);
                         break;
-                    case "woundmalus.nbrLevels":
+                    case "woundmalus.nbrlevels":
                         data.health.woundMalus.nbrLevels = value * multiplier;
                         break;
                     case "woundmalus.mod":
@@ -718,7 +718,7 @@ export default class SplittermondActor extends Actor {
                     default:
                         let dataset;
                         let element = CONFIG.splittermond.derivedAttributes.find(attr => {
-                            return modifierLabel === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`)
+                            return modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
                         });
                         if (element) {
                             dataset = data.derivedAttributes[element];

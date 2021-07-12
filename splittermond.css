@@ -1447,6 +1447,11 @@
   float: right;
   opacity: 0.7;
 }
+.splittermond .help-text {
+  font-family: "Signika";
+  font-weight: normal;
+  font-size: 12px;
+}
 .chat-message a.rollable,
 .chat-message a.request-skill-check,
 .chat-message a.add-tick {
