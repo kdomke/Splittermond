@@ -1,3 +1,7 @@
+## 0.4.7 HOTFIX ##
+2021-07-12
+* fixed: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets
+
 ## 0.4.6 ##
 2021-07-12
 * added: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets
