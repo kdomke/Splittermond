@@ -64,6 +64,10 @@
             <h3>{{localize this.groupName}}</h3>
             {{#each this.properties}}
             {{> (lookup . 'template') templateData=this}}
+            {{#if this.help}}
+            <label></label>
+            <div class="help-text">{{{this.help}}}</div>
+            {{/if}}
             {{/each}}
             {{/each}}
             </div>
