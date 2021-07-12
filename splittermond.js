@@ -174,7 +174,7 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
     TextEditor.enrichHTML = function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
         content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
 
-        content = content.replaceAll(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+        content = content.replace(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             if (!label) {
                 label = options;
             }
@@ -197,7 +197,7 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
             
         });
 
-        content = content.replaceAll(/@RequestSkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+        content = content.replace(/@RequestSkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             if (!label) {
                 label = options;
             }
@@ -220,7 +220,7 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
             
         });
 
-        content = content.replaceAll(/@Ticks\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
+        content = content.replace(/@Ticks\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             
             let parsedString = options.split(",");
             let ticks = parsedString[0];
