@@ -279,15 +279,17 @@ export default class SplittermondActor extends Actor {
                     (item.data.minAttributes || "").split(",").forEach(aStr => {
                         let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
                         if (temp) {
-                            let attr = CONFIG.splittermond.attributes.find((a) => {
-                                return temp[1] === game.i18n.localize(`splittermond.attribute.${a}.short`);
+                            let attr = CONFIG.splittermond.attributes.find(a => {
+                                return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                             });
-                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
-                            if (diff < 0) {
-                                minAttributeMalus = diff;
-                                itemData.weaponSpeed -= diff;
-                                if (itemData.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
-                                    itemData.secondaryAttack.weaponSpeed -= diff;
+                            if (attr) {
+                                let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                                if (diff < 0) {
+                                    minAttributeMalus = diff;
+                                    itemData.weaponSpeed -= diff;
+                                    if (itemData.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
+                                        itemData.secondaryAttack.weaponSpeed -= diff;
+                                    }
                                 }
                             }
                         }
@@ -363,7 +365,7 @@ export default class SplittermondActor extends Actor {
 
 
         attacks.forEach(attack => {
-            if (attack.skillId) {
+            if (attack.skillId && data.skills[attack.skillId]) {
                 attack.skill = duplicate(data.skills[attack.skillId]);
                 if (!attack.skill.mod) {
                     attack.skill.mod = {
@@ -458,12 +460,14 @@ export default class SplittermondActor extends Actor {
                 (item.data.minAttributes || "").split(",").forEach(aStr => {
                     let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
                     if (temp) {
-                        let attr = CONFIG.splittermond.attributes.find((a) => {
-                            return temp[1] === game.i18n.localize(`splittermond.attribute.${a}.short`);
+                        let attr = CONFIG.splittermond.attributes.find(a => {
+                            return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                         });
-                        let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
-                        if (diff < 0) {
-                            minAttributeMalus = diff;
+                        if (attr) {
+                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                            if (diff < 0) {
+                                minAttributeMalus = diff;
+                            }
                         }
                     }
                 });
@@ -485,9 +489,9 @@ export default class SplittermondActor extends Actor {
                     }
                     
                     if (parseInt(minAttributeMalus || 0) != 0) {
-                        skill.value += parseInt(attack.minAttributeMalus || 0);
+                        skill.value += parseInt(minAttributeMalus || 0);
                         skill.mod.sources.push({
-                            value: parseInt(attack.minAttributeMalus || 0),
+                            value: parseInt(minAttributeMalus || 0),
                             description: game.i18n.localize("splittermond.minAttributes"),
                             source: "misc"
                         });
@@ -536,9 +540,9 @@ export default class SplittermondActor extends Actor {
                             }
                             
                             if (parseInt(minAttributeMalus || 0) != 0) {
-                                skill.value += parseInt(attack.minAttributeMalus || 0);
+                                skill.value += parseInt(minAttributeMalus || 0);
                                 skill.mod.sources.push({
-                                    value: parseInt(attack.minAttributeMalus || 0),
+                                    value: parseInt(minAttributeMalus || 0),
                                     description: game.i18n.localize("splittermond.minAttributes"),
                                     source: "misc"
                                 });
@@ -571,7 +575,7 @@ export default class SplittermondActor extends Actor {
                     }
                 }
             } else if (item.type === "shield" && parseInt(item.data.damageLevel) <= 1) {
-                if (item.data.equipped) {
+                if (item.data.equipped && item.data.skill) {
                     let skill = duplicate(data.skills[item.data.skill]);
                     skill.value += parseInt(data.attributes["intuition"].value)
                     skill.value += parseInt(data.attributes["strength"].value)
@@ -645,13 +649,13 @@ export default class SplittermondActor extends Actor {
                 }
 
                 switch (modifierLabel.toLowerCase()) {
-                    case "bonusCap":
+                    case "bonuscap":
                         data.bonusCap = parseInt(data.bonusCap) + value;
                         break;
-                    case "GSW.mult":
+                    case "gsw.mult":
                         data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
                         break;
-                    case "SR":
+                    case "sr".toLowerCase():
                         addModifierHelper(data.damageReduction);
                         break;
                     case "handicap.shield.mod":
@@ -663,50 +667,50 @@ export default class SplittermondActor extends Actor {
                     case "handicap.armor.mod":
                         addModifierHelper(data.handicap.armor);
                         break;
-                    case "tickMalus.shield.mod":
+                    case "tickmalus.shield.mod":
                         addModifierHelper(data.tickMalus.shield);
                         break;
-                    case "tickMalus.armor.mod":
+                    case "tickmalus.armor.mod":
                         addModifierHelper(data.tickMalus.armor);
                         break;
-                    case "tickMalus.mod":
+                    case "tickmalus.mod":
                         addModifierHelper(data.tickMalus);
                         break;
-                    case "woundMalus.nbrLevels":
+                    case "woundmalus.nbrLevels":
                         data.health.woundMalus.nbrLevels = value * multiplier;
                         break;
-                    case "woundMalus.mod":
+                    case "woundmalus.mod":
                         data.health.woundMalus.mod += value * multiplier;
                         break;
-                    case "woundMalus.levelMod":
+                    case "woundmalus.levelmod":
                         data.health.woundMalus.levelMod += value * multiplier;
                         break;
                     case "splinterpoints":
                         data.splinterpoints.max = parseInt(data.splinterpoints?.max || 3) + value * multiplier;
                         break;
-                    case "healthRegeneration.multiplier":
+                    case "healthregeneration.multiplier":
                         actorData.healthRegeneration.multiplier = value * multiplier;
                         break;
-                    case "focusRegeneration.multiplier":
+                    case "focusregeneration.multiplier":
                         actorData.focusRegeneration.multiplier = value * multiplier;
                         break;
-                    case "lowerFumbleResult":
+                    case "lowerfumbleresult":
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
                         }
                         actorData.lowerFumbleResult += value;
                         break;
-                    case "generalSkills":
+                    case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
                             addModifierHelper(data.skills[skill], emphasis);
                         });
                         break;
-                    case "magicSkills":
+                    case "magicskills":
                         CONFIG.splittermond.skillGroups.magic.forEach((skill) => {
                             addModifierHelper(data.skills[skill], emphasis);
                         });
                         break;
-                    case "fightingSkills":
+                    case "fightingskills":
                         CONFIG.splittermond.skillGroups.fighting.forEach((skill) => {
                             addModifierHelper(data.skills[skill], emphasis);
                         });
@@ -811,6 +815,12 @@ export default class SplittermondActor extends Actor {
         const actorData = this.data;
         const data = actorData.data;
 
+        let minAttributeMalusHandicapArmor = 0;
+        let minAttributeMalusTickMalusArmor = 0;
+
+        let minAttributeMalusHandicapShield = 0;
+        let minAttributeMalusTickMalusShield = 0;
+
         actorData.items.forEach(i => {
             if (game.data.version.startsWith("0.8.")) {
                 i = i.data;
@@ -818,8 +828,8 @@ export default class SplittermondActor extends Actor {
             if (i.type === "armor" && i.data.equipped) {
                 let diff = parseInt(actorData.data.attributes.strength.value) - parseInt(i.data.minStr || 0);
                 if (diff < 0) {
-                    i.data.handicap -= diff;
-                    i.data.tickMalus -= diff;
+                    minAttributeMalusHandicapArmor -= diff;
+                    minAttributeMalusTickMalusArmor -= diff;
                 }
             }
 
@@ -828,12 +838,14 @@ export default class SplittermondActor extends Actor {
                     let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
                     if (temp) {
                         let attr = CONFIG.splittermond.attributes.find(a => {
-                            return temp[1] === game.i18n.localize(`splittermond.attribute.${a}.short`)
+                            return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                         });
-                        let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
-                        if (diff < 0) {
-                            i.data.handicap -= diff;
-                            i.data.tickMalus -= diff;
+                        if (attr) {
+                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                            if (diff < 0) {
+                                minAttributeMalusHandicapShield -= diff;
+                                minAttributeMalusTickMalusShield-= diff;
+                            }
                         }
                     }
                 });
@@ -847,7 +859,7 @@ export default class SplittermondActor extends Actor {
                         i = i.data;
                     }
                     return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
-                }, 0)
+                }, 0) + minAttributeMalusHandicapShield
             },
             armor: {
                 value: actorData.items.reduce((acc, i) => {
@@ -855,7 +867,7 @@ export default class SplittermondActor extends Actor {
                         i = i.data;
                     }
                     return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
-                }, 0)
+                }, 0) + minAttributeMalusHandicapArmor
             }
         }
 
@@ -866,7 +878,7 @@ export default class SplittermondActor extends Actor {
                         i = i.data;
                     }
                     return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
-                }, 0)
+                }, 0) + minAttributeMalusTickMalusShield
             },
             armor: {
                 value: actorData.items.reduce((acc, i) => {
@@ -874,7 +886,7 @@ export default class SplittermondActor extends Actor {
                         i = i.data;
                     }
                     return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
-                }, 0)
+                }, 0) + minAttributeMalusTickMalusArmor
             }
         };
 
@@ -2462,6 +2474,11 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
             this.rollActiveDefense(type,this.data.data.activeDefense[type][0]);
         }
         
+    }
+
+    toCompendium(pack) {
+        this.setFlag('splittermond', 'originId', this._id);
+        return super.toCompendium(pack);
     }
 
     

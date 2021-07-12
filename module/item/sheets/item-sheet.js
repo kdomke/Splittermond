@@ -30,6 +30,9 @@ export default class SplittermondItemSheet extends ItemSheet {
                 prop.value = prop.field.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
                 }, item);
+                if (prop.help) {
+                    prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help));
+                }
             });
         });
         return sheetProperties;

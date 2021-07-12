@@ -364,7 +364,8 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
-                    template: "input"
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
                 }]
         }
     ],
@@ -385,7 +386,8 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
-                    template: "input"
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
                 },
                 {
                     field: "data.multiSelectable",
@@ -412,7 +414,8 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
-                    template: "input"
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
                 }
             ]
         }
@@ -430,7 +433,8 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
-                    template: "input"
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
                 }
             ]
         }
@@ -495,7 +499,8 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
-                    template: "input"
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
                 }
             ]
         }
@@ -548,7 +553,8 @@ splittermond.itemSheetProperties.weapon = [
             {
                 field: "data.minAttributes",
                 label: "splittermond.minAttributes",
-                template: "input"
+                template: "input",
+                help: "splittermond.minAttributesHelpText"
             },
             {
                 field: "data.features",
@@ -680,7 +686,8 @@ splittermond.itemSheetProperties.shield = [
             {
                 field: "data.minAttributes",
                 label: "splittermond.minAttributes",
-                template: "input"
+                template: "input",
+                help: "splittermond.minAttributesHelpText"
             },
             {
                 field: "data.features",
@@ -817,7 +824,8 @@ splittermond.itemSheetProperties.npcfeature = [
             {
                 field: "data.modifier",
                 label: "splittermond.modifier",
-                template: "input"
+                template: "input",
+                help: "splittermond.modificatorHelpText"
             }
         ]
     }
@@ -872,8 +880,8 @@ splittermond.modifier = {
     swift: "GSW +1",
     armour1: "handicap.armor.mod -1",
     shield1: "handicap.shield.mod -1",
-    armour2: "tickmalus.armor.mod -1",
-    shield2: "tickmalus.shield.mod -1",
+    armour2: "tickMalus.armor.mod -1",
+    shield2: "tickMalus.shield.mod -1",
     flashreflexes: "INI -3",
     goodreflexes: "VTD +1",
     arcanespeed: "GSW +1",
@@ -900,12 +908,12 @@ splittermond.modifier = {
     "gute reflexe": "VTD +1",
     "rüstungsträger i": "handicap.armor.mod -1",
     "rüstungsträger 1": "handicap.armor.mod -1",
-    "rüstungsträger ii": "tickmalus.armor.mod -1",
-    "rüstungsträger 2": "tickmalus.armor.mod -1",
+    "rüstungsträger ii": "tickMalus.armor.mod -1",
+    "rüstungsträger 2": "tickMalus.armor.mod -1",
     "schildträger i": "handicap.shield.mod -1",
     "schildträger 1": "handicap.shield.mod -1",
-    "schildträger ii": "tickmalus.shield.mod -1",
-    "schildträger 2": "tickmalus.shield.mod -1",
+    "schildträger ii": "tickMalus.shield.mod -1",
+    "schildträger 2": "tickMalus.shield.mod -1",
     "natürlicher rüstungsschutz": "SR +1"
 }
 

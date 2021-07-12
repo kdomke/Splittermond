@@ -450,7 +450,12 @@
         "apply": "Anwenden",
         "applyDamageOnSelectedToken": "Der Schaden wird auf alle selektierten Token angewendet!",
         "applyDamageOnSelectedTargets": "Der Schaden wird auf alle als <i>Ziel</i> markierte Token angewendet!",
-        "applyDamageOnToken": "Der Schaden wird auf <a class='entity-link' draggable='false' data-entity='Actor' data-id='{_id}'><i class='fas fa-user'></i> {name}</a> angewendet!"
+        "applyDamageOnToken": "Der Schaden wird auf <a class='entity-link' draggable='false' data-entity='Actor' data-id='{_id}'><i class='fas fa-user'></i> {name}</a> angewendet!",
+        "adventure": "Abenteuer",
+        "adventures": "Abenteuer",
+        "library": "Bibliothek",
+        "modificatorHelpText": "Mit Komma getrennte Modifikatoren, siehe @Compendium[splittermond.journal-entries.Modifikatoren]{Modifikatoren}.",
+        "minAttributesHelpText": "Mit Komma getrennte minimale Attribute. Beisp.: <code>STÄ 3, BEW 2</code>"
     },
     "COMBAT": {
         "Round": "Tick"
