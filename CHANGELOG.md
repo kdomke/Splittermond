@@ -1,9 +1,18 @@
-## 0.4.5##
+## 0.4.6 ##
+2021-07-12
+* added: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets
+* changed: Robusteres parsen der Modifikatoren (case insensitive) und "minimalen Attribute"
+* changed: Situative Modifikatoren in "Modifikatoren"-JournalEntry hinzugefügt (inkl. Beispiele)
+* fixed: Malusberechnung für minimale Attribute von Waffen/Schilden
+* fixed: Fehler bei Nutzung des mitgelieferten Foundry-VTT-Clients unter 0.7.x
+* fixed: CombatTracker für Version 0.7.x
+
+## 0.4.5 ##
 2021-06-30
 * added: Es kann nun eine Aktive Abwehr aus der Angriffs-Chatnachricht initiiert werden.
 * changed: Combat Tracker: Bei gleicher Initiative gilt für die Kampfreihenfolge die höhere Intuition (GRW S. 157)
 
-## 0.4.4##
+## 0.4.4 ##
 2021-06-21
 * added: Der Schaden von Schadenswürfen kann mit dem Button "Schaden anwenden" auf selektierte Token angewendet werden (nur GM). Dazu öffnet sich ein weiterer Dialog in dem der Schaden modifiziert werden kann.
 * added: Die Quelle des Schadens wird in der Chatnachricht des Schadenswurfs angezeigt.
@@ -11,15 +20,15 @@
 * fixed: Fokuskostenparser hat fehlerhafte Kosten ausgegeben
 * fixed: Modifikatoren von abgeleitete Werten wurden im NSC-Sheet mehrfach angewendet
 
-## 0.4.3 HOTFIX##
+## 0.4.3 HOTFIX ##
 2021-06-19
 * fixed: Schadenschaltfläche in Chatnachricht funktioniert nicht
 
-## 0.4.2 HOTFIX##
+## 0.4.2 HOTFIX ##
 2021-06-18
 * fixed: Schadenschaltfläche wurde in Chatnachricht nicht angezeigt
 
-## 0.4.1 HOTFIX##
+## 0.4.1 HOTFIX ##
 2021-06-18
 * fixed: Fokusabrechnung in Chatnachricht funktioniert nicht
 
