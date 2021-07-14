@@ -1,113 +1,213 @@
 export default class SplittermondCombatTracker extends CombatTracker {
 
     async getData(options) {
-        
-        // Get the combat encounters possible for the viewed Scene
-        const combat = this.viewed;
-        const hasCombat = combat !== null;
-        const combats = this.combats;
-        const currentIdx = combats.findIndex(c => c === combat);
-        const previousId = currentIdx > 0 ? combats[currentIdx-1].id : null;
-        const nextId = currentIdx < combats.length - 1 ? combats[currentIdx+1].id : null;
-        const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+        if (game.data.version.startsWith("0.8.") ) {
+            // Get the combat encounters possible for the viewed Scene
+            const combat = this.viewed;
+            const hasCombat = combat !== null;
+            const combats = this.combats;
+            const currentIdx = combats.findIndex(c => c === combat);
+            const previousId = currentIdx > 0 ? combats[currentIdx-1].id : null;
+            const nextId = currentIdx < combats.length - 1 ? combats[currentIdx+1].id : null;
+            const settings = game.settings.get("core", Combat.CONFIG_SETTING);
 
-        // Prepare rendering data
-        const data = {
-        user: game.user,
-        combats: combats,
-        currentIndex: currentIdx + 1,
-        combatCount: combats.length,
-        hasCombat: hasCombat,
-        combat,
-        turns: [],
-        previousId,
-        nextId,
-        started: this.started,
-        control: false,
-        settings
-        };
-        if ( !hasCombat ) return data;
+            // Prepare rendering data
+            const data = {
+            user: game.user,
+            combats: combats,
+            currentIndex: currentIdx + 1,
+            combatCount: combats.length,
+            hasCombat: hasCombat,
+            combat,
+            turns: [],
+            previousId,
+            nextId,
+            started: this.started,
+            control: false,
+            settings
+            };
+            if ( !hasCombat ) return data;
 
-        // Format information about each combatant in the encounter
-        let hasDecimals = false;
-        const turns = [];
-        for ( let [i, combatant] of combat.turns.entries() ) {
-        if ( !combatant.isVisible ) continue;
+            // Format information about each combatant in the encounter
+            let hasDecimals = false;
+            const turns = [];
+            for ( let [i, combatant] of combat.turns.entries() ) {
+                if ( !combatant.isVisible ) continue;
 
-        // Prepare turn data
-        const resource = combatant.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER ? combatant.resource : null
-        const turn = {
-            id: combatant.id,
-            name: combatant.name,
-            img: combatant.img,
-            active: i === combat.turn,
-            owner: combatant.isOwner,
-            defeated: combatant.data.defeated,
-            hidden: combatant.hidden,
-            initiative: combatant.initiative,
-            hasRolled: combatant.initiative !== null,
-            hasResource: resource !== null,
-            resource: resource
-        };
-        if ( Number.isFinite(turn.initiative) && !Number.isInteger(turn.initiative) ) hasDecimals = true;
-        turn.css = [
-            turn.active ? "active" : "",
-            turn.hidden ? "hidden" : "",
-            turn.defeated ? "defeated" : ""
-        ].join(" ").trim();
+                // Prepare turn data
+                const resource = combatant.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER ? combatant.resource : null
+                const turn = {
+                    id: combatant.id,
+                    name: combatant.name,
+                    img: combatant.img,
+                    active: i === combat.turn,
+                    owner: combatant.isOwner,
+                    defeated: combatant.data.defeated,
+                    hidden: combatant.hidden,
+                    initiative: combatant.initiative,
+                    hasRolled: combatant.initiative !== null,
+                    hasResource: resource !== null,
+                    resource: resource
+                };
+                if ( Number.isFinite(turn.initiative) && !Number.isInteger(turn.initiative) ) hasDecimals = true;
+                turn.css = [
+                    turn.active ? "active" : "",
+                    turn.hidden ? "hidden" : "",
+                    turn.defeated ? "defeated" : ""
+                ].join(" ").trim();
 
-        // Cached thumbnail image for video tokens
-        if ( VideoHelper.hasVideoExtension(turn.img) ) {
-            if ( combatant._thumb ) turn.img = combatant._thumb;
-            else turn.img = combatant._thumb = await game.video.createThumbnail(combatant.img, {width: 100, height: 100});
-        }
+                // Cached thumbnail image for video tokens
+                if ( VideoHelper.hasVideoExtension(turn.img) ) {
+                    if ( combatant._thumb ) turn.img = combatant._thumb;
+                    else turn.img = combatant._thumb = await game.video.createThumbnail(combatant.img, {width: 100, height: 100});
+                }
 
-        // Actor and Token status effects
-        turn.effects = new Set();
-        if ( combatant.token ) {
-            combatant.token.data.effects.forEach(e => turn.effects.add(e));
-            if ( combatant.token.data.overlayEffect ) turn.effects.add(combatant.token.data.overlayEffect);
-        }
-        if ( combatant.actor ) combatant.actor.temporaryEffects.forEach(e => {
-            if ( e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId ) turn.defeated = true;
-            else if ( e.data.icon ) turn.effects.add(e.data.icon);
-        });
-        turns.push(turn);
-        }
-
-        // Format initiative numeric precision
-        const precision = CONFIG.Combat.initiative.decimals;
-        turns.forEach(t => {
-        if ( t.initiative !== null ) t.initiative = t.initiative.toFixed(hasDecimals ? precision : 0);
-        });
-
-        //turns = duplicate(turns);
-
-        turns.forEach(c => {
-            if (parseInt(c.initiative) === 10000) {
-                c.initiative = game.i18n.localize("splittermond.wait");
-
-            } else if (parseInt(c.initiative) === 20000) {
-                c.initiative = game.i18n.localize("splittermond.keepReady");
-            } else {
-                let tickNumber = c.initiative ? Math.round(c.initiative) : 0;
-                c.initiative = tickNumber + " | " + Math.round(100 * (c.initiative - tickNumber));
+                // Actor and Token status effects
+                turn.effects = new Set();
+                if ( combatant.token ) {
+                    combatant.token.data.effects.forEach(e => turn.effects.add(e));
+                    if ( combatant.token.data.overlayEffect ) turn.effects.add(combatant.token.data.overlayEffect);
+                }
+                if ( combatant.actor ) combatant.actor.temporaryEffects.forEach(e => {
+                    if ( e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId ) turn.defeated = true;
+                    else if ( e.data.icon ) turn.effects.add(e.data.icon);
+                });
+                turns.push(turn);
             }
 
-        });
-        if (combat?.data.round != null) {
-            combat.data.round = Math.round(combat.data.round) + "";
+            // Format initiative numeric precision
+            const precision = CONFIG.Combat.initiative.decimals;
+            turns.forEach(t => {
+            if ( t.initiative !== null ) t.initiative = t.initiative.toFixed(hasDecimals ? precision : 0);
+            });
+
+            //turns = duplicate(turns);
+
+            turns.forEach(c => {
+                if (parseInt(c.initiative) === 10000) {
+                    c.initiative = game.i18n.localize("splittermond.wait");
+
+                } else if (parseInt(c.initiative) === 20000) {
+                    c.initiative = game.i18n.localize("splittermond.keepReady");
+                } else {
+                    let tickNumber = c.initiative ? Math.round(c.initiative) : 0;
+                    c.initiative = tickNumber + " | " + Math.round(100 * (c.initiative - tickNumber));
+                }
+
+            });
+            if (combat?.data.round != null) {
+                combat.data.round = Math.round(combat.data.round) + "";
+            }
+
+
+            // Merge update data for rendering
+            return foundry.utils.mergeObject(data, {
+                round: Math.round(combat.data.round) + "",
+                turn: combat.data.turn,
+                turns: turns,
+                control: combat.combatant?.players?.includes(game.user)
+            });
+        } else {
+            // Get the combat encounters possible for the viewed Scene
+            const combat = this.combat;
+            const hasCombat = combat !== null;
+            const view = canvas?.scene || null;
+            const combats = view ? game.combats.entities.filter(c => c.data.scene === view._id) : [];
+            const currentIdx = combats.findIndex(c => c === this.combat);
+            const previousId = currentIdx > 0 ? combats[currentIdx-1].id : null;
+            const nextId = currentIdx < combats.length - 1 ? combats[currentIdx+1].id : null;
+            const settings = game.settings.get("core", Combat.CONFIG_SETTING);
+
+            // Prepare rendering data
+            const data = {
+            user: game.user,
+            combats: combats,
+            currentIndex: currentIdx + 1,
+            combatCount: combats.length,
+            hasCombat: hasCombat,
+            combat,
+            turns: [],
+            previousId,
+            nextId,
+            started: this.started,
+            control: false,
+            settings
+            };
+            if ( !hasCombat ) return data;
+
+            // Add active combat data
+            const combatant = combat.combatant;
+            const hasControl = combatant && combatant.players && combatant.players.includes(game.user);
+
+            // Format transient information about the combatant
+            let hasDecimals = false;
+            const turns = [];
+            for ( let [i, t] of combat.turns.entries() ) {
+            if ( !t.visible ) continue;
+
+            // Thumbnail image for video tokens
+            if ( VideoHelper.hasVideoExtension(t.img) ) {
+                if ( t.thumb ) t.img = t.thumb;
+                else t.img = t.thumb = await game.video.createThumbnail(t.img, {width: 100, height: 100});
+            }
+
+            // Copy the turn data
+            const c = duplicate(t);
+            if ( Number.isFinite(c.initiative) && !Number.isInteger(c.initiative) ) hasDecimals = true;
+
+            // Token status effect icons
+            c.effects = new Set(c.token?.effects || []);
+            if ( c.token?.overlayEffect ) c.effects.add(c.token.overlayEffect);
+            if ( t.actor ) t.actor.temporaryEffects.forEach(e => {
+                if ( e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId ) c.defeated = true;
+                else if ( e.data.icon ) c.effects.add(e.data.icon);
+            });
+
+            // Track resources
+            if ( c.permission < ENTITY_PERMISSIONS.OBSERVER ) c.resource = null;
+
+            // Rendering states
+            c.active = i === combat.turn;
+            c.css = [
+                c.active ? "active" : "",
+                c.hidden ? "hidden" : "",
+                c.defeated ? "defeated" : ""
+            ].join(" ").trim();
+            c.hasRolled = c.initiative !== null;
+            c.hasResource = c.resource !== null;
+            turns.push(c);
+            }
+
+            // Format displayed decimal places in the tracker
+            turns.forEach(c => {
+            c.initiative = c.initiative ? c.initiative.toFixed(hasDecimals ? CONFIG.Combat.initiative.decimals : 0) : null;
+            });
+
+            turns.forEach(c => {
+                if (parseInt(c.initiative) === 10000) {
+                    c.initiative = game.i18n.localize("splittermond.wait");
+
+                } else if (parseInt(c.initiative) === 20000) {
+                    c.initiative = game.i18n.localize("splittermond.keepReady");
+                } else {
+                    let tickNumber = c.initiative ? Math.round(c.initiative) : 0;
+                    c.initiative = tickNumber + " | " + Math.round(100 * (c.initiative - tickNumber));
+                }
+
+            });
+            if (combat?.data.round != null) {
+                combat.data.round = Math.round(combat.data.round) + "";
+            }
+
+
+            // Merge update data for rendering
+            return mergeObject(data, {
+                round: Math.round(combat.data.round) + "",
+                turn: combat.data.turn,
+                turns: turns,
+                control: hasControl
+            });
         }
-
-
-        // Merge update data for rendering
-        return foundry.utils.mergeObject(data, {
-            round: Math.round(combat.data.round) + "",
-            turn: combat.data.turn,
-            turns: turns,
-            control: combat.combatant?.players?.includes(game.user)
-        });
-
         
     }
 /*
