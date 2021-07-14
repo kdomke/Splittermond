@@ -43,6 +43,8 @@ function handlePdf(links) {
         const pdf = ui.PDFoundry.findPDFDataByCode(book)
         if (pdf) {
             ui.PDFoundry.openPDF(pdf, {page})
+        } else {
+            ui.notifications.warn(game.i18n.localize("splittermond.pdfoundry.notfound"))
         }
 });
 };

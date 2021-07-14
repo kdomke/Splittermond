@@ -458,7 +458,8 @@
         "minAttributesHelpText": "Mit Komma getrennte minimale Attribute. Beisp.: <code>STÄ 3, BEW 2</code>",
         "pdfoundry": {
             "page": "Seite",
-            "notinstalled": "Um PDF links zu verwenden muss PDFoundry installiert sein!."
+            "notinstalled": "Um PDF links zu verwenden muss PDFoundry installiert sein!",
+            "notfound": "Kein PDF mit dem angegebenen Code gefunden."
         }
     },
 
