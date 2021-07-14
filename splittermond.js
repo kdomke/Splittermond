@@ -317,7 +317,17 @@ function commonEventHandler(app, html, data) {
 
     });
 
-    
+    html.find(".pdflink").click(event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let pdfcode = $(event.currentTarget).closestData("pdfcode");
+        let pdfpage = $(event.currentTarget).closestData("pdfpage");
+
+        let pdfcodelink = pdfcode + pdfpage;
+
+        handlePdf(pdfcodelink);
+    });
 
 }
 
@@ -343,17 +353,6 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
         actor.addTicks(value, message);
     })
 
-    html.find(".pdflink").click(event => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        let pdfcode = $(event.currentTarget).closestData("pdfcode");
-        let pdfpage = $(event.currentTarget).closestData("pdfpage");
-
-        let pdfcodelink = pdfcode + pdfpage;
-
-        handlePdf(pdfcodelink);
-    })
 });
 
 Hooks.on('renderChatMessage', function (app, html, data) {
