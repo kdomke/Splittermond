@@ -281,7 +281,7 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
                 label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
             }
 
-            return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}">${label}</a>`;
+            return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-book"></i> ${label}</a>`;
 
 
         });
