@@ -143,39 +143,39 @@ export default class SplittermondCombatTracker extends CombatTracker {
             let hasDecimals = false;
             const turns = [];
             for ( let [i, t] of combat.turns.entries() ) {
-            if ( !t.visible ) continue;
+                if ( !t.visible ) continue;
 
-            // Thumbnail image for video tokens
-            if ( VideoHelper.hasVideoExtension(t.img) ) {
-                if ( t.thumb ) t.img = t.thumb;
-                else t.img = t.thumb = await game.video.createThumbnail(t.img, {width: 100, height: 100});
-            }
+                // Thumbnail image for video tokens
+                if ( VideoHelper.hasVideoExtension(t.img) ) {
+                    if ( t.thumb ) t.img = t.thumb;
+                    else t.img = t.thumb = await game.video.createThumbnail(t.img, {width: 100, height: 100});
+                }
 
-            // Copy the turn data
-            const c = duplicate(t);
-            if ( Number.isFinite(c.initiative) && !Number.isInteger(c.initiative) ) hasDecimals = true;
+                // Copy the turn data
+                const c = duplicate(t);
+                if ( Number.isFinite(c.initiative) && !Number.isInteger(c.initiative) ) hasDecimals = true;
 
-            // Token status effect icons
-            c.effects = new Set(c.token?.effects || []);
-            if ( c.token?.overlayEffect ) c.effects.add(c.token.overlayEffect);
-            if ( t.actor ) t.actor.temporaryEffects.forEach(e => {
-                if ( e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId ) c.defeated = true;
-                else if ( e.data.icon ) c.effects.add(e.data.icon);
-            });
+                // Token status effect icons
+                c.effects = new Set(c.token?.effects || []);
+                if ( c.token?.overlayEffect ) c.effects.add(c.token.overlayEffect);
+                if ( t.actor ) t.actor.temporaryEffects.forEach(e => {
+                    if ( e.getFlag("core", "statusId") === CONFIG.Combat.defeatedStatusId ) c.defeated = true;
+                    else if ( e.data.icon ) c.effects.add(e.data.icon);
+                });
 
-            // Track resources
-            if ( c.permission < ENTITY_PERMISSIONS.OBSERVER ) c.resource = null;
+                // Track resources
+                if ( c.permission < ENTITY_PERMISSIONS.OBSERVER ) c.resource = null;
 
-            // Rendering states
-            c.active = i === combat.turn;
-            c.css = [
-                c.active ? "active" : "",
-                c.hidden ? "hidden" : "",
-                c.defeated ? "defeated" : ""
-            ].join(" ").trim();
-            c.hasRolled = c.initiative !== null;
-            c.hasResource = c.resource !== null;
-            turns.push(c);
+                // Rendering states
+                c.active = i === combat.turn;
+                c.css = [
+                    c.active ? "active" : "",
+                    c.hidden ? "hidden" : "",
+                    c.defeated ? "defeated" : ""
+                ].join(" ").trim();
+                c.hasRolled = c.initiative !== null;
+                c.hasResource = c.resource !== null;
+                turns.push(c);
             }
 
             // Format displayed decimal places in the tracker
