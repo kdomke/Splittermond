@@ -93,15 +93,12 @@ export default class TickBarHud extends Application {
                 
             }
 
-            
-        }
+        } 
 
         //console.log(new Date())
     }
 
     _canDragStart(selector) {
-        console.log(selector)
-        //return super._canDragDrop(selector);
         return true;
     }
 
