@@ -1,7 +1,5 @@
 import SplittermondActor from "./module/actor/actor.js";
 import SplittermondItem from "./module/item/item.js";
-import SplittermondJournalEntry from "./module/journal/journal.js";
-import SplittermondPlaylist from "./module/playlist/playlist.js";
 import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
 import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
 import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
@@ -12,9 +10,7 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
-import SplittermondModule from "./module/splittermond-module.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
-import SplittermondLibrary from "./module/apps/library.js";
 import { registerSystemSettings } from "./module/settings.js";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 
@@ -22,10 +18,6 @@ import TickBarHud from "./module/apps/tick-bar-hud.js";
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);
     return (value) ? value : defaultValue;
-}
-
-function registerSplittermondModule(config) {
-    game.splittermond.modules.push(new SplittermondModule(config));
 }
 
 Hooks.once("ready", function () {
@@ -37,15 +29,12 @@ Hooks.once("init", function () {
     CONFIG.Actor.entityClass = SplittermondActor;
     CONFIG.Item.entityClass = SplittermondItem;
     CONFIG.Combat.entityClass = SplittermondCombat;
-    CONFIG.JournalEntry.entityClass = SplittermondJournalEntry;
-    CONFIG.Playlist.entityClass = SplittermondPlaylist;
     CONFIG.ui.combat = SplittermondCombatTracker;
     CONFIG.splittermond = splittermond;
 
     registerSystemSettings();
 
     game.splittermond = {
-        modules: [],
         skillCheck: Macros.skillCheck,
         attackCheck: Macros.attackCheck,
         itemCheck: Macros.itemCheck,
@@ -53,10 +42,8 @@ Hooks.once("init", function () {
         importNpc: Macros.importNpc,
         magicFumble: Macros.magicFumble,
         attackFumble: Macros.attackFumble,
-        registerSplittermondModule: registerSplittermondModule,
         heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") }),
-        compendiumBrowser: new SplittermondCompendiumBrowser(),
-        library: new SplittermondLibrary(),
+        compendiumBrowser: new SplittermondCompendiumBrowser()
     }
     Die.MODIFIERS.ri = Dice.riskModifier;
 
@@ -426,9 +413,4 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 Hooks.on("renderCompendiumDirectory", (app, html, data) => {
     const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
     html.find(".header-actions").append(compendiumBrowserButton);
-})
-
-Hooks.on("renderSettings", (app, html, data) => {
-    const libraryButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.library")}</button>`).click(() => { game.splittermond.library.render(true) });
-    html.find("#settings-game [data-action='modules']").after(libraryButton);
 })
