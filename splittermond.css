@@ -1467,6 +1467,132 @@
 .chat-message a.add-tick i {
   color: #7a7971;
 }
+.tick-bar-hud {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  left: 110px;
+  top: 60px;
+  padding: 0px;
+  max-width: calc(100% - 430px);
+  overflow: hidden;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.tick-bar-hud-nav-btn {
+  width: 32px;
+  height: 64px;
+  margin-top: 10px;
+  color: #f0f0e0;
+  background: none;
+  border: none;
+  font-size: 32px;
+  text-shadow: 0 0 10px #000;
+}
+.tick-bar-hud-nav-btn:hover,
+.tick-bar-hud-nav-btn:active,
+.tick-bar-hud-nav-btn:focus {
+  box-shadow: none;
+  text-shadow: 0 0 10px #2D80E1;
+}
+.tick-bar-hud-nav-btn:first-child {
+  margin-left: 10px;
+}
+.tick-bar-hud-ticks {
+  margin: 0px;
+  padding: 10px;
+  overflow: hidden;
+  flex-grow: 1;
+  -webkit-mask-image: linear-gradient(90deg, transparent 2px, #000 8px, #000000 calc(100% - 72px), transparent);
+  mask-image: linear-gradient(90deg, transparent 2px, #000 8px, #000000 calc(100% - 72px), transparent);
+}
+.tick-bar-hud-ticks-scroll,
+.tick-bar-hud-ticks-no-scroll {
+  display: flex;
+  position: relative;
+}
+.tick-bar-hud-ticks-special {
+  flex-grow: unset;
+  -webkit-mask-image: none;
+  mask-image: none;
+  overflow: visible;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.tick-bar-hud-tick:not(:last-child) {
+  margin-right: 8px;
+}
+.tick-bar-hud-tick-special-no-data {
+  width: 0px;
+  opacity: 0;
+}
+.tick-bar-hud-tick-number {
+  background: url(/ui/denim075.png) repeat;
+  border-radius: 5px;
+  border: 1px solid #000;
+  box-shadow: 0 0 10px #000, 0 0 5px #444 inset;
+  padding: 3px;
+  height: 64px;
+  width: 64px;
+  margin-bottom: -64px;
+}
+.tick-bar-hud-tick-number.current-tick {
+  box-shadow: 0 0 10px #2D80E1, 0 0 5px #444 inset;
+  border: 1px solid #2D80E1;
+  text-shadow: 0 0 5px #2D80E1;
+}
+.tick-bar-hud-tick-number.current-tick span {
+  text-shadow: 0 0 5px #2D80E1;
+}
+.tick-bar-hud-tick-number span {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: -15px;
+  text-shadow: 0 0 5px black;
+  font-family: "Vollkorn";
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+.tick-bar-hud-tick-number-special {
+  width: 128px;
+}
+.tick-bar-hud-combatant-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0px;
+  padding: 8px;
+  width: 100%;
+  align-items: center;
+}
+.tick-bar-hud-combatant-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0px 0px 3px #000);
+}
+.tick-bar-hud-combatant-list-item.active,
+.tick-bar-hud-combatant-list-item:hover {
+  filter: drop-shadow(0px 0px 3px #2D80E1);
+}
+.tick-bar-hud-combatant-list-item:not(:first-child) {
+  margin-top: -38px;
+}
+.tick-bar-hud-combatant-list-item .token-name {
+  margin-top: -12px;
+}
+.tick-bar-hud-combatant-list-item .token-image {
+  flex: 0 0 48px;
+  height: 48px;
+  width: 48px;
+  object-fit: cover;
+  object-position: 50% 0;
+  margin: 0;
+  border: none;
+}
 .app.window-app.journal-sheet:not(.dark) {
   background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background_journal.jpg);
   background-size: auto;

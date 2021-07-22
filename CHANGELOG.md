@@ -1,3 +1,12 @@
+## 0.5.0 ##
+2021-07-12
+* added: Tick Bar for a more Splittermond-like Combat Tracker experience
+* removed: 0.7.x support
+
+## 0.4.8 ##
+2021-07-12
+* fixed: Combat Tracker problems with FVTT 0.7.x
+
 ## 0.4.7 HOTFIX ##
 2021-07-12
 * fixed: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets

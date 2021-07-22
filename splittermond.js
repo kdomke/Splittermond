@@ -12,12 +12,17 @@ import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
+import TickBarHud from "./module/apps/tick-bar-hud.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);
     return (value) ? value : defaultValue;
 }
+
+Hooks.once("ready", function () {
+    game.splittermond.tickBarHud = new TickBarHud();
+});
 
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
