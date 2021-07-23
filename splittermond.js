@@ -20,6 +20,35 @@ $.fn.closestData = function (dataName, defaultValue = "") {
     return (value) ? value : defaultValue;
 }
 
+function handlePdf(links) {
+    if(!ui.PDFoundry){
+        ui.notifications.warn(game.i18n.localize("splittermond.pdfoundry.notinstalled"))
+        return
+    }
+
+    links.split(',').forEach(link => {
+        let t = link.trim();
+        let i = t.indexOf(':');
+        let book = '';
+        let page = 0;
+
+        if (i > 0) {
+            book = t.substring(0, i).trim();
+            page = parseInt(t.substring(i + 1));
+        } else {
+            book = t.replace(/[0-9]*/g, '').trim()
+            page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
+        }
+
+        const pdf = ui.PDFoundry.findPDFDataByCode(book)
+        if (pdf) {
+            ui.PDFoundry.openPDF(pdf, {page})
+        } else {
+            ui.notifications.warn(game.i18n.localize("splittermond.pdfoundry.notfound"))
+        }
+});
+};
+
 Hooks.once("ready", function () {
     game.splittermond.tickBarHud = new TickBarHud();
 });
@@ -242,6 +271,21 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
             return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
         });
 
+        content = content.replace(/@PdfLink\[([^\]]+)\](?:\{([^}]*)\})?/g, ( match, options, label) => {
+            
+            let parsedString = options.split(",");
+            let pdfcode = parsedString[0];
+            let pdfpage = parsedString[1];
+            
+            if (!label) {
+                label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
+            }
+
+            return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-book"></i> ${label}</a>`;
+
+
+        });
+
         return content;
     };
 })
@@ -273,7 +317,17 @@ function commonEventHandler(app, html, data) {
 
     });
 
-    
+    html.find(".pdflink").click(event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let pdfcode = $(event.currentTarget).closestData("pdfcode");
+        let pdfpage = $(event.currentTarget).closestData("pdfpage");
+
+        let pdfcodelink = pdfcode + pdfpage;
+
+        handlePdf(pdfcodelink);
+    });
 
 }
 
@@ -298,6 +352,7 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
         
         actor.addTicks(value, message);
     })
+
 });
 
 Hooks.on('renderChatMessage', function (app, html, data) {
