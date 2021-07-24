@@ -460,6 +460,10 @@
             "page": "Seite",
             "notinstalled": "Um PDF links zu verwenden muss PDFoundry installiert sein!",
             "notfound": "Kein PDF mit dem angegebenen Code gefunden."
+        },
+        "settings": {
+            "darkMode": "Dark Mode",
+            "darkModeHint": "Aktiviert den dunklen UI Modus."
         }
     },
 

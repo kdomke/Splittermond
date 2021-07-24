@@ -16,3 +16,64 @@
 @import "./layout.less";
 @import "./modules.less";
 @import "./sheet-journal.less";
+
+[data-theme="dark"] {
+    .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content, .chat-message {
+        filter: invert(1) hue-rotate(180deg);
+        backdrop-filter: invert(100%) hue-rotate(180deg) blur(20px);
+        background: rgba(255,255,255,0.1);
+
+        img, iframe {
+            filter: invert(1) hue-rotate(180deg);
+        }
+
+        &:not(.chat-message){
+            button, select, input[type="text"], input[type="number"], input[type="password"], input[type="date"], input[type="time"] {
+                border: none;
+                color: black;
+            }
+    
+        }
+        
+    }
+    
+
+    .filepicker .display-modes a {
+        border: none;
+        background: none;
+        &.active {
+            border: none;
+            background: none;
+        }
+    }
+
+    .chat-message {
+        border-color: rgba(0,0,0,0.1);
+
+        rgba(255, 255, 255, 0.5)
+
+        &.emote {
+            background: #f3edde;
+            border: 2px solid #887c5d;
+        }
+        &.whisper {
+            background: #e8e8ef;
+            border: 2px solid #545469;
+        }
+        &.blind {
+            background: #f5eaf5;
+            border: 2px solid #6b476b;
+        }
+    }
+
+    .splittermond,.app.journal-sheet:not(.dark) {
+        &.window-app {
+            filter: invert(1) hue-rotate(180deg);
+            box-shadow: 0 0 5px inset rgba(0,0,0,0.1), 0 0 20px white;
+        }
+
+        .bar,.bar-with-value .value, .solars::before, .lunars::before, .telars::before, img, .window-header::after, .moonsign-splinterpoints, iframe {
+            filter: invert(1) hue-rotate(180deg);
+        }
+    }
+}

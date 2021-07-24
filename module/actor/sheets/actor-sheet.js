@@ -665,6 +665,11 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (event.currentTarget.classList.contains("attribute") || $(event.currentTarget).closestData('attack-id') || $(event.currentTarget).closestData('defense-id')) {
                     css.left -= tooltipElement.outerWidth() / 2 - $(event.currentTarget).outerWidth() / 2;
                 }
+
+                if (game.settings.get("splittermond","darkMode")) {
+                    css.left -= $(event.currentTarget).parents(".app").position().left;
+                    css.top -= $(event.currentTarget).parents(".app").position().top;
+                }
                 /*
                 if (event.currentTarget.classList.contains("attribute")) {
                     css.left += $(event.currentTarget).outerWidth();

@@ -36,4 +36,18 @@ export const registerSystemSettings = function () {
       });
     }
   });
+
+  game.settings.register("splittermond", "darkMode", {
+    name: "splittermond.settings.darkMode",
+    hint: "splittermond.settings.darkModeHint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: darkMode => {
+      document.body.setAttribute("data-theme", darkMode ? "dark": "");
+    }
+  });
+
+  document.body.setAttribute("data-theme", game.settings.get("splittermond","darkMode") ? "dark": "");
 }

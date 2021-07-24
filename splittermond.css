@@ -1594,11 +1594,8 @@
   border: none;
 }
 .app.window-app.journal-sheet:not(.dark) {
-  background: url(../../systems/splittermond/images/parchment.jpg), url(../../systems/splittermond/images/background_journal.jpg);
+  background: url(../../systems/splittermond/images/parchment.jpg) repeat;
   background-size: auto;
-  background-repeat: repeat, no-repeat;
-  background-position: bottom left;
-  background-blend-mode: multiply;
   color: black;
   box-shadow: 0 0 5px inset rgba(255, 255, 255, 0.3), 0 0 20px #000;
 }
@@ -1867,4 +1864,81 @@
 .app.window-app.journal-sheet:not(.dark) a.request-skill-check i,
 .app.window-app.journal-sheet:not(.dark) a.add-tick i {
   color: #7a7971;
+}
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content,
+[data-theme="dark"] .chat-message {
+  filter: invert(1) hue-rotate(180deg);
+  backdrop-filter: invert(100%) hue-rotate(180deg) blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content img,
+[data-theme="dark"] .chat-message img,
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content iframe,
+[data-theme="dark"] .chat-message iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) button,
+[data-theme="dark"] .chat-message:not(.chat-message) button,
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) select,
+[data-theme="dark"] .chat-message:not(.chat-message) select,
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) input[type="text"],
+[data-theme="dark"] .chat-message:not(.chat-message) input[type="text"],
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) input[type="number"],
+[data-theme="dark"] .chat-message:not(.chat-message) input[type="number"],
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) input[type="password"],
+[data-theme="dark"] .chat-message:not(.chat-message) input[type="password"],
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) input[type="date"],
+[data-theme="dark"] .chat-message:not(.chat-message) input[type="date"],
+[data-theme="dark"] .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content:not(.chat-message) input[type="time"],
+[data-theme="dark"] .chat-message:not(.chat-message) input[type="time"] {
+  border: none;
+  color: black;
+}
+[data-theme="dark"] .filepicker .display-modes a {
+  border: none;
+  background: none;
+}
+[data-theme="dark"] .filepicker .display-modes a.active {
+  border: none;
+  background: none;
+}
+[data-theme="dark"] .chat-message {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+rgba(255, 255, 255, 0.5) [data-theme="dark"] .chat-message.emote {
+  background: #f3edde;
+  border: 2px solid #887c5d;
+}
+[data-theme="dark"] .chat-message.whisper {
+  background: #e8e8ef;
+  border: 2px solid #545469;
+}
+[data-theme="dark"] .chat-message.blind {
+  background: #f5eaf5;
+  border: 2px solid #6b476b;
+}
+[data-theme="dark"] .splittermond.window-app,
+[data-theme="dark"] .app.journal-sheet:not(.dark).window-app {
+  filter: invert(1) hue-rotate(180deg);
+  box-shadow: 0 0 5px inset rgba(0, 0, 0, 0.1), 0 0 20px white;
+}
+[data-theme="dark"] .splittermond .bar,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .bar,
+[data-theme="dark"] .splittermond .bar-with-value .value,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .bar-with-value .value,
+[data-theme="dark"] .splittermond .solars::before,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .solars::before,
+[data-theme="dark"] .splittermond .lunars::before,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .lunars::before,
+[data-theme="dark"] .splittermond .telars::before,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .telars::before,
+[data-theme="dark"] .splittermond img,
+[data-theme="dark"] .app.journal-sheet:not(.dark) img,
+[data-theme="dark"] .splittermond .window-header::after,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .window-header::after,
+[data-theme="dark"] .splittermond .moonsign-splinterpoints,
+[data-theme="dark"] .app.journal-sheet:not(.dark) .moonsign-splinterpoints,
+[data-theme="dark"] .splittermond iframe,
+[data-theme="dark"] .app.journal-sheet:not(.dark) iframe {
+  filter: invert(1) hue-rotate(180deg);
 }
