@@ -18,7 +18,7 @@
 @import "./sheet-journal.less";
 
 [data-theme="dark"] {
-    .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content, .chat-message {
+    .window-app:not(.splittermond):not(.journal-sheet):not(.sidebar-popout) .window-content {
         filter: invert(1) hue-rotate(180deg);
         backdrop-filter: invert(100%) hue-rotate(180deg) blur(20px);
         background: rgba(255,255,255,0.1);
@@ -48,21 +48,31 @@
     }
 
     .chat-message {
-        border-color: rgba(0,0,0,0.1);
 
-        rgba(255, 255, 255, 0.5)
+        .message-header, .message-content{
+            filter: invert(1) hue-rotate(180deg);
 
+            img, iframe {
+                filter: invert(1) hue-rotate(180deg);
+            }
+    
+        }
+       
+        border-color: rgba(128,128,128,0.3);
+        background: rgba(32,32,32,0.6);
+
+        
         &.emote {
-            background: #f3edde;
-            border: 2px solid #887c5d;
+            background: fade(spin(#fff-#f3edde,180deg),60%);
+            border: 2px solid fade(spin(#fff - #887c5d,180deg),60%);
         }
         &.whisper {
-            background: #e8e8ef;
-            border: 2px solid #545469;
+            background: fade(spin(#fff-#e8e8ef,180deg),60%);
+            border: 2px solid fade(spin(#fff-#545469,180deg),60%);
         }
         &.blind {
-            background: #f5eaf5;
-            border: 2px solid #6b476b;
+            background: fade(spin(#fff-#f5eaf5,180deg),60%);
+            border: 2px solid fade(spin(#fff-#6b476b,180deg),60%);
         }
     }
 

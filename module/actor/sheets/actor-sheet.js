@@ -459,6 +459,12 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 if (masteryList.html()) {
                     let posLeft = masteryList.offset().left;
+                    let posTop = $(event.currentTarget).offset().top;
+                    if (game.settings.get("splittermond","darkMode")) {
+                        posLeft -= $(event.currentTarget).parents(".app").position().left;
+                        posTop -= $(event.currentTarget).parents(".app").position().top;
+                    }
+
                     let width = masteryList.outerWidth();
                     masteryList = masteryList.clone();
 
@@ -467,7 +473,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
-                        top: $(event.currentTarget).offset().top,
+                        top: posTop,
                         width: width,
                         padding: 0,
                         border: "none"
