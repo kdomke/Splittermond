@@ -48,6 +48,8 @@ export default class TickBarHud extends Application {
                 
             }
             
+        } else {
+
         }
     }
 
@@ -324,7 +326,7 @@ export default class TickBarHud extends Application {
 
         $(html.find(".tick-bar-hud-combatant-list-item")).on("dragstart", event => {
             $(html.find(".tick-bar-hud-tick-special-no-data")).animate({width: "128px", opacity: 1},200)
-        }).on("dragstop", event => {
+        }).on("dragend", event => {
             $(html.find(".tick-bar-hud-tick-special-no-data")).animate({width: "0px", opacity: 0},200)
         })
 
