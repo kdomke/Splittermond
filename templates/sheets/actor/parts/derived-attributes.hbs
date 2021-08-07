@@ -10,12 +10,13 @@
         {{/if}}
     </div>
     {{/each}}
+    <div class="damage-reduction">
+        <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
+        {{#if damageReduction.editable}}
+        <input name="damageReduction" type="text" value="{{damageReduction.value}}" data-dtype="Number">
+        {{else}}
+        <span>{{damageReduction.value}}</span>
+        {{/if}}
+    </div>
 </div>
-<div class="damage-reduction">
-    <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
-    {{#if damageReduction.editable}}
-    <input name="damageReduction" type="text" value="{{damageReduction.value}}" data-dtype="Number">
-    {{else}}
-    <span>{{damageReduction.value}}</span>
-    {{/if}}
-</div>
+

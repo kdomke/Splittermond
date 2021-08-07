@@ -38,7 +38,7 @@ export default class TickBarHud extends Application {
         let data = JSON.parse(event.dataTransfer.getData("text/plain"));
 
         if (tick && data.type=="Combatant") {
-            let combatant = this.viewed.getCombatant(data.combatantId);
+            let combatant = this.viewed.combatants.get(data.combatantId);
             if (combatant && combatant.owner) {
                 if (combatant.initiative === 20000) {
                     this.viewed.setInitiative(data.combatantId, tick, true);

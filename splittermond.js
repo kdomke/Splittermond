@@ -55,9 +55,9 @@ Hooks.once("ready", function () {
 
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
-    CONFIG.Actor.entityClass = SplittermondActor;
-    CONFIG.Item.entityClass = SplittermondItem;
-    CONFIG.Combat.entityClass = SplittermondCombat;
+    CONFIG.Actor.documentClass = SplittermondActor;
+    CONFIG.Item.documentClass = SplittermondItem;
+    CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
     CONFIG.splittermond = splittermond;
 

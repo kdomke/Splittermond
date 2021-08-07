@@ -34,7 +34,7 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.spell}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this.id}}"
                         data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
                         data-skill-level="this.data.skillLevel">
                         <div><label>{{this.name}}</label>
@@ -80,7 +80,7 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.mastery}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this.id}}"
                         data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
                         data-level="{{this.data.level}}">
                         <div><label>{{this.name}}</label>
@@ -118,7 +118,7 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.weapon}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this.id}}"
                         data-skill="{{this.data.skill}}" data-secondary-skill="{{this.data.secondaryAttack.skill}}"
                         data-features="{{this.data.features}}" data-damage="{{this.data.damage}}"
                         data-secondary-damage="{{this.data.secondaryAttack.damage}}"

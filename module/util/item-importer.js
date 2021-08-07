@@ -4,7 +4,7 @@ export default class ItemImporter {
 
     static async _folderDialog() {
         let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder._id}">${folder.name}</option>`;
+            return `${str} <option value="${folder.id}">${folder.name}</option>`;
         }, "");
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({

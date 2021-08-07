@@ -36,7 +36,7 @@ export const registerSystemSettings = function () {
       });
     }
   });
-
+/*
   game.settings.register("splittermond", "darkMode", {
     name: "splittermond.settings.darkMode",
     hint: "splittermond.settings.darkModeHint",
@@ -50,4 +50,5 @@ export const registerSystemSettings = function () {
   });
 
   document.body.setAttribute("data-theme", game.settings.get("splittermond","darkMode") ? "dark": "");
+  */
 }

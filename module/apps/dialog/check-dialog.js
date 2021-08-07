@@ -15,7 +15,7 @@ export default class CheckDialog extends Dialog {
 
         return new Promise((resolve) => {
             const dlg = new this(checkData, {
-                title: game.i18n.localize("splittermond.skillCheck"),
+                title: checkData.title || game.i18n.localize("splittermond.skillCheck"),
                 content: html,
                 buttons: {
                     risk: {

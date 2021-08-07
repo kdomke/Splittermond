@@ -90,10 +90,7 @@ export default class SplittermondCombat extends Combat {
 
         let newInitiative = Math.round(combatant.initiative) + nTicks;
 
-
-        //await this.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
-
-        return this.setInitiative(combatant._id, newInitiative);
+        return this.setInitiative(combatant.id, newInitiative);
     }
 
     async setInitiative(id, value, first = false) {
