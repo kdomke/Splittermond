@@ -1984,17 +1984,14 @@ li.taglist-item:hover .taglist-item-actions {
 .compendium-browser .list .level {
   width: 80px;
   text-align: center;
-  height: 100%;
 }
 .compendium-browser .list .skill {
   width: 100px;
   text-align: center;
-  height: 100%;
 }
 .compendium-browser .list .damage {
   width: 60px;
   text-align: center;
-  height: 100%;
 }
 .compendium-browser .list .features {
   font-family: "Signika";
@@ -2014,6 +2011,10 @@ li.taglist-item:hover .taglist-item-actions {
 .compendium-browser .list .taglist li {
   font-family: "Signika";
   font-size: 10px;
+}
+.compendium-browser .list .list-item {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 .tick-bar-hud {
   position: fixed;
