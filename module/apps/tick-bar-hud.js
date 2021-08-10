@@ -39,7 +39,7 @@ export default class TickBarHud extends Application {
 
         if (tick && data.type=="Combatant") {
             let combatant = this.viewed.combatants.get(data.combatantId);
-            if (combatant && combatant.owner) {
+            if (combatant && combatant.isOwner) {
                 if (combatant.initiative === 20000) {
                     this.viewed.setInitiative(data.combatantId, tick, true);
                 } else {

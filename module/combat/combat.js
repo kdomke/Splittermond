@@ -112,8 +112,7 @@ export default class SplittermondCombat extends Combat {
         }
 
 
-        await this.updateCombatant({
-            _id: id,
+        await this.combatants.get(id).update({
             initiative: value
         });
         await this.nextRound();
