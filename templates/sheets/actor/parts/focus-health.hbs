@@ -1,14 +1,24 @@
-<div class="column stretch flex-gap-large">
-    <div class="column" title="{{localize 'splittermond.available'}}: {{focus.available.value}} | {{localize 'splittermond.channeled'}}: {{focus.channeled.value}} | {{localize 'splittermond.exhausted'}}: {{data.focus.exhausted.value}} | {{localize 'splittermond.consumed'}}: {{data.focus.consumed.value}}">
+<div class="row stretch flex-gap-large flex-wrap">
+    <div class="column stretch health-focus" id="focus">
         <div class="health-focus-headline">
-            <label>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</label>
-            <div class="health-focus-data" title="{{localize 'splittermond.channeled'}}">
-                <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
-                <div class="value"><span>{{focus.channeled.value}}</span></div>
+            <h3>{{localize "splittermond.derivedAttribute.focuspoints.long"}}</h3>
+        </div>
+        <div class="bar-with-value">
+            <div class="bar bar-focus">
+                <div class="available" style="width: {{focus.available.percentage}}%"></div>
+                <div class="channeled" style="width: {{focus.channeled.percentage}}%"></div>
+                <div class="exhausted" style="width: {{focus.exhausted.percentage}}%"></div>
+                <div class="value" style="left: {{focus.available.percentage}}%">
+                    {{focus.available.value}}
+                </div>
             </div>
-            <div class="health-focus-data" title="{{localize 'splittermond.exhausted'}}">
-                <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
-                
+            <div class="value-max">
+                {{focus.max}}
+            </div>
+        </div>
+        <div class="health-focus-data">
+            <div class="health-focus-data-part exhausted">
+                <label>{{localize 'splittermond.exhausted'}}</label>
                 <div class="value">
                     <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.focus.exhausted.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i></button>
@@ -17,10 +27,9 @@
                     <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.focus.exhausted.value']">
                         <i class="fa fa-plus" aria-hidden="true"></i></button>
                 </div>
-               
             </div>
-            <div class="health-focus-data" title="{{localize 'splittermond.consumed'}}">
-                <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+            <div class="health-focus-data-part consumed">
+                <label>{{localize 'splittermond.consumed'}}</label>
                 <div class="value">
                     <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.focus.consumed.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i></button>
@@ -30,41 +39,62 @@
                         <i class="fa fa-plus" aria-hidden="true"></i></button>
                 </div>
             </div>
-        </div>
-
-
-        <div class="bar-with-value">
-            <div class="value" style="left: {{focus.available.percentage}}%">
-                {{focus.available.value}}
-            </div>
-            <div class="bar bar-focus">
-                <div class="available" style="width: {{focus.available.percentage}}%"></div>
-                <div class="channeled" style="width: {{focus.channeled.percentage}}%"></div>
-                <div class="exhausted" style="width: {{focus.exhausted.percentage}}%"></div>
+            <div class="list health-channeled-list">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.channeledSpells"}}</h3>
+                    <div class="value"><span>{{focus.channeled.value}}</span></div>
+                    <div class="list-actions">
+                        <button class="button-inline" type="button" data-action="add-channeled-focus"
+                            data-render-sheet="0">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <ol class="list-body" data-array="data.focus.channeled.entries">
+                    {{#each focus.channeled.entries}}
+                    <li class="list-item" data-index="{{@index}}">
+                        <div>
+                            <input data-array-field="description" type="text" value="{{this.description}}">
+                        </div>
+                        <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
+                                data-dtype="Number"></div>
+                        <div class="list-actions">
+                            <button class="button-inline" type="button" data-action="delete-array-element">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
             </div>
         </div>
     </div>
-    <div class="column"
-        title="{{localize 'splittermond.normalDamage'}}: {{health.consumed.value}} | {{localize 'splittermond.stunDamage'}}: {{exhausted.value}} | {{localize 'splittermond.channeledDamage'}}: {{health.channeled.value}}">
+    <div class="column stretch health-focus" id="health">
         <div class="health-focus-headline">
-            <label>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</label>
-            <div class="health-focus-data" title="{{localize 'splittermond.channeledDamage'}}">
-                <label>{{localize 'splittermond.channeledAbbrev'}}:</label>
-                <div class="value"><span>{{health.channeled.value}}</span></div>
-            </div>
-            <div class="health-focus-data" title="{{localize 'splittermond.stunDamage'}}">
-                <label>{{localize 'splittermond.exhaustedAbbrev'}}:</label>
-                <div class="value">
-                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.health.exhausted.value']">
-                        <i class="fa fa-minus" aria-hidden="true"></i></button>
-                    <input name="data.health.exhausted.value" type="text"
-                        value="{{health.exhausted.value}}" data-dtype="Number">
-                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.health.exhausted.value']">
-                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+            <h3>{{localize "splittermond.derivedAttribute.healthpoints.long"}}</h3>
+        </div>
+        <div class="bar-with-value bar-with-value-health">
+            <div class="bar bar-health">
+                <div class="available" style="width: {{health.available.percentage}}%"></div>
+                <div class="channeled" style="width: {{health.channeled.percentage}}%"></div>
+                <div class="exhausted" style="width: {{health.exhausted.percentage}}%"></div>
+                <div class="value" style="left: {{health.total.percentage}}%">
+                    {{health.total.value}}
                 </div>
             </div>
-            <div class="health-focus-data" title="{{localize 'splittermond.normalDamage'}}">
-                <label>{{localize 'splittermond.consumedAbbrev'}}:</label>
+            <div class="value-max">
+                {{health.max}}
+            </div>
+        </div>
+        <div class="wound-malus">
+            {{#each health.woundMalus.levels}}
+            <div class="wound-malus-level{{#if (eq ../health.woundMalus.value this.value)}} wound-malus-level-active{{/if}}" title="{{localize this.label}}">{{this.value}}</div>
+            {{/each}}
+            <label>{{localize "splittermond.woundMalus"}}</label>
+        </div>
+         <div class="health-focus-data">
+            <div class="health-focus-data-part consumed">
+                <label>{{localize 'splittermond.normalDamage'}}</label>
                 <div class="value">
                     <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.health.consumed.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i></button>
@@ -74,21 +104,55 @@
                         <i class="fa fa-plus" aria-hidden="true"></i></button>
                 </div>
             </div>
-        </div>
-        <div class="bar-with-value bar-with-value-health">
-            <div class="value" style="left: {{health.total.percentage}}%">
-                {{health.total.value}}
+            <div class="health-focus-data-part exhausted">
+                <label>{{localize 'splittermond.stunDamage'}}</label>
+                <div class="value">
+                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.health.exhausted.value']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+                    <input name="data.health.exhausted.value" type="text"
+                        value="{{health.exhausted.value}}" data-dtype="Number">
+                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.health.exhausted.value']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+                </div>
             </div>
-            <div class="bar bar-health">
-                <div class="available" style="width: {{health.available.percentage}}%"></div>
-                <div class="channeled" style="width: {{health.channeled.percentage}}%"></div>
-                <div class="exhausted" style="width: {{health.exhausted.percentage}}%"></div>
+            <div class="list health-channeled-list">
+                <div class="list-header">
+                    <h3>{{localize "splittermond.channeledDamage"}}</h3>
+                    <div class="value"><span>{{health.channeled.value}}</span></div>
+                    <div class="list-actions">
+                        <button class="button-inline" type="button" data-action="add-channeled-health"
+                            data-render-sheet="0">
+                            <i class="fa fa-plus-square" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <ol class="list-body" data-array="data.health.channeled.entries">
+                    {{#each health.channeled.entries}}
+                    <li class="list-item" data-index="{{@index}}">
+                        <div>
+                            <input data-array-field="description" type="text" value="{{this.description}}">
+                        </div>
+                        <div class="costs"><input data-array-field="costs" type="text" value="{{this.costs}}"
+                                data-dtype="Number"></div>
+                        <div class="list-actions">
+                            <button class="button-inline" type="button" data-action="delete-array-element">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </li>
+                    {{/each}}
+                </ol>
             </div>
-        </div>
-        <div class="wound-malus">
-            {{#each health.woundMalus.levels}}
-            <div class="wound-malus-level{{#if (eq ../health.woundMalus.value this.value)}} wound-malus-level-active{{/if}}" title="{{localize this.label}}">{{this.value}}</div>
-            {{/each}}
+            {{#if hasRestActions}}
+            <div class="row">
+                <button type="button" data-action="short-rest">
+                    {{localize "splittermond.shortRest"}}
+                </button>
+                <button type="button" data-action="long-rest">
+                    {{localize "splittermond.longRest"}}
+                </button>
+            </div>
+            {{/if}}
         </div>
     </div>
 </div>

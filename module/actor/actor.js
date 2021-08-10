@@ -137,12 +137,22 @@ export default class SplittermondActor extends Actor {
 
         ["health", "focus"].forEach((type) => {
             if (data[type].channeled.hasOwnProperty("entries")) {
-                data[type].channeled.value = Math.max(
-                    Math.min(
-                        data[type].channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
-                        data.derivedAttributes[type + "points"].value
-                    ),
-                    0);
+                if (type==="health") {
+                    data[type].channeled.value = Math.max(
+                        Math.min(
+                            data[type].channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
+                            data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value
+                        ),
+                        0);
+                } else {
+                    data[type].channeled.value = Math.max(
+                        Math.min(
+                            data[type].channeled.entries.reduce((acc, val) => acc + parseInt(val.costs || 0), 0),
+                            data.derivedAttributes[type + "points"].value
+                        ),
+                        0);
+                }
+                
             } else {
                 data[type].channeled = {
                     value: 0,
@@ -167,7 +177,7 @@ export default class SplittermondActor extends Actor {
             data[type].consumed.value = parseInt(data[type].consumed.value);
             if (type == "health") {
                 data[type].available = {
-                    value: Math.max(Math.min(data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value - data[type].channeled.value - data[type].exhausted.value - data[type].consumed.value, 5 * data.derivedAttributes[type + "points"].value), 0)
+                    value: Math.max(Math.min(data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value - data[type].channeled.value - data[type].exhausted.value - data[type].consumed.value, data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value), 0)
                 }
 
                 data[type].total = {
@@ -178,6 +188,7 @@ export default class SplittermondActor extends Actor {
                 data[type].exhausted.percentage = 100 * data[type].exhausted.value / (data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value);
                 data[type].channeled.percentage = 100 * data[type].channeled.value / (data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value);
                 data[type].total.percentage = 100 * data[type].total.value / (data.health.woundMalus.nbrLevels * data.derivedAttributes[type + "points"].value);
+                data[type].max = data.health.woundMalus.nbrLevels * data.derivedAttributes.healthpoints.value;
             } else {
 
                 data[type].available = {
@@ -192,11 +203,13 @@ export default class SplittermondActor extends Actor {
                     data[type].exhausted.percentage = 100 * data[type].exhausted.value / (data.derivedAttributes[type + "points"].value);
                     data[type].channeled.percentage = 100 * data[type].channeled.value / (data.derivedAttributes[type + "points"].value);
                     data[type].total.percentage = 100 * data[type].total.value / (data.derivedAttributes[type + "points"].value);
+                    data[type].max = data.derivedAttributes.focuspoints.value;
                 } else {
                     data[type].available.percentage = 0;
                     data[type].exhausted.percentage = 0;
                     data[type].channeled.percentage = 0;
                     data[type].total.percentage = 0;
+                    data[type].max = 0;
                 }
 
             }
@@ -268,9 +281,7 @@ export default class SplittermondActor extends Actor {
             });
         }
         actorData.items.forEach(item => {
-            if (game.data.version.startsWith("0.8.")) {
-                item = item.data
-            }
+            item = item.data
             if (item.type === "weapon") {
                 if (item.data.equipped && parseInt(item.data.damageLevel) <= 1) {
 
@@ -452,9 +463,7 @@ export default class SplittermondActor extends Actor {
 
 
         actorData.items.forEach(item => {
-            if (game.data.version.startsWith("0.8.")) {
-                item = item.data
-            }
+            item = item.data
             if (item.type === "weapon" && parseInt(item.data.damageLevel) <= 1 && item.data.equipped) {
                 let minAttributeMalus = 0;
                 (item.data.minAttributes || "").split(",").forEach(aStr => {
@@ -753,9 +762,7 @@ export default class SplittermondActor extends Actor {
         }
 
         actorData.items.forEach(i => {
-            if (game.data.version.startsWith("0.8.")) {
-                i = i.data;
-            }
+            i = i.data;
             if (i.data.modifier) {
                 switch (i.type) {
                     case "weapon":
@@ -822,9 +829,7 @@ export default class SplittermondActor extends Actor {
         let minAttributeMalusTickMalusShield = 0;
 
         actorData.items.forEach(i => {
-            if (game.data.version.startsWith("0.8.")) {
-                i = i.data;
-            }
+            i = i.data;
             if (i.type === "armor" && i.data.equipped) {
                 let diff = parseInt(actorData.data.attributes.strength.value) - parseInt(i.data.minStr || 0);
                 if (diff < 0) {
@@ -855,17 +860,13 @@ export default class SplittermondActor extends Actor {
         data.handicap = {
             shield: {
                 value: actorData.items.reduce((acc, i) => {
-                    if (game.data.version.startsWith("0.8.")) {
-                        i = i.data;
-                    }
+                    i = i.data;
                     return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
                 }, 0) + minAttributeMalusHandicapShield
             },
             armor: {
                 value: actorData.items.reduce((acc, i) => {
-                    if (game.data.version.startsWith("0.8.")) {
-                        i = i.data;
-                    }
+                    i = i.data;
                     return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
                 }, 0) + minAttributeMalusHandicapArmor
             }
@@ -874,17 +875,13 @@ export default class SplittermondActor extends Actor {
         data.tickMalus = {
             shield: {
                 value: actorData.items.reduce((acc, i) => {
-                    if (game.data.version.startsWith("0.8.")) {
-                        i = i.data;
-                    }
+                    i = i.data;
                     return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
                 }, 0) + minAttributeMalusTickMalusShield
             },
             armor: {
                 value: actorData.items.reduce((acc, i) => {
-                    if (game.data.version.startsWith("0.8.")) {
-                        i = i.data;
-                    }
+                    i = i.data;
                     return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
                 }, 0) + minAttributeMalusTickMalusArmor
             }
@@ -898,9 +895,7 @@ export default class SplittermondActor extends Actor {
 
 
         actorData.items.forEach(i => {
-            if (game.data.version.startsWith("0.8.")) {
-                i = i.data;
-            }
+            i = i.data;
             if (i.type === "armor" || i.type === "shield") {
                 if (i.data.equipped && i.data.defenseBonus != 0) {
                     this._addModifier(i.name, `VTD ${i.data.defenseBonus}`, "equipment");
@@ -1072,11 +1067,7 @@ export default class SplittermondActor extends Actor {
                 }
             }
             let moonsignIds = this.items.filter(i => i.type === "moonsign")?.map(i => {
-                if (game.data.version.startsWith("0.8.")) {
-                    return i.data._id;
-                }
-
-                return i._id
+                return i.data._id;
             });
             if (moonsignIds) {
                 if (moonsignIds.length > 0) {
@@ -1532,7 +1523,8 @@ export default class SplittermondActor extends Actor {
         let checkData = await CheckDialog.create({
             difficulty: options.difficulty || 15,
             modifier: options.modifier || 0,
-            emphasis: emphasisData
+            emphasis: emphasisData,
+            title: game.i18n.localize(`splittermond.skillCheck`) + " - " + game.i18n.localize(`splittermond.skillLabel.${skill}`)
         });
         if (!checkData) return;
 
@@ -1562,7 +1554,7 @@ export default class SplittermondActor extends Actor {
         `).wrapAll('<div>').parent().html();
 
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -1598,7 +1590,8 @@ export default class SplittermondActor extends Actor {
         let checkData = await CheckDialog.create({
             difficulty: "VTD",
             modifier: 0,
-            emphasis: emphasisData
+            emphasis: emphasisData,
+            title: game.i18n.localize(`splittermond.attack`) + " - " + weaponData.name
         });
 
         if (!checkData) return;
@@ -1700,7 +1693,7 @@ export default class SplittermondActor extends Actor {
 
 
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -1713,9 +1706,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellData, options = {}) {
-        if (game.data.version.startsWith("0.8.")) {
-            spellData = spellData.data;
-        }
+        spellData = spellData.data;
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
 
         const actorData = this.data.data;
@@ -1734,7 +1725,8 @@ export default class SplittermondActor extends Actor {
         let checkData = await CheckDialog.create({
             difficulty: difficulty,
             modifier: 0,
-            emphasis: emphasisData
+            emphasis: emphasisData,
+            title: game.i18n.localize(`splittermond.skillLabel.${spellData.data.skill}`) + " - " + spellData.name
         });
 
         if (!checkData) return;
@@ -1920,7 +1912,7 @@ export default class SplittermondActor extends Actor {
         `).wrapAll('<div>').parent().html();
 
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -1949,7 +1941,8 @@ export default class SplittermondActor extends Actor {
         let checkData = await CheckDialog.create({
             difficulty: 15,
             modifier: 0,
-            emphasis: emphasisData
+            emphasis: emphasisData,
+            title: game.i18n.localize(`splittermond.activeDefense`) + " ("+ game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) +") - " + itemData.name
         });
 
         if (!checkData) return;
@@ -2051,7 +2044,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         `).wrapAll('<div>').parent().html();
 
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: data.roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -2091,7 +2084,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         };
 
         let chatData = {
-            user: game.user._id,
+            user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
             roll: roll,
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -2108,9 +2101,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         let defaultTable = "sorcerer";
         let lowerFumbleResult = actorData.lowerFumbleResult || 0;
         if (actorData.items.find(i => {
-            if (game.data.version.startsWith("0.8.")) {
-                i = i.data;
-            }
+            i = i.data;
             return  i.type=="strength" && i.name.toLowerCase()=="priester";
         })) {
             defaultTable = "priest";
@@ -2180,7 +2171,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                         };
                 
                         let chatData = {
-                            user: game.user._id,
+                            user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
                             roll: roll,
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -2240,7 +2231,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                         };
                 
                         let chatData = {
-                            user: game.user._id,
+                            user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
                             roll: roll,
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
@@ -2467,7 +2458,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             }
                         });
                     }
-                },{classes: ["splittermond","dialog"]});
+                },{classes: ["splittermond","dialog"], width: 500});
                 dialog.render(true);
             });
         } else {

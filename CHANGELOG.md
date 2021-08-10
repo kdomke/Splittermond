@@ -1,3 +1,10 @@
+## 0.6.0 ##
+2021-08-10
+* added: Neues Design das nun die Möglichkeit bietet Themes zu erstellen
+* added: 3 neue UI-Themes (einstellbar in den System-Einstellungen)
+
+* removed: legacy 0.7.x code
+
 ## 0.5.0 ##
 2021-07-12
 * added: Tick Bar for a more Splittermond-like Combat Tracker experience

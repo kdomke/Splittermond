@@ -1,4 +1,6 @@
-.splittermond {
+@import url("variables.less");
+
+.system-splittermond .splittermond {
     .row {
         display: flex;
         flex-direction: row;
@@ -33,25 +35,23 @@
         }
     }
 
-    
+    .flex-wrap {
+        flex-wrap: wrap;
+    }
 
     .stretch {
         flex: 1;
     }
 
-    header {
-        padding: @paddingMedium;
-    }
-
     main {
-        padding: @paddingMedium;
+        padding: 0px;
     }
 
     .window-content {
         overflow-y: hidden;
         form {
             height: 100%;
-            overflow: hidden;
+            //overflow: hidden;
             display: flex;
             flex-direction: column;
     
@@ -94,6 +94,12 @@
 
     &.npc section[data-tab="general"] {
         grid-template-columns: 200px 1fr;
+        .list {
+            &.masteries, &.skills {
+                overflow: unset;
+            }
+            
+        }
     }
 
     section[data-tab="skills"] {

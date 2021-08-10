@@ -1,0 +1,30 @@
+.splittermond {
+    .properties-editor {
+        display: grid;
+        grid-template-columns: 2fr 3fr;
+        gap: 3px;
+        padding: 7px;
+        align-items: baseline;
+        width: 100%;
+        min-height: 100px;
+    
+        justify-self: start;
+        align-self: start;
+        h3:extend(.border-wobbly-line-double) {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            text-align: center;
+            padding:5px;
+            width: 100%;
+            margin-top:  7px;            
+        }
+    
+        > label {
+            text-align: right;
+            justify-items: start;
+            //border-right: 2px groove rgba(255, 255, 255, 0.3);
+            padding-right: 7px;
+            margin-top: 7px;
+        }
+    }
+}

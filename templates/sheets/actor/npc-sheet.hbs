@@ -42,11 +42,11 @@
             {{/unless}}
         </section>
         {{#unless limited}}
-        <section class="row">
-            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
-            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
+        <section class="column">
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
+            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
         </section>
         {{/unless}}
     </header>

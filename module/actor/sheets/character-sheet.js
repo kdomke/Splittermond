@@ -11,7 +11,9 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             classes: ["splittermond", "sheet", "actor"],
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
-            scrollY: [, ".tab[data-tab='general']", ".list.skills", ".list.masteries", ".tab[data-tab='spells']", ".tab[data-tab='inventory']", ".tab[data-tab='status']"]
+            scrollY: [, ".tab[data-tab='general']", ".list.skills", ".list.masteries", ".tab[data-tab='spells']", ".tab[data-tab='inventory']", ".tab[data-tab='status']"],
+            overlays: ["#health","#focus"],
+            width: 750
         });
     }
 
@@ -49,7 +51,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         }
 
         if (itemData.type === "moonsign") {
-            const moonsignIds = this.actor.items.filter(i => i.type === "moonsign")?.map(i => i._id);
+            const moonsignIds = this.actor.items.filter(i => i.type === "moonsign")?.map(i => i.id);
             if (moonsignIds) {
                 const deleted = await this.actor.deleteEmbeddedEntity("OwnedItem", moonsignIds);
             }

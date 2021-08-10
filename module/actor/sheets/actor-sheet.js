@@ -3,7 +3,7 @@ import * as Dice from "../../util/dice.js"
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
         super(...args);
-
+        this._hoverOverlays = [];
         this._hideSkills = true;
     }
 
@@ -15,9 +15,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     getData() {
         const sheetData = super.getData();
-        if (game.data.version.startsWith("0.8.")) {
-            sheetData.data = sheetData.data.data;
-        }
+        sheetData.data = sheetData.data.data;
 
         
 
@@ -221,19 +219,13 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-action="edit-item"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            this.actor.getOwnedItem(itemId).sheet.render(true);
+            this.actor.items.get(itemId).sheet.render(true);
         });
 
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            if (game.data.version.startsWith("0.8.")) {
-                const item = this.actor.items.get(itemId);
-                item.update({ "data.equipped": !item.data.data.equipped });
-            } else {
-                const item = this.actor.getOwnedItem(itemId);
-                item.update({ "data.equipped": !item.data.data.equipped });
-            }
-
+            const item = this.actor.items.get(itemId);
+            item.update({ "data.equipped": !item.data.data.equipped });
         });
 
         html.find('[data-field]').change(event => {
@@ -244,7 +236,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             const itemId = $(event.currentTarget).closestData('item-id');
             const field = element.dataset.field;
-            this.actor.getOwnedItem(itemId).update({ [field]: value });
+            this.actor.items.get(itemId).update({ [field]: value });
         });
 
         html.find('[data-array-field]').change(event => {
@@ -327,7 +319,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             if (type === "spell") {
                 const itemId = $(event.currentTarget).closestData('item-id');
-                this.actor.rollSpell(this.actor.data.items.find(el => el._id === itemId));
+                this.actor.rollSpell(this.actor.data.items.find(el => el.id === itemId));
             }
 
             if (type === "damage") {
@@ -360,13 +352,37 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
         })
 
+        html.find(".derived-attribute#defense label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+    
+            this.actor.activeDefenseDialog("defense");
+        });
+
+        html.find(".derived-attribute#bodyresist label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+    
+            this.actor.activeDefenseDialog("bodyresist");
+        });
+
+        html.find(".derived-attribute#mindresist label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+    
+            this.actor.activeDefenseDialog("mindresist");
+        });
+    
+    
+    
+
         html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
             if (attackId) {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "attack",
                     attackId: attackId,
-                    actorId: this.actor._id
+                    actorId: this.actor.id
                 }));
                 event.stopPropagation();
                 return;
@@ -378,7 +394,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "skill",
                     skill: skill,
-                    actorId: this.actor_id
+                    actorId: this.actor.id
                 }));
                 event.stopPropagation();
                 return;
@@ -386,7 +402,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
+                const itemData = this.actor.data.items.find(el => el.id === itemId)?.data;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,
@@ -407,7 +423,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 display: "none"
             }
             if (itemId) {
-                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
+                const itemData = this.actor.data.items.find(el => el.id === itemId)?.data;
 
                 if (itemData.data.description) {
                     content = TextEditor.enrichHTML(itemData.data.description);
@@ -459,6 +475,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 if (masteryList.html()) {
                     let posLeft = masteryList.offset().left;
+                    let posTop = $(event.currentTarget).offset().top;
+
                     let width = masteryList.outerWidth();
                     masteryList = masteryList.clone();
 
@@ -467,10 +485,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
-                        top: $(event.currentTarget).offset().top,
-                        width: width,
-                        padding: 0,
-                        border: "none"
+                        top: posTop,
+                        width: width
                     })
                     content += masteryList.wrapAll("<div />").parent().html();
                 }
@@ -665,6 +681,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (event.currentTarget.classList.contains("attribute") || $(event.currentTarget).closestData('attack-id') || $(event.currentTarget).closestData('defense-id')) {
                     css.left -= tooltipElement.outerWidth() / 2 - $(event.currentTarget).outerWidth() / 2;
                 }
+
                 /*
                 if (event.currentTarget.classList.contains("attribute")) {
                     css.left += $(event.currentTarget).outerWidth();
@@ -683,6 +700,17 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.render();
         });
 
+
+        if (this._hoverOverlays) {
+            let el = html.find(this._hoverOverlays.join(", "));
+            if (el.length>0) {
+                el.addClass("hover");
+                el.hover( function ()  {
+                    $(this).removeClass("hover");
+                });
+            }
+        }
+        
 
         super.activateListeners(html);
     }
@@ -816,11 +844,19 @@ export default class SplittermondActorSheet extends ActorSheet {
     }
 
 
-
-
-
-
-
+    render(force=false, options={}) {
+        if (this.options.overlays) {
+            let html = this.element;
+            this._hoverOverlays = [];
+            for (let sel of this.options.overlays) {
+                let el = html.find(sel+":hover");
+                if (el.length === 1) {
+                    this._hoverOverlays.push(sel);
+                }
+            }
+        }
+        return super.render(force, options);
+    }
 
 
 }

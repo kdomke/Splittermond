@@ -34,16 +34,6 @@
                         {{/if}}
 
                     </div>
-                    {{#if this.skill.mod}}
-                    <div class="bonus-malus tooltip">
-                        <label>{{localize "splittermond.skillValue"}}</label>
-                        <div class="value">{{this.data.skill.baseValue}}</div>
-                        {{#each this.skill.mod.sources}}
-                        <label>{{this.description}}</label>
-                        <div class="value">+{{this.value}}</div>
-                        {{/each}}
-                    </div>
-                    {{/if}}
                     <div class="damage">
                         <a class="rollable" data-roll-type="damage" data-damage="{{this.damage}}"
                             data-features="{{this.features}}" data-source="{{this.name}}">{{this.damage}}</a>

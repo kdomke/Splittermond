@@ -1,0 +1,104 @@
+.tooltip:extend(.border-paper-small) {
+    //.shiny-border();
+
+    display: none;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    padding: @paddingMedium;
+    background: var(--background-parchment);
+    
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.8);
+    //border-radius: 2px;
+    text-shadow: none;
+    z-index: 100000;
+    background-clip: border-box;
+    margin: 1px;
+    
+    &::before:extend(.border-corner-1) {
+       content: "";
+       position: absolute;
+       left: 0;
+       right: 0;
+       top: 0;
+       bottom: 0;
+       border-width: 8px;
+       background-clip: border-box;
+    }
+    
+
+    p {
+        max-width: 400px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+#tooltip,
+.tooltip-part {
+
+
+    .formula {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+
+        >* {
+            margin: @paddingSmall;
+        }
+
+        .formula-part {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .description {
+                font-family: 'Signika';
+                font-size: 10px;
+            }
+
+            .value {
+                font-weight: bold;
+            }
+
+            &.malus {
+                color: var(--color-fail);
+            }
+
+            &.bonus {
+                color: var(--color-success);
+            }
+        }
+    }
+
+}
+
+#tooltip:extend(.tooltip all) {
+    display:block;
+}
+
+
+/*
+.tooltip:extend(#tooltip) {
+    display: none;
+    
+    position: absolute;
+    min-width: 160px;
+    top: 2em;
+    padding: @paddingMedium;
+    background: url(../../systems/splittermond/images/parchment.jpg) repeat fixed;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 0.5rem;
+    text-shadow: none;
+    z-index: 1000;
+    
+}
+*/

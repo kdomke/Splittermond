@@ -1,0 +1,29 @@
+.sheet {
+    input[type="text"].character-name,
+    input[type="text"].item-name {
+        font-size: @fontSizeLarger;
+        font-family: @font-secondary;
+        height: auto;
+        margin: 0;
+        margin-bottom: 1px;
+        margin-top: 1px;
+        width: 100%;
+        flex: 1;
+    }
+
+    .item-name,
+    &.npc .character-name {
+        color: var(--color-text-secondary);
+        &::first-letter {
+            color: var(--color-active-text-secondary);
+            font-weight: bold;
+        }
+    }
+
+    .item-type {
+        font-family: @font-secondary;
+        font-weight: normal;
+        text-transform: uppercase;
+        padding: @paddingSmall;
+    }
+}

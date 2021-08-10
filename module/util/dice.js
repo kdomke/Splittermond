@@ -14,7 +14,7 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
         difficulty = 0;
     }
 
-    const roll = new Roll(rollFormula, rollData).roll();
+    const roll = new Roll(rollFormula, rollData).evaluate({async: false});
 
     const difference = roll.total - difficulty;
 
@@ -75,7 +75,7 @@ export async function damage(damageFormula, featureString, damageSource="") {
         damageFormula += damageModifier;
     }
 
-    const roll = new Roll(damageFormula, {}).roll();
+    const roll = new Roll(damageFormula, {}).evaluate({async: false});
     if (feature["scharf"]) {
         let scharfBonus = 0;
         roll.terms[0].results.forEach(r => {
@@ -126,7 +126,7 @@ export async function damage(damageFormula, featureString, damageSource="") {
     };
 
     let chatData = {
-        user: game.user._id,
+        user: game.user.id,
         roll: roll,
         content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
         sound: CONFIG.sounds.dice,

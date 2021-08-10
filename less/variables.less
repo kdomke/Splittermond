@@ -1,10 +1,55 @@
 @backgroundColor: hsla(230, 10%, 80%, 1);
 
-@textColor: #444546;
-@textColor: #303336;
-@activeTextColor: #14283f;
-@activeTextColor: #143a66;
-@highlightTextColor: #2D80E1;
+@color-text: #f0f0e0;
+@color-text-secondary: #191813;
+@color-text-secondary: black;
+
+@color-active-text: #30739a;
+@color-active-text-secondary: #30739a;
+@font-primary: "Vollkorn";
+@font-secondary:  "Almendra";
+
+@color-primary: #2E72B0;
+
+@color-secondary: #65717b;
+@color-tertiary: #39464e;
+
+@color-gold: #cab66571;
+@color-silver: #8f8f8fa8;
+
+@image-noise: url(../../systems/splittermond/images/noise6.png);
+@image-grunge: url(../../systems/splittermond/images/grunge_alpha.png);
+
+@shine-gradient: url(../../systems/splittermond/images/noise5.png) repeat, repeating-linear-gradient(60deg, rgba(0,0,0,0), rgba(255, 255, 255, 0.7) 80px, rgba(0,0,0,0) 200px) no-repeat fixed;
+@shine-gradient-alt: url(../../systems/splittermond/images/noise5.png) repeat, repeating-linear-gradient(30deg, rgb(0,0,0), rgb(58, 58, 58) 80px, rgb(0,0,0) 200px, rgb(112, 112, 112) 250px, rgb(0,0,0) 300px) no-repeat fixed;
+
+@border-image-paper: var(--border-image-paper, url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16);
+@border-image-width-paper: 16px;
+@border-image-outset-paper: 3px;
+
+@border-image-paper-small: var(--border-image-paper-small, url(../../systems/splittermond/images/border-paper-small.png) 8 8);
+@border-image-width-paper-small: 8px;
+@border-image-outset-paper-small: 1px;
+
+@border-image-corner-1: var(--border-image-corner-1, url(../../systems/splittermond/images/border-corner-1.png) 16 16);
+@border-image-width-corner-1: 16px;
+@border-image-outset-corner-1: 0px;
+
+@border-image-double-corner-1: var(--border-image-double-corner-1, url(../../systems/splittermond/images/double-border-corner-1.png) 21 21);
+@border-image-width-double-corner-1: 21px;
+@border-image-outset-double-corner-1: 1px;
+
+@border-image-corner-2: var(--border-image-corner-2, url(../../systems/splittermond/images/border-small2.png) 8 8);
+@border-image-width-corner-2: 8px;
+@border-image-outset-corner-2: 0px;
+
+@border-image-wobbly-line: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+@border-image-width-wobbly-line: 3px;
+@border-image-outset-wobbly-line: 1px;
+
+@border-image-wobbly-line-double: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+@border-image-width-wobbly-line-double: 6px;
+@border-image-outset-wobbly-line-double: 1px;
 
 @fontSizeSmall: 12px;
 @fontSizeNormal: 14px;
@@ -15,7 +60,221 @@
 @paddingMedium: 7px;
 @paddingSmall: 3px;
 
-@colorSuccess: #458900;
-@colorFail: #892100;
-@colorHealth: @colorFail;
-@colorFocus: @highlightTextColor;
+@activeTextColor: #143a66;
+@highlightTextColor: #2D80E1;
+@color-success: #458900;
+@color-fail: #892100;
+@color-health: @color-fail;
+@color-focus: @color-primary;
+
+@box-shadow-groove-border: inset 0 0 1px rgba(0,0,0,0.2), 
+    inset 0 -1px 1px rgba(0,0,0,0.2), 
+    inset 0 1px 1px rgba(255,255,255,0.3);
+
+.border-paper {
+    border: 3px solid transparent;
+    border-image: @border-image-paper;
+    border-image-width: @border-image-width-paper;
+    border-image-outset: @border-image-outset-paper;
+    border-radius: 0;
+    border-image-repeat: round;
+}
+
+.border-paper-small {
+    border: 2px solid transparent;
+    border-image: @border-image-paper-small;
+    border-image-width: @border-image-width-paper-small;
+    border-image-outset: @border-image-outset-paper-small;
+    border-radius: 0;
+    border-image-repeat: repeat;
+}
+
+.border-corner-1 {
+    border: 1px solid transparent;
+    border-image: @border-image-corner-1;
+    border-image-width: @border-image-width-corner-1;
+}
+
+.border-corner-2 {
+    border: 1px solid transparent;
+    border-image: @border-image-corner-2;
+    border-image-width: @border-image-width-corner-2;
+}
+
+.border-wobbly-line {
+    border: 1px solid transparent;
+    border-image: @border-image-wobbly-line;
+    border-image-width: @border-image-width-wobbly-line;
+    border-image-outset: @border-image-outset-wobbly-line;
+    border-image-repeat: repeat;
+}
+
+.border-wobbly-line-double {
+    border: 3px solid transparent;
+    border-image: @border-image-wobbly-line-double;
+    border-image-width: @border-image-width-wobbly-line-double;
+    border-image-outset: @border-image-outset-wobbly-line-double;
+    border-image-repeat: repeat;
+}
+
+.border-double-corner-1 {
+    border: 4px solid transparent;
+    border-image: @border-image-double-corner-1;
+    border-image-width: @border-image-width-double-corner-1;
+    border-image-outset: @border-image-outset-double-corner-1;
+    //background-clip: padding-box;
+    //box-shadow: inset 0 0 1px 1px rgba(0,0,0, 0.3), 0 0 1px 1px rgba(0,0,0, 0.3);
+}
+
+.define-color(@color-name, @color) {
+    --@{color-name}: color(@color);
+    @r: red(color(@color));
+    @g: green(color(@color));
+    @b: blue(color(@color));
+    --@{color-name}_rgb: @r, @g, @b;
+}
+
+.shiny-background {
+    background-image:  @image-grunge, repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));    background-blend-mode: multiply;
+}
+
+.shiny-border(@border-width: 2px, @border-radius: 1px, @background-clip: padding-box) {
+    /*
+    position: relative;
+    border: 2px solid transparent;
+    border-image: repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark)) 1 1;
+    border-image-width: 2px;
+    */
+    .border-wobbly-line-double;
+    position: relative!important;
+    &::before {
+        content: "";
+        position:absolute;
+        top:0px; left: 0px; bottom: 0px; right: 0px;
+        z-index: -1;
+        margin: -3px;
+
+        .shiny-background;
+        background-clip: border-box;
+    }
+    
+}
+
+.button-style {
+    .border-wobbly-line-double;
+    //.shiny-border();
+    color: var(--color-text);
+    font-family: @font-secondary;
+    height: unset;
+    line-height: 1.5;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    background-origin: border-box;
+
+    background-image:  @image-grunge,
+        linear-gradient(var(--color-secondary), var(--color-secondary)), @image-noise, repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+    background-clip: padding-box, padding-box, border-box, border-box;
+    //linear-gradient(30deg, rgba(0,0,0,0.3) 10%,   rgba(0,0,0,0.0),rgba(0,0,0,0.3) 90%);
+    background-blend-mode: normal, multiply, normal, normal, normal;
+    //background-color: rgba(var(--color-primary_rgb),0.6);
+    
+
+    text-shadow:  0 0 3px rgb(0,0,0), 0px -1px 0px rgb(0, 0,0,0.5), 0px 1px 0px rgb(255,255,255,0.5);
+    
+    transition: box-shadow 0.1s;
+
+    //box-shadow: inset 0 0 0px 1px rgba(0, 0, 0, 0.2),inset 0 2px 1px 0px rgba(255,255,255,0.2);
+    box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.3);
+
+    &:hover,
+    &:focus {
+        box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255,255,255,0.3);
+        text-shadow:  0 0 3px rgb(0,0,0), 0px -1px 0px rgb(0, 0,0,0.5), 0px 1px 0px rgb(255,255,255,0.5);
+    }
+
+    &:active {
+        box-shadow: inset 0 0px 20px rgba(0,0,0,0.8);
+        text-shadow:  0 0 3px rgb(0,0,0), 0px -1px 0px rgb(0, 0,0,0.3), 0px 1px 0px rgb(255,255,255,0.3);
+    }
+
+    &:disabled {
+        color: inherit;
+        background: transparent;
+        background-color: rgba(128, 128, 128, 0.1);
+        box-shadow: none;
+        opacity: 0.8;
+
+        &::before {
+            background: transparent;
+        }
+    }
+
+    position: relative;
+
+}
+
+
+
+
+
+.system-splittermond {
+    .define-color(color-text, @color-text);
+    .define-color(color-text-secondary, @color-text-secondary);
+    .define-color(color-active-text, @color-active-text);
+    .define-color(color-active-text-secondary, @color-active-text-secondary);
+
+    .define-color(color-primary, @color-primary);
+    .define-color(color-tertiary, @color-tertiary);
+    .define-color(color-secondary, @color-secondary);
+
+    .define-color(color-health, @color-health);
+    .define-color(color-focus, @color-focus);
+    .define-color(color-success, @color-success);
+    .define-color(color-fail, @color-fail);
+
+    --color-shiny-border-light: fade(hsl(202, 10%, 90%), 80%);
+    --color-shiny-border-dark: fade(hsl(202, 10%, 60%), 80%); 
+
+    --background-parchment: url(../../ui/parchment.jpg) repeat;
+    --background-parchment-splittermond: url(../../systems/splittermond/images/background_bw6r.jpg) top right no-repeat;
+    --background-parchment-splittermond-blend-mode: multiply;
+
+    --background-denim: url(../../ui/denim075.png) repeat;
+    --background-denim-splittermond: url(../../systems/splittermond/images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
+    --background-denim-splittermond-blend-mode: normal;
+}
+
+.system-splittermond[data-theme="dark"] {
+    --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
+    //--border-image-corner-1: url(../../systems/splittermond/images/border-corner-1_inv.png) 16 16;
+    //--border-image-double-corner-1: url(../../systems/splittermond/images/double-border-corner-1_inv.png) 21 21;
+
+    --color-shiny-border-light: fade(hsl(202, 10%, 70%), 80%);
+    --color-shiny-border-dark: fade(hsl(202, 10%, 40%), 80%); 
+
+    .define-color(color-text, @color-text);
+    .define-color(color-text-secondary, @color-text);
+    .define-color(color-tertiary, #39464e);
+    .define-color(color-secondary, #373e43);
+
+    .define-color(background-color-emote, #1c1b17);
+    .define-color(background-color-whisper, #16161d);
+    .define-color(background-color-blind, #17171c);
+
+    .define-color(color-success, #59b300);
+    .define-color(color-fail, #cc3000);
+
+    
+}
+
+.system-splittermond[data-theme="splittermond-blue"] {
+    --background-parchment: url(../../systems/splittermond/images/parchment.jpg) repeat;
+    --background-parchment-splittermond: url(../../systems/splittermond/images/background7.jpg) top right no-repeat;
+
+
+    .define-color(color-text, #ebf0f5);
+    .define-color(color-text-secondary, #303336);
+
+
+    
+}

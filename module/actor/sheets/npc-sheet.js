@@ -13,7 +13,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
             scrollY: [".tab[data-tab='general']", ".tab[data-tab='spells']", ".tab[data-tab='inventory']"],
-            submitOnClose: false
+            submitOnClose: false,
+            overlays: ["#health","#focus"]
         });
     }
 

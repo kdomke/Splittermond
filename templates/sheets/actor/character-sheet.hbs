@@ -61,11 +61,11 @@
             </div>
         </section>
         {{#unless limited}}
-        <section class="row">
+        <section class="column">
+            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
+            health=data.health hasRestActions=true}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
             derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
-            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
-            health=data.health}}
         </section>
         {{/unless}}
     </header>
@@ -105,8 +105,7 @@
                             <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
                                 data-dtype="Number">
                         </div>
-                        <div class="max"><input name="data.attributes.{{attributeId}}.max" type="text"
-                                value="{{attribute.max}}" data-dtype="Number" disabled></div>
+                        <div class="max">{{attribute.max}}</div>
                     </li>
                     {{/each}}
                 </ul>
