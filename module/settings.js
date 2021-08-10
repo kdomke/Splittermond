@@ -36,19 +36,24 @@ export const registerSystemSettings = function () {
       });
     }
   });
-/*
-  game.settings.register("splittermond", "darkMode", {
-    name: "splittermond.settings.darkMode",
-    hint: "splittermond.settings.darkModeHint",
+
+  game.settings.register("splittermond", "theme", {
+    name: "splittermond.settings.theme.name",
+    hint: "splittermond.settings.theme.hint",
     scope: "client",
     config: true,
-    type: Boolean,
-    default: false,
-    onChange: darkMode => {
-      document.body.setAttribute("data-theme", darkMode ? "dark": "");
+    type: String,
+    choices: {           // If choices are defined, the resulting setting will be a select menu
+      "default": "splittermond.settings.theme.options.default",
+      "dark": "splittermond.settings.theme.options.dark",
+      "splittermond-blue": "splittermond.settings.theme.options.splittermond_blue",
+    },
+    default: "default",
+    onChange: theme => {
+      document.body.setAttribute("data-theme", theme);
     }
   });
 
-  document.body.setAttribute("data-theme", game.settings.get("splittermond","darkMode") ? "dark": "");
-  */
+  document.body.setAttribute("data-theme", game.settings.get("splittermond","theme"));
+  
 }

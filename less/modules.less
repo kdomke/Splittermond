@@ -16,16 +16,21 @@
 @import "./module-checkbox-list.less";
 
 .splittermond {
-    a.rollable, a.consume, a.add-tick {
-        display: inline-block;
-        border-bottom: 2px solid rgba(var(--color-text-secondary_rgb),0.2);
-        margin-bottom: -2px;
-    
-        &:hover {
-            text-shadow: none;
-            border-bottom: 2px solid rgba(var(--color-text-secondary_rgb),0.5);
+    .list {
+        a.rollable, a.consume, a.add-tick {
+            display: inline-block;
+            padding: 0;
+            border: none;
+            border-bottom: 2px solid rgba(var(--color-text-secondary_rgb),0.2);
+            margin-bottom: -2px;
+        
+            &:hover {
+                text-shadow: none;
+                border-bottom: 2px solid rgba(var(--color-text-secondary_rgb),0.5);
+            }
         }
     }
+    
 
     &.sheet.item .tab > * {
         padding: 7px;

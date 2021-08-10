@@ -23,31 +23,31 @@
 @shine-gradient: url(../../systems/splittermond/images/noise5.png) repeat, repeating-linear-gradient(60deg, rgba(0,0,0,0), rgba(255, 255, 255, 0.7) 80px, rgba(0,0,0,0) 200px) no-repeat fixed;
 @shine-gradient-alt: url(../../systems/splittermond/images/noise5.png) repeat, repeating-linear-gradient(30deg, rgb(0,0,0), rgb(58, 58, 58) 80px, rgb(0,0,0) 200px, rgb(112, 112, 112) 250px, rgb(0,0,0) 300px) no-repeat fixed;
 
-@border-image-paper: url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16;
+@border-image-paper: var(--border-image-paper, url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16);
 @border-image-width-paper: 16px;
 @border-image-outset-paper: 3px;
 
-@border-image-paper-small: url(../../systems/splittermond/images/border-paper-small.png) 8 8;
+@border-image-paper-small: var(--border-image-paper-small, url(../../systems/splittermond/images/border-paper-small.png) 8 8);
 @border-image-width-paper-small: 8px;
 @border-image-outset-paper-small: 1px;
 
-@border-image-corner-1: url(../../systems/splittermond/images/border-corner-1.png) 16 16;
+@border-image-corner-1: var(--border-image-corner-1, url(../../systems/splittermond/images/border-corner-1.png) 16 16);
 @border-image-width-corner-1: 16px;
 @border-image-outset-corner-1: 0px;
 
-@border-image-double-corner-1: url(../../systems/splittermond/images/double-border-corner-1.png) 21 21;
+@border-image-double-corner-1: var(--border-image-double-corner-1, url(../../systems/splittermond/images/double-border-corner-1.png) 21 21);
 @border-image-width-double-corner-1: 21px;
 @border-image-outset-double-corner-1: 1px;
 
-@border-image-corner-2: url(../../systems/splittermond/images/border-small2.png) 8 8;
+@border-image-corner-2: var(--border-image-corner-2, url(../../systems/splittermond/images/border-small2.png) 8 8);
 @border-image-width-corner-2: 8px;
 @border-image-outset-corner-2: 0px;
 
-@border-image-wobbly-line: url(../../systems/splittermond/images/double-border_small_2.png) 3 3;
+@border-image-wobbly-line: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
 @border-image-width-wobbly-line: 3px;
 @border-image-outset-wobbly-line: 1px;
 
-@border-image-wobbly-line-double: url(../../systems/splittermond/images/double-border_small_2.png) 6 6;
+@border-image-wobbly-line-double: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
 @border-image-width-wobbly-line-double: 6px;
 @border-image-outset-wobbly-line-double: 1px;
 
@@ -242,4 +242,39 @@
     --background-denim: url(../../ui/denim075.png) repeat;
     --background-denim-splittermond: url(../../systems/splittermond/images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
     --background-denim-splittermond-blend-mode: normal;
+}
+
+.system-splittermond[data-theme="dark"] {
+    --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
+    //--border-image-corner-1: url(../../systems/splittermond/images/border-corner-1_inv.png) 16 16;
+    //--border-image-double-corner-1: url(../../systems/splittermond/images/double-border-corner-1_inv.png) 21 21;
+
+    --color-shiny-border-light: fade(hsl(202, 10%, 70%), 80%);
+    --color-shiny-border-dark: fade(hsl(202, 10%, 40%), 80%); 
+
+    .define-color(color-text, @color-text);
+    .define-color(color-text-secondary, @color-text);
+    .define-color(color-tertiary, #39464e);
+    .define-color(color-secondary, #373e43);
+
+    .define-color(background-color-emote, #1c1b17);
+    .define-color(background-color-whisper, #16161d);
+    .define-color(background-color-blind, #17171c);
+
+    .define-color(color-success, #59b300);
+    .define-color(color-fail, #cc3000);
+
+    
+}
+
+.system-splittermond[data-theme="splittermond-blue"] {
+    --background-parchment: url(../../systems/splittermond/images/parchment.jpg) repeat;
+    --background-parchment-splittermond: url(../../systems/splittermond/images/background7.jpg) top right no-repeat;
+
+
+    .define-color(color-text, #ebf0f5);
+    .define-color(color-text-secondary, #303336);
+
+
+    
 }

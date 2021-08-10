@@ -2,11 +2,13 @@
   font-family: 'Vollkorn';
   src: url('./fonts/Vollkorn-VariableFont_wght.ttf') format('truetype');
   font-style: normal;
+  font-weight: 1 999;
 }
 @font-face {
   font-family: 'Vollkorn';
   src: url('./fonts/Vollkorn-Italic-VariableFont_wght.ttf') format('truetype');
   font-style: italic;
+  font-weight: 1 999;
 }
 @font-face {
   font-family: 'Vollkorn SC';
@@ -65,7 +67,7 @@
 .chat-message.blind,
 .splittermond .list.masteries#tooltip::before {
   border: 3px solid transparent;
-  border-image: url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16;
+  border-image: var(--border-image-paper, url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16);
   border-image-width: 16px;
   border-image-outset: 3px;
   border-radius: 0;
@@ -78,7 +80,7 @@
 .taglist-item-actions,
 #tooltip {
   border: 2px solid transparent;
-  border-image: url(../../systems/splittermond/images/border-paper-small.png) 8 8;
+  border-image: var(--border-image-paper-small, url(../../systems/splittermond/images/border-paper-small.png) 8 8);
   border-image-width: 8px;
   border-image-outset: 1px;
   border-radius: 0;
@@ -88,12 +90,12 @@
 .tooltip::before,
 #tooltip::before {
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/border-corner-1.png) 16 16;
+  border-image: var(--border-image-corner-1, url(../../systems/splittermond/images/border-corner-1.png) 16 16);
   border-image-width: 16px;
 }
 .border-corner-2 {
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/border-small2.png) 8 8;
+  border-image: var(--border-image-corner-2, url(../../systems/splittermond/images/border-small2.png) 8 8);
   border-image-width: 8px;
 }
 .border-wobbly-line,
@@ -118,6 +120,9 @@ input[type="time"]:focus,
 #autoexpanddummy:focus,
 .filepicker-body > .filepicker-body,
 .filepicker-body > .filepicker-body > .directory,
+form h1.form-header,
+form h2.form-header,
+form h3.form-header,
 .splittermond .derived-attribute-list,
 .splittermond .derived-attribute,
 .splittermond header .damage-reduction,
@@ -134,7 +139,7 @@ ul.checkbox-list li label,
 .splittermond .sheet-navigation,
 .splittermond .subnav {
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 3 3;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -143,15 +148,15 @@ ul.checkbox-list li label,
 .bar,
 .splittermond .properties-editor h3 {
   border: 3px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 6 6;
+  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
 }
 .border-double-corner-1,
-.window-app:not(.sidebar-popout) .window-content {
+.window-app:not(.sidebar-popout):not(.dark) .window-content {
   border: 4px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border-corner-1.png) 21 21;
+  border-image: var(--border-image-double-corner-1, url(../../systems/splittermond/images/double-border-corner-1.png) 21 21);
   border-image-width: 21px;
   border-image-outset: 1px;
 }
@@ -176,7 +181,7 @@ input[type="checkbox"],
 .splittermond .subnav .item,
 .splittermond .subnav-item {
   border: 3px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 6 6;
+  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -310,6 +315,37 @@ input[type="checkbox"]:disabled::before,
   --background-denim-splittermond: url(../../systems/splittermond/images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
   --background-denim-splittermond-blend-mode: normal;
 }
+.system-splittermond[data-theme="dark"] {
+  --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
+  --color-shiny-border-light: hsla(202, 10%, 70%, 0.8);
+  --color-shiny-border-dark: hsla(202, 10%, 40%, 0.8);
+  --color-text: #f0f0e0;
+  --color-text_rgb: 240, 240, 224;
+  --color-text-secondary: #f0f0e0;
+  --color-text-secondary_rgb: 240, 240, 224;
+  --color-tertiary: #39464e;
+  --color-tertiary_rgb: 57, 70, 78;
+  --color-secondary: #373e43;
+  --color-secondary_rgb: 55, 62, 67;
+  --background-color-emote: #1c1b17;
+  --background-color-emote_rgb: 28, 27, 23;
+  --background-color-whisper: #16161d;
+  --background-color-whisper_rgb: 22, 22, 29;
+  --background-color-blind: #17171c;
+  --background-color-blind_rgb: 23, 23, 28;
+  --color-success: #59b300;
+  --color-success_rgb: 89, 179, 0;
+  --color-fail: #cc3000;
+  --color-fail_rgb: 204, 48, 0;
+}
+.system-splittermond[data-theme="splittermond-blue"] {
+  --background-parchment: url(../../systems/splittermond/images/parchment.jpg) repeat;
+  --background-parchment-splittermond: url(../../systems/splittermond/images/background7.jpg) top right no-repeat;
+  --color-text: #ebf0f5;
+  --color-text_rgb: 235, 240, 245;
+  --color-text-secondary: #303336;
+  --color-text-secondary_rgb: 48, 51, 54;
+}
 body {
   font-family: "Vollkorn";
   font-variant-numeric: lining-nums;
@@ -319,7 +355,7 @@ form button,
 .dialog .dialog-buttons button,
 .dialog .dialog-buttons button.default {
   border: 3px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 6 6;
+  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -384,7 +420,7 @@ button.capture-position {
     height: 28px;
     */
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 3 3;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -436,12 +472,13 @@ img {
 .app > * {
   z-index: 0;
 }
-.window-app:not(.sidebar-popout) {
+.window-app:not(.sidebar-popout):not(.dark) {
   color: var(--color-text-secondary);
   background: var(--background-parchment);
 }
-.window-app:not(.sidebar-popout) .window-content {
+.window-app:not(.sidebar-popout):not(.dark) .window-content {
   color: var(--color-text-secondary);
+  background: var(--background-parchment);
   margin: 5px;
   margin-top: 0px;
   padding: 8px;
@@ -455,17 +492,17 @@ img {
         }
         */
 }
-.window-app:not(.sidebar-popout) .window-resizable-handle {
+.window-app:not(.sidebar-popout):not(.dark) .window-resizable-handle {
   bottom: -8px;
   right: -12px;
   border: none;
   background: none;
   color: var(--color-text-secondary);
 }
-.window-app:not(.sidebar-popout) .window-resizable-handle .fas.fa-arrows-alt-h:before {
+.window-app:not(.sidebar-popout):not(.dark) .window-resizable-handle .fas.fa-arrows-alt-h:before {
   content: "\f054";
 }
-.window-app:not(.sidebar-popout).minimized .window-header {
+.window-app:not(.sidebar-popout):not(.dark).minimized .window-header {
   border: none;
 }
 .window-app .window-header {
@@ -476,7 +513,7 @@ img {
   font-weight: normal;
   max-width: unset;
 }
-.window-app.sheet .window-content {
+.window-app.sheet.splittermond:not(.dark) .window-content {
   background: var(--background-parchment-splittermond), var(--background-parchment);
   background-position: top right;
   background-blend-mode: var(--background-parchment-splittermond-blend-mode);
@@ -491,19 +528,28 @@ img {
   z-index: 0;
   position: relative;
 }
+.chat-message .message-header {
+  color: rgba(var(--color-text-secondary_rgb), 0.7);
+}
+.chat-message,
+.chat-message.emote,
+.chat-message.whisper,
+.chat-message.blind {
+  color: var(--color-text-secondary);
+}
 .chat-message.emote,
 .chat-message.whisper,
 .chat-message.blind {
   background: url(../../systems/splittermond/images/grunge_alpha.png);
 }
 .chat-message.emote {
-  background-color: #f3edde;
+  background-color: var(--background-color-emote, #f3edde);
 }
 .chat-message.whisper {
-  background-color: #e8e8ef;
+  background-color: var(--background-color-whisper, #e8e8ef);
 }
 .chat-message.blind {
-  background-color: #f5eaf5;
+  background-color: var(--background-color-blind, #f5eaf5);
 }
 .tabs-style,
 .tabs:not(#sidebar-tabs),
@@ -518,7 +564,7 @@ img {
 .splittermond .subnav .item,
 .splittermond .subnav-item {
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 3 3;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -595,13 +641,6 @@ img {
   box-shadow: inset 0 0 6px var(--color-primary);
   text-shadow: 0 0 10px var(--color-primary);
   color: var(--color-text);
-}
-.directory .directory-header {
-  line-height: unset;
-}
-.directory .directory-list .directory-item.context,
-.directory .directory-list .directory-item.active {
-  border-color: var(--color-primary);
 }
 #controls .scene-control.active,
 #controls .control-tool.active,
@@ -687,14 +726,14 @@ input[type="time"],
 .directory .directory-header .header-search input {
   padding: 1px 3px;
   border-width: 4px;
-  background-image: url(../../systems/splittermond/images/noise6.png);
+  background: url(../../systems/splittermond/images/noise6.png);
   background-position: center center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: transparent;
   box-shadow: none;
   text-decoration: none;
   border-radius: 4px;
-  color: inherit;
+  color: var(--color-text-secondary);
   text-shadow: none;
   font-family: "Vollkorn";
   font-variant-numeric: lining-nums;
@@ -721,7 +760,7 @@ input[type="time"]:focus,
 .directory .directory-header .header-search input:hover,
 .directory .directory-header .header-search input:active,
 .directory .directory-header .header-search input:focus {
-  background-image: url(../../systems/splittermond/images/noise6.png);
+  background: url(../../systems/splittermond/images/noise6.png);
   background-color: transparent;
   box-shadow: none;
   border-radius: 0;
@@ -751,10 +790,32 @@ input[type="time"].autoexpand,
 .directory .directory-header .header-search input.autoexpand {
   box-sizing: content-box;
 }
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="password"],
+.dark input[type="date"],
+.dark input[type="time"],
+.dark .directory .directory-header .header-search input {
+  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+}
+.dark input[type="text"]:hover,
+.dark input[type="number"]:hover,
+.dark input[type="password"]:hover,
+.dark input[type="date"]:hover,
+.dark input[type="time"]:hover,
+.dark input[type="text"]:focus,
+.dark input[type="number"]:focus,
+.dark input[type="password"]:focus,
+.dark input[type="date"]:focus,
+.dark input[type="time"]:focus,
+.dark .directory .directory-header .header-search input:hover,
+.dark .directory .directory-header .header-search input:focus {
+  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+}
 select,
 #chat-controls .roll-type-select {
   border: 1px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small_2.png) 3 3;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -824,6 +885,31 @@ h3::first-letter,
   line-height: 0.2;
   vertical-align: -50%;
 }
+form h1.form-header,
+form h2.form-header,
+form h3.form-header {
+  margin: 0 0 5px;
+  padding: 3px 0;
+  color: var(--color-text-secondary);
+}
+.directory .directory-header {
+  line-height: unset;
+}
+.directory .directory-header .header-search input {
+  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+}
+.directory .directory-header .header-search input:hover,
+.directory .directory-header .header-search input:focus {
+  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+}
+.directory .directory-list .directory-item.context,
+.directory .directory-list .directory-item.active {
+  border-color: var(--color-primary);
+}
+form .notes,
+form .hint {
+  color: rgba(var(--color-text-secondary_rgb), 0.7);
+}
 .editor {
   flex: 1;
   justify-self: stretch;
@@ -851,6 +937,30 @@ h3::first-letter,
 }
 ::-webkit-scrollbar-track {
   box-shadow: unset;
+}
+a.rollable,
+a.request-skill-check,
+a.add-tick,
+a.entity-link,
+a.inline-roll,
+a.pdflink {
+  background: var(--background-parchment);
+  padding: 1px 4px;
+  border: 1px solid rgba(var(--color-text-secondary_rgb), 0.5);
+  border-radius: 2px;
+  white-space: nowrap;
+  word-break: break-all;
+}
+a.rollable i,
+a.request-skill-check i,
+a.add-tick i,
+a.entity-link i,
+a.inline-roll i,
+a.pdflink i {
+  color: rgba(var(--color-text-secondary_rgb), 0.5);
+}
+#client-settings section.content {
+  border: none;
 }
 .sheet input[type="text"].character-name,
 .sheet input[type="text"].item-name,
@@ -2061,14 +2171,13 @@ li.taglist-item:hover .taglist-item-actions {
   font-family: Vollkorn;
   font-variant-numeric: lining-nums;
   font-weight: bold;
-  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
   color: var(--color-fail);
   box-sizing: border-box;
-  box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 0.5), 0 0 3px rgba(0, 0, 0, 0.3);
   border-radius: 3px;
   margin-top: 3px;
   margin-bottom: 3px;
-  text-shadow: 0px 0px 5px #FFFFFF;
+  border: 1px solid transparent;
+  border-image: linear-gradient(to right, transparent, rgba(var(--color-text-secondary_rgb), 0.3), transparent) 100% 0 100% 0;
 }
 .splittermond.check .degree-of-success,
 .splittermond.damage .degree-of-success {
@@ -2084,11 +2193,21 @@ li.taglist-item:hover .taglist-item-actions {
   color: #FFB800;
   text-shadow: 0px 0px 10px #FFEFC7;
 }
+.splittermond.check.fumble .roll-total,
+.splittermond.damage.fumble .roll-total {
+  border-image: linear-gradient(to right, transparent, rgba(var(--color-fail_rgb), 0.3), transparent) 100% 0 100% 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(var(--color-fail_rgb), 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+}
 .splittermond.check.success .degree-of-success,
 .splittermond.damage.success .degree-of-success,
 .splittermond.check.success .roll-total,
 .splittermond.damage.success .roll-total {
   color: var(--color-success);
+}
+.splittermond.check.critical .roll-total,
+.splittermond.damage.critical .roll-total {
+  border-image: linear-gradient(to right, transparent, rgba(var(--color-success_rgb), 0.3), transparent) 100% 0 100% 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(var(--color-success_rgb), 0.15) 50%, rgba(255, 255, 255, 0) 100%);
 }
 .splittermond.check .actions,
 .splittermond.damage .actions {
@@ -2178,22 +2297,18 @@ ul.checkbox-list li input:checked ~ label {
 ul.checkbox-list li input:checked ~ label::before {
   content: "\f00c";
 }
-.splittermond a.rollable,
-.splittermond a.consume,
-.splittermond a.add-tick,
-.splittermond .derived-attribute#defense label,
-.splittermond .derived-attribute#mindresist label,
-.splittermond .derived-attribute#bodyresist label {
+.splittermond .list a.rollable,
+.splittermond .list a.consume,
+.splittermond .list a.add-tick {
   display: inline-block;
+  padding: 0;
+  border: none;
   border-bottom: 2px solid rgba(var(--color-text-secondary_rgb), 0.2);
   margin-bottom: -2px;
 }
-.splittermond a.rollable:hover,
-.splittermond a.consume:hover,
-.splittermond a.add-tick:hover,
-.splittermond .derived-attribute#defense label:hover,
-.splittermond .derived-attribute#mindresist label:hover,
-.splittermond .derived-attribute#bodyresist label:hover {
+.splittermond .list a.rollable:hover,
+.splittermond .list a.consume:hover,
+.splittermond .list a.add-tick:hover {
   text-shadow: none;
   border-bottom: 2px solid rgba(var(--color-text-secondary_rgb), 0.5);
 }

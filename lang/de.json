@@ -462,8 +462,15 @@
             "notfound": "Kein PDF mit dem angegebenen Code gefunden."
         },
         "settings": {
-            "darkMode": "Dark Mode",
-            "darkModeHint": "Aktiviert den dunklen UI Modus."
+            "theme": {
+                "name": "UI-Theme",
+                "hint": "Wähle eine UI-Design",
+                "options": {
+                    "default": "Standard (Sepia)",
+                    "dark": "Dunkel",
+                    "splittermond_blue": "Splittermond-Blau"
+                }
+            }
         }
     },
 

@@ -67,12 +67,14 @@ img {
     }
 }
 
-.window-app:not(.sidebar-popout) {
+.window-app:not(.sidebar-popout):not(.dark) {
     color: var(--color-text-secondary);
     background: var(--background-parchment);
 
     .window-content:extend(.border-double-corner-1) {
         color: var(--color-text-secondary);
+
+        background: var(--background-parchment);
 
         margin: 5px;
         margin-top: 0px;
@@ -127,7 +129,7 @@ img {
     
 }
 
-.window-app.sheet .window-content {
+.window-app.sheet.splittermond:not(.dark) .window-content {
     background: var(--background-parchment-splittermond), var(--background-parchment);
     background-position: top right;
     background-blend-mode: var(--background-parchment-splittermond-blend-mode);
@@ -139,22 +141,27 @@ img {
     border-image-repeat: repeat;
     z-index: 0;
     position: relative;
+
+    .message-header {
+        color: rgba(var(--color-text-secondary_rgb),0.7);
+    }
 }
 
 .chat-message {
+    color: var(--color-text-secondary);
     &.emote, &.whisper, &.blind {
         &:extend(.chat-message);
         background: @image-grunge;
     }
 
     &.emote {
-        background-color: #f3edde;
+        background-color: var(--background-color-emote, #f3edde);
     }
     &.whisper {
-        background-color: #e8e8ef;
+        background-color: var(--background-color-whisper, #e8e8ef);
     }
     &.blind {
-        background-color: #f5eaf5;
+        background-color: var(--background-color-blind,#f5eaf5);
     }
 }
 
@@ -225,23 +232,7 @@ img {
     }
 }
 
-.directory {
-    .directory-header {
-        line-height: unset;
 
-        .header-search {
-            input {
-                &:extend(input[type="text"] all);
-            }
-        }
-    }
-    .directory-list .directory-item {
-        &.context, &.active {
-            border-color: var(--color-primary);
-        }
-    }
-
-}
 
 
 #controls {
@@ -344,15 +335,14 @@ input[type="time"],
 #autoexpanddummy {
     padding: 1px 3px;
     border-width: 4px;
-    background-image: @image-noise;
+    background: @image-noise;
     background-position: center center;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background-color: transparent;
     box-shadow: none;
     text-decoration: none;
     border-radius: 4px;
-
-    color: inherit;
+    color: var(--color-text-secondary);
     text-shadow: none;
 
     font-family: @font-primary;
@@ -362,7 +352,7 @@ input[type="time"],
     
     &:hover, &:active, &:focus {
         &:extend(.border-wobbly-line);
-        background-image: @image-noise;
+        background: @image-noise;
         background-color: transparent;
         box-shadow: none;
         border-radius: 0;
@@ -375,6 +365,20 @@ input[type="time"],
 
     &.autoexpand {
         box-sizing: content-box;
+    }
+}
+
+.dark {
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    input[type="date"],
+    input[type="time"] {
+        background: @image-noise center center, var(--background-parchment);
+
+        &:hover, &:focus {
+            background: @image-noise center center, var(--background-parchment);
+        }
     }
 }
 
@@ -469,11 +473,45 @@ h1, h2, h3, .window-header .window-title {
     
 }
 
+form h1.form-header, form h2.form-header, form h3.form-header {
+    &:extend(.border-wobbly-line);
+    margin: 0 0 5px;
+    padding: 3px 0;
+    color: var(--color-text-secondary);
+}
+
 .directory .action-buttons button:extend(.button-style all) {}
+
+.directory {
+    .directory-header {
+        line-height: unset;
+
+        .header-search {
+            input {
+                &:extend(input[type="text"] all);
+                background: @image-noise center center, var(--background-parchment);
+
+                &:hover, &:focus {
+                    background: @image-noise center center, var(--background-parchment);
+                }
+            }
+        }
+    }
+    .directory-list .directory-item {
+        &.context, &.active {
+            border-color: var(--color-primary);
+        }
+    }
+
+}
 
 button.file-picker:extend(button.button-inline all) {}
 button.grid-config:extend(button.button-inline all) {}
 button.capture-position:extend(button.button-inline all) {}
+
+form .notes, form .hint {
+    color: rgba(var(--color-text-secondary_rgb),0.7);
+}
 
 .editor {
     flex: 1;
@@ -504,4 +542,21 @@ button.capture-position:extend(button.button-inline all) {}
 }
 ::-webkit-scrollbar-track {
     box-shadow: unset;
+}
+
+a.rollable, a.request-skill-check, a.add-tick, a.entity-link, a.inline-roll, a.pdflink {
+    background: var(--background-parchment);
+    padding: 1px 4px;
+    border: 1px solid rgba(var(--color-text-secondary_rgb),0.5);
+    border-radius: 2px;
+    white-space: nowrap;
+    word-break: break-all;
+
+    i {
+        color: rgba(var(--color-text-secondary_rgb),0.5)
+    }
+}
+
+#client-settings section.content {
+    border: none;
 }
