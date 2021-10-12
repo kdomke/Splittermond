@@ -1850,7 +1850,7 @@ export default class SplittermondActor extends Actor {
         data.img = spellData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
 
-        let focusCosts = this._calcSpellCostReduction(spellData.data, this.data.spellCostReduction);
+        let focusCosts = this._calcSpellCostReduction(spellData.data, this.data.spellCostReduction, spellData.data.costs);
 
         if (data.succeeded) {
             if (data.degreeOfSuccess > 0) {
@@ -1944,12 +1944,13 @@ export default class SplittermondActor extends Actor {
         }
 
         if (data.degreeOfSuccess >= enhancementEG) {
+            var enhancementCosts = this._calcSpellCostReduction(spellData.data, this.data.spellEnhancedCostReduction, spellData.data.enhancementCosts);
             data.actions.push({
-                name: `${spellData.data.enhancementCosts} ` + game.i18n.localize(`splittermond.enhancementCosts`),
+                name: `${enhancementCosts} ` + game.i18n.localize(`splittermond.enhancementCosts`),
                 icon: "fa-bullseye",
                 classes: "consume",
                 data: {
-                    value: spellData.data.enhancementCosts,
+                    value: enhancementCosts,
                     type: "focus",
                     description: spellData.name + " - " + game.i18n.localize('splittermond.enhancementCosts')
                 }
