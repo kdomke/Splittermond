@@ -612,7 +612,7 @@ export default class SplittermondActor extends Actor {
         str.split(',').forEach(str => {
             str = str.trim();
             let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
-            if (temp && !["foreduction", "forenhancedreduction"].some(e => !temp[1].trim().toLowerCase().startsWith(e))) {
+            if (temp && !["foreduction", "foenhancedreduction"].some(e => !temp[1].trim().toLowerCase().startsWith(e))) {
                 let modifierLabel = temp[1].trim();
                 let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
                     .replace("BEW", data.attributes.agility.value + "")
@@ -767,7 +767,7 @@ export default class SplittermondActor extends Actor {
 
                         return;
                     }
-                    else if (modifierLabel.toLowerCase().startsWith("forenhancedreduction")) {
+                    else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
                         var labelParts = modifierLabel.split(".");
                         var spellGroup = "*";
 
