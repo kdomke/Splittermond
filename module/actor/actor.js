@@ -609,10 +609,11 @@ export default class SplittermondActor extends Actor {
         const data = actorData.data;
         actorData.spellCostReduction = {};
         actorData.spellEnhancedCostReduction = {};
+
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
-            if (temp && ["foreduction", "foenhancedreduction"].every(e => !temp[1].trim().toLowerCase().startsWith(e))) {
+            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|(k?[0-9]+v?[0-9]*))/i);
+            if (temp) {
                 let modifierLabel = temp[1].trim();
                 let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
                     .replace("BEW", data.attributes.agility.value + "")
@@ -655,10 +656,10 @@ export default class SplittermondActor extends Actor {
 
                 switch (modifierLabel.toLowerCase()) {
                     case "bonuscap":
-                        data.bonusCap = parseInt(data.bonusCap) + value;
+                        data.bonusCap = parseInt(data.bonusCap) + parseInt(value);
                         break;
                     case "gsw.mult":
-                        data.derivedAttributes.speed.multiplier *= Math.pow(value, multiplier);
+                        data.derivedAttributes.speed.multiplier *= Math.pow(parseInt(value), multiplier);
                         break;
                     case "sr".toLowerCase():
                         addModifierHelper(data.damageReduction);
@@ -682,28 +683,28 @@ export default class SplittermondActor extends Actor {
                         addModifierHelper(data.tickMalus);
                         break;
                     case "woundmalus.nbrlevels":
-                        data.health.woundMalus.nbrLevels = value * multiplier;
+                        data.health.woundMalus.nbrLevels = parseInt(value) * multiplier;
                         break;
                     case "woundmalus.mod":
-                        data.health.woundMalus.mod += value * multiplier;
+                        data.health.woundMalus.mod += parseInt(value) * multiplier;
                         break;
                     case "woundmalus.levelmod":
-                        data.health.woundMalus.levelMod += value * multiplier;
+                        data.health.woundMalus.levelMod += parseInt(value) * multiplier;
                         break;
                     case "splinterpoints":
-                        data.splinterpoints.max = parseInt(data.splinterpoints?.max || 3) + value * multiplier;
+                        data.splinterpoints.max = parseInt(data.splinterpoints?.max || 3) + parseInt(value) * multiplier;
                         break;
                     case "healthregeneration.multiplier":
-                        actorData.healthRegeneration.multiplier = value * multiplier;
+                        actorData.healthRegeneration.multiplier = parseInt(value) * multiplier;
                         break;
                     case "focusregeneration.multiplier":
-                        actorData.focusRegeneration.multiplier = value * multiplier;
+                        actorData.focusRegeneration.multiplier = parseInt(value) * multiplier;
                         break;
                     case "lowerfumbleresult":
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
                         }
-                        actorData.lowerFumbleResult += value;
+                        actorData.lowerFumbleResult += parseInt(value);
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
@@ -721,6 +722,53 @@ export default class SplittermondActor extends Actor {
                         });
                         break;
                     default:
+                        if (modifierLabel.toLowerCase().startsWith("foreduction")) {
+                            var labelParts = modifierLabel.split(".");
+                            var spellGroup = "*";
+
+                            if (labelParts.length >= 2) {
+                                spellGroup = labelParts[1].trim();
+                                if (labelParts.length == 3) {
+                                    spellGroup += "." + labelParts[2].trim();
+                                }
+                            }
+
+                            var group = actorData.spellCostReduction[spellGroup.toLowerCase()] = actorData.spellCostReduction[spellGroup.toLowerCase()] || {
+                                consumed: 0,
+                                exhausted: 0,
+                                channeled: 0,
+                            };
+                            var parsedFocusReduction = this._parseCostsString(value);
+                            group.consumed += parsedFocusReduction.consumed || 0;
+                            group.exhausted += parsedFocusReduction.exhausted || 0;
+                            group.channeled += parsedFocusReduction.channeled || 0;
+
+                            return;
+                        }
+                        else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
+                            var labelParts = modifierLabel.split(".");
+                            var spellGroup = "*";
+
+                            if (labelParts.length >= 2) {
+                                spellGroup = labelParts[1].trim();
+                                if (labelParts.length == 3) {
+                                    spellGroup += "." + labelParts[2].trim();
+                                }
+                            }
+
+                            var group = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
+                                consumed: 0,
+                                exhausted: 0,
+                                channeled: 0,
+                            };
+                            var parsedFocusReduction = this._parseCostsString(value);
+                            group.consumed += parsedFocusReduction.consumed || 0;
+                            group.exhausted += parsedFocusReduction.exhausted || 0;
+                            group.channeled += parsedFocusReduction.channeled || 0;
+
+                            return;
+                        }
+
                         let dataset;
                         let element = CONFIG.splittermond.derivedAttributes.find(attr => {
                             return modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
@@ -737,61 +785,8 @@ export default class SplittermondActor extends Actor {
                             ui?.notifications?.warn(`Field not found in modifier-string "${str}" in ${name}!`);
                         }
                         break;
-
                 }
             } else {
-                let temp = str.match(/(.*)\s([0-9]*[k]?[0-9]+v?[0-9]*)/i);
-                if (temp) {
-                    let modifierLabel = temp[1].trim();
-                    let value = temp[2].trim();
-                    if (modifierLabel.toLowerCase().startsWith("foreduction")) {
-                        var labelParts = modifierLabel.split(".");
-                        var spellGroup = "*";
-
-                        if (labelParts.length >= 2) {
-                            spellGroup = labelParts[1];
-                            if (labelParts.length == 3) {
-                                spellGroup += "." + labelParts[2];
-                            }    
-                        }
-
-                        var group = actorData.spellCostReduction[spellGroup.toLowerCase()] = actorData.spellCostReduction[spellGroup.toLowerCase()] || {
-                            consumed: 0,
-                            exhausted: 0,
-                            channeled: 0,
-                        };
-                        var parsedFocusReduction = this._parseCostsString(value);
-                        group.consumed += parsedFocusReduction.consumed || 0;
-                        group.exhausted += parsedFocusReduction.exhausted || 0;
-                        group.channeled += parsedFocusReduction.channeled || 0;
-
-                        return;
-                    }
-                    else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-                        var labelParts = modifierLabel.split(".");
-                        var spellGroup = "*";
-
-                        if (labelParts.length >= 2) {
-                            spellGroup = labelParts[1];
-                            if (labelParts.length == 3) {
-                                spellGroup += "." + labelParts[2];
-                            }    
-                        }
-
-                        var group = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
-                            consumed: 0,
-                            exhausted: 0,
-                            channeled: 0,
-                        };
-                        var parsedFocusReduction = this._parseCostsString(value);
-                        group.consumed += parsedFocusReduction.consumed || 0;
-                        group.exhausted += parsedFocusReduction.exhausted || 0;
-                        group.channeled += parsedFocusReduction.channeled || 0;
-
-                        return;
-                    }
-                }
-
                 ui?.notifications?.error(`Syntax Error in modifier-string "${str}" in ${name}!`);
             }
         });
@@ -1748,8 +1743,8 @@ export default class SplittermondActor extends Actor {
     }
 
     _calcSpellCostReduction(spellData, reductions, costData) {
-        var reductions = [reductions["*"], reductions[spellData.skill.toLowerCase()]];
-        spellData.spellType.split(",").forEach(e => reductions.push(reductions[(spellData.skill + "." + e).toLowerCase()]))
+        var reductions = [reductions["*"], reductions[spellData.skill.trim().toLowerCase()]];
+        spellData.spellType.split(",").forEach(e => reductions.push(reductions[(spellData.skill.trim() + "." + e.trim()).toLowerCase().trim()]))
         reductions = reductions.filter(e => e != null);
 
         if (reductions.length == 0) {
@@ -1759,7 +1754,7 @@ export default class SplittermondActor extends Actor {
         var pretext = "";
         if (strParts.length > 1) {
             pretext = strParts[0];
-        } 
+        }
 
         var costs = this._parseCostsString(costData);
         reductions.forEach(reduction => {
@@ -1775,7 +1770,7 @@ export default class SplittermondActor extends Actor {
                 costs.exhausted = Math.max(1, costs.exhausted - reduction.exhausted);
             }
         });
-        if(pretext != ""){
+        if (pretext != "") {
             return pretext + "/+" + this._formatSpellCost(costs);
         }
         return this._formatSpellCost(costs);
