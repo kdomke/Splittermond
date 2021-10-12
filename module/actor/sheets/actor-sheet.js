@@ -19,7 +19,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
         Handlebars.registerHelper('calculateSpellCost', (spellData, actorData) => {
-            return actorData.actor._calcSpellCostReduction(spellData)
+            return actorData.actor._calcSpellCostReduction(spellData, actorData.actor.data.spellCostReduction, spellData.costs)
+        });      
+        Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData, actorData) => {
+            return actorData.actor._calcSpellCostReduction(spellData, actorData.actor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
         });
 
         if (sheetData.data.attributes) {

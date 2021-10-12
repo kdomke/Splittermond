@@ -769,14 +769,13 @@ export default class SplittermondActor extends Actor {
                     }
                     else if (modifierLabel.toLowerCase().startsWith("forenhancedreduction")) {
                         var labelParts = modifierLabel.split(".");
-                        if (labelParts.length < 2) {
-                            ui?.notifications?.warn(`Erwartet mindestens 3 teile für FoEnhancedReduction: FoEnhancedReduction.MagieSchule FOCUS. Beispiel: FoEnhancedReduction.FireMagic 1K1`);
-                            return;
-                        }
+                        var spellGroup = "*";
 
-                        var spellGroup = labelParts[1];
-                        if (labelParts.length == 3) {
-                            spellGroup += "." + labelParts[2];
+                        if (labelParts.length >= 2) {
+                            spellGroup = labelParts[1];
+                            if (labelParts.length == 3) {
+                                spellGroup += "." + labelParts[2];
+                            }    
                         }
 
                         var group = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
@@ -1748,15 +1747,21 @@ export default class SplittermondActor extends Actor {
         ChatMessage.create(chatData);
     }
 
-    _calcSpellCostReduction(spellData) {
-        var reductions = [this.data.spellCostReduction["*"], this.data.spellCostReduction[spellData.skill.toLowerCase()]];
-        spellData.spellType.split(",").forEach(e => reductions.push(this.data.spellCostReduction[(spellData.skill + "." + e).toLowerCase()]))
+    _calcSpellCostReduction(spellData, reductions, costData) {
+        var reductions = [reductions["*"], reductions[spellData.skill.toLowerCase()]];
+        spellData.spellType.split(",").forEach(e => reductions.push(reductions[(spellData.skill + "." + e).toLowerCase()]))
         reductions = reductions.filter(e => e != null);
 
         if (reductions.length == 0) {
-            return spellData.costs;
+            return costData;
         }
-        var costs = this._parseCostsString(spellData.costs);
+        let strParts = costData.split("/");
+        var pretext = "";
+        if (strParts.length > 1) {
+            pretext = strParts[0];
+        } 
+
+        var costs = this._parseCostsString(costData);
         reductions.forEach(reduction => {
             if (reduction.channeled > 0 && costs.channeled > 0) {
                 costs.channeled = Math.max(1, costs.channeled - reduction.channeled);
@@ -1770,6 +1775,9 @@ export default class SplittermondActor extends Actor {
                 costs.exhausted = Math.max(1, costs.exhausted - reduction.exhausted);
             }
         });
+        if(pretext != null){
+            return pretext + "/+" + this._formatSpellCost(costs);
+        }
         return this._formatSpellCost(costs);
     }
 
@@ -1842,8 +1850,7 @@ export default class SplittermondActor extends Actor {
         data.img = spellData.img;
         data.rollType = game.i18n.localize(`splittermond.rollType.${checkData.rollType}`);
 
-
-        let focusCosts = this._calcSpellCostReduction(spellData.data);
+        let focusCosts = this._calcSpellCostReduction(spellData.data, this.data.spellCostReduction);
 
         if (data.succeeded) {
             if (data.degreeOfSuccess > 0) {
