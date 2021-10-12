@@ -1775,7 +1775,7 @@ export default class SplittermondActor extends Actor {
                 costs.exhausted = Math.max(1, costs.exhausted - reduction.exhausted);
             }
         });
-        if(pretext != null){
+        if(pretext != ""){
             return pretext + "/+" + this._formatSpellCost(costs);
         }
         return this._formatSpellCost(costs);
