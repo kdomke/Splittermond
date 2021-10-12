@@ -612,7 +612,7 @@ export default class SplittermondActor extends Actor {
         str.split(',').forEach(str => {
             str = str.trim();
             let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
-            if (temp && !["foreduction", "foenhancedreduction"].some(e => !temp[1].trim().toLowerCase().startsWith(e))) {
+            if (temp && ["foreduction", "foenhancedreduction"].every(e => !temp[1].trim().toLowerCase().startsWith(e))) {
                 let modifierLabel = temp[1].trim();
                 let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
                     .replace("BEW", data.attributes.agility.value + "")
