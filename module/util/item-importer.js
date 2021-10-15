@@ -62,17 +62,29 @@ export default class ItemImporter {
         console.log(rawData);
 
         // Check Spell
-        if (rawData.includes("Schulen:") &&
-            rawData.includes("Schwierigkeit:") &&
-            rawData.includes("Typus:") &&
-            rawData.includes("Kosten:") &&
-            rawData.includes("Zauberdauer:") &&
-            rawData.includes("Wirkung:")) {
-            this.importSpell(rawData);
+        var spellRegex = new RegExp(/^(.*)(?:\s{1}|\n)\(((?:Spruch)|(?:Ritus))\)/, "gm");
 
-            return;
+        if (rawData.match(spellRegex)) {
+            var currentExec;
+            var lastexec;
+            var indzies = [];
+            while ((currentExec = spellRegex.exec(rawData))) {
+                indzies.push({ start: lastexec?.index ?? 0, end: currentExec.index });
+                lastexec = currentExec;
+            }
+            indzies.push({ start: lastexec.index, end: currentExec?.index ?? rawData.length });
+            indzies = indzies.slice(1);
+            console.log("Found " + indzies.length + " spells:")
+            indzies.forEach(e => {
+                console.log("From: " + e.start + " to: " + e.end);
+                var spellData = rawData.substring(e.start, e.end);
+                console.log(spellData);
+                this.importSpell(spellData);
+                console.log("Imported.")
+            }); 
+            return;      
         }
-
+        
         // Check multiple Weapons
         let test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +(?:([0-9]+ [LST])(?: *\/ *[0-9]+ [LST])?) +([0-9]+) +([0-9]+) +([UGFMA]) +([0-9+\-W]+) +([0-9]+) +((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3}) +(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],? *)*|–) +(.+)/g);
         if (test) {
