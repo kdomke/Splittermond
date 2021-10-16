@@ -2177,6 +2177,9 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             
                         });
                         data.degreeOfSuccessDescription += `</div>`;
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
 
                 
@@ -2238,7 +2241,9 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                         });
                         data.degreeOfSuccessDescription += `</div>`;
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
-
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
                 
                         let templateContext = {
                             ...data,
