@@ -84,7 +84,7 @@
   "primaryTokenAttribute": "data.healthBar",
   "secondaryTokenAttribute": "data.focusBar",
   "minimumCoreVersion": "0.8.6",
-  "compatibleCoreVersion": "0.8.8",
+  "compatibleCoreVersion": "0.8.9",
   "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
   "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
   "download": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/get/main.zip"
