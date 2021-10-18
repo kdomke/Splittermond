@@ -2,6 +2,7 @@
 2021-10-18
 * added: Dokumentation für fehlende Modifikatoren
 * added: Verminderte Patzerstufen werden in Chatnachricht dargestellt
+* added: Es können mehrere Zauber gleichzeitig mittels Copy-and-Paste-Importer hinzugefügt werden (Dank geht an Jean-Pierre für diese Erweiterung)
 * fixed: Bug in NSC-Sheet wenn nur Fertigkeitswerte (statt Punkte) definiert wurden
 * fixed: Darstellung der Patzertabellen in Chatnachricht korrigiert
 * fixed: Tooltip in Lebenspunkteelement falsch (Issue #53)
