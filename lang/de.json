@@ -221,7 +221,8 @@
         "masteries": "Meisterschaften",
         "negativeDegreeOfSuccess": "Negative Erfolgsgrade",
         "lowerFumbleResult": "Verminderte Patzerauswirkung (Stufe)",
-        "lowerFumbleResultHelp": "Anzahl Stufen um die die Patzerauswirukung vermindert wird (z.B. Fokuskontrolle)",
+        "lowerFumbleResultChat": "Stufe vermindert",
+        "lowerFumbleResultHelp": "Anzahl Stufen um die die Patzerauswirkung vermindert wird (z.B. Fokuskontrolle)",
         "priest": "Priester",
         "sorcerer": "Zauberer",
         "magicFumble": "Zauberpatzer",
@@ -436,7 +437,7 @@
             "battered": "angeschlagen",
             "injured": "verletzt",
             "badlyinjured": "schwer verletzt",
-            "doomed": "schwer verletzt"
+            "doomed": "todgeweiht"
         },
         "damageLevels": {
             "undamaged": "unbeschädigt",

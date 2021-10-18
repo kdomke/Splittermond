@@ -1013,6 +1013,21 @@ export default class SplittermondActor extends Actor {
                     points: 0
                 }
             }
+
+            if (actorData.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0) {
+                data.skills[skill].points = data.skills[skill].value;
+                if (CONFIG.splittermond.skillAttributes[skill]) {
+                    data.skills[skill].points -= parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value || 0) +
+                        parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value || 0)
+                }
+
+                if (data.skills[skill].mod) {
+                    data.skills[skill].points -= (data.skills[skill].mod.sources.reduce(_sumAllHelper, 0) || 0);
+                    data.skills[skill].points += Math.max(0, (data.skills[skill].mod.sources.reduce(_sumEquipmentBonus, 0) || 0) - data.bonusCap);
+                    data.skills[skill].points += Math.max(0, (data.skills[skill].mod.sources.reduce(_sumMagicBonus, 0) || 0) - data.bonusCap);
+                }
+            }
+
             data.skills[skill].value = parseInt(data.skills[skill].points);
 
             if (CONFIG.splittermond.skillAttributes[skill]) {
@@ -2162,6 +2177,9 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             
                         });
                         data.degreeOfSuccessDescription += `</div>`;
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
 
                 
@@ -2223,7 +2241,9 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                         });
                         data.degreeOfSuccessDescription += `</div>`;
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
-
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
                 
                         let templateContext = {
                             ...data,
