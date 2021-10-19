@@ -296,7 +296,7 @@ export default class SplittermondActor extends Actor {
                             if (attr) {
                                 let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
                                 if (diff < 0) {
-                                    minAttributeMalus = diff;
+                                    minAttributeMalus += diff;
                                     itemData.weaponSpeed -= diff;
                                     if (itemData.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
                                         itemData.secondaryAttack.weaponSpeed -= diff;
