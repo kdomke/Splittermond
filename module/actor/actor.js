@@ -1044,6 +1044,7 @@ export default class SplittermondActor extends Actor {
             }
 
         });
+        
     }
 
 
@@ -1544,6 +1545,9 @@ export default class SplittermondActor extends Actor {
         if (!checkData) return;
 
         checkData.difficulty = parseInt(checkData.difficulty);
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == skill)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(
             this.data.data.skills[skill].value,
@@ -1634,6 +1638,10 @@ export default class SplittermondActor extends Actor {
         checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(weaponData.skill.points);
         let skillValue = weaponData.skill.value;
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == weaponData.skillId)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
@@ -1768,6 +1776,10 @@ export default class SplittermondActor extends Actor {
         checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
         let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == spellData.data.skill)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
@@ -1966,6 +1978,11 @@ export default class SplittermondActor extends Actor {
 
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == itemData.skillId)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
+
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
