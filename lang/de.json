@@ -139,6 +139,11 @@
         "languages": "Sprachen",
         "generalProperties": "Allgemein",
         "moonsign": "Mondzeichen",
+        "moonsigns":{
+            "add": {
+                "title": "Kein Mondzeichen"
+            }
+        },
         "npcfeature": "Gegnermerkmal",
         "secretGift": "Geheime Gabe",
         "splinterpoint": "Splitterpunkt",
