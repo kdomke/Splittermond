@@ -141,7 +141,7 @@
         "moonsign": "Mondzeichen",
         "moonsigns":{
             "add": {
-                "title": "Kein Mondzeichen"
+                "title": "Mondzeichen hinzufügen"
             }
         },
         "npcfeature": "Gegnermerkmal",
