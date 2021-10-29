@@ -152,7 +152,7 @@ splittermond.skillAttributes = {
     "swim": ["strength", "constitution"],
     "seafaring": ["agility", "constitution"],
     "streetlore": ["charisma", "intuition"],
-    "animals": ["charisma", "intuition"],
+    "animals": ["charisma", "agility"],
     "survival": ["intuition", "constitution"],
     "perception": ["intuition", "willpower"],
     "endurance": ["constitution", "willpower"],
