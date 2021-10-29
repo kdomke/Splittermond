@@ -1017,6 +1017,22 @@ a.pdflink i {
   width: 120px;
   position: relative;
   margin: auto;
+  /*
+        .moonsign-add{
+            width: 120px;
+            text-overflow: ellipsis;
+            
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .moonsign-info{            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        */
 }
 .splittermond .moonsign-splinterpoints {
   display: flex;

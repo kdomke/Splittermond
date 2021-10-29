@@ -139,6 +139,11 @@
         "languages": "Sprachen",
         "generalProperties": "Allgemein",
         "moonsign": "Mondzeichen",
+        "moonsigns":{
+            "add": {
+                "title": "Mondzeichen hinzufügen"
+            }
+        },
         "npcfeature": "Gegnermerkmal",
         "secretGift": "Geheime Gabe",
         "splinterpoint": "Splitterpunkt",
@@ -370,8 +375,12 @@
         "rollType": {
             "standard": "Standardwurf",
             "risk": "Risikowurf",
-            "safety": "Sicherheitswurf"
+            "safety": "Sicherheitswurf",
+            "standardGrandmaster": "Standardwurf (Großmeister)",
+            "riskGrandmaster": "Risikowurf (Großmeister)",
+            "safetyGrandmaster": "Sicherheitswurf (Großmeister)"
         },
+        "grandmaster": "Großmeister",
         "skillCheck": "Fertigkeitsprobe",
         "successMessage": [
             "(Knapp) gelungen",

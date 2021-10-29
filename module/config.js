@@ -152,7 +152,7 @@ splittermond.skillAttributes = {
     "swim": ["strength", "constitution"],
     "seafaring": ["agility", "constitution"],
     "streetlore": ["charisma", "intuition"],
-    "animals": ["charisma", "intuition"],
+    "animals": ["charisma", "agility"],
     "survival": ["intuition", "constitution"],
     "perception": ["intuition", "willpower"],
     "endurance": ["constitution", "willpower"],
@@ -189,6 +189,18 @@ splittermond.rollType = {
     safety: {
         label: "splittermond.rollType.safety",
         rollFormula: "2d10kh1"
+    },
+    standardGrandmaster: {
+        label: "splittermond.rollType.standardGrandmaster",
+        rollFormula: "3d10ri"
+    },
+    riskGrandmaster: {
+        label: "splittermond.rollType.riskGrandmaster",
+        rollFormula: "5d10ri"
+    },
+    safetyGrandmaster: {
+        label: "splittermond.rollType.safetyGrandmaster",
+        rollFormula: "3d10kh1"
     }
 }
 
@@ -366,6 +378,11 @@ splittermond.itemSheetProperties = {
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
+                },
+                {
+                    field: "data.isGrandmaster",
+                    label: "splittermond.grandmaster",
+                    template: "bool",
                 }]
         }
     ],

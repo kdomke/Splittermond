@@ -1,4 +1,12 @@
-## 0.6.1 ++
+## 0.6.2 ##
+2021-10-29
+* added: Die Meisterschaft "Großmeister" ist nun implementiert. Eine Meisterschaft kann als "Großmeister"-Meisterschaft markiert werden (Haken in Meisterschaftseigenschaften). Ist Diese Meisterschaft vorhanden, werden automatisch "Großmeister"-Würfe bei entsprechender Fertigkeits-Probe geworfen.
+* added: Mondzeichen können jetzt aus dem Charakterblatt hinzugefügt werden (wenn noch kein Mondzeichen hinzugefügt wurde.)
+* fixed: Fehlerhaftes parsen im NSC-Copy-and-Paste-Importer
+* fixed: Malus für "min. Attribute" bei Waffen wurde falsch berechnet
+* fixed: Für die Fertigkeit "Tierführung" waren die falschen Attribute hinterlegt
+
+## 0.6.1 ##
 2021-10-18
 * added: Dokumentation für fehlende Modifikatoren
 * added: Verminderte Patzerstufen werden in Chatnachricht dargestellt

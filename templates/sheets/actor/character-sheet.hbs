@@ -42,7 +42,8 @@
                 </div>
 
             </div>
-            <div class="moonsign">
+            <div class="moonsign">                
+                
                 <div class="moonsign-splinterpoints" title="{{localize 'splittermond.splinterpoints'}}">
                     <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.splinterpoints.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i>
@@ -55,9 +56,13 @@
                     </button>
                 </div>
                 {{#each itemsByType.moonsign}}
-                <img class="moonsign-image" src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
-                <label class="moonsign-label"><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
+                    <img class="moonsign-image" src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
+                    <label class="moonsign-label"><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
                 {{/each}}
+                {{#unless itemsByType.moonsign}}
+                    <div class="moonsign-image"></div>  
+                    <label class="moonsign-label"><a data-item-type="moonsign" data-action="add-item" class="moonsign-label">{{localize 'splittermond.moonsigns.add.title'}}</a></label>
+                {{/unless}}
             </div>
         </section>
         {{#unless limited}}
