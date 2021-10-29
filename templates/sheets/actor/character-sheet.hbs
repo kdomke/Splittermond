@@ -60,8 +60,8 @@
                     <label class="moonsign-label"><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
                 {{/each}}
                 {{#unless itemsByType.moonsign}}
-                    <img class="moonsign-image" title="{{this.name}}" height="64" width="64" />
-                    <label><a data-item-type="moonsign" data-action="add-item" class="moonsign-label">{{localize 'splittermond.moonsigns.add.title'}}</a></label>
+                    <div class="moonsign-image"></div>  
+                    <label class="moonsign-label"><a data-item-type="moonsign" data-action="add-item" class="moonsign-label">{{localize 'splittermond.moonsigns.add.title'}}</a></label>
                 {{/unless}}
             </div>
         </section>
