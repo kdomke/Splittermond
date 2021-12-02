@@ -2396,7 +2396,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         });
 
         let focusData = duplicate(data.focus);
-        let healthData = duplicate(data.focus);
+        let healthData = duplicate(data.health);
 
 
         if (await p) {
