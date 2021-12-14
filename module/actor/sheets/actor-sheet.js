@@ -629,8 +629,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                                 <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
                                 <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
                                 <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mind.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
                                 `
                             break;
                         case "bodyresist":
@@ -638,8 +638,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                                 <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
                                 <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
                                 <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mind.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
                                 `
                             break;
                     }

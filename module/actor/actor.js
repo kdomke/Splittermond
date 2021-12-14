@@ -612,7 +612,7 @@ export default class SplittermondActor extends Actor {
 
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9]+)/);
+            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-0-9\.]+)/);
             if (temp) {
                 let modifierLabel = temp[1].trim();
                 let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
@@ -1014,11 +1014,11 @@ export default class SplittermondActor extends Actor {
                 }
             }
 
-            if (actorData.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0) {
+            if (actorData.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0 && !CONFIG.splittermond.skillGroups.fighting.includes(skill)) {
                 data.skills[skill].points = data.skills[skill].value;
                 if (CONFIG.splittermond.skillAttributes[skill]) {
                     data.skills[skill].points -= parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value || 0) +
-                        parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value || 0)
+                        parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value || 0);
                 }
 
                 if (data.skills[skill].mod) {
@@ -2396,7 +2396,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         });
 
         let focusData = duplicate(data.focus);
-        let healthData = duplicate(data.focus);
+        let healthData = duplicate(data.health);
 
 
         if (await p) {
