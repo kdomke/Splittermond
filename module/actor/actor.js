@@ -2090,7 +2090,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
     }
 
     async rollAttackFumble() {
-        let roll = new Roll("2d10").roll();
+        let roll = new Roll("2d10").roll({async: false});
 
         let result = CONFIG.splittermond.fumbleTable.fight.find(el => el.min <= roll.total && el.max >= roll.total);
 
@@ -2170,7 +2170,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll();
+                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll({async: false});
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -2233,7 +2233,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll();
+                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll({async: false});
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -2321,7 +2321,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
 
 
-        return combat.setInitiative(combatant._id, newInitiative);
+        return combat.setInitiative(combatant.id, newInitiative);
     }
 
 
