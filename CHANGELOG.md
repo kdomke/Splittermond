@@ -1,3 +1,8 @@
+## 0.7.1 HOTFIX ##
+2021-12-28
+* fixed: Items konnten nicht vom Sheet gelöscht werden
+* fixed: Modifikator "lowerFumbleResult" wurde fehlerhaft ausgewertet.
+
 ## 0.7.0 ##
 2021-12-28
 Das System ist nun für Version 9 von Foundry VTT kompatibel

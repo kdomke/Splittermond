@@ -20,6 +20,7 @@ export default class SplittermondActor extends Actor {
         }
 
         data.derivedAttributes.speed.multiplier = 1;
+        actorData.lowerFumbleResult = 0;
 
         if (!data.health) {
             data.health = {
@@ -707,7 +708,7 @@ export default class SplittermondActor extends Actor {
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
                         }
-                        actorData.lowerFumbleResult += value;
+                        actorData.lowerFumbleResult += value * multiplier;
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
@@ -2132,7 +2133,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         const actorData = this.data;
         const data = actorData.data;
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = actorData.lowerFumbleResult || 0;
+        let lowerFumbleResult = parseInt(actorData.lowerFumbleResult) || 0;
         if (actorData.items.find(i => {
             i = i.data;
             return  i.type=="strength" && i.name.toLowerCase()=="priester";
