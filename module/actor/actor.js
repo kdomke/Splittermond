@@ -1112,7 +1112,7 @@ export default class SplittermondActor extends Actor {
                     name: w
                 })
             });
-            newData.data.attributes = duplicate(this.data._source.attributes);
+            newData.data.attributes = duplicate(this.data._source.data.attributes);
             data.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
@@ -1126,7 +1126,7 @@ export default class SplittermondActor extends Actor {
                 }
 
             });
-            newData.data.skills = duplicate(this.data._source.skills);
+            newData.data.skills = duplicate(this.data._source.data.skills);
             data.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
                 if (newData.data.skills[id]) {
@@ -1361,7 +1361,7 @@ export default class SplittermondActor extends Actor {
                 newItems = newItems.filter((i) => {
                     let foundItem = this.data.items.find((im) => im.type === i.type && im.name === i.name);
                     if (foundItem) {
-                        i._id = foundItem._id;
+                        i._id = foundItem.id;
                         delete i.img;
                         updateItems.push(duplicate(i));
                         return false;
@@ -1370,8 +1370,8 @@ export default class SplittermondActor extends Actor {
                 });
 
                 this.update(newData);
-                await this.updateOwnedItem(updateItems);
-                await this.createOwnedItem(newItems);
+                await this.updateEmbeddedDocuments("Item", updateItems);
+                await this.createEmbeddedDocuments("Item", newItems);
 
                 return this.update(newData);
 
