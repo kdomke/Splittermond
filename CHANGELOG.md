@@ -1,3 +1,9 @@
+## 0.7.0 ##
+2021-12-28
+Das System ist nun für Version 9 von Foundry VTT kompatibel
+* changed: veraltete API-Funktionen auf neue geändert
+* fixed: Aus "Geschichten und Mythen" wurde "Geschichte und Mythen"! VORSICHT: Dies kann zu Kompatibilitätsproblemen mit Modifikatoren führen.
+
 ## 0.6.3 HOTFIX ##
 2021-12-14
 * fixed: Der Kampffertigkeitswert von NSCs wurde bei Anwendundung von Schaden erhöht (Issue #66)
