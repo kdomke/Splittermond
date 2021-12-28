@@ -1112,7 +1112,7 @@ export default class SplittermondActor extends Actor {
                     name: w
                 })
             });
-            newData.data.attributes = duplicate(this.data.data.attributes);
+            newData.data.attributes = duplicate(this.data._source.attributes);
             data.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
@@ -1126,7 +1126,7 @@ export default class SplittermondActor extends Actor {
                 }
 
             });
-            newData.data.skills = duplicate(this.data.data.skills);
+            newData.data.skills = duplicate(this.data._source.skills);
             data.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
                 if (newData.data.skills[id]) {
