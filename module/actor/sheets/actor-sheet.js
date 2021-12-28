@@ -208,13 +208,13 @@ export default class SplittermondActorSheet extends ActorSheet {
                     }
                 }
             }
-            return this.actor.createEmbeddedDocument("Item", itemData, { renderSheet: renderSheet });
+            return this.actor.createEmbeddedDocuments("Item", [itemData], { renderSheet: renderSheet });
         });
 
 
         html.find('[data-action="delete-item"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            this.actor.deleteEmbeddedDocument("Item", itemId);
+            this.actor.deleteEmbeddedDocuments("Item", [itemId]);
         });
 
         html.find('[data-action="edit-item"]').click(event => {
