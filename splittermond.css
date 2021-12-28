@@ -556,6 +556,7 @@ img {
 .splittermond .sheet-navigation,
 .splittermond .subnav {
   padding: 2px;
+  justify-content: stretch;
 }
 .tabs-style .item,
 .tabs:not(#sidebar-tabs) .item,
@@ -569,6 +570,7 @@ img {
   border-image-outset: 1px;
   border-image-repeat: repeat;
   margin: 0px;
+  flex-grow: 1;
 }
 .tabs-style .item::before,
 .tabs:not(#sidebar-tabs) .item::before,

@@ -115,7 +115,24 @@ Hooks.once("init", function () {
         return accum;
     });
 
-    document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+    
+    
+    if (game.data.version.startsWith("0.")) {
+        document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+        
+    } else {
+        game.keybindings.register("splittermond", "paste", {
+            name: "KEYBINDINGS.Paste",
+            restricted: true,
+            uneditable: [
+                {key: "V", modifiers: [ "CONTROL" ]}
+            ],
+            onDown: (e) => {ItemImporter.pasteEventhandler(e)},
+            reservedModifiers: [ "ALT", "SHIFT" ]
+        });
+    }
+
+    
 
 
     console.log("Splittermond | DONE!");
@@ -187,18 +204,9 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
 
 Hooks.on('preCreateActor', (actor) => {
     if (actor.type === 'character') {
-        if (game.data.version.startsWith("0.8.")) {
-            actor.data.token.vision = true;
-            actor.data.token.actorLink = true;
-            actor.data.token.name = actor.name;
-        } else {
-            actor.token = {
-                vision: true,
-                actorLink: true,
-                name: actor.name
-            };
-        }
-
+        actor.data.token.vision = true;
+        actor.data.token.actorLink = true;
+        actor.data.token.name = actor.name;
     }
 });
 
