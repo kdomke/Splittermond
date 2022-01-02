@@ -1,7 +1,8 @@
-## 0.7.2 HOTFIX ##
+## 0.7.2 ##
 2022-01-02
 * fixed: NSC-Sheet: Fehler bei der Übernahme der Fertigkeitswerte, falls die Fertigkeitspunkte auf 0 gesetzt wird.
 * fixed: NSCs mit Waffen ohne Merkmalen konnnten nicht importiert werden.
+* fixed: NSC-Importer: Fehler bei Import von NSCs mit Fernkampfwaffen (Issue #68)
 
 ## 0.7.1 HOTFIX ##
 2021-12-28
