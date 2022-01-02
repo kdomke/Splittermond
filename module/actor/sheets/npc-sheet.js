@@ -97,7 +97,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
                 const newValue = (value - parseInt(skillValue)) +
                     parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
                 this.actor.update({
-                    [`data.skills.${skillBaseName}.points`]: newValue
+                    [`data.skills.${skillBaseName}.points`]: newValue,
+                    [`data.skills.${skillBaseName}.value`]: 0
                 });
             } else {
                 const newValue = (value - parseInt(this.actor.data.data.skills[skillBaseName].value || 0)) +
