@@ -793,8 +793,8 @@ export default class ItemImporter {
                         let weapons = [];
                         if (weaponData) {
                             if (weaponData[1].match(/Reichw/)) {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\s+[0-9]+\-1?W6\s+.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-]+)\s+([0-9\-–]*)\-1?W6\s+(.*)/);
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\s+[0-9]+\-1?W6\s*.*/g).map(async (weaponStr) => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-]+)\s+([0-9\-–]*)\-1?W6\s*(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
@@ -812,8 +812,8 @@ export default class ItemImporter {
                                     return weaponData;
                                 });
                             } else {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s+.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s*.*/g).map(async (weaponStr) => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s*(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
