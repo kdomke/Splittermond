@@ -1060,6 +1060,7 @@ export default class SplittermondActor extends Actor {
             let newItems = [];
             newData.data = {};
             newData.type = "character";
+            newData.effects = [];
             newData.name = data.name;
             newData.data.species = {
                 value: data.race
@@ -1071,7 +1072,12 @@ export default class SplittermondActor extends Actor {
             newData.data.experience = {
                 free: data.freeExp,
                 spent: data.investedExp
-            }
+            };
+            newData.data.currency={
+                S: 0,
+                L: 0,
+                T: 0
+            };
             let moonSignDescription = data.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
             moonSignDescription = "<p>" + moonSignDescription.split("\n").join("</p><p>") + "</p>";
 
@@ -1332,6 +1338,14 @@ export default class SplittermondActor extends Actor {
                 });
             });
 
+            if (data.telare) {
+                
+                newData.data.currency.S = Math.floor(data.telare/10000);
+                newData.data.currency.L = Math.floor(data.telare/100) - newData.data.currency.S*100;
+                newData.data.currency.T = Math.floor(data.telare) - newData.data.currency.L*100 - newData.data.currency.S*10000;
+                
+            }
+
             let p = new Promise((resolve, reject) => {
                 let dialog = new Dialog({
                     title: "Import",
@@ -1360,7 +1374,7 @@ export default class SplittermondActor extends Actor {
                 let updateItems = [];
 
                 newItems = newItems.filter((i) => {
-                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name === i.name);
+                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
                     if (foundItem) {
                         i._id = foundItem.id;
                         delete i.img;
@@ -1369,6 +1383,8 @@ export default class SplittermondActor extends Actor {
                     }
                     return true;
                 });
+
+                newData.data.currency = this.data.data.currency;
 
                 this.update(newData);
                 await this.updateEmbeddedDocuments("Item", updateItems);
