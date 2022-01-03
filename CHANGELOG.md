@@ -1,3 +1,9 @@
+## 0.7.3 ##
+2022-01-03
+* added: Lunare werden vom Charakterimporter übernommen.
+* fixed: Charakter-Importer funktionierte teilweise nicht.
+* fixed: NSC-Importer: Ctrl+v funktionierte auf manchen Servern nicht.
+
 ## 0.7.2 ##
 2022-01-02
 * fixed: NSC-Sheet: Fehler bei der Übernahme der Fertigkeitswerte, falls die Fertigkeitspunkte auf 0 gesetzt wird.
