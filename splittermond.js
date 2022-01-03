@@ -117,10 +117,12 @@ Hooks.once("init", function () {
 
     
     
-    if (game.data.version.startsWith("0.")) {
+    //if (game.data.version.startsWith("0.")) {
         document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+        /*
         
     } else {
+        document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
         game.keybindings.register("splittermond", "paste", {
             name: "KEYBINDINGS.Paste",
             restricted: true,
@@ -131,6 +133,7 @@ Hooks.once("init", function () {
             reservedModifiers: [ "ALT", "SHIFT" ]
         });
     }
+    */
 
     
 
