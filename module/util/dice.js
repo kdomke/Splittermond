@@ -142,29 +142,113 @@ export async function damage(damageFormula, featureString, damageSource="") {
 
 export function riskModifier() {
     if (this.results.length == 4) {
-        const sortedResult = this.results.sort((a, b) => {
+        const sortedResult = this.results.map( i=> {
+            return {
+                result: i.result,
+                item: i
+            }
+        }).sort((a, b) => {
+            return a.result - b.result;
+        });
+
+        if (sortedResult[0].item.result < 2 && sortedResult[1].result < 3) {
+            sortedResult[0].item.active = true;
+            sortedResult[0].item.discarded = false;
+            sortedResult[1].item.active = true;
+            sortedResult[1].item.discarded = false;
+            sortedResult[2].item.active = false;
+            sortedResult[2].item.discarded = true;
+            sortedResult[3].item.active = false;
+            sortedResult[3].item.discarded = true;
+        } else {
+            sortedResult[0].item.active = false;
+            sortedResult[0].item.discarded = true;
+            sortedResult[1].item.active = false;
+            sortedResult[1].item.discarded = true;
+            sortedResult[2].item.active = true;
+            sortedResult[2].item.discarded = false;
+            sortedResult[3].item.active = true;
+            sortedResult[3].item.discarded = false;
+        }
+    }
+
+    if (this.results.length == 5) { // Grandmaster
+        let sortedResult = this.results.slice(0,-1).map( i=> {
+            return {
+                result: i.result,
+                item: i
+            }
+        }).sort((a, b) => {
             return a.result - b.result;
         });
 
         if (sortedResult[0].result < 2 && sortedResult[1].result < 3) {
-            sortedResult[0].active = true;
-            sortedResult[0].discarded = false;
-            sortedResult[1].active = true;
-            sortedResult[1].discarded = false;
-            sortedResult[2].active = false;
-            sortedResult[2].discarded = true;
-            sortedResult[3].active = false;
-            sortedResult[3].discarded = true;
+            sortedResult[0].item.active = true;
+            sortedResult[0].item.discarded = false;
+            sortedResult[1].item.active = true;
+            sortedResult[1].item.discarded = false;
+            sortedResult[2].item.active = false;
+            sortedResult[2].item.discarded = true;
+            sortedResult[3].item.active = false;
+            sortedResult[3].item.discarded = true;
+            this.results[4].active = false;
+            this.results[4].discarded = true;
         } else {
-            sortedResult[0].active = false;
-            sortedResult[0].discarded = true;
-            sortedResult[1].active = false;
-            sortedResult[1].discarded = true;
-            sortedResult[2].active = true;
-            sortedResult[2].discarded = false;
-            sortedResult[3].active = true;
-            sortedResult[3].discarded = false;
+            let sortedResult = this.results.map( i=> {
+                return {
+                    result: i.result,
+                    item: i
+                }
+            }).sort((a, b) => {
+                return a.result - b.result;
+            });
+            sortedResult[0].item.active = false;
+            sortedResult[0].item.discarded = true;
+            sortedResult[1].item.active = false;
+            sortedResult[1].item.discarded = true;
+            sortedResult[2].item.active = false;
+            sortedResult[2].item.discarded = true;
+            sortedResult[3].item.active = true;
+            sortedResult[3].item.discarded = false;
+            sortedResult[4].item.active = true;
+            sortedResult[4].item.discarded = false;
+        }
+    }
+
+    if (this.results.length == 3) { // Grandmaster (Standard)
+        let sortedResult = this.results.slice(0,-1).map( i=> {
+            return {
+                result: i.result,
+                item: i
+            }
+        }).sort((a, b) => {
+            return a.result - b.result;
+        });
+
+        if (sortedResult[0].result < 2 && sortedResult[1].result < 3) {
+            sortedResult[0].item.active = true;
+            sortedResult[0].item.discarded = false;
+            sortedResult[1].item.active = true;
+            sortedResult[1].item.discarded = false;
+            this.results[2].active = false;
+            this.results[2].discarded = true;
+        } else {
+            let sortedResult = this.results.map( i=> {
+                return {
+                    result: i.result,
+                    item: i
+                }
+            }).sort((a, b) => {
+                return a.result - b.result;
+            });
+            sortedResult[0].item.active = false;
+            sortedResult[0].item.discarded = true;
+            sortedResult[1].item.active = true;
+            sortedResult[1].item.discarded = false;
+            sortedResult[2].item.active = true;
+            sortedResult[2].item.discarded = false;
         }
     }
 }
+
 

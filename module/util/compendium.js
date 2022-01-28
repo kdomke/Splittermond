@@ -25,7 +25,7 @@ export default class SplittermondCompendium {
 
             if (possibleItems.length > 0) {
                 possibleItems = await Promise.all(possibleItems.map(item => {
-                    return item.pack.getEntry(item.id);
+                    return item.pack.getDocument(item._id);
                 }));
                 item = possibleItems.find(i => i.type === type);
             }

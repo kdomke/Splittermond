@@ -539,6 +539,7 @@
       ],
       "availableIn": "",
       "skill": "",
+      "isGrandmaster": 0,
       "level": 1
     },
     "strength": {

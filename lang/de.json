@@ -139,6 +139,11 @@
         "languages": "Sprachen",
         "generalProperties": "Allgemein",
         "moonsign": "Mondzeichen",
+        "moonsigns":{
+            "add": {
+                "title": "Mondzeichen hinzufügen"
+            }
+        },
         "npcfeature": "Gegnermerkmal",
         "secretGift": "Geheime Gabe",
         "splinterpoint": "Splitterpunkt",
@@ -221,7 +226,8 @@
         "masteries": "Meisterschaften",
         "negativeDegreeOfSuccess": "Negative Erfolgsgrade",
         "lowerFumbleResult": "Verminderte Patzerauswirkung (Stufe)",
-        "lowerFumbleResultHelp": "Anzahl Stufen um die die Patzerauswirukung vermindert wird (z.B. Fokuskontrolle)",
+        "lowerFumbleResultChat": "Stufe vermindert",
+        "lowerFumbleResultHelp": "Anzahl Stufen um die die Patzerauswirkung vermindert wird (z.B. Fokuskontrolle)",
         "priest": "Priester",
         "sorcerer": "Zauberer",
         "magicFumble": "Zauberpatzer",
@@ -369,8 +375,12 @@
         "rollType": {
             "standard": "Standardwurf",
             "risk": "Risikowurf",
-            "safety": "Sicherheitswurf"
+            "safety": "Sicherheitswurf",
+            "standardGrandmaster": "Standardwurf (Großmeister)",
+            "riskGrandmaster": "Risikowurf (Großmeister)",
+            "safetyGrandmaster": "Sicherheitswurf (Großmeister)"
         },
+        "grandmaster": "Großmeister",
         "skillCheck": "Fertigkeitsprobe",
         "successMessage": [
             "(Knapp) gelungen",
@@ -436,7 +446,7 @@
             "battered": "angeschlagen",
             "injured": "verletzt",
             "badlyinjured": "schwer verletzt",
-            "doomed": "schwer verletzt"
+            "doomed": "todgeweiht"
         },
         "damageLevels": {
             "undamaged": "unbeschädigt",

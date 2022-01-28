@@ -294,7 +294,7 @@ export default class SplittermondActor extends Actor {
                             if (attr) {
                                 let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
                                 if (diff < 0) {
-                                    minAttributeMalus = diff;
+                                    minAttributeMalus += diff;
                                     itemData.weaponSpeed -= diff;
                                     if (itemData.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
                                         itemData.secondaryAttack.weaponSpeed -= diff;
@@ -1054,6 +1054,21 @@ export default class SplittermondActor extends Actor {
                     points: 0
                 }
             }
+
+            if (actorData.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0 && !CONFIG.splittermond.skillGroups.fighting.includes(skill)) {
+                data.skills[skill].points = data.skills[skill].value;
+                if (CONFIG.splittermond.skillAttributes[skill]) {
+                    data.skills[skill].points -= parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value || 0) +
+                        parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value || 0);
+                }
+
+                if (data.skills[skill].mod) {
+                    data.skills[skill].points -= (data.skills[skill].mod.sources.reduce(_sumAllHelper, 0) || 0);
+                    data.skills[skill].points += Math.max(0, (data.skills[skill].mod.sources.reduce(_sumEquipmentBonus, 0) || 0) - data.bonusCap);
+                    data.skills[skill].points += Math.max(0, (data.skills[skill].mod.sources.reduce(_sumMagicBonus, 0) || 0) - data.bonusCap);
+                }
+            }
+
             data.skills[skill].value = parseInt(data.skills[skill].points);
 
             if (CONFIG.splittermond.skillAttributes[skill]) {
@@ -1070,6 +1085,7 @@ export default class SplittermondActor extends Actor {
             }
 
         });
+        
     }
 
     async importFromJSON(json) {
@@ -1567,6 +1583,9 @@ export default class SplittermondActor extends Actor {
         if (!checkData) return;
 
         checkData.difficulty = parseInt(checkData.difficulty);
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == skill)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(
             this.data.data.skills[skill].value,
@@ -1656,6 +1675,10 @@ export default class SplittermondActor extends Actor {
         checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(weaponData.skill.points);
         let skillValue = weaponData.skill.value;
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == weaponData.skillId)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
@@ -1838,6 +1861,10 @@ export default class SplittermondActor extends Actor {
         checkData.difficulty = parseInt(checkData.difficulty);
         let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
         let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == spellData.data.skill)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
@@ -2036,6 +2063,11 @@ export default class SplittermondActor extends Actor {
 
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);
+
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == itemData.skillId)) {
+            checkData.rollType = checkData.rollType + "Grandmaster";
+        }
+
 
         let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
 
@@ -2247,6 +2279,9 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
 
                         });
                         data.degreeOfSuccessDescription += `</div>`;
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
 
 
@@ -2307,9 +2342,10 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
 
                         });
                         data.degreeOfSuccessDescription += `</div>`;
-                        //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
-
-
+                        if (lowerFumbleResult) {
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}`+ data.degreeOfSuccessDescription;
+                        }
+                
                         let templateContext = {
                             ...data,
                             tooltip: await data.roll.getTooltip()
@@ -2443,7 +2479,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         });
 
         let focusData = duplicate(data.focus);
-        let healthData = duplicate(data.focus);
+        let healthData = duplicate(data.health);
 
 
         if (await p) {

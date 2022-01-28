@@ -1,3 +1,28 @@
+## 0.6.3 HOTFIX ##
+2021-12-14
+* fixed: Der Kampffertigkeitswert von NSCs wurde bei Anwendundung von Schaden erhöht (Issue #66)
+* fixed: Die Regeneration bei Ruhephase wurde falsch berechnet (Issue #67)
+* fixed: Modifilator GSW.mult wurde nicht richtig angewendet (Issue #71)
+* fixed: Tooltip für KW und GW
+
+## 0.6.2 ##
+2021-10-29
+* added: Die Meisterschaft "Großmeister" ist nun implementiert. Eine Meisterschaft kann als "Großmeister"-Meisterschaft markiert werden (Haken in Meisterschaftseigenschaften). Ist Diese Meisterschaft vorhanden, werden automatisch "Großmeister"-Würfe bei entsprechender Fertigkeits-Probe geworfen.
+* added: Mondzeichen können jetzt aus dem Charakterblatt hinzugefügt werden (wenn noch kein Mondzeichen hinzugefügt wurde.)
+* fixed: Fehlerhaftes parsen im NSC-Copy-and-Paste-Importer
+* fixed: Malus für "min. Attribute" bei Waffen wurde falsch berechnet
+* fixed: Für die Fertigkeit "Tierführung" waren die falschen Attribute hinterlegt
+
+## 0.6.1 ##
+2021-10-18
+* added: Dokumentation für fehlende Modifikatoren
+* added: Verminderte Patzerstufen werden in Chatnachricht dargestellt
+* added: Es können mehrere Zauber gleichzeitig mittels Copy-and-Paste-Importer hinzugefügt werden (Dank geht an Jean-Pierre für diese Erweiterung)
+* fixed: Bug in NSC-Sheet wenn nur Fertigkeitswerte (statt Punkte) definiert wurden
+* fixed: Darstellung der Patzertabellen in Chatnachricht korrigiert
+* fixed: Tooltip in Lebenspunkteelement falsch (Issue #53)
+* fixed: Kompatible FVVT-Core-Version wurde auf aktuelle Version angepasst
+
 ## 0.6.0 ##
 2021-08-10
 * added: Neues Design das nun die Möglichkeit bietet Themes zu erstellen
