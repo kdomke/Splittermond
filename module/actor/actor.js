@@ -79,6 +79,9 @@ export default class SplittermondActor extends Actor {
             mod: 0,
             levelMod: 0
         }
+        
+        actorData.spellCostReduction = {};
+        actorData.spellEnhancedCostReduction = {};
 
         if (actorData.type === "character") {
             actorData.focusRegeneration = {
@@ -607,8 +610,6 @@ export default class SplittermondActor extends Actor {
     _addModifier(name, str, type = "misc", multiplier = 1) {
         const actorData = this.data;
         const data = actorData.data;
-        actorData.spellCostReduction = {};
-        actorData.spellEnhancedCostReduction = {};
 
         str.split(',').forEach(str => {
             str = str.trim();
