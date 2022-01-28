@@ -221,7 +221,9 @@ export default class SplittermondActor extends Actor {
 
 
         data.health.woundMalus.level = Math.max(Math.min(data.health.woundMalus.nbrLevels - (Math.floor(data.health.total.value / data.derivedAttributes.healthpoints.value)+1) + data.health.woundMalus.levelMod, data.health.woundMalus.nbrLevels - 1), 0);
-        data.health.woundMalus.value = data.health.woundMalus.levels[data.health.woundMalus.level].value;
+        
+        let woundMalusValue = data.health.woundMalus.levels[data.health.woundMalus.level];
+        data.health.woundMalus.value = woundMalusValue?.value ?? 0;
 
         if (data.health.woundMalus.value) {
             if (!data.derivedAttributes.initiative.mod) {
