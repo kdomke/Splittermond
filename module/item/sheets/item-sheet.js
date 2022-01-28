@@ -8,6 +8,16 @@ export default class SplittermondItemSheet extends ItemSheet {
         });
     }
 
+    constructor(item, options)
+    {
+        options = options || {};
+
+        var displayProperties = CONFIG.splittermond.displayOptions.itemSheet[item.type] || CONFIG.splittermond.displayOptions.itemSheet["default"];
+        options.width = displayProperties.width;
+        options.height = displayProperties.height;
+        super(item, options);
+    }
+
     getData() {
         const data = super.getData();
         data.data = data.data.data;
@@ -29,6 +39,7 @@ export default class SplittermondItemSheet extends ItemSheet {
                 }
             });
         });
+
         return sheetProperties;
     }
 
