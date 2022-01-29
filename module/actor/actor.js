@@ -643,14 +643,16 @@ export default class SplittermondActor extends Actor {
                     if (!dataset.emphasis) {
                         dataset.emphasis = {}
                     }
-                    if (value * multiplier != 0) {
+
+                    var floatValue = parseFloat(value);
+                    if (floatValue * multiplier != 0) {
                         if (emphasis) {
                             if (!dataset.emphasis[emphasis]) {
                                 dataset.emphasis[emphasis] = 0
                             }
-                            dataset.emphasis[emphasis] += value * multiplier;
+                            dataset.emphasis[emphasis] += floatValue * multiplier;
                         } else {
-                            dataset.mod.sources.push({ value: value * multiplier, description: name, source: type });
+                            dataset.mod.sources.push({ value: floatValue * multiplier, description: name, source: type });
                         }
                     }
                 }
