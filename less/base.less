@@ -171,10 +171,12 @@ img {
     &:extend(.shiny-background);
    
     padding: 2px;
+    justify-content: stretch;
 
     .item:extend(.button-style all) {
         .border-wobbly-line();
         margin: 0px;
+        flex-grow: 1;
 
         &::before {
             content: unset;

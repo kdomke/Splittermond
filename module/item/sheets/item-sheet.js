@@ -10,15 +10,9 @@ export default class SplittermondItemSheet extends ItemSheet {
 
     getData() {
         const data = super.getData();
-        if (game.data.version.startsWith("0.8.")) {
-            data.data = data.data.data;
-            data.itemProperties = this._getItemProperties(data.document.data);
-            data.typeLabel = "splittermond." + data.document.data.type;
-        } else {
-            data.itemProperties = this._getItemProperties(data.item);
-            data.typeLabel = "splittermond." + data.item.type;
-        }
-
+        data.data = data.data.data;
+        data.itemProperties = this._getItemProperties(data.document.data);
+        data.typeLabel = "splittermond." + data.document.data.type;
 
         return data;
     }

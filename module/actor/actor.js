@@ -20,6 +20,7 @@ export default class SplittermondActor extends Actor {
         }
 
         data.derivedAttributes.speed.multiplier = 1;
+        actorData.lowerFumbleResult = 0;
 
         if (!data.health) {
             data.health = {
@@ -707,7 +708,7 @@ export default class SplittermondActor extends Actor {
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
                         }
-                        actorData.lowerFumbleResult += parseFloat(value);
+                        actorData.lowerFumbleResult += parseFloat(value) * multiplier;
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
@@ -1099,6 +1100,8 @@ export default class SplittermondActor extends Actor {
             let newData = {};
             let newItems = [];
             newData.data = {};
+            newData.type = "character";
+            newData.effects = [];
             newData.name = data.name;
             newData.data.species = {
                 value: data.race
@@ -1110,7 +1113,12 @@ export default class SplittermondActor extends Actor {
             newData.data.experience = {
                 free: data.freeExp,
                 spent: data.investedExp
-            }
+            };
+            newData.data.currency={
+                S: 0,
+                L: 0,
+                T: 0
+            };
             let moonSignDescription = data.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
             moonSignDescription = "<p>" + moonSignDescription.split("\n").join("</p><p>") + "</p>";
 
@@ -1152,7 +1160,7 @@ export default class SplittermondActor extends Actor {
                     name: w
                 })
             });
-            newData.data.attributes = duplicate(this._data.data.attributes);
+            newData.data.attributes = duplicate(this.data._source.data.attributes);
             data.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
@@ -1166,7 +1174,7 @@ export default class SplittermondActor extends Actor {
                 }
 
             });
-            newData.data.skills = duplicate(this._data.data.skills);
+            newData.data.skills = duplicate(this.data._source.data.skills);
             data.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
                 if (newData.data.skills[id]) {
@@ -1371,6 +1379,14 @@ export default class SplittermondActor extends Actor {
                 });
             });
 
+            if (data.telare) {
+                
+                newData.data.currency.S = Math.floor(data.telare/10000);
+                newData.data.currency.L = Math.floor(data.telare/100) - newData.data.currency.S*100;
+                newData.data.currency.T = Math.floor(data.telare) - newData.data.currency.L*100 - newData.data.currency.S*10000;
+                
+            }
+
             let p = new Promise((resolve, reject) => {
                 let dialog = new Dialog({
                     title: "Import",
@@ -1399,9 +1415,9 @@ export default class SplittermondActor extends Actor {
                 let updateItems = [];
 
                 newItems = newItems.filter((i) => {
-                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name === i.name);
+                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
                     if (foundItem) {
-                        i._id = foundItem._id;
+                        i._id = foundItem.id;
                         delete i.img;
                         updateItems.push(duplicate(i));
                         return false;
@@ -1409,9 +1425,11 @@ export default class SplittermondActor extends Actor {
                     return true;
                 });
 
+                newData.data.currency = this.data.data.currency;
+
                 this.update(newData);
-                await this.updateOwnedItem(updateItems);
-                await this.createOwnedItem(newItems);
+                await this.updateEmbeddedDocuments("Item", updateItems);
+                await this.createEmbeddedDocuments("Item", newItems);
 
                 return this.update(newData);
 
@@ -2177,7 +2195,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
     }
 
     async rollAttackFumble() {
-        let roll = new Roll("2d10").roll();
+        let roll = new Roll("2d10").roll({async: false});
 
         let result = CONFIG.splittermond.fumbleTable.fight.find(el => el.min <= roll.total && el.max >= roll.total);
 
@@ -2219,7 +2237,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         const actorData = this.data;
         const data = actorData.data;
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = actorData.lowerFumbleResult || 0;
+        let lowerFumbleResult = parseInt(actorData.lowerFumbleResult) || 0;
         if (actorData.items.find(i => {
             i = i.data;
             return i.type == "strength" && i.name.toLowerCase() == "priester";
@@ -2257,7 +2275,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll();
+                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll({async: false});
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -2320,7 +2338,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll();
+                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {eg: eg, costs: costs})).roll({async: false});
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -2406,7 +2424,7 @@ Malus in Höhe von 3 Punkten auf alle seine Proben erhält.</p>`;
         let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
 
 
-        return combat.setInitiative(combatant._id, newInitiative);
+        return combat.setInitiative(combatant.id, newInitiative);
     }
 
     getRollData() {

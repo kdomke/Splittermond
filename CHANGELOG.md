@@ -1,3 +1,26 @@
+## 0.7.3 ##
+2022-01-03
+* added: Lunare werden vom Charakterimporter übernommen.
+* fixed: Charakter-Importer funktionierte teilweise nicht.
+* fixed: NSC-Importer: Ctrl+v funktionierte auf manchen Servern nicht.
+
+## 0.7.2 ##
+2022-01-02
+* fixed: NSC-Sheet: Fehler bei der Übernahme der Fertigkeitswerte, falls die Fertigkeitspunkte auf 0 gesetzt wird.
+* fixed: NSCs mit Waffen ohne Merkmalen konnnten nicht importiert werden.
+* fixed: NSC-Importer: Fehler bei Import von NSCs mit Fernkampfwaffen (Issue #68)
+
+## 0.7.1 HOTFIX ##
+2021-12-28
+* fixed: Items konnten nicht vom Sheet gelöscht werden
+* fixed: Modifikator "lowerFumbleResult" wurde fehlerhaft ausgewertet.
+
+## 0.7.0 ##
+2021-12-28
+Das System ist nun für Version 9 von Foundry VTT kompatibel
+* changed: veraltete API-Funktionen auf neue geändert
+* fixed: Aus "Geschichten und Mythen" wurde "Geschichte und Mythen"! VORSICHT: Dies kann zu Kompatibilitätsproblemen mit Modifikatoren führen.
+
 ## 0.6.3 HOTFIX ##
 2021-12-14
 * fixed: Der Kampffertigkeitswert von NSCs wurde bei Anwendundung von Schaden erhöht (Issue #66)

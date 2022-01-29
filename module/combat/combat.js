@@ -13,11 +13,9 @@ export default class SplittermondCombat extends Combat {
             iniA = Math.random();
             iniB = Math.random();
         }
-        if (game.data.version.startsWith("0.8.")) {
-            return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
-        }else {
-            return (iniA + (a.defeated ? 1000 : 0)) - (iniB + (b.defeated ? 1000 : 0));
-        }
+
+        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
+
     }
 
     async startCombat() {
@@ -30,7 +28,6 @@ export default class SplittermondCombat extends Combat {
     }
 
     setupTurns() {
-        if (game.data.version.startsWith("0.8.")) {
             const turns = this.combatants.contents.sort(this._sortCombatants)
 
             let c = turns[0];
@@ -42,27 +39,9 @@ export default class SplittermondCombat extends Combat {
             };
             return this.turns = turns;
             
-        } else {
-            
 
-            const combatants = this.data.combatants;
-            const scene = game.scenes.get(this.data.scene);
-            const players = game.users.players;
-            const settings = game.settings.get("core", Combat.CONFIG_SETTING);
 
-            const turns = combatants.map(c => this._prepareCombatant(c, scene, players, settings)).sort(this._sortCombatants);
-
-            let c = turns[0];
-            this.current = {
-                round: this.data.round,
-                turn: 0,
-                combatantId: c ? c.id : null,
-                tokenId: c ? c.tokenId : null
-            };
-            return this.turns = turns;
-        }
-
-      }
+    }
 
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
