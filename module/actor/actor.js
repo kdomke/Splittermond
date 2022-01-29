@@ -1876,7 +1876,7 @@ export default class SplittermondActor extends Actor {
                 data: {
                     "roll-type": "damage",
                     damage: spellData.data.damage,
-                    features: "",
+                    features: spellData.data.features,
                     source: spellData.name
                 }
             });
