@@ -613,7 +613,7 @@ export default class SplittermondActor extends Actor {
 
         str.split(',').forEach(str => {
             str = str.trim();
-            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-]?(?:k?[0-9]+v?[0-9]*))/i);
+            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-]?(?:k?[0-9\.]+v?[0-9]*))/i);
             if (temp) {
                 let modifierLabel = temp[1].trim();
                 let value = temp[2].replace("AUS", data.attributes.charisma.value + "")
@@ -657,10 +657,10 @@ export default class SplittermondActor extends Actor {
 
                 switch (modifierLabel.toLowerCase()) {
                     case "bonuscap":
-                        data.bonusCap = parseInt(data.bonusCap) + parseInt(value);
+                        data.bonusCap = parseFloat(data.bonusCap) + parseFloat(value);
                         break;
                     case "gsw.mult":
-                        data.derivedAttributes.speed.multiplier *= Math.pow(parseInt(value), multiplier);
+                        data.derivedAttributes.speed.multiplier *= Math.pow(parseFloat(value), multiplier);
                         break;
                     case "sr".toLowerCase():
                         addModifierHelper(data.damageReduction);
@@ -684,28 +684,28 @@ export default class SplittermondActor extends Actor {
                         addModifierHelper(data.tickMalus);
                         break;
                     case "woundmalus.nbrlevels":
-                        data.health.woundMalus.nbrLevels = parseInt(value) * multiplier;
+                        data.health.woundMalus.nbrLevels = parseFloat(value) * multiplier;
                         break;
                     case "woundmalus.mod":
-                        data.health.woundMalus.mod += parseInt(value) * multiplier;
+                        data.health.woundMalus.mod += parseFloat(value) * multiplier;
                         break;
                     case "woundmalus.levelmod":
-                        data.health.woundMalus.levelMod += parseInt(value) * multiplier;
+                        data.health.woundMalus.levelMod += parseFloat(value) * multiplier;
                         break;
                     case "splinterpoints":
-                        data.splinterpoints.max = parseInt(data.splinterpoints?.max || 3) + parseInt(value) * multiplier;
+                        data.splinterpoints.max = parseFloat(data.splinterpoints?.max || 3) + parseFloat(value) * multiplier;
                         break;
                     case "healthregeneration.multiplier":
-                        actorData.healthRegeneration.multiplier = parseInt(value) * multiplier;
+                        actorData.healthRegeneration.multiplier = parseFloat(value) * multiplier;
                         break;
                     case "focusregeneration.multiplier":
-                        actorData.focusRegeneration.multiplier = parseInt(value) * multiplier;
+                        actorData.focusRegeneration.multiplier = parseFloat(value) * multiplier;
                         break;
                     case "lowerfumbleresult":
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
                         }
-                        actorData.lowerFumbleResult += parseInt(value);
+                        actorData.lowerFumbleResult += parseFloat(value);
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
