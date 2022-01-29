@@ -507,6 +507,7 @@
       "effectArea": "",
       "enhancementDescription": "",
       "enhancementCosts": "",
+      "features": "",
       "degreeOfSuccessOptions": {
         "castDuration": false,
         "consumedFocus": false,

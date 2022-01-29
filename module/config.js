@@ -784,6 +784,11 @@ splittermond.itemSheetProperties.spell = [
                 field: "data.enhancementDescription",
                 label: "splittermond.enhancementDescription",
                 template: "input"
+            },
+            {
+                field: "data.features",
+                label: "splittermond.features",
+                template: "input"
             }
         ]
     },
