@@ -328,6 +328,38 @@ splittermond.masterySkillsOption = {
     "none": "splittermond.skillLabel.none"
 }
 
+splittermond.displayOptions = {
+    itemSheet: {
+        default: {
+            height: 800,
+            width: 600
+        },
+        projectile: {
+            height: 200,
+            width: 600
+        },
+        strength: {
+            height: 430,
+            width: 600
+        },
+        mastery: {
+            height: 430,
+            width: 600
+        },
+        species: {
+            height: 300,
+            width: 600
+        },
+        statuseffect: {
+            height: 300,
+            width: 600
+        },
+        moonsign: {
+            height: 300,
+            width: 600
+        }
+    }
+}
 
 splittermond.itemSheetProperties = {
     species: [
@@ -783,6 +815,11 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "data.enhancementDescription",
                 label: "splittermond.enhancementDescription",
+                template: "input"
+            },
+            {
+                field: "data.features",
+                label: "splittermond.features",
                 template: "input"
             }
         ]
