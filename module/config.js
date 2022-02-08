@@ -553,6 +553,19 @@ splittermond.itemSheetProperties = {
                 }
             ]
         }
+    ],
+    culturelore: [
+        {
+            groupName: "splittermond.general",
+            properties: [
+                {
+                    field: "data.modifier",
+                    label: "splittermond.modifier",
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
+                }
+            ]
+        }
     ]
 }
 
