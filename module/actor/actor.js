@@ -1911,7 +1911,7 @@ export default class SplittermondActor extends Actor {
                     data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.exhaustedFocus`) + "</li>";
                 }
                 if (spellData.data.degreeOfSuccessOptions.channelizedFocus) {
-                    data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.channelizedFocus`) + "</li>";
+                    data.degreeOfSuccessDescription += "<li>2 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.channelizedFocus`) + "</li>";
                 }
                 if (spellData.data.degreeOfSuccessOptions.range) {
                     data.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.range`) + "</li>";
