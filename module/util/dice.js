@@ -13,9 +13,13 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
     if (isNaN(difficulty)) {
         difficulty = 0;
     }
-
+    
     const roll = new Roll(rollFormula, rollData).evaluate({async: false});
 
+    return evaluateCheck(roll, skillPoints, difficulty, rollType);
+}
+
+export function evaluateCheck(roll, skillPoints,  difficulty, rollType) {
     const difference = roll.total - difficulty;
 
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
