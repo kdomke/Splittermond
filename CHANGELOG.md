@@ -1,3 +1,14 @@
+## 0.7.4 ##
+2022-01-12
+* added: Für Proben kann nun ein Splitterpunkt ausgegeben werden um das Ergebnis um +3 zu modifizieren (GRW S. 81)
+* added: Zauber können nun Waffenmerkmale für Schaden beinhalten (Danke Jean-Pierre)
+* added: Kulturkunde-Items besitzen nun Modifier
+* added: neuer Modifier "foreduction" und "foenhancedreduction" zur reduzierung der Fokuskosten (siehe JournalEntry zu den Modifikatoren)
+* fixed: Item-Dialoge haben nun sinnvolle Größen (Danke Jean-Pierre)
+* fixed: Falscher EG-Wert für Erfolgsgradoption "Kanalisierten Fokus verringern"
+* fixed: In NPC-Sheet ist die Eingabe für LP notwendig (Danke Jean-Pierre)
+* fixed: CSS-Probleme
+
 ## 0.7.3 ##
 2022-01-03
 * added: Lunare werden vom Charakterimporter übernommen.

@@ -1,4 +1,5 @@
 import * as Dice from "../../util/dice.js"
+import * as Costs from "../../util/costs.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
@@ -17,10 +18,13 @@ export default class SplittermondActorSheet extends ActorSheet {
         const sheetData = super.getData();
         sheetData.data = sheetData.data.data;
 
-        
-
-
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
+        Handlebars.registerHelper('calculateSpellCost', (spellData, actorData) => {
+            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellCostReduction, spellData.costs)
+        });      
+        Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData, actorData) => {
+            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
+        });
 
         if (sheetData.data.attributes) {
             for (let [attrId, attr] of Object.entries(sheetData.data.attributes)) {
@@ -132,7 +136,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         data.spellsBySkill = {};
         if (data.itemsByType.spell) {
             data.itemsByType.spell.forEach(item => {
-                let costData = this.actor._parseCostsString(item.data.costs);
+                let costData = Costs.parseCostsString(item.data.costs);
                 let costTotal = costData.channeled + costData.exhausted + costData.consumed;
                 item.enoughFocus = costTotal <= data.data.focus.available.value;
             });
@@ -183,13 +187,13 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="inc-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value+1).change();
+            $(html).find(query).val(value + 1).change();
         });
 
         html.find('[data-action="dec-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value-1).change();
+            $(html).find(query).val(value - 1).change();
         });
 
         html.find('[data-action="add-item"]').click(event => {
@@ -355,26 +359,26 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find(".derived-attribute#defense label").click(event => {
             event.preventDefault();
             event.stopPropagation()
-    
+
             this.actor.activeDefenseDialog("defense");
         });
 
         html.find(".derived-attribute#bodyresist label").click(event => {
             event.preventDefault();
             event.stopPropagation()
-    
+
             this.actor.activeDefenseDialog("bodyresist");
         });
 
         html.find(".derived-attribute#mindresist label").click(event => {
             event.preventDefault();
             event.stopPropagation()
-    
+
             this.actor.activeDefenseDialog("mindresist");
         });
-    
-    
-    
+
+
+
 
         html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
@@ -703,14 +707,14 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         if (this._hoverOverlays) {
             let el = html.find(this._hoverOverlays.join(", "));
-            if (el.length>0) {
+            if (el.length > 0) {
                 el.addClass("hover");
-                el.hover( function ()  {
+                el.hover(function () {
                     $(this).removeClass("hover");
                 });
             }
         }
-        
+
 
         super.activateListeners(html);
     }
@@ -844,12 +848,12 @@ export default class SplittermondActorSheet extends ActorSheet {
     }
 
 
-    render(force=false, options={}) {
+    render(force = false, options = {}) {
         if (this.options.overlays) {
             let html = this.element;
             this._hoverOverlays = [];
             for (let sel of this.options.overlays) {
-                let el = html.find(sel+":hover");
+                let el = html.find(sel + ":hover");
                 if (el.length === 1) {
                     this._hoverOverlays.push(sel);
                 }

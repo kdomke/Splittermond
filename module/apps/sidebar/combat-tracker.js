@@ -108,35 +108,7 @@ export default class SplittermondCombatTracker extends CombatTracker {
         });
         
     }
-/*
-    async getData(options) {
-        let data = await super.getData(options);
 
-        data.turns = duplicate(data.turns);
-
-        data.turns.forEach(c => {
-            if (parseInt(c.initiative) === 10000) {
-                c.initiative = game.i18n.localize("splittermond.wait");
-
-            } else if (parseInt(c.initiative) === 20000) {
-                c.initiative = game.i18n.localize("splittermond.keepReady");
-            } else {
-                let tickNumber = c.initiative ? Math.round(c.initiative) : 0;
-                c.initiative = tickNumber + " | " + Math.round(100 * (c.initiative - tickNumber));
-            }
-
-        });
-
-        data.round = Math.round(data.round) + "";
-
-        if (data.combat?.data.round != null) {
-            data.combat.data.round = Math.round(data.combat.data.round) + "";
-        }
-
-        return data;
-        
-    }
-*/
     _onTogglePause(ev) {
         ev.preventDefault();
         ev.stopPropagation();

@@ -168,6 +168,17 @@
             "failed": "{eg} Fokuspunkte <i>erschöpfen</i>!",
             "outstanding": "Einen <i>erschöpften</i> oder <i>verzehrten Fokuspunkt</i> einsparen!"
         },
+        "defenseResultDescription": {
+            "devastating": {
+                "acrobatics": "Der Abenteurer stürzt hart auf empfindliche Körperteile ([[2d6]] Schaden) und gilt als liegend",
+                "determination": "Die Willenskraft des Abenteurers ist erschöpft. Er verliert alle Zuversicht, so dass er für den Rest des Tages einen Malus in Höhe von 3 Punkten auf alle seine Proben erhält.",
+                "endurance": "Der Abenteurer ist völlig erschöpft. Er erhält den Zustand @Item[Erschöpft]{Erschöpft 3}, der anhält bis er eine Ruhephase eingelegt hat.",
+                "melee": "Auf Patzertabelle würfeln!"
+            },
+            "nearmiss": "+ [[1d6]] Punkte Betäubungsschaden",
+            "outstanding": "Die Aktion dauert nur 2 Tick."
+        },
+        "fumbleTableLabel": "Patzertabelle",
         "shield": "Schild",
         "shields": "Schilde",
         "armor": "Rüstung",

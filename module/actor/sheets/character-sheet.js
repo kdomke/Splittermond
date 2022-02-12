@@ -1,7 +1,5 @@
 import SplittermondSpeciesWizard from "../../apps/wizards/species.js"
 import SplittermondActorSheet from "./actor-sheet.js"
-import * as Dice from "../../util/dice.js"
-import CheckDialog from "../../apps/dialog/check-dialog.js";
 
 
 export default class SplittermondCharacterSheet extends SplittermondActorSheet {
@@ -28,21 +26,10 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             }
         })
 
-
-        //this._prepareItems(sheetData);
-
-        //sheetData.config = CONFIG.splittermond;
-
-        console.log("getData()");
-
-
         return sheetData;
     }
 
     async _onDropItemCreate(itemData) {
-
-
-
         if (itemData.type === "species") {
 
             let wizard = new SplittermondSpeciesWizard(this.actor, itemData);
@@ -70,7 +57,6 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         html.find('.attribute input[name$="value"]').change(this._onChangeAttribute.bind(this));
         html.find('.attribute input[name$="start"]').change((event) => {
             event.preventDefault();
-
             const input = event.currentTarget;
             const value = parseInt(input.value);
             const attrBaseName = input.name.split('.')[2];
@@ -79,9 +65,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
                 [`data.attributes.${attrBaseName}.initial`]: value - speciesValue
             });
         });
-
         
-
         super.activateListeners(html);
     }
 

@@ -2,7 +2,7 @@
   "name": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "author": "Simon",
   "scripts": [],
   "esmodules": [

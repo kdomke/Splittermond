@@ -21,25 +21,15 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
     getData() {
         const sheetData = super.getData();
 
-
         for (let [attrId, attr] of Object.entries(sheetData.data.derivedAttributes)) {
             attr.editable = true;
         }
 
         sheetData.data.damageReduction.editable = true;
 
-
         sheetData.data.attacks.forEach(attack => {
             attack.skill.editable = true;
         });
-
-
-        //this._prepareItems(sheetData);
-
-        //sheetData.config = CONFIG.splittermond;
-
-        console.log("getData()");
-
 
         return sheetData;
     }
@@ -49,9 +39,6 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         html.find('input[name="damageReduction"]').change(this._onChangeDamageReduction.bind(this));
 
         html.find('input[name^="data.skills"]').change(this._onChangeSkill.bind(this));
-
-        
-
 
         super.activateListeners(html);
     }

@@ -314,6 +314,9 @@ input[type="checkbox"]:disabled::before,
   --background-denim: url(../../ui/denim075.png) repeat;
   --background-denim-splittermond: url(../../systems/splittermond/images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
   --background-denim-splittermond-blend-mode: normal;
+  --color-border-highlight-alt: var(--color-primary);
+  --color-border-highlight: var(--color-primary);
+  --color-shadow-highlight: var(--color-primary);
 }
 .system-splittermond[data-theme="dark"] {
   --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
@@ -960,6 +963,9 @@ a.entity-link i,
 a.inline-roll i,
 a.pdflink i {
   color: rgba(var(--color-text-secondary_rgb), 0.5);
+}
+#client-settings nav.tabs {
+  padding: 2px;
 }
 #client-settings section.content {
   border: none;
