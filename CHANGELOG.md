@@ -1,3 +1,7 @@
+## 0.7.4 HOTFIX ##
+2022-01-12
+* fixed: Fixed Chat Output
+
 ## 0.7.4 ##
 2022-01-12
 * added: Für Proben kann nun ein Splitterpunkt ausgegeben werden um das Ergebnis um +3 zu modifizieren (GRW S. 81)
