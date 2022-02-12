@@ -100,8 +100,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             });
             break;
         case "spell":
-            data.title = data.spell.name;
-            data.img = data.spell.img;
+            templateContext.title = data.spell.name;
+            templateContext.img = data.spell.img;
 
             let focusCosts = Costs.calcSpellCostReduction(data.spell.data, data.spellCostReduction, data.spell.data.costs);
 
