@@ -1,4 +1,5 @@
 import * as Dice from "../../util/dice.js"
+import * as Costs from "../../util/costs.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
@@ -19,10 +20,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
         Handlebars.registerHelper('calculateSpellCost', (spellData, actorData) => {
-            return actorData.actor._calcSpellCostReduction(spellData, actorData.actor.data.spellCostReduction, spellData.costs)
+            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellCostReduction, spellData.costs)
         });      
         Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData, actorData) => {
-            return actorData.actor._calcSpellCostReduction(spellData, actorData.actor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
+            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
         });
 
         if (sheetData.data.attributes) {
@@ -135,7 +136,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         data.spellsBySkill = {};
         if (data.itemsByType.spell) {
             data.itemsByType.spell.forEach(item => {
-                let costData = this.actor._parseCostsString(item.data.costs);
+                let costData = Costs.parseCostsString(item.data.costs);
                 let costTotal = costData.channeled + costData.exhausted + costData.consumed;
                 item.enoughFocus = costTotal <= data.data.focus.available.value;
             });

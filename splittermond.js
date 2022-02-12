@@ -473,6 +473,21 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         html.find(".fumble-table-result-item").not(".fumble-table-result-item-active").toggle(200);
     });
 
+    html.find(".use-splinterpoint").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        let message = game.messages.get(chatMessageId);
+        
+        const speaker = message.data.speaker;
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+        
+        actor.useSplinterpointBonus(message);
+    });
+
 
 });
 
