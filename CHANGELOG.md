@@ -1,3 +1,7 @@
+## 0.7.5 HOTFIX ##
+2022-01-12
+* fixed: NPCs können keine Proben würfeln
+
 ## 0.7.4 HOTFIX ##
 2022-01-12
 * fixed: Fixed Chat Output
