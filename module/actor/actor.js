@@ -1586,7 +1586,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.data.splinterpoints.value
+            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
@@ -1672,7 +1672,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.data.splinterpoints.value,
+            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
             weapon: weaponData,
             hideDifficulty: hideDifficulty,
         }
@@ -1758,7 +1758,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.data.splinterpoints.value,
+            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
             spell: spellData,
             hideDifficulty: hideDifficulty,
             spellEnhancedCostReduction: this.data.spellEnhancedCostReduction,
@@ -1820,7 +1820,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.data.splinterpoints.value,
+            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
             itemData: itemData,
             defenseType: defenseType,
             baseDefense: actorData.derivedAttributes[defenseType].value,
