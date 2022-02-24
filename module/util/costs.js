@@ -34,12 +34,10 @@ export function calcSpellCostReduction(spellData, reductions, costData) {
 
 export function formatCosts(spellCostData) {
     var display = "";
-    if (spellCostData.channeled > 0 || spellCostData.consumed > 0) {
-        display = spellCostData.channeled + spellCostData.consumed + spellCostData.exhausted;
-    }
     if (spellCostData.channeled > 0) {
-        display += "K" + spellCostData.channeled;
+        display = "K";
     }
+    display += spellCostData.channeled + spellCostData.consumed + spellCostData.exhausted;
     if (spellCostData.consumed > 0) {
         display += "V" + spellCostData.consumed;
     }
