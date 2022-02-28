@@ -2409,7 +2409,6 @@ ul.checkbox-list li input:checked ~ label::before {
   position: relative;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(10px);
 }
 .token-action-bar-char-stats .token-action-bar-name {
   position: absolute;
@@ -2423,8 +2422,6 @@ ul.checkbox-list li input:checked ~ label::before {
   padding-bottom: 0.5em;
   text-shadow: 0 0 5px var(--color-shadow-dark);
   text-align: center;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
 }
 .token-action-bar-defense,
 .token-action-bar-skills,
@@ -2537,10 +2534,8 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-spells > ul > li {
   width: 48px;
   height: 48px;
-  background: rgba(0, 0, 0, 0.5);
   background-size: contain;
   background-position: center;
-  backdrop-filter: blur(10px);
   position: relative;
   z-index: -1;
 }
@@ -2559,8 +2554,6 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-attacks li + #tooltip,
 .token-action-bar-spells li + #tooltip {
   background-image: none;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
   border-image: none;
   bottom: 100%;
   margin-bottom: 3px;
@@ -2638,14 +2631,10 @@ ul.checkbox-list li input:checked ~ label::before {
   text-align: center;
   margin: 0;
   font-family: "Almendra";
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
   padding: 3px;
 }
 .token-action-bar-popup {
   position: absolute;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
   margin-bottom: 3px;
   z-index: 1000;
   min-width: 100%;
@@ -2677,6 +2666,28 @@ ul.checkbox-list li input:checked ~ label::before {
   bottom: 0;
   left: 100%;
   margin-left: 3px;
+}
+.token-action-bar .token-action-bar-char-stats,
+.token-action-bar .token-action-bar-name,
+.token-action-bar .token-action-bar-popup,
+.token-action-bar .tooltip,
+.token-action-bar .token-action-bar-section,
+.token-action-bar > div > ul > li,
+.token-action-bar #tooltip {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .token-action-bar .token-action-bar-char-stats,
+  .token-action-bar .token-action-bar-name,
+  .token-action-bar .token-action-bar-popup,
+  .token-action-bar .tooltip,
+  .token-action-bar .token-action-bar-section,
+  .token-action-bar > div > ul > li,
+  .token-action-bar #tooltip {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(0, 0, 0, 0.5);
+  }
 }
 .splittermond .list a.rollable,
 .splittermond .list a.consume,
