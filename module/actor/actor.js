@@ -1840,7 +1840,7 @@ export default class SplittermondActor extends Actor {
             skillPoints: skillPoints,
             skillAttributes: {
                 [itemData.attribute1]: this.data.data.attributes[itemData.attribute1].value,
-                [itemData.attribute1]: this.data.data.attributes[itemData.attribute1].value,
+                [itemData.attribute2]: this.data.data.attributes[itemData.attribute2].value,
             },
             difficulty: data.difficulty,
             rollType: checkData.rollType,
