@@ -491,6 +491,10 @@
                     "dark": "Dunkel",
                     "splittermond_blue": "Splittermond-Blau"
                 }
+            },
+            "showActionBar": {
+                "name": "Token-Aktionsleiste",
+                "hint": "Aktiviert die Token-Aktionsleiste"
             }
         }
     },
