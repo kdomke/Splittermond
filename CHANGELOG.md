@@ -1,3 +1,9 @@
+## 0.8.0 ##
+2022-01-12
+* added: Token-Aktionsleiste: Über diese Leiste können Proben, Angriffe, Zauber, Aktive Abwehr etc. ohne Öffnen des Charakterplats ausgeführt werden. Die Leiste ersetzt für die Spieler die Token-Leiste. Für den Spielleiter wird diese Leiste nur bei selektiertem Token angezeigt.
+* added: Token-Aktionsleiste: Zauber und Fernkampfwaffen können vorbereitet werden.
+* fixed: Roll-Tooltip für Aktive Abwehr
+* changed: Neuimplementierung der des `foreduction`-Modifiers
 ## 0.7.6 HOTFIX ##
 2022-01-12
 * fixed: NPCs können keine Proben würfeln
