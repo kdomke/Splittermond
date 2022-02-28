@@ -64,10 +64,10 @@ export const registerSystemSettings = function () {
     type: Boolean,
     default: true,
     onChange: useActionBar => {
-      if (!game.splittermond.actionBar) {
-        game.splittermond.actionBar = new TokenActionBar();
-      }
-      game.splittermond.actionBar.update();
+      setTimeout(() => {
+        game.splittermond.tokenActionBar.update();
+      }, 500);
+      
     }
   });
 

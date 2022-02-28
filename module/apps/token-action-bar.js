@@ -27,10 +27,15 @@ export default class TokenActionBar extends Application {
     }
 
     update() {
-        
         if (this.updateTimeout) clearTimeout(this.updateTimeout);
         this.updateTimeout = setTimeout(() => {
-            console.log(`update() - ${canvas.tokens.controlled.length} - ${this.rendered}`);
+            console.log("Action Bar UPDATE!!!")
+            if (!game.settings.get("splittermond", "showActionBar")) {
+                this.currentActor = undefined;
+                this.render(true);
+                $("#hotbar").show(200);
+                return;
+            }
 
             let speaker = ChatMessage.getSpeaker();
             this.currentActor = undefined;
@@ -156,7 +161,7 @@ export default class TokenActionBar extends Application {
         });
 
         html.find('[data-action="open-sheet"]').click(event => {
-            this.currentActor.render(true);
+            this.currentActor.sheet.render(true);
         });
     }
 
@@ -164,6 +169,8 @@ export default class TokenActionBar extends Application {
 
 Hooks.on("ready", () => {
     game.splittermond.tokenActionBar = new TokenActionBar();
+
+    game.splittermond.tokenActionBar.update();
 
     Hooks.on("controlToken", (token, controlled) => {
         game.splittermond.tokenActionBar.update();
