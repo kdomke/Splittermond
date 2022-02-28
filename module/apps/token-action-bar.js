@@ -177,27 +177,42 @@ Hooks.on("ready", () => {
     });
     
     Hooks.on("updateActor", (actor, updates) => {
-        if (actor._id === game.splittermond.tokenActionBar.currentActor?.id)
+        if (actor.id == game.splittermond.tokenActionBar.currentActor?.id)
             game.splittermond.tokenActionBar.update();        
     });
 
     Hooks.on("updateToken", (scene, token, updates) => {
-        if (token._id === game.splittermond.tokenActionBar.currentActor?.token.id)
+        if (token._id == game.splittermond.tokenActionBar.currentActor?.token.id)
             game.splittermond.tokenActionBar.update();        
     });
 
     Hooks.on("updateOwnedItem", (source, item) => {
-        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+        if (source.data.id == game.splittermond.tokenActionBar.currentActor?.id)
             game.splittermond.tokenActionBar.update();        
     });
 
     Hooks.on("createOwnedItem", (source, item) => {
-        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+        if (source.data.id == game.splittermond.tokenActionBar.currentActor?.id)
             game.splittermond.tokenActionBar.update();        
     });
 
     Hooks.on("deleteOwnedItem", (source, item) => {
-        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+        if (source.data.id == game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("updateItem", (source, item) => {
+        if (source?.parent?.id == game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("createItem", (source, item) => {
+        if (source?.parent?.id == game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("deleteItem", (source, item) => {
+        if (source?.parent?.id == game.splittermond.tokenActionBar.currentActor?.id)
             game.splittermond.tokenActionBar.update();        
     });
     
