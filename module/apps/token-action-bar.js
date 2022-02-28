@@ -1,0 +1,223 @@
+import * as Costs from "../util/costs.js"
+
+export default class TokenActionBar extends Application {
+
+    constructor(options) {
+        super();
+
+        this.currentToken = undefined;
+        this.currentActor = undefined;
+
+        this.updateTimeout = 0;
+     
+        
+    }
+
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            template: "systems/splittermond/templates/apps/action-bar.hbs",
+            id: "token-action-bar",
+            popOut: false,
+            minimizable: false,
+            resizable: false,
+            left: 150,
+            top: 80
+        });
+    }
+
+    update() {
+        
+        if (this.updateTimeout) clearTimeout(this.updateTimeout);
+        this.updateTimeout = setTimeout(() => {
+            console.log(`update() - ${canvas.tokens.controlled.length} - ${this.rendered}`);
+
+            let speaker = ChatMessage.getSpeaker();
+            this.currentActor = undefined;
+            if (speaker.token) this.currentActor = game.actors.tokens[speaker.token];
+            if (!this.currentActor) this.currentActor = game.actors.get(speaker.actor);
+
+            if (this.currentActor == undefined) {
+                $("#hotbar").show(200);
+            } else {
+                $("#hotbar").hide(200);
+            }
+            this.render(true);
+        }, 100);
+    }
+
+    getData(options) {
+        console.log("getData()");
+        const data = super.getData();
+        data.id = options.id;
+        
+        if (this.currentActor) {
+            Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
+            Handlebars.registerHelper('calculateSpellCost', (spellData) => {
+                return Costs.calcSpellCostReduction(spellData, this.currentActor.data.spellCostReduction, spellData.costs)
+            });      
+            Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData) => {
+                return Costs.calcSpellCostReduction(spellData, this.currentActor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
+            });
+
+            console.log(this.currentActor.id);
+            data.name = this.currentActor.isToken ? this.currentActor.token.name : this.currentActor.name;
+            data.actorId = this.currentActor.id;
+            data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
+            data.skills = {
+                general: CONFIG.splittermond.skillGroups.general.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
+                (parseInt(this.currentActor.data.data.skills[skillId].points) > 0)).map((skillId) => {
+                    let data = duplicate(this.currentActor.data.data.skills[skillId]);
+                    data.id = skillId;
+                    data.label = `splittermond.skillLabel.${skillId}`;
+                    return data;
+                }),
+                magic: CONFIG.splittermond.skillGroups.magic.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
+                (parseInt(this.currentActor.data.data.skills[skillId].points) > 0)).map((skillId) => {
+                    let data = duplicate(this.currentActor.data.data.skills[skillId]);
+                    data.id = skillId;
+                    data.label = `splittermond.skillLabel.${skillId}`;
+                    return data;
+                })
+            }
+
+            data.attacks = duplicate(this.currentActor.data.data.attacks).map(attack => {
+                attack.isPrepared = ["longrange", "throwing"].includes(attack.skillId) ? this.currentActor.getFlag("splittermond", "preparedAttack") == attack._id : true;
+                attack.skillLabel = game.i18n.localize(`splittermond.skillLabel.${attack.skillId}`);
+                attack.featureList = attack.features?.split(",")?.map(str => str.trim());
+                return attack;
+            });
+
+            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type)));
+
+            data.spells = duplicate(this.currentActor.data.items.filter(item => ["spell"].includes(item.type))).map(spell => {
+                let costData = Costs.parseCostsString(spell.data.costs);
+                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+                spell.enoughFocus = costTotal <= this.currentActor.data.data.focus.available.value;
+                return spell;
+            }).reduce((result, item) => {
+                let skill = item.data.skill || "none";
+                if (!(skill in result)) {
+                    result[skill] = {
+                        label: `splittermond.skillLabel.${skill}`,
+                        skillValue: this.currentActor.data.data.skills[skill]?.value || 0,
+                        spells: []
+                    };
+                }
+                result[skill].spells.push(item);
+                return result;
+            }, {});
+
+            if (Object.keys(data.spells).length == 0) {
+                data.spells = undefined;
+            }
+
+            data.preparedSpell = this.currentActor.data.items.get(this.currentActor.getFlag("splittermond", "preparedSpell"));
+
+            data.derivedAttributes = duplicate(this.currentActor.data.data.derivedAttributes);
+
+            if (data.preparedSpell){
+                data.preparedSpell = duplicate(data.preparedSpell);
+                data.preparedSpell.skillLabel = game.i18n.localize(`splittermond.skillLabel.${data.preparedSpell.data.skill}`);
+                data.preparedSpell.spellTypeList = data.preparedSpell.spellType?.split(",").map(str => str.trim());
+            }
+
+        }
+            
+        console.log(data);
+        return data;
+    
+    }
+
+    activateListeners(html) {
+        console.log("activateListeners");
+        html.find(".rollable").click(async event => {
+            const type = $(event.currentTarget).closestData('roll-type');
+            if (type === "skill") {
+                const skill = $(event.currentTarget).closestData('skill');
+                this.currentActor.rollSkill(skill);
+            }
+
+            if (type === "attack") {
+                const attackId = $(event.currentTarget).closestData('attack-id');
+                const prepared = $(event.currentTarget).closestData('prepared');
+                if (prepared) {
+                    let success = await this.currentActor.rollAttack(attackId);
+                    if (success) this.currentActor.setFlag("splittermond","preparedAttack", {})
+                    return;
+                }
+                let attack = this.currentActor.data.data.attacks.find(attack => attack._id == attackId);
+                this.currentActor.addTicks(attack.weaponSpeed, `${game.i18n.localize("splittermond.attack")}: ${attack.name}`);
+                this.currentActor.setFlag("splittermond", "preparedAttack", attackId);
+            }
+            if (type === "spell") {
+                const itemId = $(event.currentTarget).closestData('item-id');
+                let success = await this.currentActor.rollSpell(this.currentActor.data.items.find(el => el.id === itemId));
+                if (success) {
+                    this.currentActor.setFlag("splittermond","preparedSpell", {});
+                }
+                
+            }
+
+            if (type === "activeDefense") {
+                const defenseType = $(event.currentTarget).closestData('defense-type');
+                this.currentActor.activeDefenseDialog(defenseType);
+            }
+        });
+
+        html.find('.toggle-equipped').click(event => {
+            const itemId = $(event.currentTarget).closestData('item-id');
+            const item = this.currentActor.items.get(itemId);
+            item.update({ "data.equipped": !item.data.data.equipped });
+        });
+
+        html.find('.prepare-spell').click(event => {
+            const itemId = $(event.currentTarget).closestData('spell-id');
+            const spell = this.currentActor.items.get(itemId);
+            if (!spell) return;
+            this.currentActor.addTicks(spell.data.data.castDuration, `${game.i18n.localize("splittermond.castDuration")}: ${spell.name}`);
+            this.currentActor.setFlag("splittermond", "preparedSpell", itemId);
+        });
+
+        html.find('[data-action="open-sheet"]').click(event => {
+            this.currentActor.render(true);
+        });
+    }
+
+}
+
+Hooks.on("ready", () => {
+    game.splittermond.tokenActionBar = new TokenActionBar();
+
+    Hooks.on("controlToken", (token, controlled) => {
+        game.splittermond.tokenActionBar.update();
+    });
+    
+    Hooks.on("updateActor", (actor, updates) => {
+        if (actor._id === game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("updateToken", (scene, token, updates) => {
+        if (token._id === game.splittermond.tokenActionBar.currentActor?.token.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("updateOwnedItem", (source, item) => {
+        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("createOwnedItem", (source, item) => {
+        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+
+    Hooks.on("deleteOwnedItem", (source, item) => {
+        if (source.data.id === game.splittermond.tokenActionBar.currentActor?.id)
+            game.splittermond.tokenActionBar.update();        
+    });
+    
+});
+
+

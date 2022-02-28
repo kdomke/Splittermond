@@ -1619,7 +1619,7 @@ export default class SplittermondActor extends Actor {
             title: game.i18n.localize(`splittermond.attack`) + " - " + weaponData.name
         });
 
-        if (!checkData) return;
+        if (!checkData) return false;
 
         if (weaponData.skill.mod) {
             checkData.modifierElements = [...weaponData.skill.mod.sources , ...checkData.modifierElements];
@@ -1678,7 +1678,7 @@ export default class SplittermondActor extends Actor {
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
-
+        return true;
     }
 
     
@@ -1707,7 +1707,7 @@ export default class SplittermondActor extends Actor {
             title: game.i18n.localize(`splittermond.skillLabel.${spellData.data.skill}`) + " - " + spellData.name
         });
 
-        if (!checkData) return;
+        if (!checkData) return false;
 
         if (actorData.skills[spellData.data.skill].mod) {
             checkData.modifierElements = [...actorData.skills[spellData.data.skill].mod.sources , ...checkData.modifierElements];
@@ -1766,7 +1766,7 @@ export default class SplittermondActor extends Actor {
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
-
+        return true;
     }
 
     async rollActiveDefense(defenseType, itemData) {
