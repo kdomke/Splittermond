@@ -52,14 +52,6 @@ export default class TokenActionBar extends Application {
         data.id = options.id;
         
         if (this.currentActor) {
-            Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
-            Handlebars.registerHelper('calculateSpellCost', (spellData) => {
-                return Costs.calcSpellCostReduction(spellData, this.currentActor.data.spellCostReduction, spellData.costs)
-            });      
-            Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData) => {
-                return Costs.calcSpellCostReduction(spellData, this.currentActor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
-            });
-
             console.log(this.currentActor.id);
             data.name = this.currentActor.isToken ? this.currentActor.token.name : this.currentActor.name;
             data.actorId = this.currentActor.id;
@@ -90,23 +82,7 @@ export default class TokenActionBar extends Application {
 
             data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type)));
 
-            data.spells = duplicate(this.currentActor.data.items.filter(item => ["spell"].includes(item.type))).map(spell => {
-                let costData = Costs.parseCostsString(spell.data.costs);
-                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-                spell.enoughFocus = costTotal <= this.currentActor.data.data.focus.available.value;
-                return spell;
-            }).reduce((result, item) => {
-                let skill = item.data.skill || "none";
-                if (!(skill in result)) {
-                    result[skill] = {
-                        label: `splittermond.skillLabel.${skill}`,
-                        skillValue: this.currentActor.data.data.skills[skill]?.value || 0,
-                        spells: []
-                    };
-                }
-                result[skill].spells.push(item);
-                return result;
-            }, {});
+            data.spells = duplicate(this.currentActor.data.data.spellsBySkill);
 
             if (Object.keys(data.spells).length == 0) {
                 data.spells = undefined;
@@ -152,7 +128,7 @@ export default class TokenActionBar extends Application {
             }
             if (type === "spell") {
                 const itemId = $(event.currentTarget).closestData('item-id');
-                let success = await this.currentActor.rollSpell(this.currentActor.data.items.find(el => el.id === itemId));
+                let success = await this.currentActor.rollSpell(itemId);
                 if (success) {
                     this.currentActor.setFlag("splittermond","preparedSpell", {});
                 }

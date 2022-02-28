@@ -1,5 +1,3 @@
-import * as Costs from "../util/costs.js"
-
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let templateContext = {...data,
         roll: roll,
@@ -103,7 +101,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             templateContext.title = data.spell.name;
             templateContext.img = data.spell.img;
 
-            let focusCosts = Costs.calcSpellCostReduction(data.spell.data, data.spellCostReduction, data.spell.data.costs);
+            let focusCosts = data.spell.data.costs;
 
             if (data.succeeded) {
                 if (data.degreeOfSuccess > 0) {
@@ -197,7 +195,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             }
 
             if (data.degreeOfSuccess >= enhancementEG) {
-                var enhancementCosts = Costs.calcSpellCostReduction(data.spell.data, data.spellEnhancedCostReduction, data.spell.data.enhancementCosts);
+                var enhancementCosts = data.spell.data.enhancementCosts;
                 templateContext.actions.push({
                     name: `${enhancementCosts} ` + game.i18n.localize(`splittermond.enhancementCosts`),
                     icon: "fa-bullseye",

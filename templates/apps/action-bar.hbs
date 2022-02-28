@@ -37,7 +37,7 @@
                 </div>
                 {{this.data.description}}
 
-                <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{calculateSpellEnhancedCost this.data}}): {{this.data.enhancementDescription}}</p>
+                <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.data.enhancementCosts}}): {{this.data.enhancementDescription}}</p>
                 <div class="item-stats">
                     <div class="item-stat">
                         <label>{{localize "splittermond.difficultyAbbrev"}}</label>
@@ -59,7 +59,7 @@
                     </div>
                     <div class="item-stat">
                         <label>{{localize "splittermond.focusCostsAbbrev"}}</label>
-                        <div>{{calculateSpellCost this.data}}</div>
+                        <div>{{this.data.costs}}</div>
                     </div>
                     <div class="item-stat">
                         <label>{{localize "splittermond.effectDurationAbbrev"}}</label>
@@ -88,7 +88,7 @@
                         <img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" />
                         <label>{{this.name}}</label>
                         <div class="difficulty">{{this.data.difficulty}}</div>
-                        <div class="costs">{{calculateSpellCost this.data}} ({{calculateSpellEnhancedCost this.data}})</div>
+                        <div class="costs">{{this.data.costs}} ({{this.data.enhancementCosts}})</div>
                         <div class="cast-duration">{{this.data.castDuration}}</div>
                         <div class="range">{{this.data.range}}</div>
                         <div class="effect-duration">{{this.data.effectDuration}}</div>

@@ -19,12 +19,6 @@ export default class SplittermondActorSheet extends ActorSheet {
         sheetData.data = sheetData.data.data;
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
-        Handlebars.registerHelper('calculateSpellCost', (spellData, actorData) => {
-            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellCostReduction, spellData.costs)
-        });      
-        Handlebars.registerHelper('calculateSpellEnhancedCost', (spellData, actorData) => {
-            return Costs.calcSpellCostReduction(spellData, actorData.actor.data.spellEnhancedCostReduction, spellData.enhancementCosts)
-        });
 
         if (sheetData.data.attributes) {
             for (let [attrId, attr] of Object.entries(sheetData.data.attributes)) {
@@ -133,30 +127,10 @@ export default class SplittermondActorSheet extends ActorSheet {
                 return result;
             }, {});
         }
-        data.spellsBySkill = {};
-        if (data.itemsByType.spell) {
-            data.itemsByType.spell.forEach(item => {
-                let costData = Costs.parseCostsString(item.data.costs);
-                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-                item.enoughFocus = costTotal <= data.data.focus.available.value;
-            });
-            data.spellsBySkill = data.itemsByType.spell.reduce((result, item) => {
-                let skill = item.data.skill || "none";
-                if (!(skill in result)) {
-                    result[skill] = {
-                        label: `splittermond.skillLabel.${skill}`,
-                        skillValue: data.data.skills[skill]?.value || 0,
-                        spells: []
-                    };
-                }
-                result[skill].spells.push(item);
-                return result;
-            }, {});
-        }
 
         CONFIG.splittermond.skillGroups.magic.forEach(skill => {
-            if (data.data.skills[skill].points > 0 && !(skill in data.spellsBySkill)) {
-                data.spellsBySkill[skill] = {
+            if (data.data.skills[skill].points > 0 && !(skill in data.data.spellsBySkill)) {
+                data.data.spellsBySkill[skill] = {
                     label: `splittermond.skillLabel.${skill}`,
                     skillValue: data.data.skills[skill].value,
                     spells: []
@@ -323,7 +297,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             if (type === "spell") {
                 const itemId = $(event.currentTarget).closestData('item-id');
-                this.actor.rollSpell(this.actor.data.items.find(el => el.id === itemId));
+                this.actor.rollSpell(itemId);
             }
 
             if (type === "damage") {

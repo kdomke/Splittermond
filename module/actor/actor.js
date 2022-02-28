@@ -127,9 +127,40 @@ export default class SplittermondActor extends Actor {
 
         this._prepareAttacks();
 
+        this._prepareSpells();
+
         this._prepareActiveDefense();
         data.derivedAttributes.speed.value *= data.derivedAttributes.speed.multiplier;
 
+    }
+
+    _prepareSpells() {
+        const actorData = this.data;
+        const data = actorData.data;
+
+        data.spells = duplicate(actorData.items.filter(item => item.data.type=="spell")).map((item) => {
+            item.data.costs = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellCostReduction), item.data.costs);
+            item.data.enhancementCosts = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellEnhancedCostReduction), item.data.enhancementCosts);
+
+            let costData = Costs.parseCostsString(item.data.costs);
+            let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+            item.enoughFocus = costTotal <= data.focus.available.value;
+
+            return item;
+        })
+        
+        data.spellsBySkill = data.spells.reduce((result, item) => {
+            let skill = item.data.skill || "none";
+            if (!(skill in result)) {
+                result[skill] = {
+                    label: `splittermond.skillLabel.${skill}`,
+                    skillValue: data.skills[skill]?.value || 0,
+                    spells: []
+                };
+            }
+            result[skill].spells.push(item);
+            return result;
+        }, {});
     }
 
     _prepareHealthFocus() {
@@ -1683,11 +1714,11 @@ export default class SplittermondActor extends Actor {
 
     
 
-    async rollSpell(spellData, options = {}) {
-        spellData = spellData.data;
+    async rollSpell(spellId, options = {}) {
+        const actorData = this.data.data;
+        let spellData = actorData.spells.find((spell)=> spell._id == spellId);
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
 
-        const actorData = this.data.data;
         let emphasisData = [];
         if (actorData.skills[spellData.data.skill].emphasis) {
             emphasisData = Object.entries(actorData.skills[spellData.data.skill].emphasis).map(([key, value]) => {
@@ -1760,9 +1791,7 @@ export default class SplittermondActor extends Actor {
             degreeOfSuccess: data.degreeOfSuccess,
             availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
             spell: spellData,
-            hideDifficulty: hideDifficulty,
-            spellEnhancedCostReduction: this.data.spellEnhancedCostReduction,
-            spellCostReduction: this.data.spellCostReduction
+            hideDifficulty: hideDifficulty
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));

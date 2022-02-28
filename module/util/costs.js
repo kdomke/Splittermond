@@ -1,16 +1,5 @@
-export function calcSpellCostReduction(spellData, reductions, costData) {
-    var reductions = [reductions["*"], reductions[spellData.skill.trim().toLowerCase()]];
-    spellData.spellType.split(",").forEach(e => reductions.push(reductions[(spellData.skill.trim() + "." + e.trim()).toLowerCase().trim()]))
-    reductions = reductions.filter(e => e != null);
-
-    if (reductions.length == 0) {
-        return costData;
-    }
-    let strParts = costData.split("/");
-    var pretext = "";
-    if (strParts.length > 1) {
-        pretext = strParts[0];
-    }
+export function calcSpellCostReduction(reductions, costData) {
+    if (reductions?.length == 0) return costData;
 
     var costs = parseCostsString(costData);
     reductions.forEach(reduction => {
@@ -26,10 +15,17 @@ export function calcSpellCostReduction(spellData, reductions, costData) {
             costs.exhausted = Math.max(1, costs.exhausted - reduction.exhausted);
         }
     });
-    if (pretext != "") {
-        return pretext + "/+" + formatCosts(costs);
-    }
+
     return formatCosts(costs);
+}
+
+export function getReductionsBySpell(spellData, reductions) {
+    let skillId = spellData.skill.trim().toLowerCase();
+    let spellType = spellData.spellType.toLowerCase().split(",").map(st => st.trim());
+    return Object.keys(reductions).filter(key => {
+        let group = key.split(".");
+        return (group[0] == "*" || group[0] == skillId) & (group[1] == undefined || spellType.includes(group[1]));
+    }).map(reductionItem => reductions[reductionItem]);
 }
 
 export function formatCosts(spellCostData) {
