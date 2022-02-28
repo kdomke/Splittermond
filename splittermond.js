@@ -13,6 +13,7 @@ import ItemImporter from "./module/util/item-importer.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
+import TokenActionBar from "./module/apps/token-action-bar.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {

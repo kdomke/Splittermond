@@ -42,7 +42,7 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
         }
         if (item) {
             if (item.type === "spell") {
-                actor.rollSpell(item);
+                actor.rollSpell(item.id);
             }
 
             if (item.type === "weapon") {

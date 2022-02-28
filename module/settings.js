@@ -1,3 +1,5 @@
+import TokenActionBar from "./apps/token-action-bar.js";
+
 export const registerSystemSettings = function () {
 
   /**
@@ -51,6 +53,21 @@ export const registerSystemSettings = function () {
     default: "default",
     onChange: theme => {
       document.body.setAttribute("data-theme", theme);
+    }
+  });
+
+  game.settings.register("splittermond", "showActionBar", {
+    name: "splittermond.settings.showActionBar.name",
+    hint: "splittermond.settings.showActionBar.hint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: useActionBar => {
+      setTimeout(() => {
+        game.splittermond.tokenActionBar.update();
+      }, 500);
+      
     }
   });
 

@@ -111,7 +111,7 @@ export default class TickBarHud extends Application {
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.id = "tick-bar-hud";
-        options.template = "systems/splittermond/templates/apps/tick-bar-hud.hbs",
+        options.template = "systems/splittermond/templates/apps/tick-bar-hud.hbs";
         options.popOut = false;
         options.dragDrop= [{dragSelector: ".tick-bar-hud-combatant-list-item", dropSelector: [".tick-bar-hud-tick", ".tick-bar-hud-nav-btn"]}]
         return options;
