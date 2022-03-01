@@ -2443,9 +2443,6 @@ ul.checkbox-list li input:checked ~ label::before {
   overflow: hidden;
   opacity: 0;
   z-index: 100;
-  transition-property: opacity max-height;
-  transition-duration: 0.5s;
-  transition-delay: 0.3s;
   bottom: 100%;
 }
 .token-action-bar-defense .token-action-bar-popup li.spell-header,
@@ -2480,7 +2477,8 @@ ul.checkbox-list li input:checked ~ label::before {
   font-size: 12px;
   opacity: 0.7;
   text-align: center;
-  width: 48px;
+  width: 60px;
+  white-space: nowrap;
   overflow: visible;
 }
 .token-action-bar-defense .token-action-bar-popup li div.costs,
@@ -2499,10 +2497,8 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-spells .token-action-bar-popup:hover {
   max-height: 2000px;
   opacity: 1;
-  transition-property: opacity max-height;
-  transition-duration: 0.5s;
-  transition-delay: 0.3s;
   overflow: unset;
+  border-width: 1px;
 }
 .token-action-bar-defense ul,
 .token-action-bar-skills ul,
@@ -2556,7 +2552,6 @@ ul.checkbox-list li input:checked ~ label::before {
   background-image: none;
   border-image: none;
   bottom: 100%;
-  margin-bottom: 3px;
   padding: 10px;
   left: unset;
   right: unset;
@@ -2566,9 +2561,6 @@ ul.checkbox-list li input:checked ~ label::before {
   width: fit-content;
   height: fit-content;
   opacity: 0;
-  transition-property: opacity;
-  transition-duration: 0.5s;
-  transition-delay: 1s;
   position: absolute;
   top: unset;
 }
@@ -2582,9 +2574,6 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-spells li:hover + #tooltip {
   display: block;
   opacity: 1;
-  transition-property: opacity;
-  transition-duration: 0.5s;
-  transition-delay: 1s;
 }
 .token-action-bar-skills {
   z-index: 400;
@@ -2635,10 +2624,9 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .token-action-bar-popup {
   position: absolute;
-  margin-bottom: 3px;
   z-index: 1000;
   min-width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 0 solid rgba(255, 255, 255, 0.1);
 }
 .token-action-bar-popup ul {
   display: flex;
@@ -2682,11 +2670,24 @@ ul.checkbox-list li input:checked ~ label::before {
   .token-action-bar .token-action-bar-popup,
   .token-action-bar .tooltip,
   .token-action-bar .token-action-bar-section,
-  .token-action-bar > div > ul > li,
   .token-action-bar #tooltip {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .token-action-bar .token-action-bar-char-stats:before,
+  .token-action-bar .token-action-bar-name:before,
+  .token-action-bar .token-action-bar-popup:before,
+  .token-action-bar .tooltip:before,
+  .token-action-bar .token-action-bar-section:before,
+  .token-action-bar #tooltip:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    background-color: rgba(0, 0, 0, 0.5);
   }
 }
 .splittermond .list a.rollable,
