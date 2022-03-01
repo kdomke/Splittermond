@@ -1,19 +1,31 @@
+## 0.8.1 HOTFIX ##
+2022-03-01
+
+* fixed: Beim Erstellen einer Würfelproben-Chatnachrichten wurden die entsprechenden Aktionen teilweise nicht auf dem korrekten Token angewendet.
+* fixed: CSS wurde überarbeitet (Dank geht an Tony)
+* changed: Verlinkungen von Zuständen beziehen sich ab jetzt auf die Zustände im Kompendium. Zustände müssen nicht mehr importiert werden.
+
 ## 0.8.0 ##
-2022-01-12
+2022-02-28
+
 * added: Token-Aktionsleiste: Über diese Leiste können Proben, Angriffe, Zauber, Aktive Abwehr etc. ohne Öffnen des Charakterplats ausgeführt werden. Die Leiste ersetzt für die Spieler die Token-Leiste. Für den Spielleiter wird diese Leiste nur bei selektiertem Token angezeigt.
 * added: Token-Aktionsleiste: Zauber und Fernkampfwaffen können vorbereitet werden.
 * fixed: Roll-Tooltip für Aktive Abwehr
 * changed: Neuimplementierung der des `foreduction`-Modifiers
+
 ## 0.7.6 HOTFIX ##
 2022-01-12
+
 * fixed: NPCs können keine Proben würfeln
 
 ## 0.7.5 HOTFIX ##
 2022-01-12
+
 * fixed: Fixed Chat Output
 
 ## 0.7.4 ##
 2022-01-12
+
 * added: Für Proben kann nun ein Splitterpunkt ausgegeben werden um das Ergebnis um +3 zu modifizieren (GRW S. 81)
 * added: Zauber können nun Waffenmerkmale für Schaden beinhalten (Danke Jean-Pierre)
 * added: Kulturkunde-Items besitzen nun Modifier
@@ -25,29 +37,34 @@
 
 ## 0.7.3 ##
 2022-01-03
+
 * added: Lunare werden vom Charakterimporter übernommen.
 * fixed: Charakter-Importer funktionierte teilweise nicht.
 * fixed: NSC-Importer: Ctrl+v funktionierte auf manchen Servern nicht.
 
 ## 0.7.2 ##
 2022-01-02
+
 * fixed: NSC-Sheet: Fehler bei der Übernahme der Fertigkeitswerte, falls die Fertigkeitspunkte auf 0 gesetzt wird.
 * fixed: NSCs mit Waffen ohne Merkmalen konnnten nicht importiert werden.
 * fixed: NSC-Importer: Fehler bei Import von NSCs mit Fernkampfwaffen (Issue #68)
 
 ## 0.7.1 HOTFIX ##
 2021-12-28
+
 * fixed: Items konnten nicht vom Sheet gelöscht werden
 * fixed: Modifikator "lowerFumbleResult" wurde fehlerhaft ausgewertet.
 
 ## 0.7.0 ##
 2021-12-28
 Das System ist nun für Version 9 von Foundry VTT kompatibel
+
 * changed: veraltete API-Funktionen auf neue geändert
 * fixed: Aus "Geschichten und Mythen" wurde "Geschichte und Mythen"! VORSICHT: Dies kann zu Kompatibilitätsproblemen mit Modifikatoren führen.
 
 ## 0.6.3 HOTFIX ##
 2021-12-14
+
 * fixed: Der Kampffertigkeitswert von NSCs wurde bei Anwendundung von Schaden erhöht (Issue #66)
 * fixed: Die Regeneration bei Ruhephase wurde falsch berechnet (Issue #67)
 * fixed: Modifilator GSW.mult wurde nicht richtig angewendet (Issue #71)
@@ -55,6 +72,7 @@ Das System ist nun für Version 9 von Foundry VTT kompatibel
 
 ## 0.6.2 ##
 2021-10-29
+
 * added: Die Meisterschaft "Großmeister" ist nun implementiert. Eine Meisterschaft kann als "Großmeister"-Meisterschaft markiert werden (Haken in Meisterschaftseigenschaften). Ist Diese Meisterschaft vorhanden, werden automatisch "Großmeister"-Würfe bei entsprechender Fertigkeits-Probe geworfen.
 * added: Mondzeichen können jetzt aus dem Charakterblatt hinzugefügt werden (wenn noch kein Mondzeichen hinzugefügt wurde.)
 * fixed: Fehlerhaftes parsen im NSC-Copy-and-Paste-Importer
@@ -63,6 +81,7 @@ Das System ist nun für Version 9 von Foundry VTT kompatibel
 
 ## 0.6.1 ##
 2021-10-18
+
 * added: Dokumentation für fehlende Modifikatoren
 * added: Verminderte Patzerstufen werden in Chatnachricht dargestellt
 * added: Es können mehrere Zauber gleichzeitig mittels Copy-and-Paste-Importer hinzugefügt werden (Dank geht an Jean-Pierre für diese Erweiterung)
@@ -73,26 +92,30 @@ Das System ist nun für Version 9 von Foundry VTT kompatibel
 
 ## 0.6.0 ##
 2021-08-10
+
 * added: Neues Design das nun die Möglichkeit bietet Themes zu erstellen
 * added: 3 neue UI-Themes (einstellbar in den System-Einstellungen)
-
 * removed: legacy 0.7.x code
 
 ## 0.5.0 ##
 2021-07-12
+
 * added: Tick Bar for a more Splittermond-like Combat Tracker experience
 * removed: 0.7.x support
 
 ## 0.4.8 ##
 2021-07-12
+
 * fixed: Combat Tracker problems with FVTT 0.7.x
 
 ## 0.4.7 HOTFIX ##
 2021-07-12
+
 * fixed: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets
 
 ## 0.4.6 ##
 2021-07-12
+
 * added: Hilfetext für Modifikatoren und minimale Attribute in Item-Sheets
 * changed: Robusteres parsen der Modifikatoren (case insensitive) und "minimalen Attribute"
 * changed: Situative Modifikatoren in "Modifikatoren"-JournalEntry hinzugefügt (inkl. Beispiele)
@@ -102,11 +125,13 @@ Das System ist nun für Version 9 von Foundry VTT kompatibel
 
 ## 0.4.5 ##
 2021-06-30
+
 * added: Es kann nun eine Aktive Abwehr aus der Angriffs-Chatnachricht initiiert werden.
 * changed: Combat Tracker: Bei gleicher Initiative gilt für die Kampfreihenfolge die höhere Intuition (GRW S. 157)
 
 ## 0.4.4 ##
 2021-06-21
+
 * added: Der Schaden von Schadenswürfen kann mit dem Button "Schaden anwenden" auf selektierte Token angewendet werden (nur GM). Dazu öffnet sich ein weiterer Dialog in dem der Schaden modifiziert werden kann.
 * added: Die Quelle des Schadens wird in der Chatnachricht des Schadenswurfs angezeigt.
 * added: Unter "Fertigkeiten" im Spielercharakterblatt werden alle Fertigkeiten ausgeblendet in denen keine Fertigkeitspunkte vergeben wurden (Gleiche Funktionalität wie bei NSCs). Durch einen Klick auf das Augesymbol lassen sich alle Fertigkeiten einblenden.
@@ -115,14 +140,17 @@ Das System ist nun für Version 9 von Foundry VTT kompatibel
 
 ## 0.4.3 HOTFIX ##
 2021-06-19
+
 * fixed: Schadenschaltfläche in Chatnachricht funktioniert nicht
 
 ## 0.4.2 HOTFIX ##
 2021-06-18
+
 * fixed: Schadenschaltfläche wurde in Chatnachricht nicht angezeigt
 
 ## 0.4.1 HOTFIX ##
 2021-06-18
+
 * fixed: Fokusabrechnung in Chatnachricht funktioniert nicht
 
 ## 0.4.0 ##

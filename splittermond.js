@@ -368,7 +368,7 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
 });
 
 Hooks.on('renderChatMessage', function (app, html, data) {
-    let actor = game.actors.get(data.message.speaker.actor);
+    let actor = ChatMessage.getSpeakerActor(data.message.speaker);
 
     if (!game.user.isGM) {
         html.find(".gm-only").remove();
@@ -410,23 +410,13 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     });
 
     html.find(".consume").click(event => {
-        
+        event.preventDefault();
+        event.stopPropagation()
         const type = $(event.currentTarget).closestData('type');
         const value = $(event.currentTarget).closestData('value');
-        if (type === "focus") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-
-        if (type === "health") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-    })
+        const description = $(event.currentTarget).closestData('description');
+        actor.consumeCost(type, value, description);
+    });
     
 
     html.find(".add-tick").click(event => {

@@ -35,7 +35,7 @@
                         {{/each}}
                     </div>
                 </div>
-                {{this.data.description}}
+                {{{this.data.description}}}
 
                 <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.data.enhancementCosts}}): {{this.data.enhancementDescription}}</p>
                 <div class="item-stats">
@@ -95,7 +95,8 @@
                     </li>
                     <li class="tooltip">
                         <h3>{{this.name}}</h3>
-                        {{this.data.description}}
+                        {{{this.data.description}}}
+                        <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.data.enhancementCosts}}): {{this.data.enhancementDescription}}</p>
                     </li>
                     {{/each}}
                     {{/each}}
@@ -161,7 +162,9 @@
                 <div class="value">{{derivedAttributes.mindresist.value}}</div>
             </li>
         </ul>
-        <div class="token-action-bar-section">{{localize "splittermond.activeDefense"}}</div>
+        <div style="position: relative;">
+            <div class="token-action-bar-section">{{localize "splittermond.activeDefense"}}</div>
+        </div>
     </div>
     {{/if}}
 </div>
