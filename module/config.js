@@ -351,7 +351,7 @@ splittermond.displayOptions = {
             width: 600
         },
         statuseffect: {
-            height: 300,
+            height: 500,
             width: 600
         },
         moonsign: {
@@ -458,6 +458,21 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.level",
                     label: "splittermond.level",
+                    template: "input"
+                },
+                {
+                    field: "data.startTick",
+                    label: "splittermond.combatEffect.statusEffect.startTick",
+                    template: "input"
+                },
+                {
+                    field: "data.interval",
+                    label: "splittermond.combatEffect.statusEffect.interval",
+                    template: "input"
+                },
+                {
+                    field: "data.times",
+                    label: "splittermond.combatEffect.statusEffect.times",
                     template: "input"
                 },
                 {

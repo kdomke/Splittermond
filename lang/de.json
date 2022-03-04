@@ -58,6 +58,15 @@
         "statusEffects": "Zustände",
         "statusEffect": "Zustand",
         "statuseffect": "Zustand",
+        "combatEffect": {
+            "statusEffectActivated.Title": "Zustand {name} wurde Aktiviert",
+            "statusEffectActivated.Description": "Der Zustand {name} wurde bei tick {onTick} aktiviert.",
+            "statusEffect": {
+                "startTick": "Start tick",
+                "interval": "Auslösezeit",
+                "times": "Anzahl der Auslösungen"
+            }
+        },
         "spelleffect": "Zaubereffekt",
         "spellEffect": "Zaubereffekt",
         "spellEffects": "Zaubereffekte",

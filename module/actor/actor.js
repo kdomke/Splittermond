@@ -135,7 +135,26 @@ export default class SplittermondActor extends Actor {
     }
 
     getVirtualStatusTokens()
-    {        
+    {    
+        return this.data
+            .items
+            .filter(e => {
+                return e.type == "statuseffect";
+            })
+            .filter(e => {
+                return e.data.data.startTick != null && e.data.data.interval != null;
+            })
+            .map(e => {
+                return {
+                    name: e.name,
+                    startTick: parseInt(e.data.data.startTick),
+                    interval: parseInt(e.data.data.interval),
+                    times: e.data.data.times ? parseInt(e.data.data.times) : 90,
+                    description: e.data.data.description,
+                    img: e.img
+                }
+            })
+        
         return [{
             name: "Burning",
             startTick: 5,

@@ -1,3 +1,5 @@
+import * as Chat from "../util/chat.js";
+
 export default class TickBarHud extends Application {
     constructor(options) {
         super(options);
@@ -239,12 +241,13 @@ export default class TickBarHud extends Application {
                         const onTick = (index * element.interval) + element.startTick + 1;
                         if(onTick < this.minTick)
                         {
-                            if(lastTick != null && lastTick < onTick)
+                            if(lastTick != null && lastTick < onTick && vToken.combatant.isOwner)
                             {
                                 //this effect was activated in between the last tick and the current tick
                                 activatedStatusTokens.push({
                                     onTick,
-                                    virtualToken: vToken,
+                                    virtualToken: element,
+                                    combatant: vToken.combatant
                                 })
                             }
                             continue;
@@ -255,17 +258,15 @@ export default class TickBarHud extends Application {
                             active: false,
                             img: element.img || vToken.combatant.img,
                             description: element.description,
-                            name: element.name
+                            name: vToken.combatant.name + " - " + element.name + " #" + index
                         });
                     }
                 });
             });
-
-            activatedStatusTokens.forEach(element => {
-                if(element.virtualToken.combatant.isOwner){                    
-                    console.log("DoStuff");
-                }
-            });
+            for (let index = 0; index < activatedStatusTokens.length; index++) {
+                const element = activatedStatusTokens[index];
+                ChatMessage.create(await Chat.prepareStatusEffectMessage(element.combatant.actor, element));
+            }
         }
 
         return data;
