@@ -142,7 +142,8 @@ export default class SplittermondActor extends Actor {
                 return e.type == "statuseffect";
             })
             .filter(e => {
-                return e.data.data.startTick != null && e.data.data.interval != null;
+                return e.data.data.startTick != null && e.data.data.startTick > 0 &&
+                e.data.data.interval != null && e.data.data.interval > 0;
             })
             .map(e => {
                 return {

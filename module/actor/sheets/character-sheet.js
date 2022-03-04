@@ -48,12 +48,9 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         if (["mastery", "strength", "weakness", "resource", "spell", "weapon", "equipment", "shield", "armor", "moonsign", "culturelore", "statuseffect", "spelleffect"].includes(itemData.type)) {
             return super._onDropItemCreate(itemData);
         }
-        W
     }
 
     activateListeners(html) {
-
-
         html.find('.attribute input[name$="value"]').change(this._onChangeAttribute.bind(this));
         html.find('.attribute input[name$="start"]').change((event) => {
             event.preventDefault();

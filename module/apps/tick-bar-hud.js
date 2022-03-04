@@ -19,7 +19,6 @@ export default class TickBarHud extends Application {
         this.render(true);
     }
 
-
     get combats() {
         const currentScene = game.scenes.current?.id || null;
         return game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
