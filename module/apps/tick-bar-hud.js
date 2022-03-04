@@ -12,6 +12,7 @@ export default class TickBarHud extends Application {
         this.viewed = null;
         this.viewedTick = null;
         this.currentTick = null;
+        this.lastStatusTick = null;
         this.maxTick = null;
         this.minTick = null;
         this._dragOverTimeout = 0;
@@ -171,7 +172,7 @@ export default class TickBarHud extends Application {
             }));
 
             var lastTick = this.minTick;
-            this.maxTick = Math.max(Math.max(...iniData, maxStatusEffectTick), 50);
+            this.maxTick = Math.max(Math.max(...iniData, maxStatusEffectTick) + 25, 50);
             this.minTick = Math.min(...iniData);
             for (let tickNumber = this.minTick; tickNumber <= this.maxTick; tickNumber++) {
                 data.ticks.push({
@@ -238,19 +239,26 @@ export default class TickBarHud extends Application {
             virtualTokens.forEach(vToken => {                
                 vToken.virtualTokens.forEach(element => {  
                     for (let index = 0; index < element.times; index++) {
-                        const onTick = (index * element.interval) + element.startTick + 1;
-                        if(onTick < this.minTick)
+                        const onTick = (index * element.interval) + element.startTick;
+                        if(onTick <= this.minTick)
                         {
-                            if(lastTick != null && lastTick < onTick && vToken.combatant.isOwner)
+                            if(this.lastStatusTick != null && 
+                                lastTick <= onTick && 
+                                this.lastStatusTick != this.currentTick &&
+                                this.lastStatusTick != onTick &&
+                                vToken.combatant.isOwner)
                             {
-                                //this effect was activated in between the last tick and the current tick
+                                //this effect was activated in between the last tick and the current tick or we just got to that tick
                                 activatedStatusTokens.push({
                                     onTick,
                                     virtualToken: element,
                                     combatant: vToken.combatant
                                 })
                             }
-                            continue;
+                            if(onTick < this.minTick)
+                            {
+                                continue;
+                            }                            
                         }
                         data.ticks.find(t => t.tickNumber == onTick).statusEffects.push({
                             id: vToken.combatant.id,
@@ -268,6 +276,8 @@ export default class TickBarHud extends Application {
                 ChatMessage.create(await Chat.prepareStatusEffectMessage(element.combatant.actor, element));
             }
         }
+
+        this.lastStatusTick = this.currentTick;
 
         return data;
     }
