@@ -153,16 +153,7 @@ export default class SplittermondActor extends Actor {
                     description: e.data.data.description,
                     img: e.img
                 }
-            })
-        
-        return [{
-            name: "Burning",
-            startTick: 5,
-            interval: 5,
-            times: 3,
-            description: "@Compendium[Zustände.Blutend]",
-            img: null
-        }];
+            });
     }
 
     _prepareSpells() {
