@@ -134,6 +134,18 @@ export default class SplittermondActor extends Actor {
 
     }
 
+    getVirtualStatusTokens()
+    {        
+        return [{
+            name: "Burning",
+            startTick: 5,
+            interval: 5,
+            times: 3,
+            description: "@Compendium[Zustände.Blutend]",
+            img: null
+        }];
+    }
+
     _prepareSpells() {
         const actorData = this.data;
         const data = actorData.data;

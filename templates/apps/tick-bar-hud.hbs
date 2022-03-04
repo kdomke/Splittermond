@@ -12,6 +12,11 @@
                             <img class="token-image" width="48" height="48" src="{{this.img}}" title="{{this.name}}"/>
                         </div>
                     {{/each}}
+                    {{#each statusEffects}}
+                        <div class="tick-bar-hud-combatant-list-item {{#if active}} active{{/if}}" data-combatant-id="{{this.id}}" data-is-status="true">
+                            <img class="token-image" width="48" height="48" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
                 </div>
             </div>
         {{/each}}
