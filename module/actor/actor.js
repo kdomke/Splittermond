@@ -152,7 +152,9 @@ export default class SplittermondActor extends Actor {
                     interval: parseInt(e.data.data.interval),
                     times: e.data.data.times ? parseInt(e.data.data.times) : 90,
                     description: e.data.data.description,
-                    img: e.img
+                    img: e.img,
+                    level: e.data.data.level,
+                    statusId: e.id
                 }
             });
     }

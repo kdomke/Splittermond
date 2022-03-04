@@ -251,7 +251,10 @@ export default class TickBarHud extends Application {
                                 activatedStatusTokens.push({
                                     onTick,
                                     virtualToken: element,
-                                    combatant: vToken.combatant
+                                    combatant: vToken.combatant,
+                                    activationNo: index + 1,
+                                    ownerId: vToken.combatant.id,
+                                    statusId: vToken.statusId
                                 })
                             }
                             if(onTick < this.minTick)

@@ -504,6 +504,20 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         actor.useSplinterpointBonus(message);
     });
 
+    html.find('.remove-status').click(async event => {
+        const statusId = $(event.currentTarget).closestData('status-id');
+
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        let message = game.messages.get(chatMessageId);
+        
+        const speaker = message.data.speaker;
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        await actor.deleteEmbeddedDocuments("Item", [statusId]);
+        await Hooks.call("redraw-combat-tick");
+    });
 
 });
 

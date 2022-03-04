@@ -346,9 +346,28 @@ export async function prepareStatusEffectMessage(actor, data) {
     let template = "systems/splittermond/templates/chat/status-effect.hbs";
     let templateContext = {...data,
         actions: [],
-        title: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Title", {name: data.virtualToken.name}),
-        description: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Description", {name: data.virtualToken.name, onTick: data.onTick})
+        title: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Title", { 
+            name: data.virtualToken.name, 
+            level: data.virtualToken.level,
+            activationNo: data.activationNo
+         }),
+        description: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Description", {
+            name: data.virtualToken.name, 
+            onTick: data.onTick, 
+            level: data.virtualToken.level
+        })
     };
+
+    if(data.activationNo == data.virtualToken.times){
+        templateContext.actions.push({
+            name: game.i18n.localize(`statusEffectActivated.RemoveStatus`),
+            icon: "fa-remove",
+            classes: "remove-status",
+            data: {
+                "status-id": data.virtualToken.statusId
+            }
+        });
+    }
 
     //TODO add actions based on the status effect to allow per-button execution for effect
 
