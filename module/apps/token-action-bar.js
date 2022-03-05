@@ -118,15 +118,27 @@ export default class TokenActionBar extends Application {
 
     activateListeners(html) {
         console.log("activateListeners");
+        
 
+        
         if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
-            let bottomPosition = $("body").outerHeight()-$("#ui-bottom").position().top;
+            let bottomPosition = $("#ui-bottom").outerHeight();
             if ($("#custom-hotbar").length) {
                 bottomPosition = Math.max($("body").outerHeight()-$("#custom-hotbar").position().top, bottomPosition);
             }
-            
             $(html).css({bottom: bottomPosition});
+        } else {
+            setTimeout(() => {
+                let bottomPosition = $("#ui-bottom").outerHeight();                    
+                $(html).css({bottom: bottomPosition});
+            }, 200);
         }
+            
+        
+
+        //if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            
+        //}
 
         html.find(".rollable").click(async event => {
             const type = $(event.currentTarget).closestData('roll-type');
