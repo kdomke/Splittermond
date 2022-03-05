@@ -40,10 +40,16 @@ export default class TokenActionBar extends Application {
             if (!this.currentActor) this.currentActor = game.actors.get(speaker.actor);
 
             if (this.currentActor == undefined) {
-                $("#hotbar").show(200);
+                $("#hotbar").parent().show(200);
+                if ($("#custom-hotbar").length > 0) {
+                    $("#custom-hotbar").attr("style", "display: flex !important");
+                }
             } else {
-                if (!game.settings.get("splittermond", "showHotbarDuringActionBar") && $("#custom-hotbar").length == 0) {
-                    $("#hotbar").hide(200);
+                if (!game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+                    $("#hotbar").parent().hide(200);
+                    if ($("#custom-hotbar").length > 0) {
+                        $("#custom-hotbar").attr("style", "display: none !important");
+                    }
                 }
                     
             }
@@ -113,11 +119,12 @@ export default class TokenActionBar extends Application {
     activateListeners(html) {
         console.log("activateListeners");
 
-        if (game.settings.get("splittermond", "showHotbarDuringActionBar") || $("#custom-hotbar").length > 0) {
-            let bottomPosition = $("body").outerHeight()-$("#hotbar").position().top;
+        if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            let bottomPosition = $("body").outerHeight()-$("#ui-bottom").position().top;
             if ($("#custom-hotbar").length) {
-                bottomPosition = $("body").outerHeight()-$("#custom-hotbar").position().top
+                bottomPosition = Math.max($("body").outerHeight()-$("#custom-hotbar").position().top, bottomPosition);
             }
+            
             $(html).css({bottom: bottomPosition});
         }
 
