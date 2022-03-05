@@ -4,11 +4,11 @@ export default class TokenActionBar extends Application {
 
     constructor(options) {
         super();
-
-        this.currentToken = undefined;
         this.currentActor = undefined;
 
         this.updateTimeout = 0;
+
+        this.showHotbar = false;
      
         
     }
@@ -20,16 +20,13 @@ export default class TokenActionBar extends Application {
             id: "token-action-bar",
             popOut: false,
             minimizable: false,
-            resizable: false,
-            left: 150,
-            top: 80
+            resizable: false
         });
     }
 
     update() {
         if (this.updateTimeout) clearTimeout(this.updateTimeout);
         this.updateTimeout = setTimeout(() => {
-            console.log("Action Bar UPDATE!!!")
             if (!game.settings.get("splittermond", "showActionBar")) {
                 this.currentActor = undefined;
                 this.render(true);
@@ -45,7 +42,10 @@ export default class TokenActionBar extends Application {
             if (this.currentActor == undefined) {
                 $("#hotbar").show(200);
             } else {
-                $("#hotbar").hide(200);
+                if (!game.settings.get("splittermond", "showHotbarDuringActionBar") && $("#custom-hotbar").length == 0) {
+                    $("#hotbar").hide(200);
+                }
+                    
             }
             this.render(true);
         }, 100);
@@ -112,6 +112,15 @@ export default class TokenActionBar extends Application {
 
     activateListeners(html) {
         console.log("activateListeners");
+
+        if (game.settings.get("splittermond", "showHotbarDuringActionBar") || $("#custom-hotbar").length > 0) {
+            let bottomPosition = $("body").outerHeight()-$("#hotbar").position().top;
+            if ($("#custom-hotbar").length) {
+                bottomPosition = $("body").outerHeight()-$("#custom-hotbar").position().top
+            }
+            $(html).css({bottom: bottomPosition});
+        }
+
         html.find(".rollable").click(async event => {
             const type = $(event.currentTarget).closestData('roll-type');
             if (type === "skill") {
