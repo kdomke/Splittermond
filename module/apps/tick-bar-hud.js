@@ -268,7 +268,7 @@ export default class TickBarHud extends Application {
                             active: false,
                             img: element.img || vToken.combatant.img,
                             description: element.description,
-                            name: vToken.combatant.name + " - " + element.name + " #" + index
+                            name: `${vToken.combatant.name} - ${element.name} ${element.level} #${index}`
                         });
                     }
                 });
