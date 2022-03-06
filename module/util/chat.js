@@ -360,7 +360,7 @@ export async function prepareStatusEffectMessage(actor, data) {
 
     if(data.activationNo == data.virtualToken.times){
         templateContext.actions.push({
-            name: game.i18n.localize(`statusEffectActivated.RemoveStatus`),
+            name: game.i18n.localize(`splittermond.combatEffect.statusEffectActivated.RemoveStatus`),
             icon: "fa-remove",
             classes: "remove-status",
             data: {
