@@ -4,11 +4,11 @@ export default class TokenActionBar extends Application {
 
     constructor(options) {
         super();
-
-        this.currentToken = undefined;
         this.currentActor = undefined;
 
         this.updateTimeout = 0;
+
+        this.showHotbar = false;
      
         
     }
@@ -20,16 +20,13 @@ export default class TokenActionBar extends Application {
             id: "token-action-bar",
             popOut: false,
             minimizable: false,
-            resizable: false,
-            left: 150,
-            top: 80
+            resizable: false
         });
     }
 
     update() {
         if (this.updateTimeout) clearTimeout(this.updateTimeout);
         this.updateTimeout = setTimeout(() => {
-            console.log("Action Bar UPDATE!!!")
             if (!game.settings.get("splittermond", "showActionBar")) {
                 this.currentActor = undefined;
                 this.render(true);
@@ -43,9 +40,18 @@ export default class TokenActionBar extends Application {
             if (!this.currentActor) this.currentActor = game.actors.get(speaker.actor);
 
             if (this.currentActor == undefined) {
-                $("#hotbar").show(200);
+                $("#hotbar").parent().show(200);
+                if ($("#custom-hotbar").length > 0) {
+                    $("#custom-hotbar").attr("style", "display: flex !important");
+                }
             } else {
-                $("#hotbar").hide(200);
+                if (!game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+                    $("#hotbar").parent().hide(200);
+                    if ($("#custom-hotbar").length > 0) {
+                        $("#custom-hotbar").attr("style", "display: none !important");
+                    }
+                }
+                    
             }
             this.render(true);
         }, 100);
@@ -112,6 +118,28 @@ export default class TokenActionBar extends Application {
 
     activateListeners(html) {
         console.log("activateListeners");
+        
+
+        
+        if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            let bottomPosition = $("#ui-bottom").outerHeight();
+            if ($("#custom-hotbar").length) {
+                bottomPosition = Math.max($("body").outerHeight()-$("#custom-hotbar").position().top, bottomPosition);
+            }
+            $(html).css({bottom: bottomPosition});
+        } else {
+            setTimeout(() => {
+                let bottomPosition = $("#ui-bottom").outerHeight();                    
+                $(html).css({bottom: bottomPosition});
+            }, 200);
+        }
+            
+        
+
+        //if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            
+        //}
+
         html.find(".rollable").click(async event => {
             const type = $(event.currentTarget).closestData('roll-type');
             if (type === "skill") {

@@ -2348,6 +2348,7 @@ ul.checkbox-list li input:checked ~ label::before {
   bottom: 0px;
   margin: 0px;
   padding: 12px;
+  padding-left: 0px;
   z-index: 100;
   align-items: flex-end;
   border: none;

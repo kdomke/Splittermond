@@ -71,6 +71,21 @@ export const registerSystemSettings = function () {
     }
   });
 
+  game.settings.register("splittermond", "showHotbarDuringActionBar", {
+    name: "splittermond.settings.showHotbarDuringActionBar.name",
+    hint: "splittermond.settings.showHotbarDuringActionBar.hint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: useActionBar => {
+      setTimeout(() => {
+        game.splittermond.tokenActionBar.update();
+      }, 500);
+      
+    }
+  });
+
   document.body.setAttribute("data-theme", game.settings.get("splittermond","theme"));
   
 }
