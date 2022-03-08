@@ -101,6 +101,10 @@ export default class SplittermondCombat extends Combat {
         return 0;
     }
 
+    get combatant() {
+        return this.turns[0];
+    }
+
     get round() {
         return this.data.round;
     }
