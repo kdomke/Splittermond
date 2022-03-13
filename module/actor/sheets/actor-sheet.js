@@ -351,8 +351,9 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.actor.activeDefenseDialog("mindresist");
         });
 
-
-
+        html.find(".item-list .item").on("dragstart", event => {
+            html.find('#tooltip').remove();
+        });
 
         html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
