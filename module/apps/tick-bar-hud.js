@@ -188,7 +188,7 @@ export default class TickBarHud extends Application {
                     
                 }
 
-                if ( !c.isVisible) continue;
+                if ( !c.visible) continue;
                 
 
                 
