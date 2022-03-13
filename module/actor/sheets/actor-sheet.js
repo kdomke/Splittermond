@@ -353,6 +353,12 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find(".item-list .item").on("dragstart", event => {
             html.find('#tooltip').remove();
+        }).on("dragover", event => {
+            event.currentTarget.style.borderTop = "1px solid black";
+            event.currentTarget.style.borderImage = "none";
+        }).on("dragleave", event => {
+            event.currentTarget.style.borderTop = "";
+            event.currentTarget.style.borderImage = "";
         });
 
         html.find(".draggable").on("dragstart", event => {
