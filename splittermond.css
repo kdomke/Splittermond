@@ -2349,7 +2349,7 @@ ul.checkbox-list li input:checked ~ label::before {
   margin: 0px;
   padding: 12px;
   padding-left: 0px;
-  z-index: 100;
+  z-index: 1;
   align-items: flex-end;
   border: none;
   border-radius: 0px;
@@ -2496,9 +2496,9 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-skills .token-action-bar-popup:hover,
 .token-action-bar-attacks .token-action-bar-popup:hover,
 .token-action-bar-spells .token-action-bar-popup:hover {
-  max-height: 2000px;
+  max-height: calc(100vh - 270px);
   opacity: 1;
-  overflow: unset;
+  overflow-y: auto;
   border-width: 1px;
 }
 .token-action-bar-defense ul,
@@ -2673,20 +2673,6 @@ ul.checkbox-list li input:checked ~ label::before {
   .token-action-bar .token-action-bar-section,
   .token-action-bar #tooltip {
     background-color: rgba(0, 0, 0, 0.5);
-  }
-  .token-action-bar .token-action-bar-char-stats:before,
-  .token-action-bar .token-action-bar-name:before,
-  .token-action-bar .token-action-bar-popup:before,
-  .token-action-bar .tooltip:before,
-  .token-action-bar .token-action-bar-section:before,
-  .token-action-bar #tooltip:before {
-    content: "";
-    z-index: -1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
