@@ -58,12 +58,10 @@ export default class TokenActionBar extends Application {
     }
 
     getData(options) {
-        console.log("getData()");
         const data = super.getData();
         data.id = options.id;
         
         if (this.currentActor) {
-            console.log(this.currentActor.id);
             data.name = this.currentActor.isToken ? this.currentActor.token.name : this.currentActor.name;
             data.actorId = this.currentActor.id;
             data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
@@ -91,7 +89,7 @@ export default class TokenActionBar extends Application {
                 return attack;
             });
 
-            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type)));
+            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
 
             data.spells = duplicate(this.currentActor.data.data.spellsBySkill);
 
@@ -110,8 +108,7 @@ export default class TokenActionBar extends Application {
             }
 
         }
-            
-        console.log(data);
+
         return data;
     
     }
