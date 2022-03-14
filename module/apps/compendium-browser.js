@@ -263,12 +263,12 @@ export default class SplittermondCompendiumBrowser extends Application {
         let idx = 0;
         for (let li of html.find(`[data-tab="mastery"] .list > ol`)[0].children) {
             const name = li.querySelector("label").textContent;
-            let availableIn = $(li).closestData("available-in");
+            let availableIn = $(li).closestData("available-in").split(",").map(s => s.trim());
             let skill = $(li).closestData("skill");
             let skillLevel = $(li).closestData("level");
             let compendium = $(li).closestData("compendium");
 
-            let test = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
+            let test = rgx.test(name) && (!filterSkill || availableIn.includes(filterSkill) || skill === filterSkill);
 
             if (test && filterSkillLevel.includes(true)) {
                 test = test && filterSkillLevel.reduce((acc, element, idx) => {
