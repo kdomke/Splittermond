@@ -2,7 +2,7 @@
   "name": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "Simon",
   "scripts": [],
   "esmodules": [
@@ -56,7 +56,7 @@
     },
     {
       "name": "statuseffects",
-      "label": "Zustände",
+      "label": "Zust√§nde",
       "system": "splittermond",
       "path": "packs/status-effects.db",
       "entity": "Item",

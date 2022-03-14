@@ -1,4 +1,4 @@
-## 0.8.2 ##
+## 0.8.3 ##
 2022-03-14
 
 * added: Die Token-Aktionsleiste kann nun zeitlgeich mit der Macroleiste angezeigt werden (Einstellung änderbar)
