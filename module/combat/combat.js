@@ -32,7 +32,7 @@ export default class SplittermondCombat extends Combat {
 
             let c = turns[0];
             this.current = {
-                round: this.data.round,
+                round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
                 tokenId: c ? c.data.tokenId : null
@@ -106,7 +106,8 @@ export default class SplittermondCombat extends Combat {
     }
 
     get round() {
-        return this.data.round;
+        //return this.data.round;
+        return Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999));
     }
 
     get started() {
@@ -119,7 +120,7 @@ export default class SplittermondCombat extends Combat {
 
     async nextRound() {
         //await super.nextRound();
-        return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
+        return this.update({ round: 0, turn: 0 });
     }
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
