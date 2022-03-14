@@ -56,7 +56,7 @@
     },
     {
       "name": "statuseffects",
-      "label": "Zustände",
+      "label": "ZustŠnde",
       "system": "splittermond",
       "path": "packs/status-effects.db",
       "entity": "Item",
