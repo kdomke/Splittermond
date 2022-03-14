@@ -1,3 +1,12 @@
+## 0.8.2 HOTFIX ##
+2022-03-14
+
+* added: Die Token-Aktionsleiste kann nun zeitlgeich mit der Macroleiste angezeigt werden (Einstellung änderbar)
+* added: Die Token-Aktionsleiste ist mit dem modul `custom-hotbar` kompatibel
+* fixed: Compendium-Browser Filtermöglichkeiten (Dank an Tony)
+* fixed: Das Inventar kann sortiert werden (Dank an Tony)
+
+
 ## 0.8.1 HOTFIX ##
 2022-03-01
 
