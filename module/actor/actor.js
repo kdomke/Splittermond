@@ -148,6 +148,7 @@ export default class SplittermondActor extends Actor {
 
             return item;
         })
+        data.spells.sort((a,b) => (a.sort - b.sort));
         
         data.spellsBySkill = data.spells.reduce((result, item) => {
             let skill = item.data.skill || "none";
