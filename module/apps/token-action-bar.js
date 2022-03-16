@@ -207,7 +207,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("updateToken", (scene, token, updates) => {
-        if (token._id == game.splittermond.tokenActionBar.currentActor?.token.id)
+        if (token._id == game.splittermond.tokenActionBar.currentActor?.token?.id)
             game.splittermond.tokenActionBar.update();        
     });
 
