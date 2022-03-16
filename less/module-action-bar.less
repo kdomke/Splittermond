@@ -161,9 +161,9 @@
 
     .token-action-bar-section:hover + .token-action-bar-popup,
     .token-action-bar-popup:hover {
-        max-height: calc(100vh - 270px);
+        max-height: none;
         opacity: 1;
-        overflow-y: auto;
+        overflow: unset;
         border-width: 1px;
     }
 
@@ -332,6 +332,9 @@
     ul {
         display: flex;
         flex-direction: column;
+        position: static;
+        max-height: calc(100vh - 270px);
+        overflow: auto;
     }
 
     li {
@@ -381,8 +384,17 @@
     .tooltip,
     .token-action-bar-section {
         background-color: rgba(0,0,0,0.5);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        &:before {
+            content: "";
+            z-index: -1;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
     }
 }
 }
