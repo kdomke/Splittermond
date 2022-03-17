@@ -37,7 +37,7 @@ export default class TickBarHud extends Application {
         let tick = $(event.currentTarget).closestData('tick');
         let data = JSON.parse(event.dataTransfer.getData("text/plain"));
 
-        if (tick && data.type=="Combatant") {
+        if (tick != undefined && data.type=="Combatant") {
             let combatant = this.viewed.combatants.get(data.combatantId);
             if (combatant && combatant.isOwner) {
                 if (combatant.initiative === 20000) {
@@ -48,8 +48,6 @@ export default class TickBarHud extends Application {
                 
             }
             
-        } else {
-
         }
     }
 
