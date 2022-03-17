@@ -31,7 +31,7 @@ export default class SplittermondCombatTracker extends CombatTracker {
         let hasDecimals = false;
         const turns = [];
         for ( let [i, combatant] of combat.turns.entries() ) {
-            if ( !combatant.isVisible ) continue;
+            if ( !combatant.visible ) continue;
 
             // Prepare turn data
             const resource = combatant.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER ? combatant.resource : null

@@ -21,9 +21,9 @@
             </button>
         </div>
     </div>
-    <ol class="list-body">
+    <ol class="list-body item-list">
         {{#each itemsByType.weapon}}
-        <li class="list-item draggable" data-item-id="{{this._id}}">
+        <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
                 {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
@@ -65,9 +65,9 @@
             </button>
         </div>
     </div>
-    <ol class="list-body">
+    <ol class="list-body item-list">
         {{#each itemsByType.armor}}
-        <li class="list-item draggable" data-item-id="{{this._id}}">
+        <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
                 {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
@@ -111,9 +111,9 @@
             </button>
         </div>
     </div>
-    <ol class="list-body">
+    <ol class="list-body item-list">
         {{#each itemsByType.shield}}
-        <li class="list-item draggable" data-item-id="{{this._id}}">
+        <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
                 {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
@@ -151,9 +151,9 @@
             </button>
         </div>
     </div>
-    <ol class="list-body">
+    <ol class="list-body item-list">
         {{#each itemsByType.equipment}}
-        <li class="list-item draggable" data-item-id="{{this._id}}">
+        <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
                 {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}

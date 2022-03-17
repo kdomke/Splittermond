@@ -242,8 +242,8 @@ Hooks.on('preCreateActor', (actor) => {
 Hooks.on('ready', function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
     // Patch enrichHTML function for Custom Links
     const oldEnrich = TextEditor.enrichHTML;
-    TextEditor.enrichHTML = function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
-        content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
+    TextEditor.enrichHTML = function (content, { secrets = false, documents = true, links = true, rolls = true, rollData = null } = {}) {
+        content = oldEnrich.apply(this, [content, { secrets: secrets, documents: documents, links: links, rolls: rolls, rollData: rollData }]);
 
         content = content.replace(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             if (!label) {

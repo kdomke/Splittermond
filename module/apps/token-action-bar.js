@@ -4,11 +4,11 @@ export default class TokenActionBar extends Application {
 
     constructor(options) {
         super();
-
-        this.currentToken = undefined;
         this.currentActor = undefined;
 
         this.updateTimeout = 0;
+
+        this.showHotbar = false;
      
         
     }
@@ -20,16 +20,13 @@ export default class TokenActionBar extends Application {
             id: "token-action-bar",
             popOut: false,
             minimizable: false,
-            resizable: false,
-            left: 150,
-            top: 80
+            resizable: false
         });
     }
 
     update() {
         if (this.updateTimeout) clearTimeout(this.updateTimeout);
         this.updateTimeout = setTimeout(() => {
-            console.log("Action Bar UPDATE!!!")
             if (!game.settings.get("splittermond", "showActionBar")) {
                 this.currentActor = undefined;
                 this.render(true);
@@ -43,21 +40,28 @@ export default class TokenActionBar extends Application {
             if (!this.currentActor) this.currentActor = game.actors.get(speaker.actor);
 
             if (this.currentActor == undefined) {
-                $("#hotbar").show(200);
+                $("#hotbar").parent().show(200);
+                if ($("#custom-hotbar").length > 0) {
+                    $("#custom-hotbar").attr("style", "display: flex !important");
+                }
             } else {
-                $("#hotbar").hide(200);
+                if (!game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+                    $("#hotbar").parent().hide(200);
+                    if ($("#custom-hotbar").length > 0) {
+                        $("#custom-hotbar").attr("style", "display: none !important");
+                    }
+                }
+                    
             }
             this.render(true);
         }, 100);
     }
 
     getData(options) {
-        console.log("getData()");
         const data = super.getData();
         data.id = options.id;
         
         if (this.currentActor) {
-            console.log(this.currentActor.id);
             data.name = this.currentActor.isToken ? this.currentActor.token.name : this.currentActor.name;
             data.actorId = this.currentActor.id;
             data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
@@ -85,7 +89,7 @@ export default class TokenActionBar extends Application {
                 return attack;
             });
 
-            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type)));
+            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
 
             data.spells = duplicate(this.currentActor.data.data.spellsBySkill);
 
@@ -104,14 +108,35 @@ export default class TokenActionBar extends Application {
             }
 
         }
-            
-        console.log(data);
+
         return data;
     
     }
 
     activateListeners(html) {
         console.log("activateListeners");
+        
+
+        
+        if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            let bottomPosition = Math.max($("#ui-bottom").outerHeight(), $("#hotbar").outerHeight());
+            if ($("#custom-hotbar").length) {
+                bottomPosition = Math.max($("body").outerHeight()-$("#custom-hotbar").position().top, bottomPosition);
+            }
+            $(html).css({bottom: bottomPosition});
+        } else {
+            setTimeout(() => {
+                let bottomPosition = $("#ui-bottom").outerHeight();                    
+                $(html).css({bottom: bottomPosition});
+            }, 200);
+        }
+            
+        
+
+        //if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
+            
+        //}
+
         html.find(".rollable").click(async event => {
             const type = $(event.currentTarget).closestData('roll-type');
             if (type === "skill") {
@@ -182,7 +207,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("updateToken", (scene, token, updates) => {
-        if (token._id == game.splittermond.tokenActionBar.currentActor?.token.id)
+        if (token._id == game.splittermond.tokenActionBar.currentActor?.token?.id)
             game.splittermond.tokenActionBar.update();        
     });
 

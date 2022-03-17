@@ -352,8 +352,15 @@ export default class SplittermondActorSheet extends ActorSheet {
             this.actor.activeDefenseDialog("mindresist");
         });
 
-
-
+        html.find(".item-list .item").on("dragstart", event => {
+            html.find('#tooltip').remove();
+        }).on("dragover", event => {
+            event.currentTarget.style.borderTop = "1px solid black";
+            event.currentTarget.style.borderImage = "none";
+        }).on("dragleave", event => {
+            event.currentTarget.style.borderTop = "";
+            event.currentTarget.style.borderImage = "";
+        });
 
         html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
@@ -829,7 +836,32 @@ export default class SplittermondActorSheet extends ActorSheet {
                 var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
                 if(activeCombat != null)
                 {
-                    itemData.data.startTick = parseInt(activeCombat.data.round) + parseInt(itemData.data.interval);
+                    var currentTick = activeCombat.current.round;
+                    //check if this status is already present
+                    var hasSameStatus = this.actor.items
+                        .filter(e => {
+                            return e.data.type == "statuseffect" && e.name == itemData.name && e.data.data.startTick;
+                        })
+                        .map(e => {
+                            var ticks = [];
+                            for (let index = 0; index < parseInt(e.data.data.times); index++) {                               
+                                ticks.push(parseInt(e.data.data.startTick) + (index * parseInt(e.data.data.interval)));
+                            }
+                            return {
+                                ticks: ticks.filter(f => f >= currentTick),
+                                status: e
+                            };
+                        })
+                        .filter(e => e.ticks.length > 0);
+                    if(hasSameStatus.length > 0)
+                    {
+                        //there is already an status with the same type so the new one will start always at the next tick
+                        itemData.data.startTick = hasSameStatus[0].ticks[0];
+                    }
+                    else
+                    {
+                        itemData.data.startTick = parseInt(activeCombat.data.round) + parseInt(itemData.data.interval);
+                    }                    
                     rerenderCombatTracker = true;
                 }
             }

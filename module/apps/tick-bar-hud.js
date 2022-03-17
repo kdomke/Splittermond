@@ -161,8 +161,9 @@ export default class TickBarHud extends Application {
 
             var iniData = combat.turns
                 .map(e => e.data)
-                .filter(e => e.initiative != null && e.initiative < 9999)
-                .map(e => Math.round(e.initiative));
+                .filter(e => e.initiative != null)
+                .map(e => Math.round(e.initiative))
+                .filter(e => e < 9999);
             var maxStatusEffectTick = Math.max(...virtualTokens.map(e => {
                 var ticks = e.virtualTokens.map(f => {
                     return (f.times * f.interval) + f.startTick;
@@ -268,7 +269,7 @@ export default class TickBarHud extends Application {
                             active: false,
                             img: element.img || vToken.combatant.img,
                             description: element.description,
-                            name: vToken.combatant.name + " - " + element.name + " #" + index
+                            name: `${vToken.combatant.name} - ${element.name} ${element.level} #${index}`
                         });
                     }
                 });

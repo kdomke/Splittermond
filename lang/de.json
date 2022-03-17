@@ -506,6 +506,10 @@
             "showActionBar": {
                 "name": "Token-Aktionsleiste",
                 "hint": "Aktiviert die Token-Aktionsleiste"
+            },
+            "showHotbarDuringActionBar": {
+                "name": "Macroleiste zeitgleich mit Aktionsleiste anzeigen",
+                "hint": "Ist diese Option aktiviert, wird die Macroleiste nicht ausgeblendet, wenn die Token-Aktionsleiste angezeigt wird."
             }
         }
     },
