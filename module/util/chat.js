@@ -346,21 +346,17 @@ export async function prepareStatusEffectMessage(actor, data) {
     let template = "systems/splittermond/templates/chat/status-effect.hbs";
     let templateContext = {...data,
         actions: [],
-        title: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Title", { 
-            name: data.virtualToken.name, 
-            level: data.virtualToken.level,
-            activationNo: data.activationNo
-         }),
-        description: game.i18n.format("splittermond.combatEffect.statusEffectActivated.Description", {
-            name: data.virtualToken.name, 
+        title: `${data.virtualToken.name} ${data.virtualToken.level}`,
+        subtitle: game.i18n.format("splittermond.combatEffect.statusEffectActivated.subtitle", {
             onTick: data.onTick, 
-            level: data.virtualToken.level
+            activationNo: data.activationNo,
+            maxActivation: data.virtualToken.times
         })
     };
 
     if(data.activationNo == data.virtualToken.times){
         templateContext.actions.push({
-            name: game.i18n.localize(`statusEffectActivated.RemoveStatus`),
+            name: game.i18n.localize(`splittermond.combatEffect.statusEffectActivated.remove`),
             icon: "fa-remove",
             classes: "remove-status",
             data: {

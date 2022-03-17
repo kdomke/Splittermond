@@ -59,14 +59,15 @@
         "statusEffect": "Zustand",
         "statuseffect": "Zustand",
         "combatEffect": {
-            "statusEffectActivated.Title": "Zustand {name} {level} wurde zum {activationNo}ten mal aktiviert",
-            "statusEffectActivated.Description": "<p>Der Zustand {name} {level} wurde bei tick {onTick} aktiviert.</p> <h3>Beschreibung:</h3>",
+            "statusEffectActivated": {
+                "subtitle": "in Tick {onTick} ({activationNo} von {maxActivation})",
+                "remove": "Status Effekt beenden"
+            },
             "statusEffect": {
                 "startTick": "Start tick",
                 "interval": "Auslösezeit",
                 "times": "Anzahl der Auslösungen"
-            },
-            "statusEffectActivated.RemoveStatus": "Entferne Status"
+            }
         },
         "spelleffect": "Zaubereffekt",
         "spellEffect": "Zaubereffekt",
