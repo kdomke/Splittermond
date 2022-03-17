@@ -2633,7 +2633,7 @@ ul.checkbox-list li input:checked ~ label::before {
   display: flex;
   flex-direction: column;
   position: static;
-  max-height: calc(100vh - 270px);
+  max-height: 18.6rem;
   overflow: auto;
 }
 .token-action-bar-popup li {
