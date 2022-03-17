@@ -21,7 +21,7 @@ export default class SplittermondCombatTracker extends CombatTracker {
         turns: [],
         previousId,
         nextId,
-        started: this.started,
+        started: combat?.started,
         control: false,
         settings
         };
@@ -94,15 +94,19 @@ export default class SplittermondCombatTracker extends CombatTracker {
             }
 
         });
+        /*
         if (combat?.data.round != null) {
             combat.data.round = Math.round(combat.data.round) + "";
         }
+        */
+
+        combat.data.round = combat?.round;
 
 
         // Merge update data for rendering
         return foundry.utils.mergeObject(data, {
             round: Math.round(combat.data.round) + "",
-            turn: combat.data.turn,
+            turn: combat.turn,
             turns: turns,
             control: combat.combatant?.players?.includes(game.user)
         });
