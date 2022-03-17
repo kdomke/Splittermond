@@ -48,9 +48,9 @@
                     </button>
                 </div>
             </div>
-            <ol class="list-body">
+            <ol class="list-body item-list">
                 {{#each statuseffects}}
-                <li class="list-item draggable" data-item-id="{{this._id}}">
+                <li class="list-item item" data-item-id="{{this._id}}">
                     <input class="name" type="text" data-field="name" value="{{this.name}}">
                     <div class="value">
                         <input type="text" data-field="data.level" value="{{this.data.level}}" data-dtype="Number">
@@ -76,9 +76,9 @@
                     </button>
                 </div>
             </div>
-            <ol class="list-body">
+            <ol class="list-body item-list">
                 {{#each spelleffects}}
-                <li class="list-item draggable" data-item-id="{{this._id}}">
+                <li class="list-item item" data-item-id="{{this._id}}">
                     <div>
                         <input data-field="data.active" type="checkbox" value="true" {{#if
                             this.data.active}}checked{{/if}} />
