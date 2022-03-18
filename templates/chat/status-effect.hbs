@@ -1,18 +1,15 @@
 <div class="splittermond status-effect-message">
     <header class="chat-message-header">
         {{#if virtualToken.img}}
-        <img src="{{virtualToken.img}}" title="{{title}}" width="36" height="36" />
-        {{/if}}
-        {{#if combatant.img}}
-        <img src="{{combatant.img}}" title="{{title}}" width="36" height="36" />
+        <img src="{{virtualToken.img}}"title="{{title}}" width="36" height="36" />
         {{/if}}
         <div>
-            <h2>{{&title}}</h2>
+            <h2>{{title}}</h2>
+            <span>{{subtitle}}</span>
         </div>
     </header>
     <div>
-        <p>{{&description}}</p>
-        <p>{{&virtualToken.description}}</p>
+        {{&virtualToken.description}}
     </div>
     {{#if actions}}
     <div class="actions">
