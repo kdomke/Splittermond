@@ -142,6 +142,31 @@ Hooks.once("init", function () {
     console.log("Splittermond | DONE!");
 });
 
+Hooks.on("redraw-combat-tick", async () => {
+    await game.splittermond.tickBarHud.render(false);
+
+    //yes i know this is not ideal, but ether this or an websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    const currentScene = game.scenes.current?.id || null;    
+    let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+    if(combats.length == 0)
+    {
+       return;
+    }
+    var activeCombat = combats[0]
+    if(activeCombat == null)
+    {
+        return;
+    }
+    
+    var combatant = activeCombat.data.combatants.contents[0];     
+    if(combatant == null)
+    {
+        return;
+    }       
+    
+    await game.combat.setInitiative(combatant.id, combatant.data.initiative);
+});
+
 Hooks.on("hotbarDrop", async (bar, data, slot) => {
     let macroData = {
         name: "",
@@ -479,6 +504,20 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         actor.useSplinterpointBonus(message);
     });
 
+    html.find('.remove-status').click(async event => {
+        const statusId = $(event.currentTarget).closestData('status-id');
+
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        let message = game.messages.get(chatMessageId);
+        
+        const speaker = message.data.speaker;
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        await actor.deleteEmbeddedDocuments("Item", [statusId]);
+        await Hooks.call("redraw-combat-tick");
+    });
 
 });
 

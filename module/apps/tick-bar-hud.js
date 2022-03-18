@@ -1,3 +1,5 @@
+import * as Chat from "../util/chat.js";
+
 export default class TickBarHud extends Application {
     constructor(options) {
         super(options);
@@ -10,11 +12,12 @@ export default class TickBarHud extends Application {
         this.viewed = null;
         this.viewedTick = null;
         this.currentTick = null;
+        this.lastStatusTick = null;
         this.maxTick = null;
+        this.minTick = null;
         this._dragOverTimeout = 0;
         this.render(true);
     }
-
 
     get combats() {
         const currentScene = game.scenes.current?.id || null;
@@ -22,8 +25,15 @@ export default class TickBarHud extends Application {
     }
 
     _onDragStart(event) {
+        var element = $(event.currentTarget);
+        if(element.closestData("is-status") == true)
+        {            
+            event.dataTransfer.effectAllowed = "none";
+            return;
+        }
+
         event.dataTransfer.effectAllowed = "move"
-        let combatantId = $(event.currentTarget).closestData('combatant-id');
+        let combatantId = element.closestData('combatant-id');
         event.dataTransfer.setData("text/plain", JSON.stringify({
             type: "Combatant",
             combatantId: combatantId,
@@ -138,6 +148,37 @@ export default class TickBarHud extends Application {
 
             if (this.viewedTick < this.currentTick) {
                 this.viewedTick = this.currentTick
+            } 
+
+            var virtualTokens = combat.combatants.contents.map(e => {
+                return {
+                    combatant: e,
+                    virtualTokens: e.actor.getVirtualStatusTokens() || [],                    
+                }
+            });
+
+            var iniData = combat.turns
+                .map(e => e.data)
+                .filter(e => e.initiative != null)
+                .map(e => Math.round(e.initiative))
+                .filter(e => e < 9999);
+            var maxStatusEffectTick = Math.max(...virtualTokens.map(e => {
+                var ticks = e.virtualTokens.map(f => {
+                    return (f.times * f.interval) + f.startTick;
+                });
+                return Math.max(...ticks)
+            }));
+
+            var lastTick = this.minTick;
+            this.maxTick = Math.max(Math.max(...iniData, maxStatusEffectTick) + 25, 50);
+            this.minTick = Math.min(...iniData);
+            for (let tickNumber = this.minTick; tickNumber <= this.maxTick; tickNumber++) {
+                data.ticks.push({
+                    tickNumber: tickNumber,
+                    isCurrentTick: this.currentTick == tickNumber,
+                    combatants: [],
+                    statusEffects: []
+                });                         
             }
 
             for ( let [i, c] of combat.turns.entries() ) {
@@ -175,22 +216,10 @@ export default class TickBarHud extends Application {
                     
                     continue;
                 };
-                
-                while (!data.ticks.length || data.ticks[data.ticks.length-1]?.tickNumber < Math.round(c.initiative)) {
-                    let tickNumber = !data.ticks.length || Math.round(c.initiative) > 9999 ? Math.round(c.initiative) : data.ticks[data.ticks.length-1].tickNumber+1;
-                    data.ticks.push({
-                        tickNumber: tickNumber,
-                        isCurrentTick: this.currentTick == tickNumber,
-                        combatants: [],
-                    });
-                    
-                }
 
-                if ( !c.visible) continue;
+                if ( !c.isVisible) continue;  
                 
-
-                
-                data.ticks[data.ticks.length-1].combatants.push({
+                data.ticks.find(t => t.tickNumber == Math.round(c.initiative)).combatants.push({
                     id: c.id,
                     name: c.name,
                     img: c.img,
@@ -200,27 +229,56 @@ export default class TickBarHud extends Application {
                     hidden: c.hidden,
                     initiative: c.initiative,
                     hasRolled: c.initiative !== null
-                });
-                
-            }
-
-            if (data.ticks.length>0) {
-                let lastTick = data.ticks[data.ticks.length-1].tickNumber;
-
-                this.maxTick = Math.min(lastTick + 50,9999);
-
-                while (!data.ticks.length || data.ticks[data.ticks.length-1]?.tickNumber < this.maxTick) {
-                    let tickNumber = data.ticks[data.ticks.length-1].tickNumber+1;
-                    data.ticks.push({
-                        tickNumber: tickNumber,
-                        isCurrentTick: this.currentTick == tickNumber,
-                        combatants: [],
-                    });
-                    
-                }
-            }
+                });                
+            }   
             
+            var activatedStatusTokens = [];
+
+            virtualTokens.forEach(vToken => {                
+                vToken.virtualTokens.forEach(element => {  
+                    for (let index = 0; index < element.times; index++) {
+                        const onTick = (index * element.interval) + element.startTick;
+                        if(onTick <= this.minTick)
+                        {
+                            if(this.lastStatusTick != null && 
+                                lastTick <= onTick && 
+                                this.lastStatusTick != this.currentTick &&
+                                this.lastStatusTick != onTick &&
+                                vToken.combatant.isOwner)
+                            {
+                                //this effect was activated in between the last tick and the current tick or we just got to that tick
+                                activatedStatusTokens.push({
+                                    onTick,
+                                    virtualToken: element,
+                                    combatant: vToken.combatant,
+                                    activationNo: index + 1,
+                                    ownerId: vToken.combatant.id,
+                                    statusId: vToken.statusId
+                                })
+                            }
+                            if(onTick < this.minTick)
+                            {
+                                continue;
+                            }                            
+                        }
+                        data.ticks.find(t => t.tickNumber == onTick).statusEffects.push({
+                            id: vToken.combatant.id,
+                            owner: vToken.combatant.owner,
+                            active: false,
+                            img: element.img || vToken.combatant.img,
+                            description: element.description,
+                            name: `${vToken.combatant.name} - ${element.name} ${element.level} #${index}`
+                        });
+                    }
+                });
+            });
+            for (let index = 0; index < activatedStatusTokens.length; index++) {
+                const element = activatedStatusTokens[index];
+                ChatMessage.create(await Chat.prepareStatusEffectMessage(element.combatant.actor, element));
+            }
         }
+
+        this.lastStatusTick = this.currentTick;
 
         return data;
     }

@@ -58,6 +58,17 @@
         "statusEffects": "Zustände",
         "statusEffect": "Zustand",
         "statuseffect": "Zustand",
+        "combatEffect": {
+            "statusEffectActivated": {
+                "subtitle": "in Tick {onTick} ({activationNo} von {maxActivation})",
+                "remove": "Status Effekt beenden"
+            },
+            "statusEffect": {
+                "startTick": "Start tick",
+                "interval": "Auslösezeit",
+                "times": "Anzahl der Auslösungen"
+            }
+        },
         "spelleffect": "Zaubereffekt",
         "spellEffect": "Zaubereffekt",
         "spellEffects": "Zaubereffekte",

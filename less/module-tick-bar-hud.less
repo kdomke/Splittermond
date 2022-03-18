@@ -63,7 +63,7 @@
 }
 
 .tick-bar-hud-tick {
-    
+    position: relative;
     
     &:not(:last-child) {
         margin-right: 8px;
@@ -122,10 +122,25 @@
     padding: 8px;
     width: 100%;
     align-items: center;
+    z-index: 1;
+}
+
+.tick-bar-hud-status-effect-list {
+    position: absolute;
+    right: -8px;
+    top:0px;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0px;
+    gap: 4px;
+    width: 24px;
+    align-items: center;
+    z-index:10;
 }
     
 
-.tick-bar-hud-combatant-list-item {
+.tick-bar-hud-combatant-list-item  {
     display: flex;
     flex-direction: column;
     align-items: center;
