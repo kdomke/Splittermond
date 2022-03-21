@@ -1,0 +1,23 @@
+<div class="splittermond status-effect-message">
+    <header class="chat-message-header">
+        {{#if virtualToken.img}}
+        <img src="{{virtualToken.img}}"title="{{title}}" width="36" height="36" />
+        {{/if}}
+        <div>
+            <h2>{{title}}</h2>
+            <span>{{subtitle}}</span>
+        </div>
+    </header>
+    <div>
+        {{&virtualToken.description}}
+    </div>
+    {{#if actions}}
+    <div class="actions">
+        <h3>{{localize "splittermond.furtherActions"}}</h3>
+        {{#each actions}}
+        <button class="{{this.classes}}" {{#each this.data}}data-{{@key}}="{{this}}" {{/each}}><i
+                class="fas {{this.icon}}"></i> {{this.name}}</button>
+        {{/each}}
+    </div>
+    {{/if}}
+</div>

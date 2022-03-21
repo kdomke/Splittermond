@@ -6,6 +6,13 @@
         {{#each ticks}}
             <div class="tick-bar-hud-tick" data-tick="{{tickNumber}}">
                 <div class="tick-bar-hud-tick-number {{#if isCurrentTick}} current-tick{{/if}}"><span>{{tickNumber}}</span></div>
+                <div class="tick-bar-hud-status-effect-list">
+                    {{#each statusEffects}}
+                        <div class="tick-bar-hud-status-effect-list-item">
+                            <img class="token-image" width="24" height="24" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
+                </div>
                 <div class="tick-bar-hud-combatant-list">
                     {{#each combatants}}
                         <div class="tick-bar-hud-combatant-list-item {{#if active}} active{{/if}}" data-combatant-id="{{this.id}}">
@@ -13,6 +20,7 @@
                         </div>
                     {{/each}}
                 </div>
+                
             </div>
         {{/each}}
         </div>

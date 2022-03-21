@@ -190,9 +190,10 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
 
-        html.find('[data-action="delete-item"]').click(event => {
+        html.find('[data-action="delete-item"]').click(async event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+            await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+            await Hooks.call("redraw-combat-tick");
         });
 
         html.find('[data-action="edit-item"]').click(event => {
@@ -824,8 +825,53 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             }
         }
+        
+        var rerenderCombatTracker = false;
+        if(itemData.type === "statuseffect")
+        {
+            const currentScene = game.scenes.current?.id || null;
+            let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+            if(combats.length > 0)
+            {
+                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
+                if(activeCombat != null)
+                {
+                    var currentTick = activeCombat.current.round;
+                    //check if this status is already present
+                    var hasSameStatus = this.actor.items
+                        .filter(e => {
+                            return e.data.type == "statuseffect" && e.name == itemData.name && e.data.data.startTick;
+                        })
+                        .map(e => {
+                            var ticks = [];
+                            for (let index = 0; index < parseInt(e.data.data.times); index++) {                               
+                                ticks.push(parseInt(e.data.data.startTick) + (index * parseInt(e.data.data.interval)));
+                            }
+                            return {
+                                ticks: ticks.filter(f => f >= currentTick),
+                                status: e
+                            };
+                        })
+                        .filter(e => e.ticks.length > 0);
+                    if(hasSameStatus.length > 0)
+                    {
+                        //there is already an status with the same type so the new one will start always at the next tick
+                        itemData.data.startTick = hasSameStatus[0].ticks[0];
+                    }
+                    else
+                    {
+                        itemData.data.startTick = parseInt(activeCombat.data.round) + parseInt(itemData.data.interval);
+                    }                    
+                    rerenderCombatTracker = true;
+                }
+            }
+        }
 
-        return super._onDropItemCreate(itemData);
+        await super._onDropItemCreate(itemData);
+        if(rerenderCombatTracker)
+        {
+            Hooks.call("redraw-combat-tick");
+        }
     }
 
 

@@ -1,3 +1,12 @@
+## 0.8.4 ##
+2022-03-21
+
+* added: Statuseffekte (wie Brennend) tauchen nun als Token in der Tickleiste auf. Der Regeltext wird bei entsprechender Aktivierung im Chat eingeblendet. Die Statuseffekte wurden im entsprechenden Kompendium für dieses Feature vorbereitet. (Dank geht an Jean-Pierre)
+* added: Kompatibilität der Token-Aktionsleiste mit `minimal-ui`.
+* added: Die max. Höhe der Zauber/Fertigkeitslister der Token-Aktionsleiste wurde eingeschränkt und eine Scrollbar hinzugefügt.
+* fixed: negative Initiative erzeugt im Combat-Tracker keinen Fehler mehr.
+* fixed: Token konnten nicht per Drag-and-Drop auf Tick 0 gezogen werden.
+
 ## 0.8.3 ##
 2022-03-14
 

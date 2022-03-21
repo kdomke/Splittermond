@@ -119,7 +119,7 @@ export default class TokenActionBar extends Application {
 
         
         if (game.settings.get("splittermond", "showHotbarDuringActionBar")) {
-            let bottomPosition = $("#ui-bottom").outerHeight();
+            let bottomPosition = Math.max($("#ui-bottom").outerHeight(), $("#hotbar").outerHeight());
             if ($("#custom-hotbar").length) {
                 bottomPosition = Math.max($("body").outerHeight()-$("#custom-hotbar").position().top, bottomPosition);
             }
@@ -207,7 +207,7 @@ Hooks.on("ready", () => {
     });
 
     Hooks.on("updateToken", (scene, token, updates) => {
-        if (token._id == game.splittermond.tokenActionBar.currentActor?.token.id)
+        if (token._id == game.splittermond.tokenActionBar.currentActor?.token?.id)
             game.splittermond.tokenActionBar.update();        
     });
 

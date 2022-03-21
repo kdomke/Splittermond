@@ -341,3 +341,38 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
     return checkMessageData;
 }
+
+export async function prepareStatusEffectMessage(actor, data) {   
+    let template = "systems/splittermond/templates/chat/status-effect.hbs";
+    let templateContext = {...data,
+        actions: [],
+        title: `${data.virtualToken.name} ${data.virtualToken.level}`,
+        subtitle: game.i18n.format("splittermond.combatEffect.statusEffectActivated.subtitle", {
+            onTick: data.onTick, 
+            activationNo: data.activationNo,
+            maxActivation: data.virtualToken.times
+        })
+    };
+
+    if(data.activationNo == data.virtualToken.times){
+        templateContext.actions.push({
+            name: game.i18n.localize(`splittermond.combatEffect.statusEffectActivated.remove`),
+            icon: "fa-remove",
+            classes: "remove-status",
+            data: {
+                "status-id": data.virtualToken.statusId
+            }
+        });
+    }
+
+    //TODO add actions based on the status effect to allow per-button execution for effect
+
+    let statusEffectData = {
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor: actor }),
+        content: await renderTemplate(template, templateContext),
+        sound: CONFIG.sounds.notification,
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+    };
+    return statusEffectData;
+}

@@ -2095,6 +2095,9 @@ li.taglist-item:hover .taglist-item-actions {
   padding-left: 0px;
   padding-right: 0px;
 }
+.tick-bar-hud-tick {
+  position: relative;
+}
 .tick-bar-hud-tick:not(:last-child) {
   margin-right: 8px;
 }
@@ -2142,6 +2145,20 @@ li.taglist-item:hover .taglist-item-actions {
   padding: 8px;
   width: 100%;
   align-items: center;
+  z-index: 1;
+}
+.tick-bar-hud-status-effect-list {
+  position: absolute;
+  right: -8px;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0px;
+  gap: 4px;
+  width: 24px;
+  align-items: center;
+  z-index: 10;
 }
 .tick-bar-hud-combatant-list-item {
   display: flex;
@@ -2169,28 +2186,34 @@ li.taglist-item:hover .taglist-item-actions {
   border: none;
 }
 .splittermond.check,
-.splittermond.damage {
+.splittermond.damage,
+.splittermond.status-effect-message {
   flex-direction: column;
 }
 .splittermond.check header,
-.splittermond.damage header {
+.splittermond.damage header,
+.splittermond.status-effect-message header {
   padding: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 .splittermond.check header img,
-.splittermond.damage header img {
+.splittermond.damage header img,
+.splittermond.status-effect-message header img {
   margin-right: 7px;
 }
 .splittermond.check .roll-type,
 .splittermond.damage .roll-type,
+.splittermond.status-effect-message .roll-type,
 .splittermond.check .difficulty,
-.splittermond.damage .difficulty {
+.splittermond.damage .difficulty,
+.splittermond.status-effect-message .difficulty {
   font-weight: bold;
 }
 .splittermond.check .roll-total,
-.splittermond.damage .roll-total {
+.splittermond.damage .roll-total,
+.splittermond.status-effect-message .roll-total {
   display: block;
   text-align: center;
   font-size: 20px;
@@ -2206,7 +2229,8 @@ li.taglist-item:hover .taglist-item-actions {
   border-image: linear-gradient(to right, transparent, rgba(var(--color-text-secondary_rgb), 0.3), transparent) 100% 0 100% 0;
 }
 .splittermond.check .degree-of-success,
-.splittermond.damage .degree-of-success {
+.splittermond.damage .degree-of-success,
+.splittermond.status-effect-message .degree-of-success {
   display: block;
   text-align: center;
   line-height: 24px;
@@ -2215,50 +2239,60 @@ li.taglist-item:hover .taglist-item-actions {
   font-variant-numeric: lining-nums;
 }
 .splittermond.check .degree-of-success .stars,
-.splittermond.damage .degree-of-success .stars {
+.splittermond.damage .degree-of-success .stars,
+.splittermond.status-effect-message .degree-of-success .stars {
   color: #FFB800;
   text-shadow: 0px 0px 10px #FFEFC7;
 }
 .splittermond.check.fumble .roll-total,
-.splittermond.damage.fumble .roll-total {
+.splittermond.damage.fumble .roll-total,
+.splittermond.status-effect-message.fumble .roll-total {
   border-image: linear-gradient(to right, transparent, rgba(var(--color-fail_rgb), 0.3), transparent) 100% 0 100% 0;
   background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(var(--color-fail_rgb), 0.15) 50%, rgba(255, 255, 255, 0) 100%);
 }
 .splittermond.check.success .degree-of-success,
 .splittermond.damage.success .degree-of-success,
+.splittermond.status-effect-message.success .degree-of-success,
 .splittermond.check.success .roll-total,
-.splittermond.damage.success .roll-total {
+.splittermond.damage.success .roll-total,
+.splittermond.status-effect-message.success .roll-total {
   color: var(--color-success);
 }
 .splittermond.check.critical .roll-total,
-.splittermond.damage.critical .roll-total {
+.splittermond.damage.critical .roll-total,
+.splittermond.status-effect-message.critical .roll-total {
   border-image: linear-gradient(to right, transparent, rgba(var(--color-success_rgb), 0.3), transparent) 100% 0 100% 0;
   background: linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgba(var(--color-success_rgb), 0.15) 50%, rgba(255, 255, 255, 0) 100%);
 }
 .splittermond.check .actions,
-.splittermond.damage .actions {
+.splittermond.damage .actions,
+.splittermond.status-effect-message .actions {
   display: flex;
   flex-direction: column;
 }
 .splittermond.check h2,
-.splittermond.damage h2 {
+.splittermond.damage h2,
+.splittermond.status-effect-message h2 {
   font-size: 18px;
   margin-bottom: 0;
 }
 .splittermond.check h3,
-.splittermond.damage h3 {
+.splittermond.damage h3,
+.splittermond.status-effect-message h3 {
   font-size: 14px;
   font-family: "Vollkorn";
   font-weight: bold;
 }
 .splittermond.check h3::first-letter,
-.splittermond.damage h3::first-letter {
+.splittermond.damage h3::first-letter,
+.splittermond.status-effect-message h3::first-letter {
   font-size: inherit;
   line-height: inherit;
   vertical-align: inherit;
 }
 .splittermond.check ul.features,
-.splittermond.damage ul.features {
+.splittermond.damage ul.features,
+.splittermond.status-effect-message ul.features {
   display: inline-block;
   margin: 0;
   padding: 0;
@@ -2267,7 +2301,8 @@ li.taglist-item:hover .taglist-item-actions {
   font-size: 12px;
 }
 .splittermond.check ul.features li,
-.splittermond.damage ul.features li {
+.splittermond.damage ul.features li,
+.splittermond.status-effect-message ul.features li {
   display: inline-block;
   margin-right: 3px;
   margin-bottom: 3px;
@@ -2277,7 +2312,8 @@ li.taglist-item:hover .taglist-item-actions {
   border-radius: 3px;
 }
 .splittermond.check ul.features li.active,
-.splittermond.damage ul.features li.active {
+.splittermond.damage ul.features li.active,
+.splittermond.status-effect-message ul.features li.active {
   background-color: var(--color-primary);
   color: white;
 }
@@ -2496,9 +2532,9 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-skills .token-action-bar-popup:hover,
 .token-action-bar-attacks .token-action-bar-popup:hover,
 .token-action-bar-spells .token-action-bar-popup:hover {
-  max-height: calc(100vh - 270px);
+  max-height: none;
   opacity: 1;
-  overflow-y: auto;
+  overflow: unset;
   border-width: 1px;
 }
 .token-action-bar-defense ul,
@@ -2632,6 +2668,9 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-popup ul {
   display: flex;
   flex-direction: column;
+  position: static;
+  max-height: 18.6rem;
+  overflow: auto;
 }
 .token-action-bar-popup li {
   list-style-type: none;
@@ -2673,6 +2712,20 @@ ul.checkbox-list li input:checked ~ label::before {
   .token-action-bar .token-action-bar-section,
   .token-action-bar #tooltip {
     background-color: rgba(0, 0, 0, 0.5);
+  }
+  .token-action-bar .token-action-bar-char-stats:before,
+  .token-action-bar .token-action-bar-name:before,
+  .token-action-bar .token-action-bar-popup:before,
+  .token-action-bar .tooltip:before,
+  .token-action-bar .token-action-bar-section:before,
+  .token-action-bar #tooltip:before {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
