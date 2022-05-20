@@ -1,9 +1,10 @@
 import * as Dice from "../../util/dice.js"
+import * as Costs from "../../util/costs.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
         super(...args);
-
+        this._hoverOverlays = [];
         this._hideSkills = true;
     }
 
@@ -15,12 +16,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     getData() {
         const sheetData = super.getData();
-        if (game.data.version.startsWith("0.8.")) {
-            sheetData.data = sheetData.data.data;
-        }
-
-        
-
+        sheetData.data = sheetData.data.data;
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
@@ -131,30 +127,10 @@ export default class SplittermondActorSheet extends ActorSheet {
                 return result;
             }, {});
         }
-        data.spellsBySkill = {};
-        if (data.itemsByType.spell) {
-            data.itemsByType.spell.forEach(item => {
-                let costData = this.actor._parseCostsString(item.data.costs);
-                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-                item.enoughFocus = costTotal <= data.data.focus.available.value;
-            });
-            data.spellsBySkill = data.itemsByType.spell.reduce((result, item) => {
-                let skill = item.data.skill || "none";
-                if (!(skill in result)) {
-                    result[skill] = {
-                        label: `splittermond.skillLabel.${skill}`,
-                        skillValue: data.data.skills[skill]?.value || 0,
-                        spells: []
-                    };
-                }
-                result[skill].spells.push(item);
-                return result;
-            }, {});
-        }
 
         CONFIG.splittermond.skillGroups.magic.forEach(skill => {
-            if (data.data.skills[skill].points > 0 && !(skill in data.spellsBySkill)) {
-                data.spellsBySkill[skill] = {
+            if (data.data.skills[skill].points > 0 && !(skill in data.data.spellsBySkill)) {
+                data.data.spellsBySkill[skill] = {
                     label: `splittermond.skillLabel.${skill}`,
                     skillValue: data.data.skills[skill].value,
                     spells: []
@@ -185,13 +161,13 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="inc-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value+1).change();
+            $(html).find(query).val(value + 1).change();
         });
 
         html.find('[data-action="dec-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value-1).change();
+            $(html).find(query).val(value - 1).change();
         });
 
         html.find('[data-action="add-item"]').click(event => {
@@ -210,30 +186,25 @@ export default class SplittermondActorSheet extends ActorSheet {
                     }
                 }
             }
-            return this.actor.createOwnedItem(itemData, { renderSheet: renderSheet });
+            return this.actor.createEmbeddedDocuments("Item", [itemData], { renderSheet: renderSheet });
         });
 
 
-        html.find('[data-action="delete-item"]').click(event => {
+        html.find('[data-action="delete-item"]').click(async event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            this.actor.deleteOwnedItem(itemId);
+            await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+            await Hooks.call("redraw-combat-tick");
         });
 
         html.find('[data-action="edit-item"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            this.actor.getOwnedItem(itemId).sheet.render(true);
+            this.actor.items.get(itemId).sheet.render(true);
         });
 
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            if (game.data.version.startsWith("0.8.")) {
-                const item = this.actor.items.get(itemId);
-                item.update({ "data.equipped": !item.data.data.equipped });
-            } else {
-                const item = this.actor.getOwnedItem(itemId);
-                item.update({ "data.equipped": !item.data.data.equipped });
-            }
-
+            const item = this.actor.items.get(itemId);
+            item.update({ "data.equipped": !item.data.data.equipped });
         });
 
         html.find('[data-field]').change(event => {
@@ -244,7 +215,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             const itemId = $(event.currentTarget).closestData('item-id');
             const field = element.dataset.field;
-            this.actor.getOwnedItem(itemId).update({ [field]: value });
+            this.actor.items.get(itemId).update({ [field]: value });
         });
 
         html.find('[data-array-field]').change(event => {
@@ -327,7 +298,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
             if (type === "spell") {
                 const itemId = $(event.currentTarget).closestData('item-id');
-                this.actor.rollSpell(this.actor.data.items.find(el => el._id === itemId));
+                this.actor.rollSpell(itemId);
             }
 
             if (type === "damage") {
@@ -360,13 +331,44 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
         })
 
+        html.find(".derived-attribute#defense label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+
+            this.actor.activeDefenseDialog("defense");
+        });
+
+        html.find(".derived-attribute#bodyresist label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+
+            this.actor.activeDefenseDialog("bodyresist");
+        });
+
+        html.find(".derived-attribute#mindresist label").click(event => {
+            event.preventDefault();
+            event.stopPropagation()
+
+            this.actor.activeDefenseDialog("mindresist");
+        });
+
+        html.find(".item-list .item").on("dragstart", event => {
+            html.find('#tooltip').remove();
+        }).on("dragover", event => {
+            event.currentTarget.style.borderTop = "1px solid black";
+            event.currentTarget.style.borderImage = "none";
+        }).on("dragleave", event => {
+            event.currentTarget.style.borderTop = "";
+            event.currentTarget.style.borderImage = "";
+        });
+
         html.find(".draggable").on("dragstart", event => {
             const attackId = event.currentTarget.dataset.attackId;
             if (attackId) {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "attack",
                     attackId: attackId,
-                    actorId: this.actor._id
+                    actorId: this.actor.id
                 }));
                 event.stopPropagation();
                 return;
@@ -378,7 +380,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "skill",
                     skill: skill,
-                    actorId: this.actor_id
+                    actorId: this.actor.id
                 }));
                 event.stopPropagation();
                 return;
@@ -386,7 +388,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
+                const itemData = this.actor.data.items.find(el => el.id === itemId)?.data;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,
@@ -407,7 +409,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 display: "none"
             }
             if (itemId) {
-                const itemData = game.data.version.startsWith("0.8.") ? this.actor.data.items.find(el => el._id === itemId)?.data : this.actor.data.items.find(el => el._id === itemId);
+                const itemData = this.actor.data.items.find(el => el.id === itemId)?.data;
 
                 if (itemData.data.description) {
                     content = TextEditor.enrichHTML(itemData.data.description);
@@ -459,6 +461,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 if (masteryList.html()) {
                     let posLeft = masteryList.offset().left;
+                    let posTop = $(event.currentTarget).offset().top;
+
                     let width = masteryList.outerWidth();
                     masteryList = masteryList.clone();
 
@@ -467,10 +471,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
-                        top: $(event.currentTarget).offset().top,
-                        width: width,
-                        padding: 0,
-                        border: "none"
+                        top: posTop,
+                        width: width
                     })
                     content += masteryList.wrapAll("<div />").parent().html();
                 }
@@ -613,8 +615,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                                 <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
                                 <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
                                 <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mind.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
                                 `
                             break;
                         case "bodyresist":
@@ -622,8 +624,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                                 <span class="formula-part"><span class="value">${this.actor.data.data.attributes.willpower.value}</span>
                                 <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
                                 <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.mind.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
+                                <span class="formula-part"><span class="value">${this.actor.data.data.attributes.constitution.value}</span>
+                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
                                 `
                             break;
                     }
@@ -665,6 +667,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (event.currentTarget.classList.contains("attribute") || $(event.currentTarget).closestData('attack-id') || $(event.currentTarget).closestData('defense-id')) {
                     css.left -= tooltipElement.outerWidth() / 2 - $(event.currentTarget).outerWidth() / 2;
                 }
+
                 /*
                 if (event.currentTarget.classList.contains("attribute")) {
                     css.left += $(event.currentTarget).outerWidth();
@@ -682,6 +685,17 @@ export default class SplittermondActorSheet extends ActorSheet {
             $(event.currentTarget).attr("data-action", "hide-skills");
             this.render();
         });
+
+
+        if (this._hoverOverlays) {
+            let el = html.find(this._hoverOverlays.join(", "));
+            if (el.length > 0) {
+                el.addClass("hover");
+                el.hover(function () {
+                    $(this).removeClass("hover");
+                });
+            }
+        }
 
 
         super.activateListeners(html);
@@ -811,16 +825,69 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             }
         }
+        
+        var rerenderCombatTracker = false;
+        if(itemData.type === "statuseffect")
+        {
+            const currentScene = game.scenes.current?.id || null;
+            let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+            if(combats.length > 0)
+            {
+                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
+                if(activeCombat != null)
+                {
+                    var currentTick = activeCombat.current.round;
+                    //check if this status is already present
+                    var hasSameStatus = this.actor.items
+                        .filter(e => {
+                            return e.data.type == "statuseffect" && e.name == itemData.name && e.data.data.startTick;
+                        })
+                        .map(e => {
+                            var ticks = [];
+                            for (let index = 0; index < parseInt(e.data.data.times); index++) {                               
+                                ticks.push(parseInt(e.data.data.startTick) + (index * parseInt(e.data.data.interval)));
+                            }
+                            return {
+                                ticks: ticks.filter(f => f >= currentTick),
+                                status: e
+                            };
+                        })
+                        .filter(e => e.ticks.length > 0);
+                    if(hasSameStatus.length > 0)
+                    {
+                        //there is already an status with the same type so the new one will start always at the next tick
+                        itemData.data.startTick = hasSameStatus[0].ticks[0];
+                    }
+                    else
+                    {
+                        itemData.data.startTick = parseInt(activeCombat.data.round) + parseInt(itemData.data.interval);
+                    }                    
+                    rerenderCombatTracker = true;
+                }
+            }
+        }
 
-        return super._onDropItemCreate(itemData);
+        await super._onDropItemCreate(itemData);
+        if(rerenderCombatTracker)
+        {
+            Hooks.call("redraw-combat-tick");
+        }
     }
 
 
-
-
-
-
-
+    render(force = false, options = {}) {
+        if (this.options.overlays) {
+            let html = this.element;
+            this._hoverOverlays = [];
+            for (let sel of this.options.overlays) {
+                let el = html.find(sel + ":hover");
+                if (el.length === 1) {
+                    this._hoverOverlays.push(sel);
+                }
+            }
+        }
+        return super.render(force, options);
+    }
 
 
 }

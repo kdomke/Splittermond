@@ -2,7 +2,7 @@
   "name": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.4.7",
+  "version": "0.8.4",
   "author": "Simon",
   "scripts": [],
   "esmodules": [
@@ -18,6 +18,7 @@
       "system": "splittermond",
       "path": "packs/species.db",
       "entity": "Item",
+      "type": "Item",
       "tags": [
         "species"
       ],
@@ -31,6 +32,7 @@
       "system": "splittermond",
       "path": "packs/macros.db",
       "entity": "Macro",
+      "type": "Macro",
       "tags": [
         "macros"
       ],
@@ -44,6 +46,7 @@
       "system": "splittermond",
       "path": "packs/journal-entries.db",
       "entity": "JournalEntry",
+      "type": "JournalEntry",
       "tags": [
         "journal-entry"
       ],
@@ -57,6 +60,7 @@
       "system": "splittermond",
       "path": "packs/status-effects.db",
       "entity": "Item",
+      "type": "Item",
       "tags": [
         "statuseffect"
       ],
@@ -81,10 +85,10 @@
   "gridDistance": 1,
   "gridUnits": "m",
   "initiative": "@initiative - 1d6",
-  "primaryTokenAttribute": "data.healthBar",
-  "secondaryTokenAttribute": "data.focusBar",
-  "minimumCoreVersion": "0.7.9",
-  "compatibleCoreVersion": "0.8.7",
+  "primaryTokenAttribute": "healthBar",
+  "secondaryTokenAttribute": "focusBar",
+  "minimumCoreVersion": "0.8.6",
+  "compatibleCoreVersion": "9",
   "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
   "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
   "download": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/get/main.zip"

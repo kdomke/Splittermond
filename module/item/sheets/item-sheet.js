@@ -8,17 +8,21 @@ export default class SplittermondItemSheet extends ItemSheet {
         });
     }
 
+    constructor(item, options)
+    {
+        options = options || {};
+
+        var displayProperties = CONFIG.splittermond.displayOptions.itemSheet[item.type] || CONFIG.splittermond.displayOptions.itemSheet["default"];
+        options.width = displayProperties.width;
+        options.height = displayProperties.height;
+        super(item, options);
+    }
+
     getData() {
         const data = super.getData();
-        if (game.data.version.startsWith("0.8.")) {
-            data.data = data.data.data;
-            data.itemProperties = this._getItemProperties(data.document.data);
-            data.typeLabel = "splittermond." + data.document.data.type;
-        } else {
-            data.itemProperties = this._getItemProperties(data.item);
-            data.typeLabel = "splittermond." + data.item.type;
-        }
-
+        data.data = data.data.data;
+        data.itemProperties = this._getItemProperties(data.document.data);
+        data.typeLabel = "splittermond." + data.document.data.type;
 
         return data;
     }
@@ -35,6 +39,7 @@ export default class SplittermondItemSheet extends ItemSheet {
                 }
             });
         });
+
         return sheetProperties;
     }
 

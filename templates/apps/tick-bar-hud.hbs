@@ -1,0 +1,54 @@
+<div id="tick-bar-hud" class="app tick-bar-hud">
+    {{#if ticks}}
+    <button class="tick-bar-hud-nav-btn" data-action="previous-ticks"><i class="fas fa-angle-left"></i></button>
+    <div class="tick-bar-hud-ticks">
+        <div class="tick-bar-hud-ticks-scroll">
+        {{#each ticks}}
+            <div class="tick-bar-hud-tick" data-tick="{{tickNumber}}">
+                <div class="tick-bar-hud-tick-number {{#if isCurrentTick}} current-tick{{/if}}"><span>{{tickNumber}}</span></div>
+                <div class="tick-bar-hud-status-effect-list">
+                    {{#each statusEffects}}
+                        <div class="tick-bar-hud-status-effect-list-item">
+                            <img class="token-image" width="24" height="24" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
+                </div>
+                <div class="tick-bar-hud-combatant-list">
+                    {{#each combatants}}
+                        <div class="tick-bar-hud-combatant-list-item {{#if active}} active{{/if}}" data-combatant-id="{{this.id}}">
+                            <img class="token-image" width="48" height="48" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
+                </div>
+                
+            </div>
+        {{/each}}
+        </div>
+    </div>
+    <button class="tick-bar-hud-nav-btn" data-action="next-ticks"><i class="fas fa-angle-right"></i></button>
+    {{/if}}
+    <div class="tick-bar-hud-ticks tick-bar-hud-ticks-special">
+        <div class="tick-bar-hud-ticks-no-scroll">
+            <div class="tick-bar-hud-tick tick-bar-hud-tick-special{{#unless wait}} tick-bar-hud-tick-special-no-data{{/unless}}" data-tick="10000">
+                <div class="tick-bar-hud-tick-number tick-bar-hud-tick-number-special"><span>{{localize "splittermond.wait"}}</span></div>
+                <div class="tick-bar-hud-combatant-list">
+                    {{#each wait}}
+                        <div class="tick-bar-hud-combatant-list-item{{#if active}} active{{/if}}" data-combatant-id="{{this.id}}">
+                            <img class="token-image" width="48" height="48" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="tick-bar-hud-tick tick-bar-hud-tick-special{{#unless keepReady}} tick-bar-hud-tick-special-no-data{{/unless}}" data-tick="20000">
+                <div class="tick-bar-hud-tick-number tick-bar-hud-tick-number-special"><span>{{localize "splittermond.keepReady"}}</span></div>
+                <div class="tick-bar-hud-combatant-list">
+                    {{#each keepReady}}
+                        <div class="tick-bar-hud-combatant-list-item {{#if active}} active{{/if}}" data-combatant-id="{{this.id}}">
+                            <img class="token-image" width="48" height="48" src="{{this.img}}" title="{{this.name}}"/>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

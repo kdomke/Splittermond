@@ -1,0 +1,366 @@
+.splittermond {
+    .list {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: @paddingMedium;
+        position: relative;
+        padding: 3px;
+    }
+
+    .list-actions:extend(.border-paper-small) {
+        position: absolute;
+        right: 0px;
+        opacity: 0;
+        transition: opacity 0.5s;
+
+        background: var(--background-parchment);
+        font-size: 12px;
+        display: inline-flex;
+        z-index: 100;
+
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+
+    *:hover > .list-actions {
+        opacity: 1;
+    }
+
+    .list-header, .list-item {
+        display: flex;
+        flex-direction: row;
+        min-height: 28px;
+        padding-left: 3px;
+        padding-right: 3px;
+
+        > * {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            &:first-child {
+                flex: 1;
+                justify-content: flex-start;
+                > * {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                
+            }
+        }
+
+        > img:first-child + * {
+            flex: 1;
+            justify-content: flex-start;
+            > * {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        > h3 {
+            display: inline-block;
+            margin: 0;
+
+            &:last-child {
+                text-align: center;
+            }
+        }
+    }
+
+    .list-header:extend(.border-wobbly-line) {
+        display: flex;
+        align-items: center;
+        position: sticky;
+        top: 0px;
+        z-index: 10;
+
+        background: var(--background-parchment), @image-noise;
+        background-blend-mode: multiply;
+
+        *:not(:first-child) {
+            color: rgba(var(--color-text-secondary_rgb), 0.7);
+        }
+
+    }
+
+
+
+    .list-body {
+        display: block;
+        flex-basis: 100%;
+        padding: 0;
+        margin: 0;
+        max-width: unset;
+        top: 0px;
+        left: 0px;
+    }
+
+    .list-item {
+        min-height: 28px;
+        /* border: 1px solid transparent; */
+        border: 1px solid transparent;
+        border-image: linear-gradient(to right, transparent, rgba(var(--color-text-secondary_rgb),0.3), transparent) 0 0 100% 0;
+        /*
+        &:nth-child(odd),
+        &.odd {
+            background-color: rgba(var(--color-text-secondary_rgb), 0.05);
+        }
+
+        &.even {
+            background-color: unset;
+        }
+        */
+
+
+        &:hover,
+        &.hover {
+            background: linear-gradient(to right, transparent, rgba(var(--color-primary_rgb),0.1), transparent), url(../../systems/splittermond/images/noise6.png);
+            background-blend-mode: multiply;
+        }
+
+        input {
+            align-self: center;
+        }
+        /*
+        input[type="checkbox"] {
+            width: @fontSizeNormal;
+            height: @fontSizeNormal;
+            margin-top: @paddingSmall;
+        }
+        */
+
+    }
+
+    &.dialog .list {
+        background: var(--background-parchment) fixed;
+    }
+
+    .list.spells,
+    .list.inventory,
+    .list.attack,
+    .list.active-defense {
+
+        img {
+            width: 32;
+            height: 32;
+            flex: none;
+            //margin: -@paddingSmall;
+        }
+
+        .list {
+            margin-bottom: @paddingMedium;
+        }
+
+        label {
+            flex: 1;
+            padding-left: @paddingMedium;
+        }
+
+        .qty,
+        .load,
+        .weapon-speed,
+        .tick-malus,
+        .defense-bonus,
+        .damage-reduction,
+        .handicap,
+        .range,
+        .value,
+        .difficulty {
+            width: 3em;
+            > * {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+        }
+
+        .damage,
+        .costs,
+        .cast-duration,
+        .effect-duration {
+            width: 6em;
+            > * {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .cast-duration, .damage, .weapon-speed, .costs {
+            //padding-bottom: 2px;
+            //margin-bottom: -2px;
+        }
+
+        .costs {
+            width: 9em;
+        }
+
+        .features {
+            width: 15em;
+            justify-content: flex-start;
+            //padding-left: @paddingSmall;
+            //text-align: left;
+            > * {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            font-size: @fontSizeSmall;
+        }
+        
+    }
+
+    .list-attributes {
+        .start,
+        .value,
+        .max {
+            width: 35px;
+            text-align: center;
+        }
+
+        .start,
+        .max {
+            font-weight: normal;
+            opacity: 0.7;
+        }
+    }
+
+    .list-resources {
+        .value {
+            width: 35px;
+            text-align: center;
+        }
+    }
+
+    .attributes {
+        display:grid;
+        grid-column: 1 / end;
+        grid-row: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-content: stretch;
+        padding-top: 3px;
+        align-items: center;
+        gap: 0.5em;
+
+        .attribute {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            font-weight: bold;
+
+            input {
+                font-size: @fontSizeLarge;
+                max-width: 2em;
+                width: 2em;
+                margin: 0;
+                height: auto;
+                text-align: center;
+            }
+
+            label {
+                width: auto;
+                margin-right: 3px;
+            }
+        }
+    }
+
+
+
+    .list.skills {
+        max-width: 480px;
+        position: relative;
+
+        label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-bottom: 2px;
+            margin-bottom: -2px;
+        }
+
+        .attribute,
+        .value,
+        input {
+            width: 3em;
+        }
+
+
+        .attribute {
+            text-align: center;
+            color: rgba(var(--color-text-secondary),0.5);
+            font-weight: 500;
+        }
+
+        .value,
+        input {
+            text-align: center;
+        }
+
+    }
+
+    .list.skills, .list.masteries {
+        position: relative;
+        height: 100%;
+        overflow-y: auto;
+        display: block;
+    }
+
+    .list.masteries {
+        .list-item {
+            flex-direction: column;
+            align-items: flex-start;
+
+            >* {
+                border: none;
+                justify-content: flex-start;
+            }
+
+            >label {
+                font-weight: bold;
+                z-index: 1;
+            }
+        }
+
+        &.tooltip {
+            background: none;
+            height: unset;
+            border: none;
+            overflow: unset;
+            margin:0;
+            padding:0;
+            
+            &::before:extend(.border-paper) {
+                border-image-repeat: repeat;
+                background: var(--background-parchment);
+                //content: unset;
+                //display: none;
+                margin: -3px;
+            }
+
+            .list-body {
+                border: none;
+                margin:0;
+                padding:0;
+            }
+
+            .list-item {
+                background: none;
+            }
+        }
+    }
+
+    .list-resources .list-item {
+        padding-right: 50px;
+    }
+
+    .not-available {
+        opacity: 0.5;
+    }
+
+}

@@ -13,13 +13,13 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
             scrollY: [".tab[data-tab='general']", ".tab[data-tab='spells']", ".tab[data-tab='inventory']"],
-            submitOnClose: false
+            submitOnClose: false,
+            overlays: ["#health","#focus"]
         });
     }
 
     getData() {
         const sheetData = super.getData();
-
 
         for (let [attrId, attr] of Object.entries(sheetData.data.derivedAttributes)) {
             attr.editable = true;
@@ -27,18 +27,9 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
         sheetData.data.damageReduction.editable = true;
 
-
         sheetData.data.attacks.forEach(attack => {
             attack.skill.editable = true;
         });
-
-
-        //this._prepareItems(sheetData);
-
-        //sheetData.config = CONFIG.splittermond;
-
-        console.log("getData()");
-
 
         return sheetData;
     }
@@ -48,9 +39,6 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         html.find('input[name="damageReduction"]').change(this._onChangeDamageReduction.bind(this));
 
         html.find('input[name^="data.skills"]').change(this._onChangeSkill.bind(this));
-
-        
-
 
         super.activateListeners(html);
     }
@@ -62,7 +50,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[1];
         const newValue = (value - parseInt(this.actor.data.data.derivedAttributes[attrBaseName].value || 0)) +
-            parseInt(this.actor._data.data.derivedAttributes[attrBaseName].value || 0);
+            parseInt(this.actor.data._source.data.derivedAttributes[attrBaseName].value || 0);
         this.actor.update({
             [`data.derivedAttributes.${attrBaseName}.value`]: newValue
         });
@@ -75,7 +63,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const newValue = (value - parseInt(this.actor.data.data.damageReduction.value || 0)) +
-            parseInt(this.actor._data.data.damageReduction.value || 0);
+            parseInt(this.actor.data._source.data.damageReduction.value || 0);
         this.actor.update({
             [`data.damageReduction.value`]: newValue
         });
@@ -96,13 +84,15 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
                 const newValue = (value - parseInt(skillValue)) +
                     parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
                 this.actor.update({
-                    [`data.skills.${skillBaseName}.points`]: newValue
+                    [`data.skills.${skillBaseName}.points`]: newValue,
+                    [`data.skills.${skillBaseName}.value`]: 0
                 });
             } else {
                 const newValue = (value - parseInt(this.actor.data.data.skills[skillBaseName].value || 0)) +
                     parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
                 this.actor.update({
-                    [`data.skills.${skillBaseName}.points`]: newValue
+                    [`data.skills.${skillBaseName}.points`]: newValue,
+                    [`data.skills.${skillBaseName}.value`]: 0
                 });
             }
         } else {

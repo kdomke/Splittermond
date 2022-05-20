@@ -12,6 +12,8 @@ import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
+import TickBarHud from "./module/apps/tick-bar-hud.js";
+import TokenActionBar from "./module/apps/token-action-bar.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -19,11 +21,44 @@ $.fn.closestData = function (dataName, defaultValue = "") {
     return (value) ? value : defaultValue;
 }
 
+function handlePdf(links) {
+    if(!ui.PDFoundry){
+        ui.notifications.warn(game.i18n.localize("splittermond.pdfoundry.notinstalled"))
+        return
+    }
+
+    links.split(',').forEach(link => {
+        let t = link.trim();
+        let i = t.indexOf(':');
+        let book = '';
+        let page = 0;
+
+        if (i > 0) {
+            book = t.substring(0, i).trim();
+            page = parseInt(t.substring(i + 1));
+        } else {
+            book = t.replace(/[0-9]*/g, '').trim()
+            page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
+        }
+
+        const pdf = ui.PDFoundry.findPDFDataByCode(book)
+        if (pdf) {
+            ui.PDFoundry.openPDF(pdf, {page})
+        } else {
+            ui.notifications.warn(game.i18n.localize("splittermond.pdfoundry.notfound"))
+        }
+});
+};
+
+Hooks.once("ready", function () {
+    game.splittermond.tickBarHud = new TickBarHud();
+});
+
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
-    CONFIG.Actor.entityClass = SplittermondActor;
-    CONFIG.Item.entityClass = SplittermondItem;
-    CONFIG.Combat.entityClass = SplittermondCombat;
+    CONFIG.Actor.documentClass = SplittermondActor;
+    CONFIG.Item.documentClass = SplittermondItem;
+    CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
     CONFIG.splittermond = splittermond;
 
@@ -81,10 +116,55 @@ Hooks.once("init", function () {
         return accum;
     });
 
-    document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+    
+    
+    //if (game.data.version.startsWith("0.")) {
+        document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+        /*
+        
+    } else {
+        document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+        game.keybindings.register("splittermond", "paste", {
+            name: "KEYBINDINGS.Paste",
+            restricted: true,
+            uneditable: [
+                {key: "V", modifiers: [ "CONTROL" ]}
+            ],
+            onDown: (e) => {ItemImporter.pasteEventhandler(e)},
+            reservedModifiers: [ "ALT", "SHIFT" ]
+        });
+    }
+    */
+
+    
 
 
     console.log("Splittermond | DONE!");
+});
+
+Hooks.on("redraw-combat-tick", async () => {
+    await game.splittermond.tickBarHud.render(false);
+
+    //yes i know this is not ideal, but ether this or an websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    const currentScene = game.scenes.current?.id || null;    
+    let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+    if(combats.length == 0)
+    {
+       return;
+    }
+    var activeCombat = combats[0]
+    if(activeCombat == null)
+    {
+        return;
+    }
+    
+    var combatant = activeCombat.data.combatants.contents[0];     
+    if(combatant == null)
+    {
+        return;
+    }       
+    
+    await game.combat.setInitiative(combatant.id, combatant.data.initiative);
 });
 
 Hooks.on("hotbarDrop", async (bar, data, slot) => {
@@ -153,26 +233,17 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
 
 Hooks.on('preCreateActor', (actor) => {
     if (actor.type === 'character') {
-        if (game.data.version.startsWith("0.8.")) {
-            actor.data.token.vision = true;
-            actor.data.token.actorLink = true;
-            actor.data.token.name = actor.name;
-        } else {
-            actor.token = {
-                vision: true,
-                actorLink: true,
-                name: actor.name
-            };
-        }
-
+        actor.data.token.vision = true;
+        actor.data.token.actorLink = true;
+        actor.data.token.name = actor.name;
     }
 });
 
 Hooks.on('ready', function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
     // Patch enrichHTML function for Custom Links
     const oldEnrich = TextEditor.enrichHTML;
-    TextEditor.enrichHTML = function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
-        content = oldEnrich.apply(this, [content, { secrets: secrets, entities: entities, links: links, rolls: rolls, rollData: rollData }]);
+    TextEditor.enrichHTML = function (content, { secrets = false, documents = true, links = true, rolls = true, rollData = null } = {}) {
+        content = oldEnrich.apply(this, [content, { secrets: secrets, documents: documents, links: links, rolls: rolls, rollData: rollData }]);
 
         content = content.replace(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             if (!label) {
@@ -237,6 +308,21 @@ Hooks.on('ready', function (content, { secrets = false, entities = true, links =
             return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
         });
 
+        content = content.replace(/@PdfLink\[([^\]]+)\](?:\{([^}]*)\})?/g, ( match, options, label) => {
+            
+            let parsedString = options.split(",");
+            let pdfcode = parsedString[0];
+            let pdfpage = parsedString[1];
+            
+            if (!label) {
+                label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
+            }
+
+            return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-file-pdf"></i> ${label}</a>`;
+
+
+        });
+
         return content;
     };
 })
@@ -268,7 +354,17 @@ function commonEventHandler(app, html, data) {
 
     });
 
-    
+    html.find(".pdflink").click(event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let pdfcode = $(event.currentTarget).closestData("pdfcode");
+        let pdfpage = $(event.currentTarget).closestData("pdfpage");
+
+        let pdfcodelink = pdfcode + pdfpage;
+
+        handlePdf(pdfcodelink);
+    });
 
 }
 
@@ -293,10 +389,11 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
         
         actor.addTicks(value, message);
     })
+
 });
 
 Hooks.on('renderChatMessage', function (app, html, data) {
-    let actor = game.actors.get(data.message.speaker.actor);
+    let actor = ChatMessage.getSpeakerActor(data.message.speaker);
 
     if (!game.user.isGM) {
         html.find(".gm-only").remove();
@@ -338,23 +435,13 @@ Hooks.on('renderChatMessage', function (app, html, data) {
     });
 
     html.find(".consume").click(event => {
-        
+        event.preventDefault();
+        event.stopPropagation()
         const type = $(event.currentTarget).closestData('type');
         const value = $(event.currentTarget).closestData('value');
-        if (type === "focus") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-
-        if (type === "health") {
-            event.preventDefault();
-            event.stopPropagation()
-            const description = $(event.currentTarget).closestData('description');
-            actor.consumeCost(type, value, description);
-        }
-    })
+        const description = $(event.currentTarget).closestData('description');
+        actor.consumeCost(type, value, description);
+    });
     
 
     html.find(".add-tick").click(event => {
@@ -402,6 +489,35 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         html.find(".fumble-table-result-item").not(".fumble-table-result-item-active").toggle(200);
     });
 
+    html.find(".use-splinterpoint").click(event => {
+        event.preventDefault();
+        event.stopPropagation()
+        
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        let message = game.messages.get(chatMessageId);
+        
+        const speaker = message.data.speaker;
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+        
+        actor.useSplinterpointBonus(message);
+    });
+
+    html.find('.remove-status').click(async event => {
+        const statusId = $(event.currentTarget).closestData('status-id');
+
+        let chatMessageId = $(event.currentTarget).closestData("message-id");
+        let message = game.messages.get(chatMessageId);
+        
+        const speaker = message.data.speaker;
+        let actor;
+        if (speaker.token) actor = game.actors.tokens[speaker.token];
+        if (!actor) actor = game.actors.get(speaker.actor);
+
+        await actor.deleteEmbeddedDocuments("Item", [statusId]);
+        await Hooks.call("redraw-combat-tick");
+    });
 
 });
 

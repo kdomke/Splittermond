@@ -1,0 +1,170 @@
+<div id="{{id}}" class="app token-action-bar">
+    {{#if name}}
+    <div class="token-action-bar-skills">
+        
+        <div class="token-action-bar-char-stats" data-action="open-sheet">
+            <img src="{{img}}" data-edit="img" title="{{name}}" height="128" width="128" />
+            <h1 class="token-action-bar-name">
+                {{name}}
+            </h1>
+        </div>
+        <div style="position: relative;">
+        <div class="token-action-bar-section">{{localize "splittermond.skills"}}</div>
+            <div class="token-action-bar-popup">
+                <ul data-roll-type="skill">
+                    {{#each skills.general}}
+                    <li class="rollable" data-skill="{{this.id}}"><label>{{localize this.label}}</label><div>{{this.value}}</div></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {{#if spells}}
+    <div class="token-action-bar-spells">
+        {{#if preparedSpell}}
+        <ul>
+            <li class="rollable" data-roll-type="spell" data-item-id="{{preparedSpell._id}}"  style="background-image: url({{preparedSpell.img}})"></li>
+            {{#with preparedSpell}}
+            <li class="tooltip">
+                <h3>{{this.name}}</h3>
+                <div class="skill">{{this.skillLabel}} {{this.skillValue}}</div>
+                <div class="item-stats">
+                    <div class="features">
+                        {{#each this.spellTypeList}}
+                        <div class="feature-item">{{this}}</div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{{this.data.description}}}
+
+                <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.data.enhancementCosts}}): {{this.data.enhancementDescription}}</p>
+                <div class="item-stats">
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.difficultyAbbrev"}}</label>
+                        <div>{{this.data.difficulty}}</div>
+                    </div>
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.castDurationAbbrev"}}</label>
+                        <div>{{this.data.castDuration}}</div>
+                    </div>
+                    {{#if this.data.damage}}
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.damage"}}</label>
+                        <div>{{this.data.damage}}</div>
+                    </div>
+                    {{/if}}
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.rangeAbbrev"}}</label>
+                        <div>{{this.data.range}}</div>
+                    </div>
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.focusCostsAbbrev"}}</label>
+                        <div>{{this.data.costs}}</div>
+                    </div>
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.effectDurationAbbrev"}}</label>
+                        <div>{{this.data.effectDuration}}</div>
+                    </div>
+                </div>
+            </li>
+            {{/with}}
+        </ul>
+        {{/if}}
+        <div style="position: relative;">
+            <div class="token-action-bar-section">{{localize "splittermond.spells"}}</div>
+            <div class="token-action-bar-popup">
+                <ul>
+                    {{#each spells}}
+                    <li class="spell-header">
+                        <h3>{{localize this.label}} ({{this.skillValue}})</h3>
+                        <div class="difficulty">{{localize "splittermond.difficultyAbbrev"}}</div>
+                        <div class="costs">{{localize "splittermond.focusCostsAbbrev"}}</div>
+                        <div class="cast-duration">{{localize "splittermond.castDurationAbbrev"}}</div>
+                        <div class="range">{{localize "splittermond.rangeAbbrev"}}</div>
+                        <div class="effect-duration">{{localize "splittermond.effectDurationAbbrev"}}</div>
+                    </li>
+                    {{#each this.spells}}
+                    <li class="prepare-spell {{#if this.enoughFocus}}available{{/if}}" data-spell-id="{{this._id}}">
+                        <img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" />
+                        <label>{{this.name}}</label>
+                        <div class="difficulty">{{this.data.difficulty}}</div>
+                        <div class="costs">{{this.data.costs}} ({{this.data.enhancementCosts}})</div>
+                        <div class="cast-duration">{{this.data.castDuration}}</div>
+                        <div class="range">{{this.data.range}}</div>
+                        <div class="effect-duration">{{this.data.effectDuration}}</div>
+                    </li>
+                    <li class="tooltip">
+                        <h3>{{this.name}}</h3>
+                        {{{this.data.description}}}
+                        <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.data.enhancementCosts}}): {{this.data.enhancementDescription}}</p>
+                    </li>
+                    {{/each}}
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+    <div class="token-action-bar-attacks">
+        <ul>
+            {{#each attacks}}
+            <li class="rollable" data-roll-type="attack" data-prepared="{{this.isPrepared}}" data-attack-id="{{this._id}}" style="background-image: url({{this.img}})">
+            </li>
+            <li class="tooltip">
+                <h3>{{this.name}}</h3>
+                <div class="skill">{{this.skillLabel}} {{this.skill.value}}</div>
+                <div class="item-stats">
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.weaponSpeedAbbrev"}}</label>
+                        <div>{{this.weaponSpeed}}</div>
+                    </div>
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.damage"}}</label>
+                        <div>{{this.damage}}</div>
+                    </div>
+                    <div class="item-stat">
+                        <label>{{localize "splittermond.rangeAbbrev"}}</label>
+                        <div>{{this.range}}</div>
+                    </div>
+                    <div class="features">
+                        <label>{{localize "splittermond.features"}}</label>
+                        {{#each this.featureList}}
+                        <div class="feature-item">{{this}}</div>
+                        {{/each}}
+                    </div>
+                </div>
+            </li>
+            {{/each}}
+        </ul>
+        <div style="position: relative;">
+            <div class="token-action-bar-section">{{localize "splittermond.attack"}}</div>
+            <div class="token-action-bar-popup">
+                <ul>
+                    {{#each weapons}}
+                    <li class="toggle-equipped {{#if this.data.equipped}}equipped{{/if}}" data-item-id="{{this._id}}"><img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" /><label>{{this.name}}</label></li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="token-action-bar-defense">
+        <ul>
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="defense">
+                <div>{{localize "splittermond.derivedAttribute.defense.short"}}</div>
+                <div class="value">{{derivedAttributes.defense.value}}</div>
+            </li>
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="bodyresist">
+                <div>{{localize "splittermond.derivedAttribute.bodyresist.short"}}</div>
+                <div class="value">{{derivedAttributes.bodyresist.value}}</div>
+            </li>
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="mindresist">
+                <div>{{localize "splittermond.derivedAttribute.mindresist.short"}}</div>
+                <div class="value">{{derivedAttributes.mindresist.value}}</div>
+            </li>
+        </ul>
+        <div style="position: relative;">
+            <div class="token-action-bar-section">{{localize "splittermond.activeDefense"}}</div>
+        </div>
+    </div>
+    {{/if}}
+</div>

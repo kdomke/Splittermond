@@ -152,7 +152,7 @@ splittermond.skillAttributes = {
     "swim": ["strength", "constitution"],
     "seafaring": ["agility", "constitution"],
     "streetlore": ["charisma", "intuition"],
-    "animals": ["charisma", "intuition"],
+    "animals": ["charisma", "agility"],
     "survival": ["intuition", "constitution"],
     "perception": ["intuition", "willpower"],
     "endurance": ["constitution", "willpower"],
@@ -189,6 +189,18 @@ splittermond.rollType = {
     safety: {
         label: "splittermond.rollType.safety",
         rollFormula: "2d10kh1"
+    },
+    standardGrandmaster: {
+        label: "splittermond.rollType.standardGrandmaster",
+        rollFormula: "3d10ri"
+    },
+    riskGrandmaster: {
+        label: "splittermond.rollType.riskGrandmaster",
+        rollFormula: "5d10ri"
+    },
+    safetyGrandmaster: {
+        label: "splittermond.rollType.safetyGrandmaster",
+        rollFormula: "3d10kh1"
     }
 }
 
@@ -316,6 +328,38 @@ splittermond.masterySkillsOption = {
     "none": "splittermond.skillLabel.none"
 }
 
+splittermond.displayOptions = {
+    itemSheet: {
+        default: {
+            height: 800,
+            width: 600
+        },
+        projectile: {
+            height: 200,
+            width: 600
+        },
+        strength: {
+            height: 430,
+            width: 600
+        },
+        mastery: {
+            height: 430,
+            width: 600
+        },
+        species: {
+            height: 300,
+            width: 600
+        },
+        statuseffect: {
+            height: 500,
+            width: 600
+        },
+        moonsign: {
+            height: 300,
+            width: 600
+        }
+    }
+}
 
 splittermond.itemSheetProperties = {
     species: [
@@ -366,6 +410,11 @@ splittermond.itemSheetProperties = {
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
+                },
+                {
+                    field: "data.isGrandmaster",
+                    label: "splittermond.grandmaster",
+                    template: "bool",
                 }]
         }
     ],
@@ -409,6 +458,21 @@ splittermond.itemSheetProperties = {
                 {
                     field: "data.level",
                     label: "splittermond.level",
+                    template: "input"
+                },
+                {
+                    field: "data.startTick",
+                    label: "splittermond.combatEffect.statusEffect.startTick",
+                    template: "input"
+                },
+                {
+                    field: "data.interval",
+                    label: "splittermond.combatEffect.statusEffect.interval",
+                    template: "input"
+                },
+                {
+                    field: "data.times",
+                    label: "splittermond.combatEffect.statusEffect.times",
                     template: "input"
                 },
                 {
@@ -496,6 +560,19 @@ splittermond.itemSheetProperties = {
                     label: "splittermond.quality",
                     template: "input"
                 },
+                {
+                    field: "data.modifier",
+                    label: "splittermond.modifier",
+                    template: "input",
+                    help: "splittermond.modificatorHelpText"
+                }
+            ]
+        }
+    ],
+    culturelore: [
+        {
+            groupName: "splittermond.general",
+            properties: [
                 {
                     field: "data.modifier",
                     label: "splittermond.modifier",
@@ -766,6 +843,11 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "data.enhancementDescription",
                 label: "splittermond.enhancementDescription",
+                template: "input"
+            },
+            {
+                field: "data.features",
+                label: "splittermond.features",
                 template: "input"
             }
         ]

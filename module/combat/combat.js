@@ -13,11 +13,9 @@ export default class SplittermondCombat extends Combat {
             iniA = Math.random();
             iniB = Math.random();
         }
-        if (game.data.version.startsWith("0.8.")) {
-            return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
-        }else {
-            return (iniA + (a.defeated ? 1000 : 0)) - (iniB + (b.defeated ? 1000 : 0));
-        }
+
+        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
+
     }
 
     async startCombat() {
@@ -30,39 +28,20 @@ export default class SplittermondCombat extends Combat {
     }
 
     setupTurns() {
-        if (game.data.version.startsWith("0.8.")) {
             const turns = this.combatants.contents.sort(this._sortCombatants)
 
             let c = turns[0];
             this.current = {
-                round: this.data.round,
+                round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
                 tokenId: c ? c.data.tokenId : null
             };
             return this.turns = turns;
             
-        } else {
-            
 
-            const combatants = this.data.combatants;
-            const scene = game.scenes.get(this.data.scene);
-            const players = game.users.players;
-            const settings = game.settings.get("core", Combat.CONFIG_SETTING);
 
-            const turns = combatants.map(c => this._prepareCombatant(c, scene, players, settings)).sort(this._sortCombatants);
-
-            let c = turns[0];
-            this.current = {
-                round: this.data.round,
-                turn: 0,
-                combatantId: c ? c.id : null,
-                tokenId: c ? c.tokenId : null
-            };
-            return this.turns = turns;
-        }
-
-      }
+    }
 
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
@@ -90,10 +69,7 @@ export default class SplittermondCombat extends Combat {
 
         let newInitiative = Math.round(combatant.initiative) + nTicks;
 
-
-        //await this.updateCombatant({ _id: combatant._id, "flags.relativeTickPosition": combatant.flags.relativeTickPosition })
-
-        return this.setInitiative(combatant._id, newInitiative);
+        return this.setInitiative(combatant.id, newInitiative);
     }
 
     async setInitiative(id, value, first = false) {
@@ -115,8 +91,7 @@ export default class SplittermondCombat extends Combat {
         }
 
 
-        await this.updateCombatant({
-            _id: id,
+        await this.combatants.get(id).update({
             initiative: value
         });
         await this.nextRound();
@@ -126,8 +101,13 @@ export default class SplittermondCombat extends Combat {
         return 0;
     }
 
+    get combatant() {
+        return this.turns[0];
+    }
+
     get round() {
-        return this.data.round;
+        //return this.data.round;
+        return Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999));
     }
 
     get started() {
@@ -140,7 +120,7 @@ export default class SplittermondCombat extends Combat {
 
     async nextRound() {
         //await super.nextRound();
-        return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
+        return this.update({ round: 0, turn: 0 });
     }
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {

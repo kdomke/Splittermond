@@ -7,7 +7,7 @@ export default class SplittermondCompendium {
         if (!item) {
             let possibleItems = [];
             game.packs.forEach((pack) => {
-                let temp = game.data.version.startsWith("0.8.") ? pack.index.find(i => i.type === type && i.name.startsWith(name)) : pack.index.find(i => i.name.startsWith(name));
+                let temp = pack.index.find(i => i.type === type && i.name.startsWith(name));
 
                 if (temp) {
                     temp = duplicate(temp);
@@ -25,7 +25,7 @@ export default class SplittermondCompendium {
 
             if (possibleItems.length > 0) {
                 possibleItems = await Promise.all(possibleItems.map(item => {
-                    return item.pack.getEntry(item._id);
+                    return item.pack.getDocument(item._id);
                 }));
                 item = possibleItems.find(i => i.type === type);
             }

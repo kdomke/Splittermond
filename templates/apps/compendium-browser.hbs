@@ -9,7 +9,7 @@
         <section class="tab" data-group="primary" data-tab="spell">
             <div class="filter column">
                 <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
-                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
+                    <input type="checkbox" value="true" name="show-world-items-spell" id="show-world-items-spell"><label
                         for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
                 </div>
                 <div class="row">
@@ -59,8 +59,8 @@
             <div class="filter column">
                 <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
-                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
-                        for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+                    <input type="checkbox" value="true" name="show-world-items-mastery" id="show-world-items-mastery"><label
+                        for="show-world-items-mastery">{{localize "splittermond.showWorldItems"}}</label>
                 </div>
                 <div class="row">
                     <select name="skill">
@@ -108,8 +108,8 @@
             <div class="filter column">
                 <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
-                    <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell"><label
-                        for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+                    <input type="checkbox" value="true" name="show-world-items-weapon" id="show-world-items-weapon"><label
+                        for="show-world-items-weapon">{{localize "splittermond.showWorldItems"}}</label>
                     <select name="skill">
                         {{selectOptions weaponFilter.skills selected="none" localize=true}}
                     </select>

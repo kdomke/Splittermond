@@ -1,0 +1,66 @@
+
+.splittermond {
+    .derived-attribute-list {
+        &:extend(.border-wobbly-line);
+        &:extend(.shiny-background);
+        display: flex;
+        flex-direction: row;
+        align-content: stretch;
+        flex-wrap: wrap;
+        flex-basis: 100%;
+        margin-left:-8px;
+        margin-right:-8px;
+        margin-bottom: -1px;
+
+        padding: 2px;
+        gap: 2px;
+    }
+    
+    .derived-attribute, header .damage-reduction {
+        &:extend(.border-wobbly-line);
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        flex: 1;
+
+        min-height: 26px;
+
+        
+        background: var(--background-parchment);
+    
+        label {
+            min-width: 35px;
+            //border-bottom: 1px solid transparent;
+            //border-image: linear-gradient(to right, transparent, rgba(var(--color-text-secondary_rgb), 0.3), transparent) 0 0 100% 0;
+        }
+    
+        span,
+        input {
+            width: 25px;
+            //margin-top: 2px;
+        }
+        /*
+        input {
+            margin: -@paddingSmall;
+        }
+        */
+    
+        >* {
+            text-align: center;
+        }
+    }
+
+    .derived-attribute {
+        &#defense, &#mindresist, &#bodyresist {
+            label {
+                &:extend(.splittermond a.rollable all);
+                cursor: pointer;
+            }
+            
+        }
+    }
+
+}

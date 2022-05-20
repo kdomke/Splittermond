@@ -38,9 +38,9 @@
                     aria-hidden="true"></i></button>
         </div>
     </div>
-    <ol class="list-body">
+    <ol class="list-body item-list">
         {{#each this.spells}}
-        <li class="list-item draggable {{#if this.enoughFocus}}available{{else}}not-available{{/if}}" data-item-id="{{this._id}}">
+        <li class="list-item item {{#if this.enoughFocus}}available{{else}}not-available{{/if}}" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>
                 <a class="rollable">{{localize this.name}}</a>
@@ -48,9 +48,9 @@
             <div class="difficulty">{{this.data.difficulty}}</div>
             <div class="costs" data-type="focus" data-description="{{this.name}}">
                 <a class="consume" data-value="{{this.data.costs}}">{{this.data.costs}}</a>
-                (<a class="consume" data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
+                &nbsp;(<a class="consume" data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
                     data-value="{{this.data.enhancementCosts}}">{{this.data.enhancementCosts}}</a>)
-            </div>
+            </div> 
             <div class="cast-duration">
                 <a class="add-tick" data-ticks="{{this.data.castDuration}}" data-message="{{localize "
                     splittermond.castDuration"}}: {{this.name}}">

@@ -42,11 +42,11 @@
             {{/unless}}
         </section>
         {{#unless limited}}
-        <section class="row">
-            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
-            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
+        <section class="column">
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
+            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
         </section>
         {{/unless}}
     </header>
@@ -141,13 +141,13 @@
         </section>
         <section class="tab" data-group="primary" data-tab="spells">
             <div>
-                {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
+                {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=data.spellsBySkill
                 channeledSpells=data.focus.channeled.entries}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="inventory">
             <div>
-                {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType}}
+                {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType currency=data.currency}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="status">

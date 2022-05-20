@@ -26,8 +26,8 @@ export default class SplittermondCompendiumBrowser extends Application {
         const data = super.getData();
 
         this.allItems = {};
-        const packs = game.packs.filter(p => p.entity == "Item")
-        let indexes = await Promise.all(packs.map(p => p.getContent()));
+        const packs = game.packs.filter(p => p.documentName == "Item")
+        let indexes = await Promise.all(packs.map(p => p.getDocuments()));
         indexes.forEach((index, idx) => {
             index.forEach((item, idx) => {
                 let itemData = duplicate(item.data);
@@ -123,7 +123,7 @@ export default class SplittermondCompendiumBrowser extends Application {
                 sheet.render(true);
 
             } else {
-                game.packs.get(compendium).getEntity(itemId).then(e => {
+                game.packs.get(compendium).getDocument(itemId).then(e => {
                     let sheet = e.sheet;
                     sheet = Object.values(ui.windows).find(app => app.id === sheet.id) ?? sheet;
                     if (sheet._minimized) return sheet.maximize();
@@ -152,7 +152,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             return true;
         const pack = game.packs.get(packName);
 
-        if (pack.entity === "Item") return true;
+        if (pack.documentName === "Item") return true;
         return false;
     }
 
@@ -174,12 +174,12 @@ export default class SplittermondCompendiumBrowser extends Application {
         const pack = game.packs.get(packName);
         if (!pack) {
             event.dataTransfer.setData("text/plain", JSON.stringify({
-                type: pack.entity,
+                type: pack.documentName,
                 id: li.dataset.itemId
             }));
         } else {
             event.dataTransfer.setData("text/plain", JSON.stringify({
-                type: pack.entity,
+                type: pack.documentName,
                 pack: pack.collection,
                 id: li.dataset.itemId
             }));
@@ -193,7 +193,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     _onSearchFilterSpell(html) {
         const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="spell"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="spell"] select[name="skill"]`)[0].value;
-        let filterWorldItems = html.find(`[data-tab="spell"] input[name="show-world-items"]`)[0].checked;
+        let filterWorldItems = html.find(`[data-tab="spell"] input[name="show-world-items-spell"]`)[0].checked;
         let filterSkillLevel = [
             html.find(`[data-tab="spell"] input#skill-level-spell-0`)[0].checked,
             html.find(`[data-tab="spell"] input#skill-level-spell-1`)[0].checked,
@@ -248,7 +248,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     _onSearchFilterMastery(html) {
         const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="mastery"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="mastery"] select[name="skill"]`)[0].value;
-        let filterWorldItems = html.find(`[data-tab="mastery"] input[name="show-world-items"]`)[0].checked;
+        let filterWorldItems = html.find(`[data-tab="mastery"] input[name="show-world-items-mastery"]`)[0].checked;
         let filterSkillLevel = [
             html.find(`[data-tab="mastery"] input#skill-level-mastery-1`)[0].checked,
             html.find(`[data-tab="mastery"] input#skill-level-mastery-2`)[0].checked,
@@ -263,12 +263,12 @@ export default class SplittermondCompendiumBrowser extends Application {
         let idx = 0;
         for (let li of html.find(`[data-tab="mastery"] .list > ol`)[0].children) {
             const name = li.querySelector("label").textContent;
-            let availableIn = $(li).closestData("available-in");
+            let availableIn = $(li).closestData("available-in").split(",").map(s => s.trim());
             let skill = $(li).closestData("skill");
             let skillLevel = $(li).closestData("level");
             let compendium = $(li).closestData("compendium");
 
-            let test = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
+            let test = rgx.test(name) && (!filterSkill || availableIn.includes(filterSkill) || skill === filterSkill);
 
             if (test && filterSkillLevel.includes(true)) {
                 test = test && filterSkillLevel.reduce((acc, element, idx) => {
@@ -301,7 +301,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     _onSearchFilterWeapon(html) {
         const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="weapon"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="weapon"] select[name="skill"]`)[0].value;
-        let filterWorldItems = html.find(`[data-tab="weapon"] input[name="show-world-items"]`)[0].checked;
+        let filterWorldItems = html.find(`[data-tab="weapon"] input[name="show-world-items-weapon"]`)[0].checked;
 
         //let filterSkillLevel = html.find(`[data-tab="spell"] select[name="skill"]`)[0].value;
         if (filterSkill === "none") {

@@ -1,0 +1,53 @@
+ul.checkbox-list {
+    display: block;
+    margin: 0;
+    padding: 0;
+
+    li {
+        display: inline;
+        margin: 0;
+        padding: 0;
+
+
+        input {
+            display: none;
+        }
+
+        label {
+            &:extend(.border-wobbly-line);
+            cursor: pointer;
+            display: inline-block;
+            margin-right: @paddingSmall;
+            margin-bottom: @paddingSmall;
+            margin-top: @paddingSmall;
+
+            padding: @paddingSmall;
+            white-space: nowrap;
+        }
+
+        input~label {
+            opacity: 0.7;
+
+            &::before {
+                display: inline-block;
+                font-style: normal;
+                font-variant: normal;
+                text-rendering: auto;
+                font-family: "Font Awesome 5 Free";
+                font-weight: 900;
+                font-size: 12px;
+                padding: 2px 6px 2px 2px;
+                content: "\f067";
+            }
+        }
+
+        input:checked~label {
+            opacity: 1;
+
+            &::before {
+                content: "\f00c";
+            }
+
+        }
+    }
+}

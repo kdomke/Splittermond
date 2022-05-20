@@ -1,3 +1,5 @@
+import TokenActionBar from "./apps/token-action-bar.js";
+
 export const registerSystemSettings = function () {
 
   /**
@@ -36,4 +38,54 @@ export const registerSystemSettings = function () {
       });
     }
   });
+
+  game.settings.register("splittermond", "theme", {
+    name: "splittermond.settings.theme.name",
+    hint: "splittermond.settings.theme.hint",
+    scope: "client",
+    config: true,
+    type: String,
+    choices: {           // If choices are defined, the resulting setting will be a select menu
+      "default": "splittermond.settings.theme.options.default",
+      "dark": "splittermond.settings.theme.options.dark",
+      "splittermond-blue": "splittermond.settings.theme.options.splittermond_blue",
+    },
+    default: "default",
+    onChange: theme => {
+      document.body.setAttribute("data-theme", theme);
+    }
+  });
+
+  game.settings.register("splittermond", "showActionBar", {
+    name: "splittermond.settings.showActionBar.name",
+    hint: "splittermond.settings.showActionBar.hint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: useActionBar => {
+      setTimeout(() => {
+        game.splittermond.tokenActionBar.update();
+      }, 500);
+      
+    }
+  });
+
+  game.settings.register("splittermond", "showHotbarDuringActionBar", {
+    name: "splittermond.settings.showHotbarDuringActionBar.name",
+    hint: "splittermond.settings.showHotbarDuringActionBar.hint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: useActionBar => {
+      setTimeout(() => {
+        game.splittermond.tokenActionBar.update();
+      }, 500);
+      
+    }
+  });
+
+  document.body.setAttribute("data-theme", game.settings.get("splittermond","theme"));
+  
 }

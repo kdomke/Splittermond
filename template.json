@@ -507,6 +507,7 @@
       "effectArea": "",
       "enhancementDescription": "",
       "enhancementCosts": "",
+      "features": "",
       "degreeOfSuccessOptions": {
         "castDuration": false,
         "consumedFocus": false,
@@ -523,7 +524,10 @@
         "description",
         "modifier"
       ],
-      "level": 1
+      "level": 1,
+      "startTick": 0,
+      "interval": 0,
+      "times": 0
     },
     "spelleffect": {
       "templates": [
@@ -539,6 +543,7 @@
       ],
       "availableIn": "",
       "skill": "",
+      "isGrandmaster": 0,
       "level": 1
     },
     "strength": {
@@ -619,7 +624,8 @@
     },
     "culturelore": {
       "templates": [
-        "description"
+        "description",
+        "modifier"
       ]
     }
   }

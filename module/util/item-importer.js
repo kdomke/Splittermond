@@ -4,7 +4,7 @@ export default class ItemImporter {
 
     static async _folderDialog() {
         let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder._id}">${folder.name}</option>`;
+            return `${str} <option value="${folder.id}">${folder.name}</option>`;
         }, "");
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
@@ -55,24 +55,43 @@ export default class ItemImporter {
     }
 
     static async pasteEventhandler(e) {
-        let rawData = e.clipboardData.getData("text");
+        //let rawData = e.clipboardData.getData("text");
+        let rawData = "";
+
+        if (e instanceof ClipboardEvent) {
+            rawData = e.clipboardData.getData("text");
+        } else {
+            rawData = await navigator.clipboard.readText();
+        }
         rawData = rawData.replace(/\r\n/g, "\n");
         rawData = rawData.replace(/-\n/g, "");
         rawData = rawData.replace(//g, "");
         console.log(rawData);
 
         // Check Spell
-        if (rawData.includes("Schulen:") &&
-            rawData.includes("Schwierigkeit:") &&
-            rawData.includes("Typus:") &&
-            rawData.includes("Kosten:") &&
-            rawData.includes("Zauberdauer:") &&
-            rawData.includes("Wirkung:")) {
-            this.importSpell(rawData);
+        var spellRegex = new RegExp(/^(.*)(?:\s{1}|\n)\(((?:Spruch)|(?:Ritus))\)/, "gm");
 
-            return;
+        if (rawData.match(spellRegex)) {
+            var currentExec;
+            var lastexec;
+            var indzies = [];
+            while ((currentExec = spellRegex.exec(rawData))) {
+                indzies.push({ start: lastexec?.index ?? 0, end: currentExec.index });
+                lastexec = currentExec;
+            }
+            indzies.push({ start: lastexec.index, end: currentExec?.index ?? rawData.length });
+            indzies = indzies.slice(1);
+            console.log("Found " + indzies.length + " spells:")
+            indzies.forEach(e => {
+                console.log("From: " + e.start + " to: " + e.end);
+                var spellData = rawData.substring(e.start, e.end);
+                console.log(spellData);
+                this.importSpell(spellData);
+                console.log("Imported.")
+            }); 
+            return;      
         }
-
+        
         // Check multiple Weapons
         let test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +(?:([0-9]+ [LST])(?: *\/ *[0-9]+ [LST])?) +([0-9]+) +([0-9]+) +([UGFMA]) +([0-9+\-W]+) +([0-9]+) +((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3}) +(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],? *)*|–) +(.+)/g);
         if (test) {
@@ -774,8 +793,8 @@ export default class ItemImporter {
                         let weapons = [];
                         if (weaponData) {
                             if (weaponData[1].match(/Reichw/)) {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-]+\-1?W6\s+[0-9\-–]*\s+.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-]+)\-1?W6\s+([0-9\-–]*)\s+(.*)/);
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+([\-–]+|[0-9]+|[0-9]+\s*m)+\s+[0-9]+\-1?W6\s*.*/g).map(async (weaponStr) => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([\-–]+|[0-9]+|[0-9]+\s*m)\s+([0-9\-–]*)\-1?W6\s*(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
@@ -793,8 +812,8 @@ export default class ItemImporter {
                                     return weaponData;
                                 });
                             } else {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s+.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s+(.*)/);
+                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s*.*/g).map(async (weaponStr) => {
+                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s*(.*)/);
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
