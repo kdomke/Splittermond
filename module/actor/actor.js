@@ -165,7 +165,7 @@ export default class SplittermondActor extends Actor {
 
         data.spells = duplicate(actorData.items.filter(item => item.data.type=="spell")).map((item) => {
             item.data.costs = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellCostReduction), item.data.costs);
-            item.data.enhancementCosts = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellEnhancedCostReduction), item.data.enhancementCosts);
+            item.data.enhancementCosts = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellEnhancedCostReduction), item.data.enhancementCosts, true);
 
             let costData = Costs.parseCostsString(item.data.costs);
             let costTotal = costData.channeled + costData.exhausted + costData.consumed;
