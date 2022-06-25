@@ -766,6 +766,12 @@ export default class SplittermondActor extends Actor {
                     case "focusregeneration.multiplier":
                         actorData.focusRegeneration.multiplier = parseFloat(value) * multiplier;
                         break;
+                    case "healthregeneration.bonus":
+                        actorData.healthRegeneration.bonus += parseFloat(value);
+                        break;
+                    case "focusregeneration.bonus":
+                        actorData.focusRegeneration.bonus += parseFloat(value);
+                        break;
                     case "lowerfumbleresult":
                         if (!actorData.lowerFumbleResult) {
                             actorData.lowerFumbleResult = 0;
@@ -2178,8 +2184,8 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        focusData.consumed.value = Math.max(focusData.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value, 0);
-        healthData.consumed.value = Math.max(healthData.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value, 0);
+        focusData.consumed.value = Math.max(focusData.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value - actorData.focusRegeneration.bonus, 0);
+        healthData.consumed.value = Math.max(healthData.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value - actorData.healthRegeneration.bonus, 0);
 
         return this.update({ "data.focus": focusData, "data.health": healthData });
     }
