@@ -1161,7 +1161,7 @@ export default class SplittermondActor extends Actor {
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
             let newData = {};
             let newItems = [];
-            newData.token = {};
+            
             newData.data = {};
             newData.type = "character";
             newData.effects = [];
@@ -1497,7 +1497,7 @@ export default class SplittermondActor extends Actor {
                 return this.update(newData);
 
             }
-
+            newData.token = {};
             newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
 
