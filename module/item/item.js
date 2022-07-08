@@ -1,14 +1,21 @@
 export default class SplittermondItem extends Item {
 
+    systemData() {
+        return !this.system ? this.data.data : this.system;
+    }
+
+    itemData() {
+        return !this.system ? this.data : this;
+    }
+
     prepareData() {
         super.prepareData();
 
-        const itemData = this.data;
-        const data = itemData.data;
+        const data = this.systemData();
 
         if (data.id) {
             if (!data.description) {
-                const descriptionId = `${itemData.type}.${data.id}.desc`;
+                const descriptionId = `${this.type}.${data.id}.desc`;
                 const descriptionText = game.i18n.localize(descriptionId);
                 if (descriptionId !== descriptionText) {
                     data.description = descriptionText;
@@ -19,15 +26,15 @@ export default class SplittermondItem extends Item {
                 data.modifier = CONFIG.splittermond.modifier[data.id];
             }
 
-            if (itemData.type === "spell") {
-                const enhancementDescriptionId = `${itemData.type}.${data.id}.enhan`;
+            if (this.type === "spell") {
+                const enhancementDescriptionId = `${this.type}.${data.id}.enhan`;
                 const enhancementDescriptionText = game.i18n.localize(enhancementDescriptionId);
                 if (enhancementDescriptionText !== enhancementDescriptionId) {
                     data.enhancementDescription = enhancementDescriptionText;
                 }
             }
 
-            if (itemData.type === "strength") {
+            if (this.type === "strength") {
                 if (data.level === false || data.level === true) {
                     data.multiSelectable = data.level;
                     data.level = 1;
@@ -38,15 +45,15 @@ export default class SplittermondItem extends Item {
             }
         }
 
-        if (["strength", "mastery"].includes(itemData.type)) {
+        if (["strength", "mastery"].includes(this.type)) {
             if (!data.modifier) {
-                if (CONFIG.splittermond.modifier[itemData.name.toLowerCase()]) {
-                    data.modifier = CONFIG.splittermond.modifier[itemData.name.toLowerCase()];
+                if (CONFIG.splittermond.modifier[this.name.toLowerCase()]) {
+                    data.modifier = CONFIG.splittermond.modifier[this.name.toLowerCase()];
                 }
             }
         }
 
-        if (["weapon", "shield", "armor","equipment"].includes(itemData.type)) {
+        if (["weapon", "shield", "armor","equipment"].includes(this.type)) {
             data.durability = parseInt(data.weight) + parseInt(data.hardness);
             data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
 

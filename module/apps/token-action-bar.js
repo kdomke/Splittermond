@@ -67,31 +67,31 @@ export default class TokenActionBar extends Application {
             data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
             data.skills = {
                 general: CONFIG.splittermond.skillGroups.general.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
-                (parseInt(this.currentActor.data.data.skills[skillId].points) > 0)).map((skillId) => {
-                    let data = duplicate(this.currentActor.data.data.skills[skillId]);
+                (parseInt(this.currentActor.systemData().skills[skillId].points) > 0)).map((skillId) => {
+                    let data = duplicate(this.currentActor.systemData().skills[skillId]);
                     data.id = skillId;
                     data.label = `splittermond.skillLabel.${skillId}`;
                     return data;
                 }),
                 magic: CONFIG.splittermond.skillGroups.magic.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
-                (parseInt(this.currentActor.data.data.skills[skillId].points) > 0)).map((skillId) => {
-                    let data = duplicate(this.currentActor.data.data.skills[skillId]);
+                (parseInt(this.currentActor.systemData().skills[skillId].points) > 0)).map((skillId) => {
+                    let data = duplicate(this.currentActor.systemData().skills[skillId]);
                     data.id = skillId;
                     data.label = `splittermond.skillLabel.${skillId}`;
                     return data;
                 })
             }
 
-            data.attacks = duplicate(this.currentActor.data.data.attacks).map(attack => {
+            data.attacks = duplicate(this.currentActor.systemData().attacks).map(attack => {
                 attack.isPrepared = ["longrange", "throwing"].includes(attack.skillId) ? this.currentActor.getFlag("splittermond", "preparedAttack") == attack._id : true;
                 attack.skillLabel = game.i18n.localize(`splittermond.skillLabel.${attack.skillId}`);
                 attack.featureList = attack.features?.split(",")?.map(str => str.trim());
                 return attack;
             });
 
-            data.weapons = duplicate(this.currentActor.data.items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
+            data.weapons = duplicate(this.currentActor.actorData().items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
 
-            data.spells = duplicate(this.currentActor.data.data.spellsBySkill);
+            data.spells = duplicate(this.currentActor.systemData().spellsBySkill);
 
             if (Object.keys(data.spells).length == 0) {
                 data.spells = undefined;
@@ -99,7 +99,7 @@ export default class TokenActionBar extends Application {
 
             data.preparedSpell = this.currentActor.data.items.get(this.currentActor.getFlag("splittermond", "preparedSpell"));
 
-            data.derivedAttributes = duplicate(this.currentActor.data.data.derivedAttributes);
+            data.derivedAttributes = duplicate(this.currentActor.systemData().derivedAttributes);
 
             if (data.preparedSpell){
                 data.preparedSpell = duplicate(data.preparedSpell);
@@ -152,7 +152,7 @@ export default class TokenActionBar extends Application {
                     if (success) this.currentActor.setFlag("splittermond","preparedAttack", {})
                     return;
                 }
-                let attack = this.currentActor.data.data.attacks.find(attack => attack._id == attackId);
+                let attack = this.currentActor.systemData().attacks.find(attack => attack._id == attackId);
                 this.currentActor.addTicks(attack.weaponSpeed, `${game.i18n.localize("splittermond.attack")}: ${attack.name}`);
                 this.currentActor.setFlag("splittermond", "preparedAttack", attackId);
             }
@@ -174,14 +174,14 @@ export default class TokenActionBar extends Application {
         html.find('.toggle-equipped').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.currentActor.items.get(itemId);
-            item.update({ "data.equipped": !item.data.data.equipped });
+            item.update({ "data.equipped": !item.systemData().equipped });
         });
 
         html.find('.prepare-spell').click(event => {
             const itemId = $(event.currentTarget).closestData('spell-id');
             const spell = this.currentActor.items.get(itemId);
             if (!spell) return;
-            this.currentActor.addTicks(spell.data.data.castDuration, `${game.i18n.localize("splittermond.castDuration")}: ${spell.name}`);
+            this.currentActor.addTicks(spell.systemData().castDuration, `${game.i18n.localize("splittermond.castDuration")}: ${spell.name}`);
             this.currentActor.setFlag("splittermond", "preparedSpell", itemId);
         });
 

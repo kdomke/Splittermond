@@ -20,8 +20,8 @@ export default class TickBarHud extends Application {
     }
 
     get combats() {
-        const currentScene = game.scenes.current?.id || null;
-        return game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+        const currentScene = game.scenes.current || null;
+        return game.combats.filter(c => (c.data.scene === null) || (c.scene === currentScene));
     }
 
     _onDragStart(event) {
@@ -217,7 +217,7 @@ export default class TickBarHud extends Application {
                     continue;
                 };
 
-                if ( !c.isVisible) continue;  
+                if ( !c.visible) continue;  
                 
                 data.ticks.find(t => t.tickNumber == Math.round(c.initiative)).combatants.push({
                     id: c.id,

@@ -5,11 +5,18 @@ import CheckDialog from "../apps/dialog/check-dialog.js"
 import * as Chat from "../util/chat.js";
 
 export default class SplittermondActor extends Actor {
+
+    systemData() {
+        return !this.system ? this.data.data : this.system;
+    }
+
+    actorData() {
+        return !this.system ? this.data : this;
+    }
+
     prepareData() {
         super.prepareData();
-
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         if (!data.derivedAttributes) {
             data.derivedAttributes = {};
@@ -23,7 +30,7 @@ export default class SplittermondActor extends Actor {
         }
 
         data.derivedAttributes.speed.multiplier = 1;
-        actorData.lowerFumbleResult = 0;
+        data.lowerFumbleResult = 0;
 
         if (!data.health) {
             data.health = {
@@ -84,16 +91,16 @@ export default class SplittermondActor extends Actor {
             levelMod: 0
         }
         
-        actorData.spellCostReduction = {};
-        actorData.spellEnhancedCostReduction = {};
+        data.spellCostReduction = {};
+        data.spellEnhancedCostReduction = {};
 
-        if (actorData.type === "character") {
-            actorData.focusRegeneration = {
+        if (this.type === "character") {
+            data.focusRegeneration = {
                 multiplier: 2,
                 bonus: 0
             };
 
-            actorData.healthRegeneration = {
+            data.healthRegeneration = {
                 multiplier: 2,
                 bonus: 0
             };
@@ -115,7 +122,7 @@ export default class SplittermondActor extends Actor {
             }
         }
 
-        if (actorData.type === "npc") {
+        if (this.type === "npc") {
             data.bonusCap = 6;
         }
         this._prepareAttributes();
@@ -136,7 +143,7 @@ export default class SplittermondActor extends Actor {
 
     getVirtualStatusTokens()
     {    
-        return this.data
+        return this.actorData()
             .items
             .filter(e => {
                 return e.type == "statuseffect";
@@ -160,12 +167,12 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareSpells() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
-        data.spells = duplicate(actorData.items.filter(item => item.data.type=="spell")).map((item) => {
-            item.data.costs = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellCostReduction), item.data.costs);
-            item.data.enhancementCosts = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, actorData.spellEnhancedCostReduction), item.data.enhancementCosts, true);
+        data.spells = duplicate(this.actorData().items.filter(item => item.type=="spell")).map((item) => {
+            item.data = !item.data ? item.system : item.data;
+            item.data.costs = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, data.spellCostReduction), item.data.costs);
+            item.data.enhancementCosts = Costs.calcSpellCostReduction(Costs.getReductionsBySpell(item.data, data.spellEnhancedCostReduction), item.data.enhancementCosts, true);
 
             let costData = Costs.parseCostsString(item.data.costs);
             let costTotal = costData.channeled + costData.exhausted + costData.consumed;
@@ -190,8 +197,7 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareHealthFocus() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data =this.systemData();
 
         data.health.woundMalus.levels = duplicate(CONFIG.splittermond.woundMalus[data.health.woundMalus.nbrLevels]);
         data.health.woundMalus.levels = data.health.woundMalus.levels.map(i => {
@@ -322,11 +328,10 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareAttacks() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         let attacks = [];
-        if (actorData.type === "character") {
+        if (this.type === "character") {
             attacks.push({
                 _id: "weaponless",
                 name: game.i18n.localize("splittermond.weaponless"),
@@ -344,12 +349,11 @@ export default class SplittermondActor extends Actor {
                 minAttributeMalus: 0
             });
         }
-        actorData.items.forEach(item => {
-            item = item.data
+        this.actorData().items.forEach(item => {
             if (item.type === "weapon") {
-                if (item.data.equipped && parseInt(item.data.damageLevel) <= 1) {
+                if (item.systemData().equipped && parseInt(item.systemData().damageLevel) <= 1) {
 
-                    let itemData = duplicate(item.data);
+                    let itemData = duplicate(item.systemData());
                     let minAttributeMalus = 0;
                     (item.data.minAttributes || "").split(",").forEach(aStr => {
                         let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
@@ -358,7 +362,7 @@ export default class SplittermondActor extends Actor {
                                 return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                             });
                             if (attr) {
-                                let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                                let diff = parseInt(data.attributes[attr].value) - parseInt(temp[2] || 0);
                                 if (diff < 0) {
                                     minAttributeMalus += diff;
                                     itemData.weaponSpeed -= diff;
@@ -373,7 +377,7 @@ export default class SplittermondActor extends Actor {
                     let damageLevel = parseInt(itemData.damageLevel);
 
                     attacks.push({
-                        _id: item._id,
+                        _id: item.id,
                         name: item.name,
                         img: item.img,
                         item: item,
@@ -388,11 +392,11 @@ export default class SplittermondActor extends Actor {
                         isDamaged: parseInt(damageLevel) === 1,
                         minAttributeMalus: minAttributeMalus
                     });
-                    if (item.data.secondaryAttack) {
-                        if (item.data.secondaryAttack.skill !== "" && item.data.secondaryAttack.skill !== "none") {
-                            let itemData = duplicate(item.data.secondaryAttack);
+                    if (itemData.secondaryAttack) {
+                        if (itemData.secondaryAttack.skill !== "" && itemData.secondaryAttack.skill !== "none") {
+                            let itemData = duplicate(itemData.secondaryAttack);
                             attacks.push({
-                                _id: item._id + "_secondary",
+                                _id: item.id + "_secondary",
                                 name: item.name + " (" + game.i18n.localize("splittermond.skillLabel." + itemData.skill) + ")",
                                 img: item.img,
                                 item: item,
@@ -417,7 +421,7 @@ export default class SplittermondActor extends Actor {
                 let itemData = duplicate(item.data);
                 if (itemData.equipped) {
                     attacks.push({
-                        _id: item._id,
+                        _id: item.id,
                         name: item.name,
                         img: item.img,
                         item: item,
@@ -497,7 +501,7 @@ export default class SplittermondActor extends Actor {
             name: game.i18n.localize("splittermond.skillLabel.acrobatics"),
             item: null,
             skillId: "acrobatics",
-            skill: this.data.data.skills.acrobatics,
+            skill: data.skills.acrobatics,
             features: "",
             attribute1: CONFIG.splittermond.skillAttributes["acrobatics"][0],
             attribute2: CONFIG.splittermond.skillAttributes["acrobatics"][1]
@@ -508,7 +512,7 @@ export default class SplittermondActor extends Actor {
             name: game.i18n.localize("splittermond.skillLabel.determination"),
             item: null,
             skillId: "determination",
-            skill: this.data.data.skills.determination,
+            skill: data.skills.determination,
             features: "",
             attribute1: CONFIG.splittermond.skillAttributes["determination"][0],
             attribute2: CONFIG.splittermond.skillAttributes["determination"][1]
@@ -519,43 +523,43 @@ export default class SplittermondActor extends Actor {
             name: game.i18n.localize("splittermond.skillLabel.endurance"),
             item: null,
             skillId: "endurance",
-            skill: this.data.data.skills.endurance,
+            skill: data.skills.endurance,
             features: "",
             attribute1: CONFIG.splittermond.skillAttributes["endurance"][0],
             attribute2: CONFIG.splittermond.skillAttributes["endurance"][1]
         }];
 
 
-        actorData.items.forEach(item => {
-            item = item.data
-            if (item.type === "weapon" && parseInt(item.data.damageLevel) <= 1 && item.data.equipped) {
+        this.actorData().items.forEach(item => {
+            let itemData = item.systemData();
+            if (item.type === "weapon" && parseInt(itemData.damageLevel) <= 1 && itemData.equipped) {
                 let minAttributeMalus = 0;
-                (item.data.minAttributes || "").split(",").forEach(aStr => {
+                (itemData.minAttributes || "").split(",").forEach(aStr => {
                     let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
                     if (temp) {
                         let attr = CONFIG.splittermond.attributes.find(a => {
                             return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                         });
                         if (attr) {
-                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                            let diff = parseInt(data.attributes[attr].value) - parseInt(temp[2] || 0);
                             if (diff < 0) {
                                 minAttributeMalus = diff;
                             }
                         }
                     }
                 });
-                if (["melee", "slashing", "chains", "blades", "staffs"].includes(item.data.skill)) {
-                    let skill = duplicate(data.skills[item.data.skill]);
+                if (["melee", "slashing", "chains", "blades", "staffs"].includes(itemData.skill)) {
+                    let skill = duplicate(data.skills[itemData.skill]);
                     if (!skill.mod) {
                         skill.mod = {
                             value: 0,
                             sources: [],
                         }
                     }
-                    if (parseInt(item.data.skillMod || 0) != 0) {
-                        skill.value += parseInt(item.data.skillMod || 0);
+                    if (parseInt(itemData.skillMod || 0) != 0) {
+                        skill.value += parseInt(itemData.skillMod || 0);
                         skill.mod.sources.push({
-                            value: parseInt(item.data.skillMod || 0),
+                            value: parseInt(itemData.skillMod || 0),
                             description: game.i18n.localize("splittermond.skillMod"),
                             source: "misc"
                         });
@@ -570,7 +574,7 @@ export default class SplittermondActor extends Actor {
                         });
                     }
 
-                    if (parseInt(item.data.damageLevel) == 1) {
+                    if (parseInt(itemData.damageLevel) == 1) {
                         skill.value -= 3;
                         skill.mod.sources.push({
                             value: -3,
@@ -578,10 +582,10 @@ export default class SplittermondActor extends Actor {
                             source: "misc"
                         });
                     }
-                    skill.value += parseInt(data.attributes[item.data.attribute1].value)
-                    skill.value += parseInt(data.attributes[item.data.attribute2].value)
-                    skill.baseValue += parseInt(data.attributes[item.data.attribute1].value)
-                    skill.baseValue += parseInt(data.attributes[item.data.attribute2].value)
+                    skill.value += parseInt(data.attributes[itemData.attribute1].value)
+                    skill.value += parseInt(data.attributes[itemData.attribute2].value)
+                    skill.baseValue += parseInt(data.attributes[itemData.attribute1].value)
+                    skill.baseValue += parseInt(data.attributes[itemData.attribute2].value)
                     data.activeDefense.defense.push({
                         _id: item._id,
                         name: item.name,
@@ -589,24 +593,24 @@ export default class SplittermondActor extends Actor {
                         item: item,
                         skillId: item.data.skill,
                         skill: skill,
-                        features: item.data.features,
-                        attribute1: item.data.attribute1,
-                        attribute2: item.data.attribute2
+                        features: itemData.features,
+                        attribute1: itemData.attribute1,
+                        attribute2: itemData.attribute2
                     });
 
-                    if (item.data.secondaryAttack) {
-                        if (["melee", "slashing", "chains", "blades", "staffs"].includes(item.data.secondaryAttack.skill)) {
-                            let skill = duplicate(data.skills[item.data.secondaryAttack.skill]);
+                    if (itemData.secondaryAttack) {
+                        if (["melee", "slashing", "chains", "blades", "staffs"].includes(itemData.secondaryAttack.skill)) {
+                            let skill = duplicate(data.skills[itemData.secondaryAttack.skill]);
                             if (!skill.mod) {
                                 skill.mod = {
                                     value: 0,
                                     sources: [],
                                 }
                             }
-                            if (parseInt(item.data.skillMod || 0) != 0) {
-                                skill.value += parseInt(item.data.skillMod || 0);
+                            if (parseInt(itemData.skillMod || 0) != 0) {
+                                skill.value += parseInt(itemData.skillMod || 0);
                                 skill.mod.sources.push({
-                                    value: parseInt(item.data.skillMod || 0),
+                                    value: parseInt(itemData.skillMod || 0),
                                     description: game.i18n.localize("splittermond.skillMod"),
                                     source: "misc"
                                 });
@@ -621,7 +625,7 @@ export default class SplittermondActor extends Actor {
                                 });
                             }
 
-                            if (parseInt(item.data.damageLevel) == 1) {
+                            if (parseInt(itemData.damageLevel) == 1) {
                                 skill.value -= 3;
                                 skill.mod.sources.push({
                                     value: -3,
@@ -629,39 +633,39 @@ export default class SplittermondActor extends Actor {
                                     source: "misc"
                                 });
                             }
-                            skill.value += parseInt(data.attributes[item.data.secondaryAttack.attribute1].value)
-                            skill.value += parseInt(data.attributes[item.data.secondaryAttack.attribute2].value)
-                            skill.baseValue += parseInt(data.attributes[item.data.secondaryAttack.attribute1].value)
-                            skill.baseValue += parseInt(data.attributes[item.data.secondaryAttack.attribute2].value)
+                            skill.value += parseInt(data.attributes[itemData.secondaryAttack.attribute1].value)
+                            skill.value += parseInt(data.attributes[itemData.secondaryAttack.attribute2].value)
+                            skill.baseValue += parseInt(data.attributes[itemData.secondaryAttack.attribute1].value)
+                            skill.baseValue += parseInt(data.attributes[itemData.secondaryAttack.attribute2].value)
                             data.activeDefense.defense.push({
-                                _id: item._id,
-                                name: item.name + " (" + game.i18n.localize("splittermond.skillLabel." + item.data.secondaryAttack.skill) + ")",
+                                _id: item.id,
+                                name: item.name + " (" + game.i18n.localize("splittermond.skillLabel." + itemData.secondaryAttack.skill) + ")",
                                 img: item.img,
                                 item: item,
-                                skillId: item.data.secondaryAttack.skill,
+                                skillId: itemData.secondaryAttack.skill,
                                 skill: skill,
-                                features: item.data.secondaryAttack.features,
-                                attribute1: item.data.secondaryAttack.attribute1,
-                                attribute2: item.data.secondaryAttack.attribute2
+                                features: itemData.secondaryAttack.features,
+                                attribute1: itemData.secondaryAttack.attribute1,
+                                attribute2: itemData.secondaryAttack.attribute2
                             });
                         }
                     }
                 }
-            } else if (item.type === "shield" && parseInt(item.data.damageLevel) <= 1) {
-                if (item.data.equipped && item.data.skill) {
-                    let skill = duplicate(data.skills[item.data.skill]);
+            } else if (item.type === "shield" && parseInt(itemData.damageLevel) <= 1) {
+                if (itemData.equipped && itemData.skill) {
+                    let skill = duplicate(data.skills[itemData.skill]);
                     skill.value += parseInt(data.attributes["intuition"].value)
                     skill.value += parseInt(data.attributes["strength"].value)
                     skill.baseValue += parseInt(data.attributes["intuition"].value)
                     skill.baseValue += parseInt(data.attributes["strength"].value)
                     data.activeDefense.defense.push({
-                        _id: item._id,
+                        _id: item.id,
                         name: item.name,
                         img: item.img,
                         item: item,
-                        skillId: item.data.skill,
+                        skillId: itemData.skill,
                         skill: skill,
-                        features: item.data.features,
+                        features: itemData.features,
                         attribute1: "intuition",
                         attribute2: "strength",
                     });
@@ -671,8 +675,7 @@ export default class SplittermondActor extends Actor {
     }
 
     _addModifier(name, str, type = "misc", multiplier = 1) {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         str.split(',').forEach(str => {
             str = str.trim();
@@ -761,22 +764,22 @@ export default class SplittermondActor extends Actor {
                         data.splinterpoints.max = parseFloat(data.splinterpoints?.max || 3) + parseFloat(value) * multiplier;
                         break;
                     case "healthregeneration.multiplier":
-                        actorData.healthRegeneration.multiplier = parseFloat(value) * multiplier;
+                        data.healthRegeneration.multiplier = parseFloat(value) * multiplier;
                         break;
                     case "focusregeneration.multiplier":
-                        actorData.focusRegeneration.multiplier = parseFloat(value) * multiplier;
+                        data.focusRegeneration.multiplier = parseFloat(value) * multiplier;
                         break;
                     case "healthregeneration.bonus":
-                        actorData.healthRegeneration.bonus += parseFloat(value);
+                        data.healthRegeneration.bonus += parseFloat(value);
                         break;
                     case "focusregeneration.bonus":
-                        actorData.focusRegeneration.bonus += parseFloat(value);
+                        data.focusRegeneration.bonus += parseFloat(value);
                         break;
                     case "lowerfumbleresult":
-                        if (!actorData.lowerFumbleResult) {
-                            actorData.lowerFumbleResult = 0;
+                        if (!data.lowerFumbleResult) {
+                            data.lowerFumbleResult = 0;
                         }
-                        actorData.lowerFumbleResult += parseFloat(value) * multiplier;
+                        data.lowerFumbleResult += parseFloat(value) * multiplier;
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
@@ -805,7 +808,7 @@ export default class SplittermondActor extends Actor {
                                 }
                             }
 
-                            var group = actorData.spellCostReduction[spellGroup.toLowerCase()] = actorData.spellCostReduction[spellGroup.toLowerCase()] || {
+                            var group = data.spellCostReduction[spellGroup.toLowerCase()] = data.spellCostReduction[spellGroup.toLowerCase()] || {
                                 consumed: 0,
                                 exhausted: 0,
                                 channeled: 0,
@@ -828,7 +831,7 @@ export default class SplittermondActor extends Actor {
                                 }
                             }
 
-                            var group = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] = actorData.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
+                            var group = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
                                 consumed: 0,
                                 exhausted: 0,
                                 channeled: 0,
@@ -865,9 +868,8 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareModifier() {
-        const actorData = this.data;
-        const data = actorData.data;
-        if (actorData.type === "character") {
+        const data = this.systemData();
+        if (this.type === "character") {
             if (data.experience.heroLevel > 1) {
                 ["VTD", "KW", "GW"].forEach(d => {
                     this._addModifier(game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), d + " +" + (2 * (data.experience.heroLevel - 1)));
@@ -876,32 +878,32 @@ export default class SplittermondActor extends Actor {
             }
         }
 
-        actorData.items.forEach(i => {
-            i = i.data;
-            if (i.data.modifier) {
+        this.actorData().items.forEach(i => {
+            let itemData = i.systemData();
+            if (itemData.modifier) {
                 switch (i.type) {
                     case "weapon":
                     case "shield":
                     case "armor":
-                        if (!i.data.equipped) {
+                        if (!itemData.equipped) {
                             break;
                         }
                     case "equipment":
-                        this._addModifier(i.name, i.data.modifier, "equipment");
+                        this._addModifier(i.name, itemData.modifier, "equipment");
                         break;
                     case "strength":
-                        this._addModifier(i.name, i.data.modifier, "misc", i.data.quantity)
+                        this._addModifier(i.name, itemData.modifier, "misc", itemData.quantity)
                         break;
                     case "statuseffect":
-                        this._addModifier(i.name, i.data.modifier, "misc", i.data.level);
+                        this._addModifier(i.name, itemData.modifier, "misc", itemData.level);
                         break;
                     case "spelleffect":
-                        if (i.data.active) {
-                            this._addModifier(i.name, i.data.modifier, "magic");
+                        if (itemData.active) {
+                            this._addModifier(i.name, itemData.modifier, "magic");
                         }
                         break
                     default:
-                        this._addModifier(i.name, i.data.modifier);
+                        this._addModifier(i.name, itemData.modifier);
                         break;
                 }
             }
@@ -934,7 +936,7 @@ export default class SplittermondActor extends Actor {
 
     _prepareArmor() {
         const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         let minAttributeMalusHandicapArmor = 0;
         let minAttributeMalusTickMalusArmor = 0;
@@ -942,25 +944,25 @@ export default class SplittermondActor extends Actor {
         let minAttributeMalusHandicapShield = 0;
         let minAttributeMalusTickMalusShield = 0;
 
-        actorData.items.forEach(i => {
-            i = i.data;
-            if (i.type === "armor" && i.data.equipped) {
-                let diff = parseInt(actorData.data.attributes.strength.value) - parseInt(i.data.minStr || 0);
+        this.actorData().items.forEach(i => {
+            let itemData = i.systemData();
+            if (i.type === "armor" && itemData.equipped) {
+                let diff = parseInt(data.attributes.strength.value) - parseInt(itemData.minStr || 0);
                 if (diff < 0) {
                     minAttributeMalusHandicapArmor -= diff;
                     minAttributeMalusTickMalusArmor -= diff;
                 }
             }
 
-            if (i.type === "shield" && i.data.equipped) {
-                (i.data.minAttributes || "").split(",").forEach(aStr => {
+            if (i.type === "shield" && itemData.equipped) {
+                (itemData.minAttributes || "").split(",").forEach(aStr => {
                     let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
                     if (temp) {
                         let attr = CONFIG.splittermond.attributes.find(a => {
                             return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                         });
                         if (attr) {
-                            let diff = parseInt(actorData.data.attributes[attr].value) - parseInt(temp[2] || 0);
+                            let diff = parseInt(data.attributes[attr].value) - parseInt(temp[2] || 0);
                             if (diff < 0) {
                                 minAttributeMalusHandicapShield -= diff;
                                 minAttributeMalusTickMalusShield -= diff;
@@ -973,30 +975,26 @@ export default class SplittermondActor extends Actor {
 
         data.handicap = {
             shield: {
-                value: actorData.items.reduce((acc, i) => {
-                    i = i.data;
-                    return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
+                value: this.actorData().items.reduce((acc, i) => {
+                    return ((i.type === "shield") && i.systemData().equipped) ? acc + parseInt(i.systemData().handicap) : acc
                 }, 0) + minAttributeMalusHandicapShield
             },
             armor: {
                 value: actorData.items.reduce((acc, i) => {
-                    i = i.data;
-                    return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.handicap) : acc
+                    return ((i.type === "armor") && i.systemData().equipped) ? acc + parseInt(i.systemData().handicap) : acc
                 }, 0) + minAttributeMalusHandicapArmor
             }
         }
 
         data.tickMalus = {
             shield: {
-                value: actorData.items.reduce((acc, i) => {
-                    i = i.data;
-                    return ((i.type === "shield") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
+                value: this.actorData().items.reduce((acc, i) => {
+                    return ((i.type === "shield") &&i.systemData().equipped) ? acc + parseInt(i.systemData().tickMalus) : acc
                 }, 0) + minAttributeMalusTickMalusShield
             },
             armor: {
-                value: actorData.items.reduce((acc, i) => {
-                    i = i.data;
-                    return ((i.type === "armor") && i.data.equipped) ? acc + parseInt(i.data.tickMalus) : acc
+                value: this.actorData().items.reduce((acc, i) => {
+                    return ((i.type === "armor") && i.systemData().equipped) ? acc + parseInt(i.systemData().tickMalus) : acc
                 }, 0) + minAttributeMalusTickMalusArmor
             }
         };
@@ -1008,17 +1006,16 @@ export default class SplittermondActor extends Actor {
         }
 
 
-        actorData.items.forEach(i => {
-            i = i.data;
+        this.actorData().items.forEach(i => {
             if (i.type === "armor" || i.type === "shield") {
-                if (i.data.equipped && i.data.defenseBonus != 0) {
-                    this._addModifier(i.name, `VTD ${i.data.defenseBonus}`, "equipment");
+                if (i.systemData().equipped && i.systemData().defenseBonus != 0) {
+                    this._addModifier(i.name, `VTD ${i.systemData().defenseBonus}`, "equipment");
                 }
             }
 
             if (i.type === "armor") {
-                if (i.data.equipped && parseInt(i.data.damageReduction) != 0) {
-                    data.damageReduction.value = parseInt(data.damageReduction.value) + parseInt(i.data.damageReduction);
+                if (i.systemData().equipped && parseInt(i.systemData().damageReduction) != 0) {
+                    data.damageReduction.value = parseInt(data.damageReduction.value) + parseInt(i.systemData().damageReduction);
                 }
             }
         });
@@ -1026,9 +1023,8 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareAttributes() {
-        const actorData = this.data;
-        const data = actorData.data;
-        if (actorData.type === "character") {
+        const data = this.systemData();
+        if (this.type === "character") {
             CONFIG.splittermond.attributes.forEach(attr => {
                 data.attributes[attr].value = parseInt(data.attributes[attr].initial || 0)
                     + parseInt(data.attributes[attr].species || 0)
@@ -1045,10 +1041,9 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareDerivedAttributes() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data =this.systemData();
 
-        if (actorData.type === "character") {
+        if (this.type === "character") {
             data.derivedAttributes.size.value = parseInt(data.species.size);
             data.derivedAttributes.speed.value = parseInt(data.attributes.agility.value) + parseInt(data.derivedAttributes.size.value);
             data.derivedAttributes.initiative.value = 10 - parseInt(data.attributes.intuition.value);
@@ -1108,8 +1103,7 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareSkills() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         let _sumAllHelper = (acc, current) => acc + current.value;
         let _sumEquipmentBonus = (acc, current) => current.value > 0 && current.source === "equipment" ? acc + current.value : acc;
@@ -1127,7 +1121,7 @@ export default class SplittermondActor extends Actor {
                 }
             }
 
-            if (actorData.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0 && !CONFIG.splittermond.skillGroups.fighting.includes(skill)) {
+            if (this.type==="npc" && data.skills[skill].value > 0 && data.skills[skill].points === 0 && !CONFIG.splittermond.skillGroups.fighting.includes(skill)) {
                 data.skills[skill].points = data.skills[skill].value;
                 if (CONFIG.splittermond.skillAttributes[skill]) {
                     data.skills[skill].points -= parseInt(data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value || 0) +
@@ -1200,7 +1194,7 @@ export default class SplittermondActor extends Actor {
                 }
             }
             let moonsignIds = this.items.filter(i => i.type === "moonsign")?.map(i => {
-                return i.data._id;
+                return i.id;
             });
             if (moonsignIds) {
                 if (moonsignIds.length > 0) {
@@ -1516,11 +1510,11 @@ export default class SplittermondActor extends Actor {
 
         let content = '<span class="formula">';
         let a = defenseData.attribute1;
-        content += `<span class="formula-part"><span class="value">${this.data.data.attributes[a].value}</span>
+        content += `<span class="formula-part"><span class="value">${this.systemData().attributes[a].value}</span>
                 <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
         a = defenseData.attribute2;
         content += `<span class="operator">+</span>
-            <span class="formula-part"><span class="value">${this.data.data.attributes[a].value}</span>
+            <span class="formula-part"><span class="value">${this.systemData().attributes[a].value}</span>
             <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
             <span class="operator">+</span>`;
 
@@ -1572,7 +1566,7 @@ export default class SplittermondActor extends Actor {
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.data.data.splinterpoints.value = parseInt(this.data.data.splinterpoints.value) -1;
+        this.systemData().splinterpoints.value = parseInt(this.systemData().splinterpoints.value) -1;
         checkMessageData.availableSplinterpoints = 0;
 
         let checkData = Dice.evaluateCheck(message.roll, checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
@@ -1590,14 +1584,14 @@ export default class SplittermondActor extends Actor {
             "flags.splittermond.check": chatMessageData.flags.splittermond.check
         });
         this.update({
-            "data.splinterpoints.value": this.data.data.splinterpoints.value
+            "data.splinterpoints.value": this.systemData().splinterpoints.value
         })
     }
 
     async rollSkill(skill, options = {}) {
         let emphasisData = [];
-        if (this.data.data.skills[skill].emphasis) {
-            emphasisData = Object.entries(this.data.data.skills[skill].emphasis).map(([key, value]) => {
+        if (this.systemData().skills[skill].emphasis) {
+            emphasisData = Object.entries(this.systemData().skills[skill].emphasis).map(([key, value]) => {
                 return {
                     name: key,
                     label: key + (value > 0 ? " +" : " ") + value,
@@ -1615,19 +1609,19 @@ export default class SplittermondActor extends Actor {
         });
         if (!checkData) return;
 
-        if (this.data.data.skills[skill].mod) {
-            checkData.modifierElements = [...this.data.data.skills[skill].mod.sources , ...checkData.modifierElements];
+        if (this.systemData().skills[skill].mod) {
+            checkData.modifierElements = [...this.systemData().skills[skill].mod.sources , ...checkData.modifierElements];
         }
         
 
         checkData.difficulty = parseInt(checkData.difficulty);
-        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == skill)) {
+        if (this.data.items.find(i => i.data.type=="mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == skill)) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
         let data = Dice.check(
-            this.data.data.skills[skill].value,
-            this.data.data.skills[skill].points,
+            this.systemData().skills[skill].value,
+            this.systemData().skills[skill].points,
             checkData.difficulty,
             checkData.rollType,
             checkData.modifier);
@@ -1636,11 +1630,11 @@ export default class SplittermondActor extends Actor {
         let checkMessageData = {
             type: "skill",
             skill: skill,
-            skillValue: this.data.data.skills[skill].value,
-            skillPoints: this.data.data.skills[skill].points,
+            skillValue: this.systemData().skills[skill].value,
+            skillPoints: this.systemData().skills[skill].points,
             skillAttributes: {
-                [CONFIG.splittermond.skillAttributes[skill][0]]: this.data.data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value,
-                [CONFIG.splittermond.skillAttributes[skill][1]]: this.data.data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value,
+                [CONFIG.splittermond.skillAttributes[skill][0]]: this.systemData().attributes[CONFIG.splittermond.skillAttributes[skill][0]].value,
+                [CONFIG.splittermond.skillAttributes[skill][1]]: this.systemData().attributes[CONFIG.splittermond.skillAttributes[skill][1]].value,
             },
             difficulty: data.difficulty,
             rollType: checkData.rollType,
@@ -1649,16 +1643,16 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0
+            availableSplinterpoints: this.data.type === "character" ? this.systemData().splinterpoints.value : 0
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
     }
 
     async rollAttack(attackId, options = {}) {
-        const actorData = this.data.data;
+        const systemData = this.systemData();
 
-        let weaponData = actorData.attacks.find(a => a._id === attackId);
+        let weaponData = systemData.attacks.find(a => a._id === attackId);
 
         if (!weaponData) return;
 
@@ -1693,15 +1687,15 @@ export default class SplittermondActor extends Actor {
         if (target) {
             switch (checkData.difficulty) {
                 case "VTD":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.defense.value;
                     hideDifficulty = true;
                     break;
                 case "KW":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.bodyresist.value;
                     hideDifficulty = true;
                     break;
                 case "GW":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.mindresist.value;
                     hideDifficulty = true;
                     break;
             }
@@ -1712,7 +1706,7 @@ export default class SplittermondActor extends Actor {
         let skillPoints = parseInt(weaponData.skill.points);
         let skillValue = weaponData.skill.value;
 
-        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == weaponData.skillId)) {
+        if (this.actorData().items.find(i => i.type=="mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == weaponData.skillId)) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
@@ -1725,8 +1719,8 @@ export default class SplittermondActor extends Actor {
             skillValue: skillValue,
             skillPoints: skillPoints,
             skillAttributes: {
-                [weaponData.attribute1]: this.data.data.attributes[weaponData.attribute1].value,
-                [weaponData.attribute2]: this.data.data.attributes[weaponData.attribute2].value,
+                [weaponData.attribute1]: systemData.attributes[weaponData.attribute1].value,
+                [weaponData.attribute2]: systemData.attributes[weaponData.attribute2].value,
             },
             difficulty: data.difficulty,
             rollType: checkData.rollType,
@@ -1735,7 +1729,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
+            availableSplinterpoints: this.data.type === "character" ? systemData.splinterpoints.value : 0,
             weapon: weaponData,
             hideDifficulty: hideDifficulty,
         }
@@ -1747,13 +1741,13 @@ export default class SplittermondActor extends Actor {
     
 
     async rollSpell(spellId, options = {}) {
-        const actorData = this.data.data;
-        let spellData = actorData.spells.find((spell)=> spell._id == spellId);
+        const systemData = this.systemData();
+        let spellData = systemData.spells.find((spell)=> spell._id == spellId);
         let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
 
         let emphasisData = [];
-        if (actorData.skills[spellData.data.skill].emphasis) {
-            emphasisData = Object.entries(actorData.skills[spellData.data.skill].emphasis).map(([key, value]) => {
+        if (systemData.skills[spellData.data.skill].emphasis) {
+            emphasisData = Object.entries(systemData.skills[spellData.data.skill].emphasis).map(([key, value]) => {
                 return {
                     name: key,
                     label: key + (value > 0 ? " +" : " ") + value,
@@ -1772,8 +1766,8 @@ export default class SplittermondActor extends Actor {
 
         if (!checkData) return false;
 
-        if (actorData.skills[spellData.data.skill].mod) {
-            checkData.modifierElements = [...actorData.skills[spellData.data.skill].mod.sources , ...checkData.modifierElements];
+        if (systemData.skills[spellData.data.skill].mod) {
+            checkData.modifierElements = [...systemData.skills[spellData.data.skill].mod.sources , ...checkData.modifierElements];
         }
 
         let target = Array.from(game.user.targets)[0];
@@ -1781,25 +1775,25 @@ export default class SplittermondActor extends Actor {
         if (target) {
             switch (checkData.difficulty) {
                 case "VTD":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.defense.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.defense.value;
                     hideDifficulty = true;
                     break;
                 case "KW":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.bodyresist.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.bodyresist.value;
                     hideDifficulty = true;
                     break;
                 case "GW":
-                    checkData.difficulty = target.actor.data.data.derivedAttributes.mindresist.value;
+                    checkData.difficulty = target.actor.systemData().derivedAttributes.mindresist.value;
                     hideDifficulty = true;
                     break;
             }
         }
 
         checkData.difficulty = parseInt(checkData.difficulty);
-        let skillPoints = parseInt(actorData.skills[spellData.data.skill].points);
-        let skillValue = parseInt(actorData.skills[spellData.data.skill].value);
+        let skillPoints = parseInt(systemData.skills[spellData.data.skill].points);
+        let skillValue = parseInt(systemData.skills[spellData.data.skill].value);
 
-        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == spellData.data.skill)) {
+        if (this.actorData().items.find(i => i.type=="mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == spellData.data.skill)) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
@@ -1821,7 +1815,7 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
+            availableSplinterpoints: this.type === "character" ? systemData.splinterpoints.value : 0,
             spell: spellData,
             hideDifficulty: hideDifficulty
         }
@@ -1831,7 +1825,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollActiveDefense(defenseType, itemData) {
-        const actorData = this.data.data;
+        const systemData = this.systemData();
         let emphasisData = [];
         if (itemData.skill.emphasis) {
             emphasisData = Object.entries(itemData.skill.emphasis).map(([key, value]) => {
@@ -1858,7 +1852,7 @@ export default class SplittermondActor extends Actor {
         let skillPoints = parseInt(itemData.skill.points);
         let skillValue = parseInt(itemData.skill.value);
 
-        if (this.data.items.find(i => i.data.type=="mastery" && (i.data.data.isGrandmaster || 0) && i.data.data.skill == itemData.skillId)) {
+        if (this.actorData().items.find(i => i.type=="mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == itemData.skillId)) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
@@ -1871,8 +1865,8 @@ export default class SplittermondActor extends Actor {
             skillValue: skillValue,
             skillPoints: skillPoints,
             skillAttributes: {
-                [itemData.attribute1]: this.data.data.attributes[itemData.attribute1].value,
-                [itemData.attribute2]: this.data.data.attributes[itemData.attribute2].value,
+                [itemData.attribute1]: systemData.attributes[itemData.attribute1].value,
+                [itemData.attribute2]: systemData.attributes[itemData.attribute2].value,
             },
             difficulty: data.difficulty,
             rollType: checkData.rollType,
@@ -1881,10 +1875,10 @@ export default class SplittermondActor extends Actor {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? this.data.data.splinterpoints.value : 0,
+            availableSplinterpoints: this.data.type === "character" ? systemData.splinterpoints.value : 0,
             itemData: itemData,
             defenseType: defenseType,
-            baseDefense: actorData.derivedAttributes[defenseType].value,
+            baseDefense: systemData.derivedAttributes[defenseType].value,
         }
 
         ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
@@ -1930,14 +1924,10 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollMagicFumble(eg = 0, costs = 0) {
-        const actorData = this.data;
-        const data = actorData.data;
+
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = parseInt(actorData.lowerFumbleResult) || 0;
-        if (actorData.items.find(i => {
-            i = i.data;
-            return i.type == "strength" && i.name.toLowerCase() == "priester";
-        })) {
+        let lowerFumbleResult = parseInt(systemData.lowerFumbleResult) || 0;
+        if (this.actorData().items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }
 
@@ -2124,8 +2114,7 @@ export default class SplittermondActor extends Actor {
     }
 
     getRollData() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
         let rollData = {};
 
         rollData['initiative'] = data.derivedAttributes.initiative.value;
@@ -2135,8 +2124,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async shortRest() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
 
         let focusData = duplicate(data.focus);
         let healthData = duplicate(data.health);
@@ -2147,8 +2135,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async longRest() {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: game.i18n.localize("splittermond.clearChanneledFocus"),
@@ -2184,15 +2171,14 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        focusData.consumed.value = Math.max(focusData.consumed.value - actorData.focusRegeneration.multiplier * data.attributes.willpower.value - actorData.focusRegeneration.bonus, 0);
-        healthData.consumed.value = Math.max(healthData.consumed.value - actorData.healthRegeneration.multiplier * data.attributes.constitution.value - actorData.healthRegeneration.bonus, 0);
+        focusData.consumed.value = Math.max(focusData.consumed.value - data.focusRegeneration.multiplier * data.attributes.willpower.value - data.focusRegeneration.bonus, 0);
+        healthData.consumed.value = Math.max(healthData.consumed.value - data.healthRegeneration.multiplier * data.attributes.constitution.value - data.healthRegeneration.bonus, 0);
 
         return this.update({ "data.focus": focusData, "data.health": healthData });
     }
 
     consumeCost(type, valueStr, description) {
-        const actorData = this.data;
-        const data = actorData.data;
+        const data = this.systemData();
         let costData = Costs.parseCostsString(valueStr.toString());
 
         let subData = duplicate(data[type]);

@@ -34,12 +34,12 @@ export default class SplittermondCombatTracker extends CombatTracker {
             if ( !combatant.visible ) continue;
 
             // Prepare turn data
-            const resource = combatant.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER ? combatant.resource : null
+            const resource = combatant.permission >= (game.release.generation < 10 ? CONST.ENTITY_PERMISSIONS.OBSERVER : combatant.resource ) ? combatant.resource : null
             const turn = {
                 id: combatant.id,
                 name: combatant.name,
                 img: combatant.img,
-                active: i === combat.turn,
+                active: combatant === combat.combatant,
                 owner: combatant.isOwner,
                 defeated: combatant.data.defeated,
                 hidden: combatant.hidden,
