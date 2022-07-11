@@ -128,15 +128,22 @@ export default class SplittermondActorSheet extends ActorSheet {
             }, {});
         }
 
-        CONFIG.splittermond.skillGroups.magic.forEach(skill => {
-            if (sheetData.data.skills[skill].points > 0 && !(skill in sheetData.data.spellsBySkill)) {
-                sheetData.data.spellsBySkill[skill] = {
+        sheetData.data.spells.sort((a,b) => (a.sort - b.sort));
+        sheetData.data.spellsBySkill = sheetData.data.spells.reduce((result, item) => {
+            let skill = item.data.skill || "none";
+            if (!(skill in result)) {
+                result[skill] = {
                     label: `splittermond.skillLabel.${skill}`,
                     skillValue: sheetData.data.skills[skill].value,
                     spells: []
                 };
-            };
-        });
+            }
+            let costData = Costs.parseCostsString(item.data.costs);
+            let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+            item.enoughFocus = costTotal <= this.actor.systemData().focus.available.value;
+            result[skill].spells.push(item);
+            return result;
+        }, {});
 
     }
 

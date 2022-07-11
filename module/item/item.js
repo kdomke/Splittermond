@@ -1,5 +1,15 @@
 export default class SplittermondItem extends Item {
 
+    constructor(data, context) {
+        if (context?.splittermond?.ready) {
+            super(data, context);
+        } else {
+            mergeObject(context, { splittermond: { ready: true } });
+            const ItemConstructor = CONFIG.splittermond.Item.documentClasses[data.type];
+            return ItemConstructor ? new ItemConstructor(data, context) : new SplittermondItem(data, context);
+        }
+    }
+
     systemData() {
         return !this.system ? this.data.data : this.system;
     }
@@ -8,10 +18,13 @@ export default class SplittermondItem extends Item {
         return !this.system ? this.data : this;
     }
 
-    prepareData() {
-        super.prepareData();
+    prepareBaseData() {
+        console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        super.prepareBaseData();
 
         const data = this.systemData();
+
+        
 
         if (data.id) {
             if (!data.description) {
@@ -74,6 +87,40 @@ export default class SplittermondItem extends Item {
                 
         }
 
+
+    }
+
+    prepareActorData() {
+        const data = this.systemData();
+        switch (this.type) {
+            case "weapon":
+            case "shield":
+            case "armor":
+                if (!data.equipped) {
+                    break;
+                }
+            case "equipment":
+                this.actor.addModifier(this.name, data.modifier, "equipment");
+                break;
+            case "strength":
+                this.actor.addModifier(this.name, data.modifier, "strength", data.quantity)
+                break;
+            case "statuseffect":
+                this.actor.addModifier(this.name, data.modifier, "statuseffect", data.level);
+                break;
+            case "spelleffect":
+                if (data.active) {
+                    this.actor.addModifier(this.name, data.modifier, "magic");
+                }
+                break
+            default:
+                if (data.modifier) {
+                    this.actor.addModifier(this.name, data.modifier);
+                }
+                
+                break;
+        }
+        
     }
 
 }

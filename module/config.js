@@ -1,3 +1,9 @@
+import SplittermondWeaponItem from "./item/weapon.js";
+import SplittermondItem from "./item/item.js";
+import SplittermondShieldItem from "./item/shield.js";
+import SplittermondSpellItem from "./item/spell.js";
+import SplittermondArmorItem from "./item/armor.js";
+
 export const splittermond = {};
 
 splittermond.heroLevel = [0, 100, 300, 600];
@@ -1128,7 +1134,17 @@ splittermond.fumbleTable = {
             }
         ]
     }
-}
+};
+
+splittermond.Item = {
+    documentClasses: {
+        default: SplittermondItem,
+        weapon: SplittermondWeaponItem,
+        shield: SplittermondShieldItem,
+        armor: SplittermondArmorItem,
+        spell: SplittermondSpellItem
+    }
+};
 
 
 

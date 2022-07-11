@@ -91,8 +91,23 @@ export default class TokenActionBar extends Application {
 
             data.weapons = duplicate(this.currentActor.actorData().items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
 
-            data.spells = duplicate(this.currentActor.systemData().spellsBySkill);
-
+            let spells = duplicate(this.currentActor.systemData().spells);
+            spells.sort((a,b) => (a.sort - b.sort));
+            data.spells = spells.reduce((result, item) => {
+                let skill = item.data.skill || "none";
+                if (!(skill in result)) {
+                    result[skill] = {
+                        label: `splittermond.skillLabel.${skill}`,
+                        skillValue: this.currentActor.systemData().skills[skill].value,
+                        spells: []
+                    };
+                }
+                let costData = Costs.parseCostsString(item.data.costs);
+                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
+                item.enoughFocus = costTotal <= this.currentActor.systemData().focus.available.value;
+                result[skill].spells.push(item);
+                return result;
+            }, {});
             if (Object.keys(data.spells).length == 0) {
                 data.spells = undefined;
             }
