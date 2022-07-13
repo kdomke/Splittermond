@@ -7,7 +7,7 @@
             </div>
             <div class="column stretch">
                 <input class="character-name" name="name" type="text" value="{{actor.name}}"
-                        placeholder="{{localize 'splittermond.name' }}" />
+                    placeholder="{{localize 'splittermond.name' }}" />
                 <div class="experience">
                     <div class="bar">
                         <div style="width: {{data.experience.percentage}}%"></div>
@@ -42,26 +42,30 @@
                 </div>
 
             </div>
-            <div class="moonsign">                
-                
+            <div class="moonsign">
+
                 <div class="moonsign-splinterpoints" title="{{localize 'splittermond.splinterpoints'}}">
-                    <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='data.splinterpoints.value']">
+                    <button class="button-inline" type="button" data-action="dec-value"
+                        data-input-query="input[name='data.splinterpoints.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i>
                     </button>
                     <input type="text" name="data.splinterpoints.value" value="{{data.splinterpoints.value}}"
                         data-dtype="Number">
                     <span> / {{data.splinterpoints.max}}</span>
-                    <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='data.splinterpoints.value']">
+                    <button class="button-inline" type="button" data-action="inc-value"
+                        data-input-query="input[name='data.splinterpoints.value']">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </button>
                 </div>
                 {{#each itemsByType.moonsign}}
-                    <img class="moonsign-image" src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
-                    <label class="moonsign-label"><a data-action="edit-item" data-item-id="{{this._id}}">{{this.name}}</a></label>
+                <img class="moonsign-image" src="{{this.img}}" title="{{this.name}}" height="64" width="64" />
+                <label class="moonsign-label"><a data-action="edit-item"
+                        data-item-id="{{this._id}}">{{this.name}}</a></label>
                 {{/each}}
                 {{#unless itemsByType.moonsign}}
-                    <div class="moonsign-image"></div>  
-                    <label class="moonsign-label"><a data-item-type="moonsign" data-action="add-item" class="moonsign-label">{{localize 'splittermond.moonsigns.add.title'}}</a></label>
+                <div class="moonsign-image"></div>
+                <label class="moonsign-label"><a data-item-type="moonsign" data-action="add-item"
+                        class="moonsign-label">{{localize 'splittermond.moonsigns.add.title'}}</a></label>
                 {{/unless}}
             </div>
         </section>
@@ -70,7 +74,7 @@
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health hasRestActions=true}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
-            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
+            derivedAttributes=actor.derivedValues damageReduction=data.damageReduction}}
         </section>
         {{/unless}}
     </header>
@@ -97,7 +101,7 @@
                     <div class="max">{{localize "splittermond.max"}}</div>
                 </div>
                 <ul class="list-body">
-                    {{#each data.attributes as |attribute attributeId|}}
+                    {{#each actor.attributes as |attribute attributeId|}}
                     <li class="list-item attribute">
                         <label for="data.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
@@ -183,7 +187,8 @@
                     {{#each itemsByType.resource}}
                     <li class="list-item" data-item-id="{{this._id}}">
                         <div><input class="name" type="text" data-field="name" value="{{this.name}}"></div>
-                        <div class="value"><input type="text" data-field="data.value" value="{{this.data.value}}" data-dtype="Number"></div>
+                        <div class="value"><input type="text" data-field="data.value" value="{{this.data.value}}"
+                                data-dtype="Number"></div>
                         <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
                                     aria-hidden="true"></i></button>
@@ -248,7 +253,7 @@
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="skills">
-            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
             <div class="list skills" data-roll-type="skill">
                 <div class="list-header">
                     <h3>{{localize "splittermond.generalSkills"}}</h3>
@@ -263,8 +268,7 @@
                     </div>
                 </div>
                 <ol class="list-body skill-list">
-                    {{#each data.generalSkills as |skill skillId|}}
-                    {{#if skill.isVisible}}
+                    {{#each generalSkills as |skill skillId|}}
                     <li class="list-item draggable" data-skill="{{skillId}}">
                         <label>
                             <a class="rollable">
@@ -272,13 +276,13 @@
                             </a>
                         </label>
                         <div class="points">
-                            <input class="spinner spinner-horizontal" name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                            <input class="spinner spinner-horizontal" name="data.skills.{{skillId}}.points" type="text"
+                                value="{{skill.points}}">
                         </div>
-                        <div class="attribute">{{localize skill.attribute1.label}}</div>
-                        <div class="attribute">{{localize skill.attribute2.label}}</div>
+                        <div class="attribute">{{localize skill.attribute1.label.short}}</div>
+                        <div class="attribute">{{localize skill.attribute2.label.short}}</div>
                         <div class="value">{{skill.value}}</div>
                     </li>
-                    {{/if}}
                     {{/each}}
                 </ol>
                 <div class="list-header">
@@ -294,8 +298,7 @@
                     </div>
                 </div>
                 <ol class="list-body skill-list">
-                    {{#each data.fightingSkills as |skill skillId|}}
-                    {{#if skill.isVisible}}
+                    {{#each fightingSkills as |skill skillId|}}
                     <li class="list-item" data-skill="{{skillId}}">
                         <label>
                             {{localize skill.label}}
@@ -304,7 +307,6 @@
                             <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
                     </li>
-                    {{/if}}
                     {{/each}}
                 </ol>
                 <div class="list-header">
@@ -320,8 +322,7 @@
                     </div>
                 </div>
                 <ol class="list-body skill-list">
-                    {{#each data.magicSkills as |skill skillId|}}
-                    {{#if skill.isVisible}}
+                    {{#each magicSkills as |skill skillId|}}
                     <li class="list-item draggable" data-skill="{{skillId}}">
                         <label>
                             <a class="rollable">{{localize skill.label}}</a>
@@ -329,17 +330,16 @@
                         <div class="points">
                             <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
-                        <div class="attribute">{{localize skill.attribute1.label}}</div>
-                        <div class="attribute">{{localize skill.attribute2.label}}</div>
+                        <div class="attribute">{{localize skill.attribute1.label.short}}</div>
+                        <div class="attribute">{{localize skill.attribute2.label.short}}</div>
                         <div class="value">{{skill.value}}</div>
                     </li>
-                    {{/if}}
                     {{/each}}
                 </ol>
             </div>
             {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
-            masteriesBySkill=masteriesBySkill generalSkills=data.generalSkills fightingSkills=data.fightingSkills
-            magicSkills=data.magicSkills}}
+            masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=fightingSkills
+            magicSkills=magicSkills}}
         </section>
         <section class="tab" data-group="primary" data-tab="spells">
             <div>
@@ -350,7 +350,7 @@
         <section class="tab" data-group="primary" data-tab="fight">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
-                activeDefense=data.activeDefense attacks=data.attacks}}
+                activeDefense=data.activeDefense attacks=actor.attacks}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="inventory">

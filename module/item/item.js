@@ -24,7 +24,7 @@ export default class SplittermondItem extends Item {
 
         const data = this.systemData();
 
-        
+
 
         if (data.id) {
             if (!data.description) {
@@ -66,7 +66,7 @@ export default class SplittermondItem extends Item {
             }
         }
 
-        if (["weapon", "shield", "armor","equipment"].includes(this.type)) {
+        if (["weapon", "shield", "armor", "equipment"].includes(this.type)) {
             data.durability = parseInt(data.weight) + parseInt(data.hardness);
             data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
 
@@ -77,14 +77,14 @@ export default class SplittermondItem extends Item {
                     data.damageLevel = 0;
                 }
             } else {
-                data.damageLevel = Math.max(Math.min(Math.floor((parseInt(data.sufferedDamage)-1)/data.durability), 3),0);
-                if (data.sufferedDamage === 3*data.durability) {
+                data.damageLevel = Math.max(Math.min(Math.floor((parseInt(data.sufferedDamage) - 1) / data.durability), 3), 0);
+                if (data.sufferedDamage === 3 * data.durability) {
                     data.damageLevel = 3;
                 }
             }
 
             data.damageLevelText = CONFIG.splittermond.damageLevel[data.damageLevel];
-                
+
         }
 
 
@@ -100,27 +100,27 @@ export default class SplittermondItem extends Item {
                     break;
                 }
             case "equipment":
-                this.actor.addModifier(this.name, data.modifier, "equipment");
+                this.actor.addModifier(this, this.name, data.modifier, "equipment");
                 break;
             case "strength":
-                this.actor.addModifier(this.name, data.modifier, "strength", data.quantity)
+                this.actor.addModifier(this, this.name, data.modifier, "strength", data.quantity)
                 break;
             case "statuseffect":
-                this.actor.addModifier(this.name, data.modifier, "statuseffect", data.level);
+                this.actor.addModifier(this, this.name, data.modifier, "statuseffect", data.level);
                 break;
             case "spelleffect":
                 if (data.active) {
-                    this.actor.addModifier(this.name, data.modifier, "magic");
+                    this.actor.addModifier(this, this.name, data.modifier, "magic");
                 }
                 break
             default:
                 if (data.modifier) {
-                    this.actor.addModifier(this.name, data.modifier);
+                    this.actor.addModifier(this, this.name, data.modifier);
                 }
-                
+
                 break;
         }
-        
+
     }
 
 }

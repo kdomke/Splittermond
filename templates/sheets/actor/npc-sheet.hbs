@@ -6,8 +6,8 @@
                     class="profile-img" />
             </div>
             <div class="column stretch">
-                <input  class="character-name" name="name" type="text" value="{{actor.name}}"
-                        placeholder="{{localize 'splittermond.name' }}" />
+                <input class="character-name" name="name" type="text" value="{{actor.name}}"
+                    placeholder="{{localize 'splittermond.name' }}" />
                 <div>
                     <input class="autoexpand" name="data.type" type="text" value="{{data.type}}"
                         placeholder="{{localize 'splittermond.opponenttype'}}" />
@@ -46,7 +46,7 @@
             {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
             health=data.health}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
-            derivedAttributes=data.derivedAttributes damageReduction=data.damageReduction}}
+            derivedAttributes=actor.derivedAttributes damageReduction=data.damageReduction}}
         </section>
         {{/unless}}
     </header>
@@ -63,7 +63,7 @@
             {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="general">
-            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=data.attributes}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
             <div data-roll-type="skill">
                 <div class="list skills">
                     <div class="list-header">
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                     <ol class="list-body skill-list">
-                        {{#each data.generalSkills as |skill skillId|}}
+                        {{#each generalSkills as |skill skillId|}}
                         {{#if skill.isVisible}}
                         <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
@@ -112,7 +112,7 @@
                         </div>
                     </div>
                     <ol class="list-body skill-list">
-                        {{#each data.magicSkills as |skill skillId|}}
+                        {{#each magicSkills as |skill skillId|}}
                         {{#if skill.isVisible}}
                         <li class="list-item draggable" data-skill="{{skillId}}">
                             <label>
@@ -131,11 +131,11 @@
             <div>
                 <div>
                     {{> "systems/splittermond/templates/sheets/actor/parts/combat-actions.hbs"
-                    activeDefense=data.activeDefense attacks=data.attacks}}
+                    activeDefense=data.activeDefense attacks=actor.attacks}}
                 </div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/mastery-list.hbs"
-                masteriesBySkill=masteriesBySkill generalSkills=data.generalSkills fightingSkills=data.fightingSkills
-                magicSkills=data.magicSkills}}
+                masteriesBySkill=masteriesBySkill generalSkills=generalSkills fightingSkills=data.fightingSkills
+                magicSkills=magicSkills}}
             </div>
 
         </section>
@@ -147,7 +147,8 @@
         </section>
         <section class="tab" data-group="primary" data-tab="inventory">
             <div>
-                {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType currency=data.currency}}
+                {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType
+                currency=data.currency}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="status">

@@ -16,7 +16,7 @@ splittermond.attributes = ["charisma", "agility", "intuition",
     "willpower"];
 
 splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "bodyresist", "mindresist"];
-
+splittermond.derivedValues = splittermond.derivedAttributes;
 splittermond.woundMalus = {
     "5": [
         {
@@ -62,7 +62,7 @@ splittermond.woundMalus = {
     ],
 };
 
-splittermond.damageLevel = ["splittermond.damageLevels.undamaged","splittermond.damageLevels.tarnished","splittermond.damageLevels.demolished","splittermond.damageLevels.destroyed"]
+splittermond.damageLevel = ["splittermond.damageLevels.undamaged", "splittermond.damageLevels.tarnished", "splittermond.damageLevels.demolished", "splittermond.damageLevels.destroyed"]
 
 splittermond.skillGroups = {
     fighting: [
@@ -120,6 +120,7 @@ splittermond.skillGroups = {
         "watermagic",
         "windmagic"]
 };
+splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]
 splittermond.resources = {
     core: ["reputation",
         "contacts",

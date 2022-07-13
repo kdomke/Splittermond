@@ -5,16 +5,41 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondI
 
     prepareActorData() {
         super.prepareActorData();
-        if (this.systemData().equipped && this.systemData().defenseBonus != 0) {
-            this.actor.addModifier(this.name, `VTD ${this.systemData().defenseBonus}`, "equipment")
-        }
-        this.actor.systemData().handicap.shield.value += this.handicap;
-        this.actor.systemData().tickMalus.shield.value += this.tickMalus;
+        this.prepareActiveDefense();
+        if (!this.systemData().equipped) return;
+        if (this.systemData().defenseBonus)
+            this.actor.modifier.add("defense", this.name, this.systemData().defenseBonus, this, "equipment");
+        let handicap = this.handicap;
+        let tickMalus = this.tickMalus;
+        if (handicap)
+            this.actor.modifier.add("handicap.shield", this.name, handicap, this, "equipment");
+        if (tickMalus)
+            this.actor.modifier.add("tickmalus.shield", this.name, tickMalus, this, "equipment");
+    }
+
+
+    prepareActiveDefense() {
+        if (!this.systemData().equipped && this.systemData().damageLevel <= 1) return;
+        let itemData = duplicate(this.systemData());
+        this.actor.systemData().activeDefense.defense.push({
+            _id: this.id,
+            name: this.name,
+            img: this.img,
+            item: this,
+            skillId: itemData.skill,
+            skillMod: itemData.skillMod,
+            attribute1: "intuition",
+            attribute2: "strength",
+            features: itemData.features,
+            isDamaged: parseInt(this.systemData().damageLevel) === 1,
+            minAttributeMalus: 0
+        });
     }
 
     get attributeMalus() {
         if (!this.systemData().equipped) return 0;
         let minAttributeMalus = 0;
+        const actor = this.actor;
         (this.systemData().minAttributes || "").split(",").forEach(aStr => {
             let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
             if (temp) {
@@ -22,7 +47,7 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondI
                     return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                 });
                 if (attr) {
-                    minAttributeMalus +=  Math.max(parseInt(temp[2] || 0) - parseInt(this.actor.systemData().attributes[attr].value), 0);
+                    minAttributeMalus += Math.max(parseInt(temp[2] || 0) - parseInt(actor.attributes[attr].value), 0);
                 }
             }
         });
