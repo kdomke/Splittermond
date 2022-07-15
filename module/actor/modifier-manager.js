@@ -20,10 +20,16 @@ export default class ModifierManager {
     }
 
     selectable(path) {
-        if (!this._modifier[path]) return [];
+        if (!Array.isArray(path)) {
+            path = [path];
+        }
 
-        return this._modifier[path].filter(modifier => modifier.selectable).reduce((acc, modifier) => {
-            acc[modifier.label] = (acc[modifier.label] || 0) + modifier.value;
+        return path.reduce((acc, p) => {
+            acc.push(...(this._modifier[p] || []).filter(modifier => modifier.selectable));
+            return acc;
+        }, []).reduce((acc, mod) => {
+            acc[mod.name] = (acc[mod.name] || 0) + mod.value;
+            return acc;
         }, {});
     }
 

@@ -1,5 +1,6 @@
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
-    let templateContext = {...data,
+    let templateContext = {
+        ...data,
         roll: roll,
         rollMode: rollMode,
         tooltip: await roll.getTooltip(),
@@ -11,7 +12,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let flagsData = data;
 
     let additionalTooltip = '<span class="formula">';
-    additionalTooltip = Object.keys(data.skillAttributes).reduce((p, key) => 
+    additionalTooltip = Object.keys(data.skillAttributes).reduce((p, key) =>
         p + `<span class="formula-part"><span class="value">${data.skillAttributes[key]}</span>
                     <span class="description">` + game.i18n.localize(`splittermond.attribute.${key}.short`) + `</span></span>
                     <span class="operator">+</span>` , additionalTooltip);
@@ -46,9 +47,9 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     }
 
     templateContext.title = game.i18n.localize(`splittermond.skillLabel.${data.skill}`);
-    templateContext.rollType =  game.i18n.localize(`splittermond.rollType.${data.rollType}`);
+    templateContext.rollType = game.i18n.localize(`splittermond.rollType.${data.rollType}`);
 
-    switch(data.type) {
+    switch (data.type) {
         case "attack":
             templateContext.title = data.weapon.name;
             templateContext.img = data.weapon.img;
@@ -62,7 +63,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                         type: "defense"
                     }
                 });
-    
+
                 templateContext.actions.push({
                     name: game.i18n.localize(`splittermond.damage`) + " (" + data.weapon.damage + ")",
                     icon: "fa-heart-broken",
@@ -75,7 +76,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     }
                 });
             }
-    
+
             if (data.isFumble || data.degreeOfSuccess <= -5) {
                 templateContext.actions.push({
                     name: game.i18n.localize("splittermond.fumbleTableLabel"),
@@ -86,7 +87,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     }
                 });
             }
-    
+
             templateContext.actions.push({
                 name: `${ticks} ` + game.i18n.localize(`splittermond.ticks`),
                 icon: "fa-stopwatch",
@@ -101,7 +102,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             templateContext.title = data.spell.name;
             templateContext.img = data.spell.img;
 
-            let focusCosts = data.spell.data.costs;
+            let focusCosts = data.spell.costs;
 
             if (data.succeeded) {
                 if (data.degreeOfSuccess > 0) {
@@ -110,31 +111,31 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                         templateContext.degreeOfSuccessDescription = "<p>" + game.i18n.localize(`splittermond.spellCheckResultDescription.outstanding`) + "</p>";
                     }
                     templateContext.degreeOfSuccessDescription += "<ul>";
-                    if (data.spell.data.degreeOfSuccessOptions.castDuration) {
+                    if (data.spell.degreeOfSuccessOptions?.castDuration) {
                         templateContext.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.castDuration`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.exhaustedFocus) {
+                    if (data.spell.degreeOfSuccessOptions?.exhaustedFocus) {
                         templateContext.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.exhaustedFocus`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.channelizedFocus) {
+                    if (data.spell.degreeOfSuccessOptions?.channelizedFocus) {
                         templateContext.degreeOfSuccessDescription += "<li>2 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.channelizedFocus`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.range) {
+                    if (data.spell.degreeOfSuccessOptions?.range) {
                         templateContext.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.range`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.damage) {
+                    if (data.spell.degreeOfSuccessOptions?.damage) {
                         templateContext.degreeOfSuccessDescription += "<li>1 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.damage`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.consumedFocus) {
+                    if (data.spell.degreeOfSuccessOptions?.consumedFocus) {
                         templateContext.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.consumedFocus`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.effectArea) {
+                    if (data.spell.degreeOfSuccessOptions?.effectArea) {
                         templateContext.degreeOfSuccessDescription += "<li>3 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.effectArea`) + "</li>";
                     }
-                    if (data.spell.data.degreeOfSuccessOptions.effectDuration) {
+                    if (data.spell.degreeOfSuccessOptions?.effectDuration) {
                         templateContext.degreeOfSuccessDescription += "<li>2 EG: " + game.i18n.localize(`splittermond.degreeOfSuccessOptions.effectDuration`) + "</li>";
                     }
-                    templateContext.degreeOfSuccessDescription += `<li>${data.spell.data.enhancementCosts}: ${data.spell.data.enhancementDescription}</li>`;
+                    templateContext.degreeOfSuccessDescription += `<li>${data.spell.enhancementCosts}: ${data.spell.enhancementDescription}</li>`;
                     templateContext.degreeOfSuccessDescription += "</ul>";
 
                 }
@@ -148,8 +149,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 focusCosts = -data.degreeOfSuccess;
             }
 
-            if (data.spell.data.damage && data.succeeded) {
-                let difficulty = (data.spell.data.difficulty + "").trim().toUpperCase();
+            if (data.spell.systemData().damage && data.succeeded) {
+                let difficulty = (data.spell.systemData().difficulty + "").trim().toUpperCase();
                 if (["VTD", "KW", "GW"].includes(difficulty)) {
                     templateContext.actions.push({
                         name: `${game.i18n.localize("splittermond.activeDefense")} (${difficulty})`,
@@ -163,13 +164,13 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
 
                 templateContext.actions.push({
-                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.data.damage + ")",
+                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.systemData().damage + ")",
                     icon: "fa-heart-broken",
                     classes: "rollable",
                     data: {
                         "roll-type": "damage",
-                        damage: data.spell.data.damage,
-                        features: data.spell.data.features,
+                        damage: data.spell.systemData().damage,
+                        features: data.spell.systemData().features,
                         source: data.spell.name
                     }
                 });
@@ -187,7 +188,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 });
             }
 
-            let enhancementEG = data.spell.data.enhancementCosts.match("([0-9]+)[ ]*EG");
+            let enhancementEG = data.spell.enhancementCosts.match("([0-9]+)[ ]*EG");
             if (enhancementEG) {
                 enhancementEG = parseInt(enhancementEG[1]);
             } else {
@@ -195,7 +196,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             }
 
             if (data.degreeOfSuccess >= enhancementEG) {
-                var enhancementCosts = data.spell.data.enhancementCosts;
+                var enhancementCosts = data.spell.enhancementCosts;
                 templateContext.actions.push({
                     name: `${enhancementCosts} ` + game.i18n.localize(`splittermond.enhancementCosts`),
                     icon: "fa-bullseye",
@@ -218,7 +219,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 }
             });
 
-            if (data.isFumble || data.spell.degreeOfSuccess <= -5) {
+            if (data.isFumble || data.degreeOfSuccess <= -5) {
                 templateContext.actions.push({
                     name: game.i18n.localize("splittermond.fumbleTableLabel"),
                     icon: "fa-dice",
@@ -226,14 +227,14 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     data: {
                         "roll-type": "magicFumble",
                         success: -data.degreeOfSuccess,
-                        costs: data.spell.data.costs
+                        costs: data.spell.costs
                     }
                 });
             }
 
             templateContext.tooltip = $(templateContext.tooltip).append(`
                 <section class="tooltip-part">
-                <p>${data.spell.data.description}</p>
+                <p>${data.spell.description}</p>
                 </section>
                 `).wrapAll('<div>').parent().html();
 
@@ -246,7 +247,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             let defenseValue = data.baseDefense;
             if (data.succeeded) {
                 defenseValue = defenseValue + 1 + data.degreeOfSuccess;
-    
+
                 let feature = {};
                 data.itemData.features?.toLowerCase().split(',').forEach(feat => {
                     let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
@@ -254,23 +255,23 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                         feature[temp[1]] = parseInt(temp[2] || 1);
                     }
                 });
-    
+
                 if (feature["defensiv"]) {
                     defenseValue += feature["defensiv"];
                 }
-    
+
                 templateContext.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
-    
-    
+
+
                 if (data.degreeOfSuccess >= 5) {
                     templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.outstanding")}</p>`
                     tickCost = 2;
                 }
             } else {
-    
+
                 if (data.degreeOfSuccess === 0) {
                     defenseValue += 1;
-    
+
                 }
                 data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
                 if (data.degreeOfSuccess === 0) {
@@ -294,11 +295,11 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                             }
                         });
                     }
-    
+
                 }
-    
+
             }
-    
+
             templateContext.actions.push({
                 name: `${tickCost} ` + game.i18n.localize(`splittermond.ticks`),
                 icon: "fa-stopwatch",
@@ -308,9 +309,9 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     message: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + "): " + data.title
                 }
             });
-    
+
             break;
-    
+
         default:
             break;
     }
@@ -342,19 +343,20 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     return checkMessageData;
 }
 
-export async function prepareStatusEffectMessage(actor, data) {   
+export async function prepareStatusEffectMessage(actor, data) {
     let template = "systems/splittermond/templates/chat/status-effect.hbs";
-    let templateContext = {...data,
+    let templateContext = {
+        ...data,
         actions: [],
         title: `${data.virtualToken.name} ${data.virtualToken.level}`,
         subtitle: game.i18n.format("splittermond.combatEffect.statusEffectActivated.subtitle", {
-            onTick: data.onTick, 
+            onTick: data.onTick,
             activationNo: data.activationNo,
             maxActivation: data.virtualToken.times
         })
     };
 
-    if(data.activationNo == data.virtualToken.times){
+    if (data.activationNo == data.virtualToken.times) {
         templateContext.actions.push({
             name: game.i18n.localize(`splittermond.combatEffect.statusEffectActivated.remove`),
             icon: "fa-remove",

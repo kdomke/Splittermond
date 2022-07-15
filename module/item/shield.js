@@ -1,7 +1,13 @@
-import SplittermondItem from "./item.js";
+import SplittermondPhysicalItem from "./physical.js";
 import AttackableItem from "./attackable-item.js";
+import ActiveDefense from "../actor/active-defense.js";
+import Skill from "../actor/skill.js";
 
-export default class SplittermondShieldItem extends AttackableItem(SplittermondItem) {
+export default class SplittermondShieldItem extends AttackableItem(SplittermondPhysicalItem) {
+
+    prepareBaseData() {
+        this.activeDefenses = [];
+    }
 
     prepareActorData() {
         super.prepareActorData();
@@ -20,20 +26,11 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondI
 
     prepareActiveDefense() {
         if (!this.systemData().equipped && this.systemData().damageLevel <= 1) return;
-        let itemData = duplicate(this.systemData());
-        this.actor.systemData().activeDefense.defense.push({
-            _id: this.id,
-            name: this.name,
-            img: this.img,
-            item: this,
-            skillId: itemData.skill,
-            skillMod: itemData.skillMod,
-            attribute1: "intuition",
-            attribute2: "strength",
-            features: itemData.features,
-            isDamaged: parseInt(this.systemData().damageLevel) === 1,
-            minAttributeMalus: 0
-        });
+
+        let skill = new Skill(this.actor, this.systemData().skill, "intuition", "strength");
+        this.activeDefenses.push(new ActiveDefense(this.id, "defense", this.name, skill, this.systemData().features, img));
+
+        this.actor.activeDefenses.defense.push(this.activeDefenses[0]);
     }
 
     get attributeMalus() {

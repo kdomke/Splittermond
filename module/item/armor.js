@@ -1,7 +1,8 @@
 import SplittermondItem from "./item.js";
+import SplittermondPhysicalItem from "./physical.js";
 
 
-export default class SplittermondArmorItem extends SplittermondItem {
+export default class SplittermondArmorItem extends SplittermondPhysicalItem {
 
     prepareActorData() {
         super.prepareActorData();
@@ -10,11 +11,11 @@ export default class SplittermondArmorItem extends SplittermondItem {
             this.actor.modifier.add("defense", this.name, this.systemData().defenseBonus, this, "equipment");
         let handicap = this.handicap;
         let tickMalus = this.tickMalus;
-        let damageReduction = parseInt(this.actor.systemData().damageReduction.value);
+        let damageReduction = parseInt(this.systemData().damageReduction);
         if (handicap)
-            this.actor.modifier.add("handicap.shield", this.name, handicap, this, "equipment");
+            this.actor.modifier.add("handicap.armor", this.name, handicap, this, "equipment");
         if (tickMalus)
-            this.actor.modifier.add("tickmalus.shield", this.name, tickMalus, this, "equipment");
+            this.actor.modifier.add("tickmalus.armor", this.name, tickMalus, this, "equipment");
         if (damageReduction)
             this.actor.modifier.add("damagereduction", this.name, damageReduction, this, "equipment");
     }

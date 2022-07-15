@@ -3,6 +3,7 @@ import SplittermondItem from "./item/item.js";
 import SplittermondShieldItem from "./item/shield.js";
 import SplittermondSpellItem from "./item/spell.js";
 import SplittermondArmorItem from "./item/armor.js";
+import SplittermondEquipmentItem from "./item/equipment.js";
 
 export const splittermond = {};
 
@@ -1143,7 +1144,8 @@ splittermond.Item = {
         weapon: SplittermondWeaponItem,
         shield: SplittermondShieldItem,
         armor: SplittermondArmorItem,
-        spell: SplittermondSpellItem
+        spell: SplittermondSpellItem,
+        equipment: SplittermondEquipmentItem
     }
 };
 

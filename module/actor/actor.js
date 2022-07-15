@@ -8,8 +8,11 @@ import Attribute from "./attribute.js";
 import Skill from "./skill.js";
 import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
+import Attack from "./attack.js";
+import ActiveDefense from "./active-defense.js";
 
 export default class SplittermondActor extends Actor {
+
 
     systemData() {
         return !this.system ? this.data.data : this.system;
@@ -24,23 +27,44 @@ export default class SplittermondActor extends Actor {
     */
     prepareBaseData() {
         console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
-        this.caching = false;
         super.prepareBaseData();
+        this.modifier = new ModifierManager();
+
+        if (!this.attributes) {
+            this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
+                obj[id] = new Attribute(this, id);
+                return obj;
+            }, {});
+        }
+
+        if (!this.derivedValues) {
+            this.derivedValues = CONFIG.splittermond.derivedValues.reduce((obj, id) => {
+                obj[id] = new DerivedValue(this, id);
+                return obj;
+            }, {});
+        }
+
+        if (!this.skills) {
+            this.skills = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].reduce((obj, id) => {
+                obj[id] = new Skill(this, id);
+                return obj;
+            }, {});
+        }
+
+        [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.disableCaching());
+        [...Object.values(this.attributes)].forEach(e => e.enableCaching());
         const data = this.systemData();
+
+
         this.attacks = [];
-        data.spells = [];
-        if (!data.derivedAttributes) {
-            data.derivedAttributes = {};
-            CONFIG.splittermond.derivedAttributes.forEach(attr => {
-                data.derivedAttributes[attr] = {
-                    value: 0
-                }
-            });
+        this.activeDefense = {
+            defense: [],
+            mindresist: [],
+            bodyresist: []
         }
 
 
-
-        data.derivedAttributes.speed.multiplier = 1;
+        data.spells = [];
         data.lowerFumbleResult = 0;
 
         if (!data.health) {
@@ -118,21 +142,6 @@ export default class SplittermondActor extends Actor {
             }
         }
 
-        this.modifier = new ModifierManager();
-
-        this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
-            obj[id] = new Attribute(this, id);
-            return obj;
-        }, {});
-        this.derivedValues = CONFIG.splittermond.derivedValues.reduce((obj, id) => {
-            obj[id] = new DerivedValue(this, id);
-            return obj;
-        }, {});
-        this.skills = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].reduce((obj, id) => {
-            obj[id] = new Skill(this, id);
-            return obj;
-        }, {});
-
     }
 
     get bonusCap() {
@@ -147,18 +156,18 @@ export default class SplittermondActor extends Actor {
     prepareDerivedData() {
         console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
         super.prepareDerivedData();
-
+        this.spells = this.items.filter(i => i.type === "spell");
         this._prepareModifier();
 
         this._prepareHealthFocus();
+
+        [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.enableCaching());
 
         this._prepareAttacks();
 
         this._prepareActiveDefense();
 
         this.systemData().splinterpoints.max += this.modifier.value("splinterpoints");
-
-        this.caching = true;
 
     }
 
@@ -306,117 +315,28 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareAttacks() {
-
         const attacks = this.attacks || [];
         if (this.type === "character") {
-            let skill = new Skill(this, "melee", "agility", "strength");
-            skill.addModifierPath("skill.weaponless");
-            attacks.push({
-                _id: "weaponless",
+            attacks.push(new Attack(this, {
+                id: "weaponless",
                 name: game.i18n.localize("splittermond.weaponless"),
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
-                item: null,
-                skill: skill,
-                skillMod: 0,
+                skill: "melee",
+                attribute1: "agility",
+                attribute2: "strength",
                 weaponSpeed: 5,
-                range: 0,
                 features: "Entwaffnend 1, Stumpf, Umklammern",
                 damage: "1W6"
-            });
+            }));
         }
-        let tickMalus = this.tickMalus;
-        attacks.forEach(attack => {
-            if (attack.skillId && data.skills[attack.skillId]) {
-                if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skillId))
-                    attack.weaponSpeed += tickMalus;
-            }
-        });
-
-        this.attacks = attacks;
     }
 
     _prepareActiveDefense() {
         const data = this.systemData();
 
-        data.activeDefense.defense.push({
-            _id: "acrobatics",
-            name: game.i18n.localize("splittermond.skillLabel.acrobatics"),
-            item: null,
-            skillId: "acrobatics",
-            skill: data.skills.acrobatics,
-            features: "",
-            attribute1: CONFIG.splittermond.skillAttributes["acrobatics"][0],
-            attribute2: CONFIG.splittermond.skillAttributes["acrobatics"][1]
-        });
-
-        data.activeDefense.mindresist.push({
-            _id: "determination",
-            name: game.i18n.localize("splittermond.skillLabel.determination"),
-            item: null,
-            skillId: "determination",
-            skill: data.skills.determination,
-            features: "",
-            attribute1: CONFIG.splittermond.skillAttributes["determination"][0],
-            attribute2: CONFIG.splittermond.skillAttributes["determination"][1]
-        });
-
-        data.activeDefense.bodyresist.push({
-            _id: "endurance",
-            name: game.i18n.localize("splittermond.skillLabel.endurance"),
-            item: null,
-            skillId: "endurance",
-            skill: data.skills.endurance,
-            features: "",
-            attribute1: CONFIG.splittermond.skillAttributes["endurance"][0],
-            attribute2: CONFIG.splittermond.skillAttributes["endurance"][1]
-        });
-
-
-
-
-        data.activeDefense.defense.filter(d => !d?.skill).forEach(d => {
-
-            let skill = duplicate(data.skills[d.skillId]);
-            if (!skill.mod) {
-                skill.mod = {
-                    value: 0,
-                    sources: [],
-                }
-            }
-            if (parseInt(d.skillMod || 0) != 0) {
-                skill.value += parseInt(d.skillMod || 0);
-                skill.mod.sources.push({
-                    value: parseInt(d.skillMod || 0),
-                    description: game.i18n.localize("splittermond.skillMod"),
-                    source: "misc"
-                });
-            }
-
-            if (parseInt(d.minAttributeMalus || 0) != 0) {
-                skill.value += parseInt(d.minAttributeMalus || 0);
-                skill.mod.sources.push({
-                    value: parseInt(d.minAttributeMalus || 0),
-                    description: game.i18n.localize("splittermond.minAttributes"),
-                    source: "misc"
-                });
-            }
-
-            if (d.isDamaged) {
-                skill.value -= 3;
-                skill.mod.sources.push({
-                    value: -3,
-                    description: game.i18n.localize("splittermond.damageLevel"),
-                    source: "misc"
-                });
-            }
-            skill.value += parseInt(this.attributes[d.attribute1].value)
-            skill.value += parseInt(this.attributes[d.attribute2].value)
-            skill.baseValue += parseInt(this.attributes[d.attribute1].value)
-            skill.baseValue += parseInt(this.attributes[d.attribute2].value)
-
-            d.skill = skill;
-
-        });
+        this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", game.i18n.localize(this.skills["acrobatics"].label), this.skills["acrobatics"]));
+        this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", game.i18n.localize(this.skills["determination"].label), this.skills["determination"]));
+        this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", game.i18n.localize(this.skills["endurance"].label), this.skills["endurance"]));
     }
 
     addModifier(item, name = "", str = "", type = "", multiplier = 1) {
@@ -461,8 +381,9 @@ export default class SplittermondActor extends Actor {
                     case "bonuscap":
                         addModifierHelper("bonuscap");
                         break;
+                    case "speed.multiplier":
                     case "gsw.mult":
-                        data.derivedAttributes.speed.multiplier *= Math.pow(parseFloat(value), multiplier);
+                        this.derivedValues.speed.multiplier *= Math.pow(parseFloat(value), multiplier);
                         break;
                     case "sr":
                         addModifierHelper("damagereduction");
@@ -1083,300 +1004,26 @@ export default class SplittermondActor extends Actor {
         })
     }
 
-    async rollSkill(skill, options = {}) {
-        let emphasisData = [];
-        if (this.systemData().skills[skill].emphasis) {
-            emphasisData = Object.entries(this.systemData().skills[skill].emphasis).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: false
-                }
-            });
-        }
-
-        let checkData = await CheckDialog.create({
-            difficulty: options.difficulty || 15,
-            modifier: options.modifier || 0,
-            emphasis: emphasisData,
-            title: game.i18n.localize(`splittermond.skillCheck`) + " - " + game.i18n.localize(`splittermond.skillLabel.${skill}`)
-        });
-        if (!checkData) return;
-
-        if (this.systemData().skills[skill].mod) {
-            checkData.modifierElements = [...this.systemData().skills[skill].mod.sources, ...checkData.modifierElements];
-        }
-
-
-        checkData.difficulty = parseInt(checkData.difficulty);
-        if (this.data.items.find(i => i.data.type == "mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == skill)) {
-            checkData.rollType = checkData.rollType + "Grandmaster";
-        }
-
-        let data = Dice.check(
-            this.systemData().skills[skill].value,
-            this.systemData().skills[skill].points,
-            checkData.difficulty,
-            checkData.rollType,
-            checkData.modifier);
-
-
-        let checkMessageData = {
-            type: "skill",
-            skill: skill,
-            skillValue: this.systemData().skills[skill].value,
-            skillPoints: this.systemData().skills[skill].points,
-            skillAttributes: {
-                [CONFIG.splittermond.skillAttributes[skill][0]]: this.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value,
-                [CONFIG.splittermond.skillAttributes[skill][1]]: this.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value,
-            },
-            difficulty: data.difficulty,
-            rollType: checkData.rollType,
-            modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? this.systemData().splinterpoints.value : 0
-        }
-
-        ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
+    async rollSkill(skillId, options = {}) {
+        let skill = this.skills[skillId];
+        if (!skill) return;
+        return skill.roll(options);
     }
 
     async rollAttack(attackId, options = {}) {
-        const systemData = this.systemData();
-
-        let weaponData = systemData.attacks.find(a => a._id === attackId);
-
-        if (!weaponData) return;
-
-        let emphasisData = [];
-
-        if (weaponData.skill.emphasis) {
-            emphasisData = Object.entries(weaponData.skill.emphasis).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: key.toLowerCase().trim() === weaponData.name.toLowerCase().trim()
-                }
-            });
-        }
-
-        let checkData = await CheckDialog.create({
-            difficulty: "VTD",
-            modifier: 0,
-            emphasis: emphasisData,
-            title: game.i18n.localize(`splittermond.attack`) + " - " + weaponData.name
-        });
-
-        if (!checkData) return false;
-
-        if (weaponData.skill.mod) {
-            checkData.modifierElements = [...weaponData.skill.mod.sources, ...checkData.modifierElements];
-        }
-
-        let target = Array.from(game.user.targets)[0];
-        let hideDifficulty = false;
-        if (target) {
-            switch (checkData.difficulty) {
-                case "VTD":
-                    checkData.difficulty = target.actor.derivedValues.defense.value;
-                    hideDifficulty = true;
-                    break;
-                case "KW":
-                    checkData.difficulty = target.actor.derivedValues.bodyresist.value;
-                    hideDifficulty = true;
-                    break;
-                case "GW":
-                    checkData.difficulty = target.actor.derivedValues.mindresist.value;
-                    hideDifficulty = true;
-                    break;
-            }
-        }
-
-
-        checkData.difficulty = parseInt(checkData.difficulty);
-        let skillPoints = parseInt(weaponData.skill.points);
-        let skillValue = weaponData.skill.value;
-
-        if (this.actorData().items.find(i => i.type == "mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == weaponData.skillId)) {
-            checkData.rollType = checkData.rollType + "Grandmaster";
-        }
-
-        let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
-
-
-        let checkMessageData = {
-            type: "attack",
-            skill: weaponData.skillId,
-            skillValue: skillValue,
-            skillPoints: skillPoints,
-            skillAttributes: {
-                [weaponData.attribute1]: this.attributes[weaponData.attribute1].value,
-                [weaponData.attribute2]: this.attributes[weaponData.attribute2].value,
-            },
-            difficulty: data.difficulty,
-            rollType: checkData.rollType,
-            modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? systemData.splinterpoints.value : 0,
-            weapon: weaponData,
-            hideDifficulty: hideDifficulty,
-        }
-
-        ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
-        return true;
+        let attack = this.attacks.find(a => a.id === attackId);
+        if (!attack) return;
+        return attack.roll(options);
     }
-
-
 
     async rollSpell(spellId, options = {}) {
-        const systemData = this.systemData();
-        let spellData = systemData.spells.find((spell) => spell._id == spellId);
-        let difficulty = (spellData.data.difficulty + "").trim().toUpperCase();
-
-        let emphasisData = [];
-        if (systemData.skills[spellData.data.skill].emphasis) {
-            emphasisData = Object.entries(systemData.skills[spellData.data.skill].emphasis).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: (spellData.data.spellType + "").toLowerCase().includes(key.toLocaleLowerCase().trim())
-                }
-            });
-        }
-
-        let checkData = await CheckDialog.create({
-            difficulty: difficulty,
-            modifier: 0,
-            emphasis: emphasisData,
-            title: game.i18n.localize(`splittermond.skillLabel.${spellData.data.skill}`) + " - " + spellData.name
-        });
-
-        if (!checkData) return false;
-
-        if (systemData.skills[spellData.data.skill].mod) {
-            checkData.modifierElements = [...systemData.skills[spellData.data.skill].mod.sources, ...checkData.modifierElements];
-        }
-
-        let target = Array.from(game.user.targets)[0];
-        let hideDifficulty = false;
-        if (target) {
-            switch (checkData.difficulty) {
-                case "VTD":
-                    checkData.difficulty = target.actor.systemData().derivedAttributes.defense.value;
-                    hideDifficulty = true;
-                    break;
-                case "KW":
-                    checkData.difficulty = target.actor.systemData().derivedAttributes.bodyresist.value;
-                    hideDifficulty = true;
-                    break;
-                case "GW":
-                    checkData.difficulty = target.actor.systemData().derivedAttributes.mindresist.value;
-                    hideDifficulty = true;
-                    break;
-            }
-        }
-
-        checkData.difficulty = parseInt(checkData.difficulty);
-        let skillPoints = parseInt(systemData.skills[spellData.data.skill].points);
-        let skillValue = parseInt(systemData.skills[spellData.data.skill].value);
-
-        if (this.actorData().items.find(i => i.type == "mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == spellData.data.skill)) {
-            checkData.rollType = checkData.rollType + "Grandmaster";
-        }
-
-        let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
-
-        let checkMessageData = {
-            type: "spell",
-            skill: spellData.data.skill,
-            skillValue: skillValue,
-            skillPoints: skillPoints,
-            skillAttributes: {
-                [CONFIG.splittermond.skillAttributes[spellData.data.skill][0]]: this.attributes[CONFIG.splittermond.skillAttributes[spellData.data.skill][0]].value,
-                [CONFIG.splittermond.skillAttributes[spellData.data.skill][1]]: this.attributes[CONFIG.splittermond.skillAttributes[spellData.data.skill][1]].value,
-            },
-            difficulty: data.difficulty,
-            rollType: checkData.rollType,
-            modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.type === "character" ? systemData.splinterpoints.value : 0,
-            spell: spellData,
-            hideDifficulty: hideDifficulty
-        }
-
-        ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
-        return true;
+        let spell = this.spells.find((s) => s.id == spellId);
+        if (!spell) return;
+        return spell.roll(options);
     }
 
-    async rollActiveDefense(defenseType, itemData) {
-        const systemData = this.systemData();
-        let emphasisData = [];
-        if (itemData.skill.emphasis) {
-            emphasisData = Object.entries(itemData.skill.emphasis).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: itemData.name.toLowerCase().trim() === key.toLowerCase().trim()
-                }
-            });
-        }
-
-        let checkData = await CheckDialog.create({
-            difficulty: 15,
-            modifier: 0,
-            emphasis: emphasisData,
-            title: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${defenseType}.short`) + ") - " + itemData.name
-        });
-
-        if (!checkData) return;
-
-        checkData.difficulty = parseInt(checkData.difficulty);
-
-        let skillPoints = parseInt(itemData.skill.points);
-        let skillValue = parseInt(itemData.skill.value);
-
-        if (this.actorData().items.find(i => i.type == "mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == itemData.skillId)) {
-            checkData.rollType = checkData.rollType + "Grandmaster";
-        }
-
-
-        let data = Dice.check(skillValue, skillPoints, checkData.difficulty, checkData.rollType, checkData.modifier);
-
-        let checkMessageData = {
-            type: "defense",
-            skill: itemData.skillId,
-            skillValue: skillValue,
-            skillPoints: skillPoints,
-            skillAttributes: {
-                [itemData.attribute1]: this.attributes[itemData.attribute1].value,
-                [itemData.attribute2]: this.attributes[itemData.attribute2].value,
-            },
-            difficulty: data.difficulty,
-            rollType: checkData.rollType,
-            modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.data.type === "character" ? systemData.splinterpoints.value : 0,
-            itemData: itemData,
-            defenseType: defenseType,
-            baseDefense: systemData.derivedAttributes[defenseType].value,
-        }
-
-        ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
+    async rollActiveDefense(defenseType, item) {
+        return item.roll();
     }
 
     async rollAttackFumble() {
@@ -1728,7 +1375,7 @@ export default class SplittermondActor extends Actor {
         }
 
         if (type === "defense") {
-            let content = await renderTemplate("systems/splittermond/templates/apps/dialog/active-defense.hbs", { activeDefense: this.data.data.activeDefense.defense });
+            let content = await renderTemplate("systems/splittermond/templates/apps/dialog/active-defense.hbs", { activeDefense: this.activeDefense.defense });
             let p = new Promise((resolve, reject) => {
                 let dialog = new Dialog({
                     title: game.i18n.localize("splittermond.activeDefense"),
@@ -1747,7 +1394,7 @@ export default class SplittermondActor extends Actor {
                             if (type === "activeDefense") {
                                 const itemId = $(event.currentTarget).closestData('defense-id');
                                 const defenseType = $(event.currentTarget).closestData('defense-type');
-                                this.rollActiveDefense(defenseType, this.data.data.activeDefense.defense.find(el => el._id === itemId));
+                                this.rollActiveDefense(defenseType, this.activeDefense.defense.find(el => el.id === itemId));
                                 dialog.close();
                             }
                         });
@@ -1756,7 +1403,7 @@ export default class SplittermondActor extends Actor {
                 dialog.render(true);
             });
         } else {
-            this.rollActiveDefense(type, this.data.data.activeDefense[type][0]);
+            this.rollActiveDefense(type, this.activeDefense[type][0]);
         }
 
     }

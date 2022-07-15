@@ -21,10 +21,10 @@ export default class SplittermondActorSheet extends ActorSheet {
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
         sheetData.hideSkills = this._hideSkills;
-        [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(skill => {
-            sheetData.data.skills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
-                (parseInt(sheetData.data.skills[skill].points) > 0) || !this._hideSkills;
-        });
+        // [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(skill => {
+        //     sheetData.data.skills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
+        //         (parseInt(sheetData.data.skills[skill].points) > 0) || !this._hideSkills;
+        // });
 
         sheetData.generalSkills = {};
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s) || this.actor.skills[s].points > 0).forEach(skill => {
@@ -48,6 +48,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             });
 
+        }
+
+        sheetData.data.damageReduction = {
+            value: this.actor.damageReduction
         }
         this._prepareItems(sheetData);
 
@@ -83,20 +87,16 @@ export default class SplittermondActorSheet extends ActorSheet {
             }, {});
         }
 
-        sheetData.data.spells.sort((a, b) => (a.sort - b.sort));
-        sheetData.data.spellsBySkill = sheetData.data.spells.reduce((result, item) => {
-            let skill = item.data.skill || "none";
-            if (!(skill in result)) {
-                result[skill] = {
-                    label: `splittermond.skillLabel.${skill}`,
-                    skillValue: sheetData.data.skills[skill].value,
+        this.actor.spells.sort((a, b) => (a.sort - b.sort));
+        sheetData.spellsBySkill = this.actor.spells.reduce((result, item) => {
+            if (!result[item.skill.id]) {
+                result[item.skill.id] = {
+                    label: `splittermond.skillLabel.${item.skill.id}`,
+                    skillValue: item.skill.value,
                     spells: []
                 };
             }
-            let costData = Costs.parseCostsString(item.data.costs);
-            let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-            item.enoughFocus = costTotal <= this.actor.systemData().focus.available.value;
-            result[skill].spells.push(item);
+            result[item.skill.id].spells.push(item);
             return result;
         }, {});
 
@@ -362,7 +362,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         }).attr('draggable', true);
 
-        html.find("[data-item-id], .list.skills [data-skill], .derived-attribute, .list.attack .value, .list.active-defense .value").hover(event => {
+        html.find("[data-item-id], .list.skills [data-skill], .derived-attribute, .damage-reduction, .list.attack .value, .list.active-defense .value").hover(event => {
             const itemId = event.currentTarget.dataset.itemId;
             let content = "";
             let css = {
@@ -424,21 +424,21 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList = masteryList.clone();
 
                     masteryList.find("button").remove();
-                    masteryList = masteryList.wrapAll(`< div class="list tooltip masteries" /> `).wrapAll(` <ol class="list-body" /> `).parent().parent();
+                    masteryList = masteryList.wrapAll(`<div class="list tooltip masteries"/>`).wrapAll(`<ol class="list-body"/>`).parent().parent();
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
                         top: posTop,
                         width: width
                     })
-                    content += masteryList.wrapAll("<div />").parent().html();
+                    content += masteryList.wrapAll("<div/>").parent().html();
                 }
             }
 
             if ($(event.currentTarget).closestData('attack-id')) {
                 let attackId = $(event.currentTarget).closestData('attack-id');
-                if (this.actor.attacks.find(a => a._id === attackId)) {
-                    let attack = this.actor.attacks.find(a => a._id === attackId);
+                if (this.actor.attacks.find(a => a.id === attackId)) {
+                    let attack = this.actor.attacks.find(a => a.id === attackId);
                     let skill = attack.skill;
                     content += '<span class="formula">';
                     content += `<span class="formula-part"><span class="value">${skill.attribute1.value}</span>
@@ -514,7 +514,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             if (event.currentTarget.classList.contains("derived-attribute")) {
                 let attribute = event.currentTarget.id;
-                if (this.actor.systemData().derivedAttributes[attribute]) {
+                if (this.actor.derivedValues[attribute]) {
                     content += '<span class="formula">';
                     switch (attribute) {
                         case "size":
@@ -595,6 +595,21 @@ export default class SplittermondActorSheet extends ActorSheet {
                     content += '</span>';
                 }
 
+            }
+
+            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction > 0) {
+                content += '<span class="formula">';
+                this.actor.modifier.static("damagereduction").forEach(e => {
+                    if (e.value != 0) {
+                        let val = parseInt(e.value);
+                        let cls = e.isMalus ? "malus" : "bonus";
+                        val = val > 0 ? "+" + val : val;
+                        content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
+                        <span class="description">${e.name}</span></span> `
+                    }
+
+                });
+                content += '</span>';
             }
 
             if (content) {

@@ -1,10 +1,10 @@
 import SplittermondItem from "./item.js";
 
 
-export default class PhysicalItem extends SplittermondItem {
+export default class SplittermondPhysicalItem extends SplittermondItem {
 
     prepareBaseData() {
-        super.prepareActorData();
+        super.prepareBaseData();
         const data = this.systemData();
         data.durability = parseInt(data.weight) + parseInt(data.hardness);
         data.sufferedDamage = parseInt(data.sufferedDamage) || 0;

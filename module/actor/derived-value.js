@@ -9,10 +9,17 @@ export default class DerivedValue extends Modifiable {
             short: `splittermond.derivedAttribute.${this.id}.short`,
             long: `splittermond.derivedAttribute.${this.id}.long`
         }
+
+        this._cache = {
+            enabled: false,
+            baseValue: null,
+            value: null
+        }
     }
 
-    get value() {
+    get baseValue() {
         if (this.actor.type != "character") return this.actor.systemData().attributes[this.id].value;
+        if (this._cache.enabled && this._cache.baseValue !== null) return this._cache.baseValue;
         let baseValue = 0;
         const attributes = this.actor.attributes;
         const derivedValues = this.actor.derivedValues;
@@ -46,12 +53,34 @@ export default class DerivedValue extends Modifiable {
                 break;
 
         }
+        if (this._cache.enabled && this._cache.baseValue === null)
+            this._cache.baseValue = baseValue;
+        return baseValue;
+    }
 
-        return Math.ceil(this.multiplier * (baseValue + this.mod));
+    get value() {
+        console.log(`DerivedValue (${this.id}) ${this.actor.name} get`);
+        if (this.actor.type != "character") return this.actor.systemData().attributes[this.id].value;
+        if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
+        let value = Math.ceil(this.multiplier * (this.baseValue + this.mod));
+        if (this._cache.enabled && this._cache.value === null)
+            this._cache.value = value;
+        console.log(`DerivedValue (${this.id}) ${this.actor.name} processed`);
+        return value;
     }
 
     get mod() {
         if (this.id == "initiative") return -super.mod;
         return super.mod;
+    }
+
+    enableCaching() {
+        this._cache.enabled = true;
+    }
+
+    disableCaching() {
+        this._cache.enabled = false;
+        this._cache.baseValue = null;
+        this._cache.value = null;
     }
 }
