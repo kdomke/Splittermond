@@ -27,17 +27,23 @@ export default class SplittermondActorSheet extends ActorSheet {
         // });
 
         sheetData.generalSkills = {};
-        CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s) || this.actor.skills[s].points > 0).forEach(skill => {
-            sheetData.generalSkills[skill] = this.actor.skills[skill];
-        });
+        CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
+            || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
+            || this.actor.skills[s].points > 0
+            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
+                sheetData.generalSkills[skill] = this.actor.skills[skill];
+            });
         sheetData.magicSkills = {};
-        CONFIG.splittermond.skillGroups.magic.filter(s => !sheetData.hideSkills || this.actor.skills[s].points > 0).forEach(skill => {
-            sheetData.magicSkills[skill] = this.actor.skills[skill];
-        });
+        CONFIG.splittermond.skillGroups.magic.filter(s => !sheetData.hideSkills
+            || this.actor.skills[s].points > 0
+            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
+                sheetData.magicSkills[skill] = this.actor.skills[skill];
+            });
 
-        if (sheetData.data.skills) {
-            sheetData.fightingSkills = {};
-            CONFIG.splittermond.skillGroups.fighting.filter(s => !sheetData.hideSkills || (sheetData.data.skills[s]?.points || 0) > 0).forEach(skill => {
+        sheetData.fightingSkills = {};
+        CONFIG.splittermond.skillGroups.fighting.filter(s => !sheetData.hideSkills
+            || (sheetData.data.skills[s]?.points || 0) > 0
+            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
                 if (!sheetData.data.skills[skill]) {
                     sheetData.data.skills[skill] = {
                         points: 0
@@ -45,10 +51,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
                 sheetData.fightingSkills[skill] = duplicate(sheetData.data.skills[skill]);
                 sheetData.fightingSkills[skill].label = `splittermond.skillLabel.${skill}`;
-
             });
-
-        }
 
         sheetData.data.damageReduction = {
             value: this.actor.damageReduction

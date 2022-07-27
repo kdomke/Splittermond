@@ -13,7 +13,6 @@ import ActiveDefense from "./active-defense.js";
 
 export default class SplittermondActor extends Actor {
 
-
     systemData() {
         return !this.system ? this.data.data : this.system;
     }
@@ -63,8 +62,6 @@ export default class SplittermondActor extends Actor {
             bodyresist: []
         }
 
-
-        data.spells = [];
         data.lowerFumbleResult = 0;
 
         if (!data.health) {
@@ -148,6 +145,10 @@ export default class SplittermondActor extends Actor {
         return this.type === "npc" ? 6 : this.systemData().experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
 
+    get splinterpoints() {
+        return this.systemData().splinterpoints;
+    }
+
     prepareEmbeddedDocuments() {
         super.prepareEmbeddedDocuments();
         this.items.forEach(item => item.prepareActorData());
@@ -156,7 +157,7 @@ export default class SplittermondActor extends Actor {
     prepareDerivedData() {
         console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
         super.prepareDerivedData();
-        this.spells = this.items.filter(i => i.type === "spell");
+        this.spells = (this.items.filter(i => i.type === "spell") || []);
         this._prepareModifier();
 
         this._prepareHealthFocus();
@@ -167,7 +168,10 @@ export default class SplittermondActor extends Actor {
 
         this._prepareActiveDefense();
 
-        this.systemData().splinterpoints.max += this.modifier.value("splinterpoints");
+        if (this.type == "character") {
+            this.systemData().splinterpoints.max += this.modifier.value("splinterpoints");
+        }
+
 
     }
 
@@ -281,13 +285,8 @@ export default class SplittermondActor extends Actor {
                     data[type].total.percentage = 0;
                     data[type].max = 0;
                 }
-
             }
-
-
-
         });
-
 
         data.health.woundMalus.level = Math.max(Math.min(data.health.woundMalus.nbrLevels - (Math.floor(data.health.total.value / this.derivedValues.healthpoints.value) + 1) + data.health.woundMalus.levelMod, data.health.woundMalus.nbrLevels - 1), 0);
 
@@ -295,13 +294,9 @@ export default class SplittermondActor extends Actor {
         data.health.woundMalus.value = woundMalusValue?.value ?? 0;
 
         if (data.health.woundMalus.value) {
-            this.modifier.add("initiative", game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
-            this.modifier.add("speed", game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
-
-            [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic].forEach(skill => {
-                this.modifier.add(skill, game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
-            });
+            this.modifier.add("woundmalus", game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
         }
+
 
         data.healthBar = {
             value: data.health.total.value,

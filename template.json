@@ -392,7 +392,8 @@
       "language",
       "culturelore",
       "statuseffect",
-      "spelleffect"
+      "spelleffect",
+      "npcattack"
     ],
     "templates": {
       "description": {

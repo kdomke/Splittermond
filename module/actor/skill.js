@@ -5,30 +5,43 @@ import * as Chat from "../util/chat.js";
 
 
 export default class Skill extends Modifiable {
-    constructor(actor, skill, attribute1 = "", attribute2 = "", parent = null) {
-        attribute1 = attribute1 ? attribute1 : CONFIG.splittermond.skillAttributes[skill][0];
-        attribute2 = attribute2 ? attribute2 : CONFIG.splittermond.skillAttributes[skill][1];
-        super(actor, skill);
-        this.id = skill;
-        this.label = `splittermond.skillLabel.${this.id}`;
-        this.attribute1 = this.actor.attributes[attribute1];
-        this.attribute2 = this.actor.attributes[attribute2];
+    constructor(actor, skill, attribute1 = "", attribute2 = "", skillValue = null) {
+        super(actor, [skill.toLowerCase().trim(), "woundmalus"]);
+        this.id = skill.toLowerCase().trim();
+        this.label = skill;
+        if (this.actor.systemData().skills[skill]) {
+            this.label = `splittermond.skillLabel.${this.id}`;
+            attribute1 = attribute1 ? attribute1 : CONFIG.splittermond.skillAttributes[skill][0];
+            attribute2 = attribute2 ? attribute2 : CONFIG.splittermond.skillAttributes[skill][1];
+            this.attribute1 = this.actor.attributes[attribute1];
+            this.attribute2 = this.actor.attributes[attribute2];
+        }
+
+        this._skillValue = skillValue;
+
+
         this._cache = {
             enabled: false,
             value: null
         }
-
-        this.parent = parent;
     }
 
     get points() {
-        return parseInt(this.actor.systemData().skills[this.id].points);
+        if (this._skillValue == null) {
+            return parseInt(this.actor.systemData().skills[this.id].points);
+        } else {
+            return this._skillValue - (this.attribute1?.value || 0) - (this.attribute2?.value || 0);
+        }
+
     }
 
     get value() {
         console.log(`Skill (${this.id}) ${this.actor.name} get`);
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
-        let value = this.attribute1.value + this.attribute2.value + this.points + this.mod;
+
+        let value = (this.attribute1?.value || 0) + (this.attribute2?.value || 0) + this.points;
+        value += this.mod;
+
         if (this._cache.enabled && this._cache.value === null)
             this._cache.value = value;
         console.log(`Skill (${this.id}) ${this.actor.name} processed`);
@@ -109,16 +122,21 @@ export default class Skill extends Modifiable {
         }
 
         let data = Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
+        let skillAttributes = {};
+        if (this.attribute1?.id && this.attribute1?.value) {
+            skillAttributes[this.attribute1.id] = this.attribute1.value;
+        }
+
+        if (this.attribute2?.id && this.attribute2?.value) {
+            skillAttributes[this.attribute2.id] = this.attribute2.value;
+        }
 
         let checkMessageData = {
             type: options.type || "skill",
             skill: this.id,
             skillValue: this.value,
             skillPoints: this.points,
-            skillAttributes: {
-                [this.attribute1.id]: this.attribute1.value,
-                [this.attribute2.id]: this.attribute2.value,
-            },
+            skillAttributes: skillAttributes,
             difficulty: data.difficulty,
             rollType: checkData.rollType,
             modifierElements: checkData.modifierElements,
