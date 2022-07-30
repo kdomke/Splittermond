@@ -1,4 +1,9 @@
 export default class Attribute {
+    /**
+     * 
+     * @param {Actor} actor 
+     * @param {string} attributeId ID of the attribute, like "agility", "strength" etc.
+     */
     constructor(actor, attributeId) {
         this.actor = actor;
         this.id = attributeId;

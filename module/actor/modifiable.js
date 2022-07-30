@@ -1,4 +1,9 @@
 export default class Modifiable {
+    /**
+     * 
+     * @param {Actor} actor 
+     * @param {string} path 
+     */
     constructor(actor, path) {
         this.actor = actor;
         this._modifierPath = [path];

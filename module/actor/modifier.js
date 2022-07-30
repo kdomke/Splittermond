@@ -1,4 +1,13 @@
 export default class Modifier {
+    /**
+     * 
+     * @param {string} path Modifier Path
+     * @param {string} name name of modification
+     * @param {(numeric | string)} value 
+     * @param {(Item | Actor)=null} origin 
+     * @param {string=""} type "equipment", "magic" etc.
+     * @param {boolean=false} selectable is the modifier selectable as a roll option
+     */
     constructor(path, name, value, origin = null, type = "", selectable = false) {
         this.path = path;
         this.value = parseInt(value);

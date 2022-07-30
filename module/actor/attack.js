@@ -1,6 +1,12 @@
 import Skill from "./skill.js";
 
 export default class Attack {
+    /**
+     * 
+     * @param {Actor} actor Actor-Object of attack
+     * @param {(Item|Object)} item Corresponding item for attack
+     * @param {boolean=false} secondaryAttack Generate secondary attack of item
+     */
     constructor(actor, item, secondaryAttack = false) {
         this.actor = actor;
         this.item = item;

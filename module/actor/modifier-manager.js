@@ -4,7 +4,7 @@ export default class ModifierManager {
     constructor() {
         this._modifier = {};
     }
-
+    
     add(path, ...args) {
         if (!this._modifier[path]) {
             this._modifier[path] = [];

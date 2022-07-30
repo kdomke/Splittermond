@@ -7,7 +7,7 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
 
     prepareBaseData() {
         super.prepareBaseData()
-        this.activeDefenses = [];
+        this.activeDefense = [];
     }
     prepareActorData() {
         super.prepareActorData();
@@ -19,10 +19,10 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
 
         this.attacks.forEach(attack => {
             if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skill.id)) {
-                this.activeDefenses.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, attack.features, attack.img));
+                this.activeDefense.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, attack.features, attack.img));
             }
         });
 
-        this.activeDefenses.forEach(d => this.actor.activeDefense.defense.push(d));
+        this.activeDefense.forEach(d => this.actor.activeDefense.defense.push(d));
     }
 }

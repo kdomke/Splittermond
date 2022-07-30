@@ -6,7 +6,10 @@ import Skill from "../actor/skill.js";
 export default class SplittermondShieldItem extends AttackableItem(SplittermondPhysicalItem) {
 
     prepareBaseData() {
+        super.prepareBaseData();
         this.activeDefenses = [];
+        this.systemData().attribute1 = "agility";
+        this.systemData().attribute2 = "strength";
     }
 
     prepareActorData() {
@@ -28,9 +31,9 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
         if (!this.systemData().equipped && this.systemData().damageLevel <= 1) return;
 
         let skill = new Skill(this.actor, this.systemData().skill, "intuition", "strength");
-        this.activeDefenses.push(new ActiveDefense(this.id, "defense", this.name, skill, this.systemData().features, img));
+        this.activeDefenses.push(new ActiveDefense(this.id, "defense", this.name, skill, this.systemData().features, this.img));
 
-        this.actor.activeDefenses.defense.push(this.activeDefenses[0]);
+        this.actor.activeDefense.defense.push(this.activeDefenses[0]);
     }
 
     get attributeMalus() {

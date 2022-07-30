@@ -1,6 +1,11 @@
 import Modifiable from "./modifiable.js";
 
 export default class DerivedValue extends Modifiable {
+    /**
+     * 
+     * @param {Actor} actor Actor object of DerivedValue
+     * @param {string} id ID of Derived value like "size", "speed", "initiative" etc.
+     */
     constructor(actor, id) {
         super(actor, id);
         this.id = id;
@@ -60,7 +65,7 @@ export default class DerivedValue extends Modifiable {
 
     get value() {
         console.log(`DerivedValue (${this.id}) ${this.actor.name} get`);
-        if (this.actor.type != "character") return this.actor.systemData().attributes[this.id].value;
+        if (this.actor.type != "character") return this.actor.systemData().derivedAttributes[this.id].value;
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
         let value = Math.ceil(this.multiplier * (this.baseValue + this.mod));
         if (this._cache.enabled && this._cache.value === null)
