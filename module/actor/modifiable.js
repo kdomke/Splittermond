@@ -6,7 +6,10 @@ export default class Modifiable {
      */
     constructor(actor, path) {
         this.actor = actor;
-        this._modifierPath = [path];
+        if (!Array.isArray(path)) {
+            path = [path];
+        }
+        this._modifierPath = path;
     }
 
     get mod() {

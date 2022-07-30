@@ -7,7 +7,9 @@ export default class DerivedValue extends Modifiable {
      * @param {string} id ID of Derived value like "size", "speed", "initiative" etc.
      */
     constructor(actor, id) {
-        super(actor, id);
+        let path = [id]
+        if (["initiative", "speed"].includes(id)) path.push("woundmalus");
+        super(actor, path);
         this.id = id;
         this.multiplier = 1;
         this.label = {
@@ -23,14 +25,14 @@ export default class DerivedValue extends Modifiable {
     }
 
     get baseValue() {
-        if (this.actor.type != "character") return this.actor.systemData().attributes[this.id].value;
+        if (this.actor.type != "character" && this.actor.systemData().derivedAttributes[this.id].value > 0) return this.actor.systemData().derivedAttributes[this.id].value;
         if (this._cache.enabled && this._cache.baseValue !== null) return this._cache.baseValue;
         let baseValue = 0;
         const attributes = this.actor.attributes;
         const derivedValues = this.actor.derivedValues;
         switch (this.id) {
             case "size":
-                baseValue = parseInt(this.actor.systemData().species.size);
+                baseValue = this.actor.type == "npc" ? this.actor.systemData().derivedAttributes[this.id].value : parseInt(this.actor.systemData().species.size);
                 break;
             case "speed":
                 baseValue = attributes.agility.value + derivedValues.size.value;
@@ -65,7 +67,7 @@ export default class DerivedValue extends Modifiable {
 
     get value() {
         console.log(`DerivedValue (${this.id}) ${this.actor.name} get`);
-        if (this.actor.type != "character") return this.actor.systemData().derivedAttributes[this.id].value;
+        //if (this.actor.type != "character") return this.actor.systemData().attributes[this.id].value;
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
         let value = Math.ceil(this.multiplier * (this.baseValue + this.mod));
         if (this._cache.enabled && this._cache.value === null)

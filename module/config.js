@@ -4,6 +4,7 @@ import SplittermondShieldItem from "./item/shield.js";
 import SplittermondSpellItem from "./item/spell.js";
 import SplittermondArmorItem from "./item/armor.js";
 import SplittermondEquipmentItem from "./item/equipment.js";
+import SplittermondNPCAttackItem from "./item/npcattack.js";
 
 export const splittermond = {};
 
@@ -939,6 +940,39 @@ splittermond.itemSheetProperties.moonsign = [
     }
 ]
 
+splittermond.itemSheetProperties.npcattack = [
+    {
+        groupName: "splittermond.weaponProperties",
+        properties: [
+            {
+                field: "data.skillValue",
+                label: "splittermond.skillValue",
+                template: "inputNumberWithSpinner"
+            },
+            {
+                field: "data.damage",
+                label: "splittermond.damage",
+                template: "input"
+            },
+            {
+                field: "data.range",
+                label: "splittermond.range",
+                template: "input"
+            },
+            {
+                field: "data.weaponSpeed",
+                label: "splittermond.weaponSpeed",
+                template: "inputNumberWithSpinner"
+            },
+            {
+                field: "data.features",
+                label: "splittermond.features",
+                template: "input"
+            }
+        ]
+    }
+]
+
 splittermond.icons = {
     equipment: {
         default: "icons/svg/chest.svg"
@@ -1145,7 +1179,8 @@ splittermond.Item = {
         shield: SplittermondShieldItem,
         armor: SplittermondArmorItem,
         spell: SplittermondSpellItem,
-        equipment: SplittermondEquipmentItem
+        equipment: SplittermondEquipmentItem,
+        npcattack: SplittermondNPCAttackItem
     }
 };
 
