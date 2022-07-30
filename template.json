@@ -450,6 +450,16 @@
         "features": ""
       }
     },
+    "npcattack": {
+      "templates": [
+        "description"
+      ],
+      "damage": "",
+      "range": 0,
+      "weaponSpeed": 0,
+      "skillValue": "",
+      "features": ""
+    },
     "projectile": {
       "templates": [
         "description",

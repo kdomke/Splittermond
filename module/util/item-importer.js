@@ -798,7 +798,7 @@ export default class ItemImporter {
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
-                                        type: "weapon",
+                                        type: "npcattack",
                                         name: weaponName,
                                         img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
                                         data: {}
@@ -817,7 +817,7 @@ export default class ItemImporter {
                                     INI = parseInt(weaponDataRaw[5].trim()) || 0;
                                     let weaponName = weaponDataRaw[1].trim();
                                     let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
-                                        type: "weapon",
+                                        type: "npcattack",
                                         name: weaponName,
                                         img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
                                         data: {}
@@ -835,16 +835,20 @@ export default class ItemImporter {
                             weapons = await Promise.all(weapons);
 
                             weapons.forEach(weaponData => {
-                                if (!weaponData.data.skill) {
-                                    weaponData.data.skill = "melee";
-                                    weaponData.data.attribute1 = "agility";
-                                    weaponData.data.attribute2 = "strength";
+                                if (weaponData.type == "npcattack") {
+                                    weaponData.data.skillValue = weaponData.skillValue;
+                                } else {
+                                    if (!weaponData.data.skill) {
+                                        weaponData.data.skill = "melee";
+                                        weaponData.data.attribute1 = "agility";
+                                        weaponData.data.attribute2 = "strength";
+                                    }
+                                    skillObj[weaponData.data.skill] = {
+                                        value: weaponData.skillValue,
+                                        points: weaponData.skillValue - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
+                                    };
                                 }
-                                skillObj[weaponData.data.skill] = {
-                                    value: weaponData.skillValue,
-                                    points: weaponData.skillValue - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
-                                };
-
+                                
                                 delete weaponData.skillValue;
                             });
 
