@@ -26,7 +26,7 @@ export default class Attribute {
     get value() {
         console.log(`Attribute (${this.id}) ${this.actor.name} get value`);
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
-        let val = this.start + parseInt(this.actor.systemData().attributes[this.id].advances || 0);
+        let val = parseInt(this.actor.systemData().attributes[this.id].value) || (this.start + parseInt(this.actor.systemData().attributes[this.id].advances || 0));
         if (this._cache.enabled && this._cache.value === null) this._cache.value = val;
         console.log(`Attribute (${this.id}) ${this.actor.name} processed value`);
         return val;

@@ -586,7 +586,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                     this.actor.modifier.static(this.actor.derivedValues[attribute]._modifierPath).forEach(e => {
                         if (e.value != 0) {
-                            let val = (e.path == "initiative") ? -parseInt(e.value) : parseInt(e.value);
+                            let val = (attribute == "initiative") ? -parseInt(e.value) : parseInt(e.value);
                             let cls = e.isMalus ? "malus" : "bonus";
                             val = val > 0 ? "+" + val : val;
                             content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
