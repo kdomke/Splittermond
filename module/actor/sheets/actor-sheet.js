@@ -317,7 +317,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find(".item-list .item").on("dragstart", event => {
-            html.find('#tooltip').remove();
+            html.find('#splittermond-tooltip').remove();
         }).on("dragover", event => {
             event.currentTarget.style.borderTop = "1px solid black";
             event.currentTarget.style.borderImage = "none";
@@ -426,7 +426,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                     masteryList = masteryList.clone();
 
                     masteryList.find("button").remove();
-                    masteryList = masteryList.wrapAll(`<div class="list tooltip masteries"/>`).wrapAll(`<ol class="list-body"/>`).parent().parent();
+                    masteryList = masteryList.wrapAll(`<div class="list splittermond-tooltip masteries"/>`).wrapAll(`<ol class="list-body"/>`).parent().parent();
                     masteryList.css({
                         position: "fixed",
                         left: posLeft,
@@ -615,7 +615,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (content) {
-                let tooltipElement = $(`<div id="tooltip"> ${content}</div>`);
+                let tooltipElement = $(`<div id="splittermond-tooltip"> ${content}</div>`);
                 html.append(tooltipElement);
                 if (skillId) {
                     css.left += $(event.currentTarget).outerWidth() - tooltipElement.outerWidth();
@@ -635,7 +635,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             }
         }, event => {
-            html.find("div#tooltip").remove();
+            html.find("div#splittermond-tooltip").remove();
         })
 
         html.find('[data-action="show-hide-skills"]').click(event => {

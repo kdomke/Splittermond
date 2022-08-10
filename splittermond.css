@@ -61,11 +61,11 @@
 .border-paper,
 .window-app,
 .chat-message,
-.splittermond .list.masteries.tooltip::before,
+.splittermond .list.masteries.splittermond-tooltip::before,
 .chat-message.emote,
 .chat-message.whisper,
 .chat-message.blind,
-.splittermond .list.masteries#tooltip::before {
+.splittermond .list.masteries#splittermond-tooltip::before {
   border: 3px solid transparent;
   border-image: var(--border-image-paper, url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16);
   border-image-width: 16px;
@@ -75,10 +75,10 @@
 }
 .border-paper-small,
 .health-focus-data,
-.tooltip,
+.splittermond-tooltip,
 .splittermond .list-actions,
 .taglist-item-actions,
-#tooltip {
+#splittermond-tooltip {
   border: 2px solid transparent;
   border-image: var(--border-image-paper-small, url(../../systems/splittermond/images/border-paper-small.png) 8 8);
   border-image-width: 8px;
@@ -87,8 +87,8 @@
   border-image-repeat: repeat;
 }
 .border-corner-1,
-.tooltip::before,
-#tooltip::before {
+.splittermond-tooltip::before,
+#splittermond-tooltip::before {
   border: 1px solid transparent;
   border-image: var(--border-image-corner-1, url(../../systems/splittermond/images/border-corner-1.png) 16 16);
   border-image-width: 16px;
@@ -1342,8 +1342,8 @@ a.pdflink i {
   font-weight: bold;
   font-size: 14px;
 }
-.tooltip,
-#tooltip {
+.splittermond-tooltip,
+#splittermond-tooltip {
   display: none;
   position: fixed;
   top: 0px;
@@ -1356,8 +1356,8 @@ a.pdflink i {
   background-clip: border-box;
   margin: 1px;
 }
-.tooltip::before,
-#tooltip::before {
+.splittermond-tooltip::before,
+#splittermond-tooltip::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1367,19 +1367,19 @@ a.pdflink i {
   border-width: 8px;
   background-clip: border-box;
 }
-.tooltip p,
-#tooltip p {
+.splittermond-tooltip p,
+#splittermond-tooltip p {
   max-width: 400px;
 }
-.tooltip p:first-child,
-#tooltip p:first-child {
+.splittermond-tooltip p:first-child,
+#splittermond-tooltip p:first-child {
   margin-top: 0;
 }
-.tooltip p:last-child,
-#tooltip p:last-child {
+.splittermond-tooltip p:last-child,
+#splittermond-tooltip p:last-child {
   margin-bottom: 0;
 }
-#tooltip .formula,
+#splittermond-tooltip .formula,
 .tooltip-part .formula {
   display: inline-flex;
   flex-direction: row;
@@ -1387,38 +1387,38 @@ a.pdflink i {
   justify-content: center;
   width: 100%;
 }
-#tooltip .formula > *,
+#splittermond-tooltip .formula > *,
 .tooltip-part .formula > * {
   margin: 3px;
 }
-#tooltip .formula .formula-part,
+#splittermond-tooltip .formula .formula-part,
 .tooltip-part .formula .formula-part {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-#tooltip .formula .formula-part .description,
+#splittermond-tooltip .formula .formula-part .description,
 .tooltip-part .formula .formula-part .description {
   font-family: 'Signika';
   font-size: 10px;
 }
-#tooltip .formula .formula-part .value,
+#splittermond-tooltip .formula .formula-part .value,
 .tooltip-part .formula .formula-part .value {
   font-weight: bold;
 }
-#tooltip .formula .formula-part.malus,
+#splittermond-tooltip .formula .formula-part.malus,
 .tooltip-part .formula .formula-part.malus {
   color: var(--color-fail);
 }
-#tooltip .formula .formula-part.bonus,
+#splittermond-tooltip .formula .formula-part.bonus,
 .tooltip-part .formula .formula-part.bonus {
   color: var(--color-success);
 }
-#tooltip {
+#splittermond-tooltip {
   display: block;
 }
 /*
-.tooltip:extend(#tooltip) {
+.splittermond-tooltip:extend(#splittermond-tooltip) {
     display: none;
     
     position: absolute;
@@ -1833,8 +1833,8 @@ a.pdflink i {
   font-weight: bold;
   z-index: 1;
 }
-.splittermond .list.masteries.tooltip,
-.splittermond .list.masteries#tooltip {
+.splittermond .list.masteries.splittermond-tooltip,
+.splittermond .list.masteries#splittermond-tooltip {
   background: none;
   height: unset;
   border: none;
@@ -1842,20 +1842,20 @@ a.pdflink i {
   margin: 0;
   padding: 0;
 }
-.splittermond .list.masteries.tooltip::before,
-.splittermond .list.masteries#tooltip::before {
+.splittermond .list.masteries.splittermond-tooltip::before,
+.splittermond .list.masteries#splittermond-tooltip::before {
   border-image-repeat: repeat;
   background: var(--background-parchment);
   margin: -3px;
 }
-.splittermond .list.masteries.tooltip .list-body,
-.splittermond .list.masteries#tooltip .list-body {
+.splittermond .list.masteries.splittermond-tooltip .list-body,
+.splittermond .list.masteries#splittermond-tooltip .list-body {
   border: none;
   margin: 0;
   padding: 0;
 }
-.splittermond .list.masteries.tooltip .list-item,
-.splittermond .list.masteries#tooltip .list-item {
+.splittermond .list.masteries.splittermond-tooltip .list-item,
+.splittermond .list.masteries#splittermond-tooltip .list-item {
   background: none;
 }
 .splittermond .list-resources .list-item {
@@ -2581,11 +2581,7 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-defense li + .tooltip,
 .token-action-bar-skills li + .tooltip,
 .token-action-bar-attacks li + .tooltip,
-.token-action-bar-spells li + .tooltip,
-.token-action-bar-defense li + #tooltip,
-.token-action-bar-skills li + #tooltip,
-.token-action-bar-attacks li + #tooltip,
-.token-action-bar-spells li + #tooltip {
+.token-action-bar-spells li + .tooltip {
   background-image: none;
   border-image: none;
   bottom: 100%;
@@ -2604,11 +2600,7 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-defense li:hover + .tooltip,
 .token-action-bar-skills li:hover + .tooltip,
 .token-action-bar-attacks li:hover + .tooltip,
-.token-action-bar-spells li:hover + .tooltip,
-.token-action-bar-defense li:hover + #tooltip,
-.token-action-bar-skills li:hover + #tooltip,
-.token-action-bar-attacks li:hover + #tooltip,
-.token-action-bar-spells li:hover + #tooltip {
+.token-action-bar-spells li:hover + .tooltip {
   display: block;
   opacity: 1;
 }
@@ -2689,8 +2681,7 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar-popup li:hover {
   box-shadow: inset 0px 0px 24px rgba(var(--color-active-text_rgb), 0.7);
 }
-.token-action-bar-popup li + .tooltip,
-.token-action-bar-popup li + #tooltip {
+.token-action-bar-popup li + .tooltip {
   bottom: 0;
   left: 100%;
   margin-left: 3px;
@@ -2700,8 +2691,7 @@ ul.checkbox-list li input:checked ~ label::before {
 .token-action-bar .token-action-bar-popup,
 .token-action-bar .tooltip,
 .token-action-bar .token-action-bar-section,
-.token-action-bar > div > ul > li,
-.token-action-bar #tooltip {
+.token-action-bar > div > ul > li {
   background-color: rgba(0, 0, 0, 0.8);
 }
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
@@ -2709,16 +2699,14 @@ ul.checkbox-list li input:checked ~ label::before {
   .token-action-bar .token-action-bar-name,
   .token-action-bar .token-action-bar-popup,
   .token-action-bar .tooltip,
-  .token-action-bar .token-action-bar-section,
-  .token-action-bar #tooltip {
+  .token-action-bar .token-action-bar-section {
     background-color: rgba(0, 0, 0, 0.5);
   }
   .token-action-bar .token-action-bar-char-stats:before,
   .token-action-bar .token-action-bar-name:before,
   .token-action-bar .token-action-bar-popup:before,
   .token-action-bar .tooltip:before,
-  .token-action-bar .token-action-bar-section:before,
-  .token-action-bar #tooltip:before {
+  .token-action-bar .token-action-bar-section:before {
     content: "";
     z-index: -1;
     position: absolute;

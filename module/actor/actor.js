@@ -137,45 +137,6 @@ export default class SplittermondActor extends Actor {
 
     }
 
-    get sheetData() {
-        return {
-            attributes: this.attributes.map(a => a.sheetData),
-            derivedValues: this.derivedValues.map(a => a.sheetData),
-            skills: this.skills.map(a => a.sheetData),
-            attacks: this.attacks,
-            activeDefense: this.activeDefense,
-            health: this.system.health,
-            focus: this.system.focus,
-            experience: this.system.experience,
-            splinterpoints: this.system.splinterpoints,
-            damageReduction: this.damageReduction,
-            bonusCap: this.bonusCap,
-            spellCostReduction: this.system.spellCostReduction,
-            spellEnhancedCostReduction: this.system.spellEnhancedCostReduction,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            healthWoundMalus: this.system.health.woundMalus,
-            modifier: this.modifier,
-            spells: this.spells,
-            lowerFumbleResult: this.system.lowerFumbleResult,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focusRegeneration: this.system.focusRegeneration,
-            healthRegeneration: this.system.healthRegeneration,
-            focus}
-    }
-
     get bonusCap() {
         return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
@@ -604,7 +565,7 @@ export default class SplittermondActor extends Actor {
 
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
-            let newData = {};
+            let newData = this.toObject();
             let newItems = [];
 
             newData.data = {};
@@ -940,10 +901,9 @@ export default class SplittermondActor extends Actor {
                 return this.update(newData);
 
             }
-            newData.type = "character";
-            newData.effects = [];
             newData.name = data.name;
-            newData.token = duplicate(this.token) || {};
+            newData.token.name = data.name;
+            newData.token.actorLink = true;
             newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
 

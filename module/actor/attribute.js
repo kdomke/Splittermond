@@ -34,22 +34,18 @@ export default class Attribute {
     }
 
     get value() {
-        console.log(`Attribute (${this.id}) ${this.actor.name} get value`);
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
         let val = parseInt(this.actor.system.attributes[this.id].value) || (this.start + parseInt(this.actor.system.attributes[this.id].advances || 0));
         if (this._cache.enabled && this._cache.value === null) this._cache.value = val;
-        console.log(`Attribute (${this.id}) ${this.actor.name} processed value`);
         return val;
     }
 
     get start() {
-        console.log(`Attribute (${this.id}) ${this.actor.name} get start`);
         if (this._cache.enabled && this._cache.start !== null) return this._cache.start;
         const data = this.actor.system;
         let val = parseInt(data.attributes[this.id].initial || 0)
             + parseInt(data.attributes[this.id].species || 0);
         if (this._cache.enabled && this._cache.start === null) this._cache.start = val;
-        console.log(`Attribute (${this.id}) ${this.actor.name} processed start`);
         return val;
     }
 

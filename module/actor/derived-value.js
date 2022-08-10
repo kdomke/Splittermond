@@ -74,13 +74,11 @@ export default class DerivedValue extends Modifiable {
     }
 
     get value() {
-        console.log(`DerivedValue (${this.id}) ${this.actor.name} get`);
         //if (this.actor.type != "character") return this.actor.system.attributes[this.id].value;
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
         let value = Math.ceil(this.multiplier * (this.baseValue + this.mod));
         if (this._cache.enabled && this._cache.value === null)
             this._cache.value = value;
-        console.log(`DerivedValue (${this.id}) ${this.actor.name} processed`);
         return value;
     }
 

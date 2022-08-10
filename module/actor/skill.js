@@ -46,7 +46,6 @@ export default class Skill extends Modifiable {
     }
 
     get value() {
-        console.log(`Skill (${this.id}) ${this.actor.name} get`);
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
 
         let value = (this.attribute1?.value || 0) + (this.attribute2?.value || 0) + this.points;
@@ -54,7 +53,6 @@ export default class Skill extends Modifiable {
 
         if (this._cache.enabled && this._cache.value === null)
             this._cache.value = value;
-        console.log(`Skill (${this.id}) ${this.actor.name} processed`);
         return value;
     }
 
