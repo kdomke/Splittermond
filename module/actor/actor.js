@@ -154,7 +154,7 @@ export default class SplittermondActor extends Actor {
         console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
         super.prepareDerivedData();
         this.spells = (this.items.filter(i => i.type === "spell") || []);
-        this.spells.sort((a, b) => (a.data.sort - b.data.sort));
+        this.spells.sort((a, b) => (a.sort - b.sort));
         this._prepareModifier();
 
         this._prepareHealthFocus();

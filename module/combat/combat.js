@@ -22,7 +22,7 @@ export default class SplittermondCombat extends Combat {
             console.log("SplittermondCombat._sortCombatants: random INI!");
         }
 
-        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
+        return (iniA + (a.isDefeated ? 1000 : 0)) - (iniB + (b.isDefeated ? 1000 : 0));
 
     }
 
@@ -43,7 +43,7 @@ export default class SplittermondCombat extends Combat {
                 round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
-                tokenId: c ? c.data.tokenId : null
+                tokenId: c ? c.token.id : null
             };
             return this.turns = turns;
             
@@ -148,7 +148,7 @@ export default class SplittermondCombat extends Combat {
         //super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId);
         this.setupTurns();
         // Render the collection
-         if ( this.data.active && (options.render !== false) ) this.collection.render();
+         if ( this.isActive && (options.render !== false) ) this.collection.render();
     }
   
 }

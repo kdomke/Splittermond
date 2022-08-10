@@ -21,7 +21,7 @@ export default class TickBarHud extends Application {
 
     get combats() {
         const currentScene = game.scenes.current || null;
-        return game.combats.filter(c => (c.data.scene === null) || (c.scene === currentScene));
+        return game.combats.filter(c => (c.scene === null) || (c.scene === currentScene));
     }
 
     _onDragStart(event) {
@@ -133,7 +133,7 @@ export default class TickBarHud extends Application {
         }
 
         const combats = this.combats;
-        let temp = combats.length ? combats.find(c => c.data.active) || combats[0] : null;
+        let temp = combats.length ? combats.find(c => c.isActive) || combats[0] : null;
         if (temp != this.viewed) {
             this.viewedTick = null;
         }
@@ -158,7 +158,6 @@ export default class TickBarHud extends Application {
             });
 
             var iniData = combat.turns
-                .map(e => e.data)
                 .filter(e => e.initiative != null)
                 .map(e => Math.round(e.initiative))
                 .filter(e => e < 9999);
@@ -183,35 +182,30 @@ export default class TickBarHud extends Application {
 
             for ( let [i, c] of combat.turns.entries() ) {
 
+                
+
                 if (c.initiative == null) continue;
 
                 if ( c.initiative > 9999) {
+
+                    let combatantData = {
+                        id: c.id,
+                        name: c.name,
+                        img: c.img,
+                        active: false,
+                        owner: c.isOwner,
+                        defeated: c.isDefeated,
+                        hidden: c.hidden,
+                        initiative: c.initiative,
+                        hasRolled: c.initiative !== null
+                    };
+                    
                     if (c.initiative === 10000) {
-                        data.wait.push({
-                            id: c.id,
-                            name: c.name,
-                            img: c.img,
-                            active: false,
-                            owner: c.isOwner,
-                            defeated: c.data.defeated,
-                            hidden: c.hidden,
-                            initiative: c.initiative,
-                            hasRolled: c.initiative !== null
-                        });
+                        data.wait.push(combatantData);
                     }
 
                     if (c.initiative === 20000) {
-                        data.keepReady.push({
-                            id: c.id,
-                            name: c.name,
-                            img: c.img,
-                            active: false,
-                            owner: c.isOwner,
-                            defeated: c.data.defeated,
-                            hidden: c.hidden,
-                            initiative: c.initiative,
-                            hasRolled: c.initiative !== null
-                        });
+                        data.keepReady.push(combatantData);
                     }
                     
                     continue;
@@ -225,7 +219,7 @@ export default class TickBarHud extends Application {
                     img: c.img,
                     active: i === combat.turn,
                     owner: c.isOwner,
-                    defeated: c.data.defeated,
+                    defeated: c.isDefeated,
                     hidden: c.hidden,
                     initiative: c.initiative,
                     hasRolled: c.initiative !== null

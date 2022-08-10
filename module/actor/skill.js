@@ -10,7 +10,7 @@ export default class Skill extends Modifiable {
         this.id = skill.toLowerCase().trim();
         this.label = skill;
         if (this.actor.system.skills[skill]) {
-            this.label = `splittermond.skillLabel.${this.id}`;
+            this.label = game.i18n.localize(`splittermond.skillLabel.${this.id}`);
             attribute1 = attribute1 ? attribute1 : CONFIG.splittermond.skillAttributes[skill][0];
             attribute2 = attribute2 ? attribute2 : CONFIG.splittermond.skillAttributes[skill][1];
             this.attribute1 = this.actor.attributes[attribute1];
