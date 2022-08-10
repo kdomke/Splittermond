@@ -1159,12 +1159,14 @@ export default class SplittermondActor extends Actor {
 
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
-            let newData = {};
+            let newData = this.toObject();
             let newItems = [];
             newData.data = {};
             newData.type = "character";
             newData.effects = [];
             newData.name = data.name;
+            newData.token.name = data.name;
+            newData.token.actorLink = true;
             newData.data.species = {
                 value: data.race
             }
