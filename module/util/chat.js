@@ -149,8 +149,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 focusCosts = -data.degreeOfSuccess;
             }
 
-            if (data.spell.systemData().damage && data.succeeded) {
-                let difficulty = (data.spell.systemData().difficulty + "").trim().toUpperCase();
+            if (data.spell.system.damage && data.succeeded) {
+                let difficulty = (data.spell.system.difficulty + "").trim().toUpperCase();
                 if (["VTD", "KW", "GW"].includes(difficulty)) {
                     templateContext.actions.push({
                         name: `${game.i18n.localize("splittermond.activeDefense")} (${difficulty})`,
@@ -164,13 +164,13 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
 
                 templateContext.actions.push({
-                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.systemData().damage + ")",
+                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.system.damage + ")",
                     icon: "fa-heart-broken",
                     classes: "rollable",
                     data: {
                         "roll-type": "damage",
-                        damage: data.spell.systemData().damage,
-                        features: data.spell.systemData().features,
+                        damage: data.spell.system.damage,
+                        features: data.spell.system.features,
                         source: data.spell.name
                     }
                 });

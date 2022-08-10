@@ -35,13 +35,13 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
     if (actor) {
         let item;
         if (itemId) {
-            item = actor.actorData().items.find(el => el.id === itemId)
+            item = actor.items.find(el => el.id === itemId)
             if (!item) {
                 item = game.data.items.find(el => el.id === itemId);
-                item = actor.actorData().items.find(el => el.name === item?.name && el.type === item?.type)
+                item = actor.items.find(el => el.name === item?.name && el.type === item?.type)
             }
         } else {
-            item = actor.actorData().items.find(el => el.name === itemName && el.type === itemType)
+            item = actor.items.find(el => el.name === itemName && el.type === itemType)
         }
         if (item) {
             if (item.type === "spell") {

@@ -10,19 +10,12 @@ export default class SplittermondItem extends Item {
         }
     }
 
-    systemData() {
-        return !this.system ? this.data.data : this.system;
-    }
-
-    itemData() {
-        return !this.system ? this.data : this;
-    }
 
     prepareBaseData() {
         console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
         super.prepareBaseData();
 
-        const data = this.systemData();
+        const data = this.system;
 
 
 
@@ -69,7 +62,7 @@ export default class SplittermondItem extends Item {
     }
 
     prepareActorData() {
-        const data = this.systemData();
+        const data = this.system;
         switch (this.type) {
             case "weapon":
             case "shield":

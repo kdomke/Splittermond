@@ -10,11 +10,11 @@ const AttackableItem = (superclass) => class extends superclass {
         super.prepareActorData();
 
 
-        if (!this.systemData().equipped && this.type != "npcattack") return;
+        if (!this.system.equipped && this.type != "npcattack") return;
 
         this.attacks.push(new Attack(this.actor, this));
 
-        if (this.systemData().secondaryAttack && this.systemData().secondaryAttack.skill !== "" && this.systemData().secondaryAttack.skill !== "none") {
+        if (this.system.secondaryAttack && this.system.secondaryAttack.skill !== "" && this.system.secondaryAttack.skill !== "none") {
             this.attacks.push(new Attack(this.actor, this, true));
         }
 

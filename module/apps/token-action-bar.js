@@ -67,60 +67,35 @@ export default class TokenActionBar extends Application {
             data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
             data.skills = {
                 general: CONFIG.splittermond.skillGroups.general.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
-                (parseInt(this.currentActor.systemData().skills[skillId].points) > 0)).map((skillId) => {
-                    let data = duplicate(this.currentActor.systemData().skills[skillId]);
-                    data.id = skillId;
-                    data.label = `splittermond.skillLabel.${skillId}`;
-                    return data;
-                }),
+                (parseInt(this.currentActor.skills[skillId].points) > 0)).map(skillId => this.currentActor.skills[skillId]),
                 magic: CONFIG.splittermond.skillGroups.magic.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
-                (parseInt(this.currentActor.systemData().skills[skillId].points) > 0)).map((skillId) => {
-                    let data = duplicate(this.currentActor.systemData().skills[skillId]);
-                    data.id = skillId;
-                    data.label = `splittermond.skillLabel.${skillId}`;
-                    return data;
-                })
+                (parseInt(this.currentActor.skills[skillId].points) > 0)).map(skillId => this.currentActor.skills[skillId])
             }
 
-            data.attacks = duplicate(this.currentActor.systemData().attacks).map(attack => {
-                attack.isPrepared = ["longrange", "throwing"].includes(attack.skillId) ? this.currentActor.getFlag("splittermond", "preparedAttack") == attack._id : true;
-                attack.skillLabel = game.i18n.localize(`splittermond.skillLabel.${attack.skillId}`);
-                attack.featureList = attack.features?.split(",")?.map(str => str.trim());
-                return attack;
-            });
+            data.attacks = this.currentActor.attacks;
 
-            data.weapons = duplicate(this.currentActor.actorData().items.filter(item => ["weapon", "shield"].includes(item.type))).sort((a,b) => (a.sort - b.sort));
+            data.weapons = this.currentActor.items.filter(item => ["weapon", "shield"].includes(item.type)).sort((a,b) => (a.sort - b.sort)).map(w => w.toObject());
 
-            let spells = duplicate(this.currentActor.systemData().spells);
-            spells.sort((a,b) => (a.sort - b.sort));
-            data.spells = spells.reduce((result, item) => {
-                let skill = item.data.skill || "none";
-                if (!(skill in result)) {
-                    result[skill] = {
-                        label: `splittermond.skillLabel.${skill}`,
-                        skillValue: this.currentActor.systemData().skills[skill].value,
+            data.spells = this.currentActor.spells.reduce((result, item) => {
+                if (!result[item.skill.id]) {
+                    result[item.skill.id] = {
+                        label: `splittermond.skillLabel.${item.skill.id}`,
+                        skillValue: item.skill.value,
                         spells: []
                     };
                 }
-                let costData = Costs.parseCostsString(item.data.costs);
-                let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-                item.enoughFocus = costTotal <= this.currentActor.systemData().focus.available.value;
-                result[skill].spells.push(item);
+                result[item.skill.id].spells.push(item);
                 return result;
             }, {});
+    
             if (Object.keys(data.spells).length == 0) {
                 data.spells = undefined;
             }
 
-            data.preparedSpell = this.currentActor.data.items.get(this.currentActor.getFlag("splittermond", "preparedSpell"));
+            data.preparedSpell = this.currentActor.items.get(this.currentActor.getFlag("splittermond", "preparedSpell"));
 
-            data.derivedAttributes = duplicate(this.currentActor.systemData().derivedAttributes);
+            data.derivedAttributes = this.currentActor.derivedAttributes;
 
-            if (data.preparedSpell){
-                data.preparedSpell = duplicate(data.preparedSpell);
-                data.preparedSpell.skillLabel = game.i18n.localize(`splittermond.skillLabel.${data.preparedSpell.data.skill}`);
-                data.preparedSpell.spellTypeList = data.preparedSpell.spellType?.split(",").map(str => str.trim());
-            }
 
         }
 
@@ -167,7 +142,7 @@ export default class TokenActionBar extends Application {
                     if (success) this.currentActor.setFlag("splittermond","preparedAttack", {})
                     return;
                 }
-                let attack = this.currentActor.systemData().attacks.find(attack => attack._id == attackId);
+                let attack = this.currentActor.attacks.find(attack => attack.id == attackId);
                 this.currentActor.addTicks(attack.weaponSpeed, `${game.i18n.localize("splittermond.attack")}: ${attack.name}`);
                 this.currentActor.setFlag("splittermond", "preparedAttack", attackId);
             }
@@ -189,14 +164,14 @@ export default class TokenActionBar extends Application {
         html.find('.toggle-equipped').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.currentActor.items.get(itemId);
-            item.update({ "data.equipped": !item.systemData().equipped });
+            item.update({ "data.equipped": !item.system.equipped });
         });
 
         html.find('.prepare-spell').click(event => {
             const itemId = $(event.currentTarget).closestData('spell-id');
             const spell = this.currentActor.items.get(itemId);
             if (!spell) return;
-            this.currentActor.addTicks(spell.systemData().castDuration, `${game.i18n.localize("splittermond.castDuration")}: ${spell.name}`);
+            this.currentActor.addTicks(spell.system.castDuration, `${game.i18n.localize("splittermond.castDuration")}: ${spell.name}`);
             this.currentActor.setFlag("splittermond", "preparedSpell", itemId);
         });
 

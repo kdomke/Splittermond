@@ -1,0 +1,67 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <main>
+        <section class="raw-input">
+            <textarea name="clipboarddata" placeholder="Paste NPC data here">{{clipboarddata}}</textarea>
+        </section>
+        <section class="parsed-data">
+            <h2>{{parsedData.name}}</h2>
+            <p>{{parsedData.data.description}}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{localize "splittermond.attribute.charisma.short"}}</th>
+                        <th>{{localize "splittermond.attribute.agility.short"}}</th>
+                        <th>{{localize "splittermond.attribute.intuition.short"}}</th>
+                        <th>{{localize "splittermond.attribute.constitution.short"}}</th>
+                        <th>{{localize "splittermond.attribute.mystic.short"}}</th>
+                        <th>{{localize "splittermond.attribute.strength.short"}}</th>
+                        <th>{{localize "splittermond.attribute.mind.short"}}</th>
+                        <th>{{localize "splittermond.attribute.willpower.short"}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{parsedData.data.attributes.charisma.value}}</td>
+                        <td>{{parsedData.data.attributes.agility.value}}</td>
+                        <td>{{parsedData.data.attributes.intuition.value}}</td>
+                        <td>{{parsedData.data.attributes.constitution.value}}</td>
+                        <td>{{parsedData.data.attributes.mystic.value}}</td>
+                        <td>{{parsedData.data.attributes.strength.value}}</td>
+                        <td>{{parsedData.data.attributes.mind.value}}</td>
+                        <td>{{parsedData.data.attributes.willpower.value}}</td>
+                    </tr>
+                </tbody>
+                <thead>
+                    <tr>
+                        <th>{{localize "splittermond.derivedAttribute.size.short"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.speed.short"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.healthpoints.short"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.focuspoints.short"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.defense.short"}}</th>
+                        <th>{{localize "splittermond.damageReductionAbbrev"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.bodyresist.short"}}</th>
+                        <th>{{localize "splittermond.derivedAttribute.mindresist.short"}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{parsedData.data.derivedAttributes.size.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.speed.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.healthpoints.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.focuspoints.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.defense.value}}</td>
+                        <td>{{parsedData.data.damageReduction.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.bodyresist.value}}</td>
+                        <td>{{parsedData.data.derivedAttributes.mindresist.value}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+    <footer>
+        <button name="cancel" type="button">{{localize "splittermond.cancel"}}</button>
+        <button name="import" type="button" {{#unless this.ready}}disabled{{/unless}}>{{localize
+            "splittermond.import"}}</button>
+    </footer>
+</form>

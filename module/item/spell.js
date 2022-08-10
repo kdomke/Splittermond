@@ -6,53 +6,57 @@ import * as Costs from "../util/costs.js";
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
     get costs() {
-        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.systemData(), this.actor.systemData().spellCostReduction), this.systemData().costs);
+        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
     }
 
     get enhancementCosts() {
-        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.systemData(), this.actor.systemData().spellEnhancedCostReduction), this.systemData().enhancementCosts, true);
+        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
     }
 
     get skill() {
-        return this.actor?.skills[this.systemData().skill];
+        return this.actor?.skills[this.system.skill];
     }
 
     get enoughFocus() {
         let costData = Costs.parseCostsString(this.costs);
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-        return costTotal <= this.actor.systemData().focus.available.value;
+        return costTotal <= this.actor.system.focus.available.value;
     }
 
     get difficulty() {
-        return this.systemData().difficulty;
+        return this.system.difficulty;
     }
 
     get castDuration() {
-        return this.systemData().castDuration;
+        return this.system.castDuration;
     }
 
     get range() {
-        return this.systemData().range;
+        return this.system.range;
     }
 
     get effectDuration() {
-        return this.systemData().effectDuration;
+        return this.system.effectDuration;
     }
 
     get description() {
-        return this.systemData().description;
+        return this.system.description;
     }
 
     get enhancementDescription() {
-        return this.systemData().enhancementDescription;
+        return this.system.enhancementDescription;
     }
 
     get degreeOfSuccessOptions() {
-        return this.systemData().degreeOfSuccessOptions;
+        return this.system.degreeOfSuccessOptions;
     }
 
     get spellType() {
-        return this.systemData().spellType + "";
+        return this.system.spellType + "";
+    }
+
+    get spellTypeList() {
+        return this.spellType?.split(",").map(str => str.trim());
     }
 
     async roll(options) {

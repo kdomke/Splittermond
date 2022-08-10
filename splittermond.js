@@ -136,6 +136,29 @@ Hooks.once("init", function () {
     }
     */
 
+    if (game.release.generation < 10) {
+        for (const documentName of [...CONST.DOCUMENT_TYPES, "Token"]) {
+            Object.defineProperty(CONFIG[documentName].documentClass.prototype, "flags", {
+                get() {
+                    return this.data.flags;
+                },
+                enumerable: true,
+            });
+        }
+    
+        for (const Document of [Actor, Item]) {
+            Object.defineProperty(Document.prototype, "system", {
+                get() {
+                    return this.data.data;
+                },
+                enumerable: true,
+            });
+        }
+
+    }
+
+    
+
     
 
 

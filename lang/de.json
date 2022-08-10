@@ -513,6 +513,9 @@
                 "name": "Macroleiste zeitgleich mit Aktionsleiste anzeigen",
                 "hint": "Ist diese Option aktiviert, wird die Macroleiste nicht ausgeblendet, wenn die Token-Aktionsleiste angezeigt wird."
             }
+        },
+        "error": {
+            "parseError": "Fehler beim Parsen der Daten im Bereich: {section}"
         }
     },
     "COMBAT": {

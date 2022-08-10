@@ -5,8 +5,8 @@ export default class SplittermondCombat extends Combat {
 
         // if equal initiative => compare intuition
         if (iniA === iniB) {
-            iniA = -a.actor.systemData().attributes.intuition.value;
-            iniB = -b.actor.systemData().attributes.intuition.value;
+            iniA = -a.actor.system.attributes.intuition.value;
+            iniB = -b.actor.system.attributes.intuition.value;
         }
 
         // if equal intuition => player character first!

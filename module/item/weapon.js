@@ -15,7 +15,7 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
     }
 
     prepareActiveDefense() {
-        if (!this.systemData().equipped && this.systemData().damageLevel <= 1) return;
+        if (!this.system.equipped && this.system.damageLevel <= 1) return;
 
         this.attacks.forEach(attack => {
             if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skill.id)) {

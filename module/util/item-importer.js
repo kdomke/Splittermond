@@ -1,3 +1,4 @@
+import NPCImporter from "../apps/wizards/npc-importer.js";
 import SplittermondCompendium from "./compendium.js"
 
 export default class ItemImporter {
@@ -567,6 +568,9 @@ export default class ItemImporter {
     }
 
     static async importNpc(rawData) {
+        let importer = new NPCImporter(rawData);
+        importer.render(true);
+        return;
         let clipboard = rawData;
         clipboard = clipboard.replace(/\r\n/g, "\n");
         let stats = clipboard;
@@ -785,6 +789,9 @@ export default class ItemImporter {
                                 skillObj[skill].points = skillObj[skill].value;
                                 skillObj[skill].points -= parseInt(attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
                                 skillObj[skill].points -= parseInt(attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
+                                if (skill == "stealth") {
+                                    skillObj[skill].points -= 5-parseInt(GK);
+                                }
                             }
                         });
 

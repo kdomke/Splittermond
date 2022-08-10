@@ -12,8 +12,8 @@ export default class Attack {
         this.item = item;
         this._secondary = secondaryAttack;
         let attackData = this.item;
-        if (this.item.systemData) {
-            attackData = this.item.systemData();
+        if (this.item.system) {
+            attackData = this.item.system;
         }
         if (this._secondary && attackData.secondaryAttack) {
             attackData = attackData.secondaryAttack;
@@ -64,6 +64,23 @@ export default class Attack {
         this.deletable = ["npcattack"].includes(this.item.type);
     }
 
+    get sheetData() {
+        return {
+            id: this.id,
+            img: this.img,
+            name: this.name,
+            skill: this.skill.sheetData,
+            range: this.range,
+            features: this.features,
+            damage: this.damage,
+            weaponSpeed: this.weaponSpeed,
+            editable: this.editable,
+            deletable: this.deletable,
+            isPrepared: this.isPrepared,
+            featureList: this.featureList
+        }
+    }
+
     get weaponSpeed() {
         let weaponSpeed = this._weaponSpeed;
         weaponSpeed -= parseInt(this.actor.modifier.value(`weaponspeed.${this.id}`));
@@ -72,7 +89,15 @@ export default class Attack {
         return weaponSpeed;
     }
 
-    roll(options) {
+    get isPrepared() {
+        return ["longrange", "throwing"].includes(this.skill.id) ? this.actor.getFlag("splittermond", "preparedAttack") == this.id : true;
+    }
+
+    get featureList() {
+        return this.features?.split(",")?.map(str => str.trim());
+    }
+
+    async roll(options) {
         if (!this.actor) return false;
 
         options = duplicate(options);
@@ -84,7 +109,7 @@ export default class Attack {
             weapon: this
         }
 
-        this.skill.roll(options);
+        return this.skill.roll(options);
     }
 
 

@@ -9,7 +9,7 @@ export default class Skill extends Modifiable {
         super(actor, [skill.toLowerCase().trim(), "woundmalus"]);
         this.id = skill.toLowerCase().trim();
         this.label = skill;
-        if (this.actor.systemData().skills[skill]) {
+        if (this.actor.system.skills[skill]) {
             this.label = `splittermond.skillLabel.${this.id}`;
             attribute1 = attribute1 ? attribute1 : CONFIG.splittermond.skillAttributes[skill][0];
             attribute2 = attribute2 ? attribute2 : CONFIG.splittermond.skillAttributes[skill][1];
@@ -26,9 +26,19 @@ export default class Skill extends Modifiable {
         }
     }
 
+    get sheetData() {
+        return {
+            id: this.id,
+            label: this.label,
+            value: this.value,
+            attribute1: this.attribute1?.getSheetData(),
+            attribute2: this.attribute2?.getSheetData()
+        }
+    }
+
     get points() {
         if (this._skillValue == null) {
-            return parseInt(this.actor.systemData().skills[this.id].points);
+            return parseInt(this.actor.system.skills[this.id].points);
         } else {
             return this._skillValue - (this.attribute1?.value || 0) - (this.attribute2?.value || 0);
         }
@@ -53,7 +63,7 @@ export default class Skill extends Modifiable {
     }
 
     get isGrandmaster() {
-        return this.actor.items.find(i => i.type == "mastery" && (i.systemData().isGrandmaster || 0) && i.systemData().skill == this.id);
+        return this.actor.items.find(i => i.type == "mastery" && (i.system.isGrandmaster || 0) && i.system.skill == this.id);
     }
 
     enableCaching() {
@@ -144,7 +154,7 @@ export default class Skill extends Modifiable {
             isFumble: data.isFumble,
             isCrit: data.isCrit,
             degreeOfSuccess: data.degreeOfSuccess,
-            availableSplinterpoints: this.actor.type === "character" ? this.actor.systemData().splinterpoints.value : 0,
+            availableSplinterpoints: this.actor.type === "character" ? this.actor.system.splinterpoints.value : 0,
             hideDifficulty: hideDifficulty,
             ...(options.checkMessageData || {})
         }

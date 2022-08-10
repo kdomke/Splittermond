@@ -30,20 +30,20 @@ export default class SplittermondActorSheet extends ActorSheet {
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
             || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
                 sheetData.generalSkills[skill] = this.actor.skills[skill];
             });
         sheetData.magicSkills = {};
         CONFIG.splittermond.skillGroups.magic.filter(s => !sheetData.hideSkills
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
                 sheetData.magicSkills[skill] = this.actor.skills[skill];
             });
 
         sheetData.fightingSkills = {};
         CONFIG.splittermond.skillGroups.fighting.filter(s => !sheetData.hideSkills
             || (sheetData.data.skills[s]?.points || 0) > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.systemData().skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
                 if (!sheetData.data.skills[skill]) {
                     sheetData.data.skills[skill] = {
                         points: 0
@@ -90,7 +90,6 @@ export default class SplittermondActorSheet extends ActorSheet {
             }, {});
         }
 
-        this.actor.spells.sort((a, b) => (a.sort - b.sort));
         sheetData.spellsBySkill = this.actor.spells.reduce((result, item) => {
             if (!result[item.skill.id]) {
                 result[item.skill.id] = {
@@ -214,7 +213,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             }, this.actor.actorData()));
             let updateData = {}
             if (array === "data.focus.channeled.entries") {
-                let tempValue = parseInt(this.actor.systemData().focus.exhausted.value) + parseInt(arrayData[idx].costs);
+                let tempValue = parseInt(this.actor.system.focus.exhausted.value) + parseInt(arrayData[idx].costs);
                 updateData["data.focus.exhausted.value"] = tempValue;
             }
 
@@ -224,7 +223,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find('[data-action="add-channeled-focus"]').click(event => {
-            let channeledEntries = duplicate(this.actor.systemData().focus.channeled.entries);
+            let channeledEntries = duplicate(this.actor.system.focus.channeled.entries);
             channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
@@ -233,7 +232,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
         html.find('[data-action="add-channeled-health"]').click(event => {
-            let channeledEntries = duplicate(this.actor.systemData().health.channeled.entries);
+            let channeledEntries = duplicate(this.actor.system.health.channeled.entries);
             channeledEntries.push({
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
@@ -276,7 +275,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (type === "activeDefense") {
                 const itemId = $(event.currentTarget).closestData('defense-id');
                 const defenseType = $(event.currentTarget).closestData('defense-type');
-                this.actor.rollActiveDefense(defenseType, this.actor.systemData().activeDefense[defenseType].find(el => el._id === itemId));
+                this.actor.rollActiveDefense(defenseType, this.actor.system.activeDefense[defenseType].find(el => el._id === itemId));
             }
         });
 
@@ -378,14 +377,14 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 if (!item) return;
 
-                if (item.systemData().description) {
-                    content = TextEditor.enrichHTML(item.systemData().description);
+                if (item.system.description) {
+                    content = TextEditor.enrichHTML(item.system.description);
                     if (!content.startsWith("<p>")) {
                         content = `<p>${content}</p>`;
                     }
                 }
                 if (item.type === "spell") {
-                    content += `<p><strong>` + game.i18n.localize("splittermond.enhancementDescription") + ` (${item.systemData().enhancementCosts}):</strong> ${item.systemData().enhancementDescription}</p>`;
+                    content += `<p><strong>` + game.i18n.localize("splittermond.enhancementDescription") + ` (${item.system.enhancementCosts}):</strong> ${item.system.enhancementDescription}</p>`;
                 }
             }
 
@@ -469,30 +468,30 @@ export default class SplittermondActorSheet extends ActorSheet {
             if ($(event.currentTarget).closestData('defense-id')) {
                 let defenseId = $(event.currentTarget).closestData('defense-id');
                 let defenseData = {}
-                if (this.actor.systemData().activeDefense.defense.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.systemData().activeDefense.defense.find(a => a._id === defenseId)
+                if (this.actor.system.activeDefense.defense.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.system.activeDefense.defense.find(a => a._id === defenseId)
 
                 }
 
-                if (this.actor.systemData().activeDefense.mindresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.systemData().activeDefense.mindresist.find(a => a._id === defenseId)
+                if (this.actor.system.activeDefense.mindresist.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.system.activeDefense.mindresist.find(a => a._id === defenseId)
 
                 }
 
 
-                if (this.actor.systemData().activeDefense.bodyresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.systemData().activeDefense.bodyresist.find(a => a._id === defenseId)
+                if (this.actor.system.activeDefense.bodyresist.find(a => a._id === defenseId)) {
+                    defenseData = this.actor.system.activeDefense.bodyresist.find(a => a._id === defenseId)
 
                 }
 
 
                 content += '<span class="formula">';
                 let a = defenseData.attribute1;
-                content += `<span class="formula-part"><span class="value">${this.actor.systemData().attributes[a].value}</span>
+                content += `<span class="formula-part"><span class="value">${this.actor.system.attributes[a].value}</span>
                         <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
                 a = defenseData.attribute2;
                 content += `<span class="operator"> +</span>
-                    <span class="formula-part"><span class="value">${this.actor.systemData().attributes[a].value}</span>
+                    <span class="formula-part"><span class="value">${this.actor.system.attributes[a].value}</span>
                     <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
                     <span class="operator">+</span>`;
 

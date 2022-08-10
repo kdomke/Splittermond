@@ -5,7 +5,7 @@ export default class SplittermondPhysicalItem extends SplittermondItem {
 
     prepareBaseData() {
         super.prepareBaseData();
-        const data = this.systemData();
+        const data = this.system;
         data.durability = parseInt(data.weight) + parseInt(data.hardness);
         data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
 

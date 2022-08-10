@@ -13,10 +13,6 @@ import ActiveDefense from "./active-defense.js";
 
 export default class SplittermondActor extends Actor {
 
-    systemData() {
-        return !this.system ? this.data.data : this.system;
-    }
-
     actorData() {
         return !this.system ? this.data : this;
     }
@@ -52,7 +48,7 @@ export default class SplittermondActor extends Actor {
 
         [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.disableCaching());
         [...Object.values(this.attributes)].forEach(e => e.enableCaching());
-        const data = this.systemData();
+        const data = this.system;
 
 
         this.attacks = [];
@@ -141,12 +137,51 @@ export default class SplittermondActor extends Actor {
 
     }
 
+    get sheetData() {
+        return {
+            attributes: this.attributes.map(a => a.sheetData),
+            derivedValues: this.derivedValues.map(a => a.sheetData),
+            skills: this.skills.map(a => a.sheetData),
+            attacks: this.attacks,
+            activeDefense: this.activeDefense,
+            health: this.system.health,
+            focus: this.system.focus,
+            experience: this.system.experience,
+            splinterpoints: this.system.splinterpoints,
+            damageReduction: this.damageReduction,
+            bonusCap: this.bonusCap,
+            spellCostReduction: this.system.spellCostReduction,
+            spellEnhancedCostReduction: this.system.spellEnhancedCostReduction,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            healthWoundMalus: this.system.health.woundMalus,
+            modifier: this.modifier,
+            spells: this.spells,
+            lowerFumbleResult: this.system.lowerFumbleResult,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focusRegeneration: this.system.focusRegeneration,
+            healthRegeneration: this.system.healthRegeneration,
+            focus}
+    }
+
     get bonusCap() {
-        return this.type === "npc" ? 6 : this.systemData().experience.heroLevel + 2 + this.modifier.value("bonuscap");
+        return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
 
     get splinterpoints() {
-        return this.systemData().splinterpoints;
+        return this.system.splinterpoints;
     }
 
     prepareEmbeddedDocuments() {
@@ -158,6 +193,7 @@ export default class SplittermondActor extends Actor {
         console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
         super.prepareDerivedData();
         this.spells = (this.items.filter(i => i.type === "spell") || []);
+        this.spells.sort((a, b) => (a.data.sort - b.data.sort));
         this._prepareModifier();
 
         this._prepareHealthFocus();
@@ -169,7 +205,7 @@ export default class SplittermondActor extends Actor {
         this._prepareActiveDefense();
 
         if (this.type == "character") {
-            this.systemData().splinterpoints.max += this.modifier.value("splinterpoints");
+            this.system.splinterpoints.max += this.modifier.value("splinterpoints");
         }
 
 
@@ -201,7 +237,7 @@ export default class SplittermondActor extends Actor {
 
 
     _prepareHealthFocus() {
-        const data = this.systemData();
+        const data = this.system;
 
         data.health.woundMalus.levels = duplicate(CONFIG.splittermond.woundMalus[data.health.woundMalus.nbrLevels]);
         data.health.woundMalus.levels = data.health.woundMalus.levels.map(i => {
@@ -327,7 +363,7 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareActiveDefense() {
-        const data = this.systemData();
+        const data = this.system;
 
         this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", game.i18n.localize(this.skills["acrobatics"].label), this.skills["acrobatics"]));
         this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", game.i18n.localize(this.skills["determination"].label), this.skills["determination"]));
@@ -336,7 +372,7 @@ export default class SplittermondActor extends Actor {
 
     addModifier(item, name = "", str = "", type = "", multiplier = 1) {
         if (str == "") return;
-        const data = this.systemData();
+        const data = this.system;
 
 
         str.split(',').forEach(str => {
@@ -520,7 +556,7 @@ export default class SplittermondActor extends Actor {
     }
 
     _prepareModifier() {
-        const data = this.systemData();
+        const data = this.system;
         if (this.type === "character") {
             if (data.experience.heroLevel > 1) {
                 ["defense", "mindresist", "bodyresist"].forEach(d => {
@@ -921,11 +957,11 @@ export default class SplittermondActor extends Actor {
 
         let content = '<span class="formula">';
         let a = defenseData.attribute1;
-        content += `<span class="formula-part"><span class="value">${this.systemData().attributes[a].value}</span>
+        content += `<span class="formula-part"><span class="value">${this.system.attributes[a].value}</span>
                 <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
         a = defenseData.attribute2;
         content += `<span class="operator">+</span>
-            <span class="formula-part"><span class="value">${this.systemData().attributes[a].value}</span>
+            <span class="formula-part"><span class="value">${this.system.attributes[a].value}</span>
             <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
             <span class="operator">+</span>`;
 
@@ -977,7 +1013,7 @@ export default class SplittermondActor extends Actor {
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.systemData().splinterpoints.value = parseInt(this.systemData().splinterpoints.value) - 1;
+        this.system.splinterpoints.value = parseInt(this.system.splinterpoints.value) - 1;
         checkMessageData.availableSplinterpoints = 0;
 
         let checkData = Dice.evaluateCheck(message.roll, checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
@@ -995,7 +1031,7 @@ export default class SplittermondActor extends Actor {
             "flags.splittermond.check": chatMessageData.flags.splittermond.check
         });
         this.update({
-            "data.splinterpoints.value": this.systemData().splinterpoints.value
+            "data.splinterpoints.value": this.system.splinterpoints.value
         })
     }
 
@@ -1064,7 +1100,7 @@ export default class SplittermondActor extends Actor {
 
         let defaultTable = "sorcerer";
         let lowerFumbleResult = parseInt(systemData.lowerFumbleResult) || 0;
-        if (this.actorData().items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
+        if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }
 
@@ -1251,7 +1287,7 @@ export default class SplittermondActor extends Actor {
     }
 
     getRollData() {
-        const data = this.systemData();
+        const data = this.system;
         let rollData = {};
 
         rollData['initiative'] = this.derivedValues.initiative.value;
@@ -1261,7 +1297,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async shortRest() {
-        const data = this.systemData();
+        const data = this.system;
 
         let focusData = duplicate(data.focus);
         let healthData = duplicate(data.health);
@@ -1272,7 +1308,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async longRest() {
-        const data = this.systemData();
+        const data = this.system;
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: game.i18n.localize("splittermond.clearChanneledFocus"),
@@ -1315,7 +1351,7 @@ export default class SplittermondActor extends Actor {
     }
 
     consumeCost(type, valueStr, description) {
-        const data = this.systemData();
+        const data = this.system;
         let costData = Costs.parseCostsString(valueStr.toString());
 
         let subData = duplicate(data[type]);
