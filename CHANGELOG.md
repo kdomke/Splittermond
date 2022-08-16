@@ -1,3 +1,8 @@
+## 0.8.5 HOTFIX ##
+2022-08-10
+
+* fixed: Import von Genesis-Charakteren
+
 ## 0.8.4 ##
 2022-03-21
 
