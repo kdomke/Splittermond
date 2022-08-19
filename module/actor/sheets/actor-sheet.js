@@ -192,12 +192,12 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (field) {
                 newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.actorData()));
+                }, this.actor.toObject()));
                 newValue[idx][field] = element.value;
             } else {
                 newValue = duplicate(array.split('.').reduce(function (prev, curr) {
                     return prev ? prev[curr] : null
-                }, this.actor.actorData()));
+                }, this.actor.toObject()));
                 newValue[idx] = element.value;
             }
             this.actor.update({ [array]: newValue });
@@ -210,7 +210,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (!(idx >= 0 && array !== "")) return;
             let arrayData = duplicate(array.split('.').reduce(function (prev, curr) {
                 return prev ? prev[curr] : null
-            }, this.actor.actorData()));
+            }, this.actor.toObject()));
             let updateData = {}
             if (array === "data.focus.channeled.entries") {
                 let tempValue = parseInt(this.actor.system.focus.exhausted.value) + parseInt(arrayData[idx].costs);
@@ -352,7 +352,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = this.actor.actorData().items.find(el => el.id === itemId)?.data;
+                const itemData = this.actor.items.find(el => el.id === itemId)?.data;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,
@@ -373,7 +373,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 display: "none"
             }
             if (itemId) {
-                const item = this.actor.actorData().items.find(el => el.id === itemId);
+                const item = this.actor.items.find(el => el.id === itemId);
 
                 if (!item) return;
 
