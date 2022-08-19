@@ -109,15 +109,15 @@ export default class Skill extends Modifiable {
         if (target) {
             switch (checkData.difficulty) {
                 case "VTD":
-                    checkData.difficulty = target.actor.derivedAttributes.defense.value;
+                    checkData.difficulty = target.actor.derivedValues.defense.value;
                     hideDifficulty = true;
                     break;
                 case "KW":
-                    checkData.difficulty = target.actor.derivedAttributes.bodyresist.value;
+                    checkData.difficulty = target.actor.derivedValues.bodyresist.value;
                     hideDifficulty = true;
                     break;
                 case "GW":
-                    checkData.difficulty = target.actor.derivedAttributes.mindresist.value;
+                    checkData.difficulty = target.actor.derivedValues.mindresist.value;
                     hideDifficulty = true;
                     break;
             }
