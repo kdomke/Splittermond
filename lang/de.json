@@ -406,29 +406,29 @@
         },
         "grandmaster": "Großmeister",
         "skillCheck": "Fertigkeitsprobe",
-        "successMessage": [
-            "(Knapp) gelungen",
-            "Gelungen",
-            "Gelungen",
-            "(Gut) gelungen",
-            "(Gut) gelungen",
-            "Herausragend gelungen"
-        ],
-        "failMessage": [
-            "Knapp misslungen",
-            "Misslungen",
-            "Misslungen",
-            "(Schwer) misslungen",
-            "(Schwer) misslungen",
-            "Verheerend misslungen"
-        ],
-        "heroLevels": [
-            "in Erstellung",
-            "Suchender",
-            "Wanderer",
-            "Veteran",
-            "Heroe"
-        ],
+        "successMessage": {
+            "0": "(Knapp) gelungen",
+            "1": "Gelungen",
+            "2": "Gelungen",
+            "3": "(Gut) gelungen",
+            "4": "(Gut) gelungen",
+            "5": "Herausragend gelungen"
+        },
+        "failMessage": {
+            "0": "Knapp misslungen",
+            "1": "Misslungen",
+            "2": "Misslungen",
+            "3": "(Schwer) misslungen",
+            "4": "(Schwer) misslungen",
+            "5": "Verheerend misslungen"
+        },
+        "heroLevels": {
+            "0": "in Erstellung",
+            "1": "Suchender",
+            "2": "Wanderer",
+            "3": "Veteran",
+            "4": "Heroe"
+        },
         "rollMode": "Wurfmodus",
         "sufferedDamage": "erlittener Schaden",
         "fumbleTable": {
