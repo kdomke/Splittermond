@@ -59,6 +59,10 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.spellType?.split(",").map(str => str.trim());
     }
 
+    get damage() {
+        return this.system.damage;
+    }
+
     async roll(options) {
         if (!this.actor) return false;
 
@@ -68,7 +72,23 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         options.difficulty = this.difficulty;
         options.preSelectedModifier = this.spellType.split(",");
         options.checkMessageData = {
-            spell: this
+            spell: {
+                id: this.id,
+                name: this.name,
+                spellType: this.spellType,
+                description: this.description,
+                enhancementDescription: this.enhancementDescription,
+                degreeOfSuccessOptions: this.degreeOfSuccessOptions,
+                costs: this.costs,
+                enhancementCosts: this.enhancementCosts,
+                skill: this.skill.toObject(),
+                difficulty: this.difficulty,
+                castDuration: this.castDuration,
+                range: this.range,
+                effectDuration: this.effectDuration,
+                spellTypeList: this.spellTypeList,
+                damage: this.damage
+            }
         }
 
         return this.skill.roll(options);

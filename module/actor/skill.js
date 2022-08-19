@@ -26,13 +26,13 @@ export default class Skill extends Modifiable {
         }
     }
 
-    get sheetData() {
+    toObject() {
         return {
             id: this.id,
             label: this.label,
             value: this.value,
-            attribute1: this.attribute1?.getSheetData(),
-            attribute2: this.attribute2?.getSheetData()
+            attribute1: this.attribute1?.toObject(),
+            attribute2: this.attribute2?.toObject()
         }
     }
 

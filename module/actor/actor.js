@@ -173,8 +173,7 @@ export default class SplittermondActor extends Actor {
     }
 
     getVirtualStatusTokens() {
-        return this.actorData()
-            .items
+        return this.items
             .filter(e => {
                 return e.type == "statuseffect";
             })

@@ -23,7 +23,7 @@ export default class Attribute {
         }
     }
 
-    get sheetData() {
+    toObject() {
         return {
             id: this.id,
             label: this.label,

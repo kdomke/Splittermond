@@ -149,8 +149,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 focusCosts = -data.degreeOfSuccess;
             }
 
-            if (data.spell.system.damage && data.succeeded) {
-                let difficulty = (data.spell.system.difficulty + "").trim().toUpperCase();
+            if (data.spell.damage && data.succeeded) {
+                let difficulty = (data.spell.difficulty + "").trim().toUpperCase();
                 if (["VTD", "KW", "GW"].includes(difficulty)) {
                     templateContext.actions.push({
                         name: `${game.i18n.localize("splittermond.activeDefense")} (${difficulty})`,
@@ -164,13 +164,13 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
 
                 templateContext.actions.push({
-                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.system.damage + ")",
+                    name: game.i18n.localize(`splittermond.damage`) + " (" + data.spell.damage + ")",
                     icon: "fa-heart-broken",
                     classes: "rollable",
                     data: {
                         "roll-type": "damage",
-                        damage: data.spell.system.damage,
-                        features: data.spell.system.features,
+                        damage: data.spell.damage,
+                        features: data.spell.features,
                         source: data.spell.name
                     }
                 });
@@ -306,7 +306,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                 classes: "add-tick",
                 data: {
                     ticks: tickCost,
-                    message: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + "): " + data.title
+                    message: game.i18n.localize(`splittermond.activeDefense`) + " (" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + "): " + templateContext.title
                 }
             });
 

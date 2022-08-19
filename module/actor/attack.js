@@ -10,12 +10,12 @@ export default class Attack {
     constructor(actor, item, secondaryAttack = false) {
         this.actor = actor;
         this.item = item;
-        this._secondary = secondaryAttack;
+        this.isSecondaryAttack = secondaryAttack;
         let attackData = this.item;
         if (this.item.system) {
             attackData = this.item.system;
         }
-        if (this._secondary && attackData.secondaryAttack) {
+        if (this.isSecondaryAttack && attackData.secondaryAttack) {
             attackData = attackData.secondaryAttack;
         }
 
@@ -37,9 +37,9 @@ export default class Attack {
         });
 
 
-        this.id = !this._secondary ? this.item.id : `${this.item.id}_secondary`;
+        this.id = !this.isSecondaryAttack ? this.item.id : `${this.item.id}_secondary`;
         this.img = this.item.img;
-        this.name = !this._secondary ? this.item.name : `${this.item.name} (${game.i18n.localize(`splittermond.skillLabel.${attackData.skill}`)})`;
+        this.name = !this.isSecondaryAttack ? this.item.name : `${this.item.name} (${game.i18n.localize(`splittermond.skillLabel.${attackData.skill}`)})`;
         this.skill = new Skill(this.actor, (attackData.skill || this.name), (attackData.attribute1 || ""), (attackData.attribute2 || ""), attackData.skillValue || null);
         this.skill.addModifierPath(`skill.${this.id}`);
 
@@ -64,12 +64,12 @@ export default class Attack {
         this.deletable = ["npcattack"].includes(this.item.type);
     }
 
-    get sheetData() {
+    toObject() {
         return {
             id: this.id,
             img: this.img,
             name: this.name,
-            skill: this.skill.sheetData,
+            skill: this.skill.toObject(),
             range: this.range,
             features: this.features,
             damage: this.damage,
@@ -106,7 +106,7 @@ export default class Attack {
         options.difficulty = "VTD";
         options.preSelectedModifier = [this.item.name];
         options.checkMessageData = {
-            weapon: this
+            weapon: this.toObject()
         }
 
         return this.skill.roll(options);
