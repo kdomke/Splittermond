@@ -59,7 +59,8 @@
   font-style: italic;
 }
 .border-paper,
-.window-app,
+.window-app:not(.journal-entry),
+.sheet.journal-entry .journal-entry-content,
 .chat-message,
 .splittermond .list.masteries.splittermond-tooltip::before,
 .chat-message.emote,
@@ -154,7 +155,8 @@ ul.checkbox-list li label,
   border-image-repeat: repeat;
 }
 .border-double-corner-1,
-.window-app:not(.sidebar-popout):not(.dark) .window-content {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) .window-content,
+.sheet.journal-entry .journal-entry-pages {
   border: 4px solid transparent;
   border-image: var(--border-image-double-corner-1, url(../../systems/splittermond/images/double-border-corner-1.png) 21 21);
   border-image-width: 21px;
@@ -476,11 +478,11 @@ img {
 .app > * {
   z-index: 0;
 }
-.window-app:not(.sidebar-popout):not(.dark) {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) {
   color: var(--color-text-secondary);
   background: var(--background-parchment);
 }
-.window-app:not(.sidebar-popout):not(.dark) .window-content {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) .window-content {
   color: var(--color-text-secondary);
   background: var(--background-parchment);
   margin: 5px;
@@ -496,28 +498,40 @@ img {
         }
         */
 }
-.window-app:not(.sidebar-popout):not(.dark) .window-resizable-handle {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) .window-resizable-handle {
   bottom: -8px;
   right: -12px;
   border: none;
   background: none;
   color: var(--color-text-secondary);
 }
-.window-app:not(.sidebar-popout):not(.dark) .window-resizable-handle .fas.fa-arrows-alt-h:before {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) .window-resizable-handle .fas.fa-arrows-alt-h:before {
   content: "\f054";
 }
-.window-app:not(.sidebar-popout):not(.dark).minimized .window-header {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark).minimized .window-header {
   border: none;
 }
-.window-app .window-header {
+.window-app:not(.journal-entry) .window-header {
   border: none;
 }
-.window-app .window-header .window-title {
+.window-app:not(.journal-entry) .window-header .window-title {
   font-family: "Almendra";
   font-weight: normal;
   max-width: unset;
 }
-.window-app.sheet.splittermond:not(.dark) .window-content {
+.sheet.journal-entry .journal-entry-content {
+  border-radius: 0;
+  color: var(--color-text-secondary);
+  background: var(--background-parchment);
+}
+.sheet.journal-entry .journal-entry-pages {
+  margin: 5px;
+  margin-top: 0px;
+}
+.sheet.journal-entry .journal-entry-pages .scrollable {
+  padding: 8px;
+}
+.window-app.sheet.splittermond:not(.dark):not(.journal-entry) .window-content {
   background: var(--background-parchment-splittermond), var(--background-parchment);
   background-position: top right;
   background-blend-mode: var(--background-parchment-splittermond-blend-mode);
@@ -970,6 +984,111 @@ a.pdflink i {
 }
 #client-settings section.content {
   border: none;
+}
+.system-splittermond .filepicker .current-dir button {
+  border: 3px solid transparent;
+  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image-width: 6px;
+  color: var(--color-text);
+  font-family: "Almendra";
+  height: unset;
+  line-height: 1.5;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-origin: border-box;
+  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-clip: padding-box, padding-box, border-box, border-box;
+  background-blend-mode: normal, multiply, normal, normal, normal;
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+  transition: box-shadow 0.1s;
+  box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  position: relative;
+  border: 1px solid transparent;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image-width: 3px;
+  border-image-outset: 1px;
+  border-image-repeat: repeat;
+}
+.system-splittermond .filepicker .current-dir button:hover,
+.system-splittermond .filepicker .current-dir button:focus {
+  box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+}
+.system-splittermond .filepicker .current-dir button:active {
+  box-shadow: inset 0 0px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+}
+.system-splittermond .filepicker .current-dir button:disabled {
+  color: inherit;
+  background: transparent;
+  background-color: rgba(128, 128, 128, 0.1);
+  box-shadow: none;
+  opacity: 0.8;
+}
+.system-splittermond .filepicker .current-dir button:disabled::before {
+  background: transparent;
+}
+.system-splittermond .prosemirror menu {
+  background: transparent;
+}
+.system-splittermond .prosemirror menu .pm-dropdown,
+.system-splittermond .prosemirror menu button {
+  border: 3px solid transparent;
+  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image-width: 6px;
+  color: var(--color-text);
+  font-family: "Almendra";
+  height: unset;
+  line-height: 1.5;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-origin: border-box;
+  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-clip: padding-box, padding-box, border-box, border-box;
+  background-blend-mode: normal, multiply, normal, normal, normal;
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+  transition: box-shadow 0.1s;
+  box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  position: relative;
+  border: 1px solid transparent;
+  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image-width: 3px;
+  border-image-outset: 1px;
+  border-image-repeat: repeat;
+}
+.system-splittermond .prosemirror menu .pm-dropdown:hover,
+.system-splittermond .prosemirror menu button:hover,
+.system-splittermond .prosemirror menu .pm-dropdown:focus,
+.system-splittermond .prosemirror menu button:focus {
+  box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+}
+.system-splittermond .prosemirror menu .pm-dropdown:active,
+.system-splittermond .prosemirror menu button:active {
+  box-shadow: inset 0 0px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+}
+.system-splittermond .prosemirror menu .pm-dropdown:disabled,
+.system-splittermond .prosemirror menu button:disabled {
+  color: inherit;
+  background: transparent;
+  background-color: rgba(128, 128, 128, 0.1);
+  box-shadow: none;
+  opacity: 0.8;
+}
+.system-splittermond .prosemirror menu .pm-dropdown:disabled::before,
+.system-splittermond .prosemirror menu button:disabled::before {
+  background: transparent;
+}
+.system-splittermond .prosemirror menu button.active {
+  box-shadow: inset 0 0px 20px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
+}
+.system-splittermond .prosemirror menu .pm-dropdown ul {
+  color: var(--color-text-secondary);
+}
+.system-splittermond .prosemirror menu .pm-dropdown ul li {
+  text-shadow: none;
 }
 .sheet input[type="text"].character-name,
 .sheet input[type="text"].item-name,
