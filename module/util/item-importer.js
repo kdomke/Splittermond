@@ -69,30 +69,33 @@ export default class ItemImporter {
         console.log(rawData);
 
         // Check Spell
-        var spellRegex = new RegExp(/^(.*)(?:\s{1}|\n)\(((?:Spruch)|(?:Ritus))\)/, "gm");
 
-        if (rawData.match(spellRegex)) {
-            var currentExec;
-            var lastexec;
-            var indzies = [];
-            while ((currentExec = spellRegex.exec(rawData))) {
-                indzies.push({ start: lastexec?.index ?? 0, end: currentExec.index });
-                lastexec = currentExec;
+        if (rawData.match(/Schulen:/) && rawData.match(/Typus:/ && rawData.match(/Kosten:/))) {
+            let folder = await this._folderDialog();
+            let spellTokens = rawData.replace(/^[0-9]{3}\n/g, "") // Remove page numbers
+                .split(/(.*\s+\((?:Spruch|Ritus)\))/gm); // Split into spell tokens
+            let spellName = "";
+            for (let k = 0; k < spellTokens.length; k++) {
+                const spellToken = spellTokens[k];
+                if (spellToken == "") {
+                    continue;
+                }
+                if (spellName != "") {
+                    this.importSpell(spellName, spellToken, folder);
+                    spellName = "";
+                    continue;
+                }
+                    
+                if (spellToken.match(/(.*\s+\((?:Spruch|Ritus)\))/gm)) {
+                    spellName = spellToken.match(/(.*?)\s+\((?:Spruch|Ritus)\)/m)[1];
+                    continue;
+                }
+
             }
-            indzies.push({ start: lastexec.index, end: currentExec?.index ?? rawData.length });
-            indzies = indzies.slice(1);
-            console.log("Found " + indzies.length + " spells:")
-            indzies.forEach(e => {
-                console.log("From: " + e.start + " to: " + e.end);
-                var spellData = rawData.substring(e.start, e.end);
-                console.log(spellData);
-                this.importSpell(spellData);
-                console.log("Imported.")
-            }); 
             return;      
         }
         
-        // Check multiple Weapons
+        // Check Weapons
         let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
         let weaponRegex =`${skills}|(.*?)\\s+(Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`
         let test = rawData.match(new RegExp(weaponRegex, "gm"));
@@ -116,11 +119,7 @@ export default class ItemImporter {
                 return;
             }
         }
-        // Check Weapon
-        // if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
-        //     this.importWeapon(rawData);
-        //     return;
-        // }
+
 
         // Check multiple Armor
         test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
@@ -479,96 +478,92 @@ export default class ItemImporter {
         ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeWeapon") }));
     }
 
-    static async importSpell(rawData) {
+    static async importSpell(spellName, rawData, folder) {
         let spellData = {
             type: "spell",
-            name: "",
+            name: spellName,
             img: CONFIG.splittermond.icons.spell.default,
+            folder: folder,
             data: {}
         };
-        let nameData = rawData.match(/([^(]+)\s(\(.*\))/);
-        spellData.name = `${nameData[1]} ${nameData[2]} `;
+        
+        const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
+        let tokens = rawData.split( new RegExp(`(${sectionLabels.map(sl => sl+":").join("|")})`,"gm"));
 
-        let skillsData = rawData.match(/Schulen: ([^:]+?)[^\s]+:/);
-        spellData.data.availableIn = skillsData[1].trim().split(",").map(s => {
-            let data = s.match(/([^ ]+)\s([0-5])/);
-            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
-            spellData.data.skill = skill;
-            spellData.data.skillLevel = parseInt(data[2]);
-            return `${skill} ${data[2]} `;
-        }).join(", ");
+        for (let k = 0; k < tokens.length-1; k++) {
+            const sectionHeading = tokens[k].trim();
+            const sectionData = tokens[k+1].trim();
+            switch(sectionHeading) { 
+                case "Schulen:":
+                    spellData.data.availableIn = sectionData.split(",").map(s => {
+                        let data = s.match(/([^ ]+)\s([0-5])/);
+                        let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
+                        spellData.data.skill = skill;
+                        spellData.data.skillLevel = parseInt(data[2]);
+                        return `${skill} ${data[2]} `;
+                    }).join(", ");
+                    break;
+                case "Typus:":
+                    spellData.data.spellType = sectionData;
+                    break;
+                case "Schwierigkeit:":
+                    spellData.data.difficulty = sectionData;
+                    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
+                        spellData.data.difficulty.search("Geist") >= 0) {
+                        spellData.data.difficulty = "GW";
+                    }
 
-        let typeData = rawData.match(/Typus: ([^:]+?)[^\s]+:/);
-        spellData.data.spellType = typeData[1].trim();
+                    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
+                        spellData.data.difficulty.search("Körper") >= 0) {
+                        spellData.data.difficulty = "KW";
+                    }
 
-        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)[^\s]+:/);
-        spellData.data.difficulty = difficultyData[1].trim();
-
-        if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
-            spellData.data.difficulty.search("Geist") >= 0) {
-            spellData.data.difficulty = "GW";
-        }
-
-        if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
-            spellData.data.difficulty.search("Körper") >= 0) {
-            spellData.data.difficulty = "KW";
-        }
-
-        if (spellData.data.difficulty.search("Verteidigung") >= 0) {
-            spellData.data.difficulty = "VTD";
-        }
-
-        let costsData = rawData.match(/Kosten:\s*([^:]+?)\s*[^\s]+:/);
-        spellData.data.costs = costsData[1];
-
-        let castDurationData = rawData.match(/Zauberdauer:\s*([^:]+?)[^\s]+:/);
-        spellData.data.castDuration = castDurationData[1].trim();
-
-        let descriptionData = rawData.match(/Wirkung:\s*([^]+?)\n[^\s]+:/);
-        spellData.data.description = descriptionData[1];
-        spellData.data.description = spellData.data.description.replace(/\n/g, " ");
-        spellData.data.description = spellData.data.description.replace(/  /g, " ");
-
-        let effectDurationData = rawData.match(/Wirkungsdauer:\s*([^:]+?)[^\s]+:/);
-        if (effectDurationData)
-            spellData.data.effectDuration = effectDurationData[1].trim();
-        else
-            spellData.data.effectDuration = "";
-
-        let effectAreaData = rawData.match(/Wirkungsbereich:\s*([^:]+?)[^\s]+:/);
-        if (effectAreaData)
-            spellData.data.effectArea = effectAreaData[1].trim();
-        else
-            spellData.data.effectArea = "";
-
-        let rangeData = rawData.match(/Reichweite:\s*([^:]+?)[^\s]+:/);
-        if (rangeData)
-            spellData.data.range = rangeData[1];
-        else
-            spellData.data.range = "";
-
-        let egData = rawData.match(/Erfolgsgrade:\s*([^]+)/);
-        let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-        spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
-        spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
-        spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
-        spellData.data.degreeOfSuccessOptions = {
-            castDuration: egData[1].search("Auslösezeit") >= 0,
-            consumedFocus: egData[1].search("Verzehrter") >= 0,
-            exhaustedFocus: egData[1].search("Erschöpfter") >= 0,
-            channelizedFocus: egData[1].search("Kanalisierter") >= 0,
-            effectDuration: egData[1].search("Wirkungsd") >= 0 || egData[1].search("dauer") >= 0,
-            damage: egData[1].search("Schaden,") >= 0,
-            range: egData[1].search("Reichw") >= 0,
-            effectArea: egData[1].search("Wirkungsb") >= 0 || egData[1].search("bereich") >= 0
+                    if (spellData.data.difficulty.search("Verteidigung") >= 0) {
+                        spellData.data.difficulty = "VTD";
+                    }
+                    break;
+                case "Kosten:":
+                    spellData.data.costs = sectionData;
+                    break;
+                case "Zauberdauer:":
+                    spellData.data.castDuration = sectionData;
+                    break;
+                case "Reichweite:":
+                    spellData.data.range = sectionData;
+                    break;
+                case "Wirkung:":
+                    spellData.data.description = sectionData;
+                    spellData.data.description = spellData.data.description.replace(/\n/g, " ");
+                    spellData.data.description = spellData.data.description.replace(/  /g, " ");
+                    break;
+                case "Wirkungsdauer:":
+                    spellData.data.effectDuration = sectionData;
+                    break;
+                case "Wirkungsbereich:":
+                    spellData.data.effectArea = sectionData;
+                    break;
+                case "Erfolgsgrade:":
+                    let enhancementData = sectionData.match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
+                    spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
+                    spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
+                    spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
+                    spellData.data.degreeOfSuccessOptions = {
+                        castDuration: sectionData.search("Auslösezeit") >= 0,
+                        consumedFocus: sectionData.search("Verzehrter") >= 0,
+                        exhaustedFocus: sectionData.search("Erschöpfter") >= 0,
+                        channelizedFocus: sectionData.search("Kanalisierter") >= 0,
+                        effectDuration: sectionData.search("Wirkungsd") >= 0 || sectionData.search("dauer") >= 0,
+                        damage: sectionData.search("Schaden,") >= 0,
+                        range: sectionData.search("Reichw") >= 0,
+                        effectArea: sectionData.search("Wirkungsb") >= 0 || sectionData.search("bereich") >= 0
+                    }
+            }
         }
 
         let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.data.description);
         if (damage) {
             spellData.data.damage = damage[0] || "";
         }
-
-
 
         Item.create(spellData);
 
@@ -799,12 +794,17 @@ export default class ItemImporter {
                         });
                        
                         actorData.items.push(...await Promise.all(weaponData.map(async data => {
-                            let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", data.name) || {
-                                type: "npcattack",
-                                name: data.name,
-                                img: CONFIG.splittermond.icons.weapon[data.name] || CONFIG.splittermond.icons.weapon.default,
-                                data: {}
-                            });
+                            let weaponData = await SplittermondCompendium.findItem("weapon", data.name);
+                            if (!weaponData) {
+                                weaponData = {
+                                    type: "npcattack",
+                                    name: data.name,
+                                    img: CONFIG.splittermond.icons.weapon[data.name] || CONFIG.splittermond.icons.weapon.default,
+                                    data: {}
+                                };
+                            } else {
+                                weaponData = weaponData.toObject();
+                            }
                             weaponData.data.damage = data.damage;
                             weaponData.data.weaponSpeed =  data.weaponSpeed;
                             weaponData.data.range =  data.range;
@@ -859,7 +859,7 @@ export default class ItemImporter {
                             let searchString = data.name.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
                             let masteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
                             if (masteryData) {
-                                masteryData = duplicate(masteryData);
+                                masteryData = masteryData.toObject();
                                 delete masteryData._id;
                                 masteryData.data.skill = data.data.skill;
                                 masteryData.data.level = data.data.level;
@@ -886,7 +886,7 @@ export default class ItemImporter {
                             }
                             let featureData = await SplittermondCompendium.findItem("npcfeature", searchString[1].trim());
                             if (featureData) {
-                                featureData = duplicate(featureData);
+                                featureData = featureData.toObject();
                                 delete featureData._id;
                                 featureData.name = data.name;
                                 return featureData
@@ -950,7 +950,7 @@ export default class ItemImporter {
                             let searchString = data.name.match(/([^\[]+)(?:\[[\[]+\])?/)
                             let spellData = await SplittermondCompendium.findItem("spell", searchString[1]);
                             if (spellData) {
-                                spellData = duplicate(spellData);
+                                spellData = spellData.toObject();
                                 delete spellData._id;
                                 spellData.name = data.name;
                                 spellData.data.skill = data.data.skill;
