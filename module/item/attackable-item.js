@@ -3,6 +3,7 @@ import Attack from "../actor/attack.js";
 const AttackableItem = (superclass) => class extends superclass {
 
     prepareBaseData() {
+        super.prepareBaseData()
         this.attacks = [];
     }
 
