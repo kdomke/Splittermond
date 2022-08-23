@@ -93,23 +93,34 @@ export default class ItemImporter {
         }
         
         // Check multiple Weapons
-        let test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +(?:([0-9]+ [LST])(?: *\/ *[0-9]+ [LST])?) +([0-9]+) +([0-9]+) +([UGFMA]) +([0-9+\-W]+) +([0-9]+) +((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3}) +(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],? *)*|–) +(.+)/g);
+        let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
+        let weaponRegex =`${skills}|(.*?)\\s+(Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`
+        let test = rawData.match(new RegExp(weaponRegex, "gm"));
         if (test) {
             if (test.length > 1) {
-                let skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
                 let folder = await this._folderDialog();
-
-                test.forEach(m => {
+                let skill = "";
+                
+                for (let k = 0; k < test.length; k++) {
+                    const m = test[k];
+                    if (m.match(new RegExp(skills, "gm"))) {
+                        skill = CONFIG.splittermond.skillGroups.fighting.find(s => game.i18n.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
+                        continue;
+                    }
+                    if (skill == "") {
+                        skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+                    }
+                    
                     this.importWeapon(m, skill, folder);
-                });
+                }
                 return;
             }
         }
         // Check Weapon
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
-            this.importWeapon(rawData);
-            return;
-        }
+        // if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
+        //     this.importWeapon(rawData);
+        //     return;
+        // }
 
         // Check multiple Armor
         test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
@@ -384,11 +395,11 @@ export default class ItemImporter {
 
         let isRanged = ["throwing", "longrange"].includes(skill);
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9],?\s*)*|–)\s+(.+)/);
+        let tokens = rawData.match(/([\s\S]*?)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST]|-|–)(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL)\s*[0-9],?\s*)*|–)\s+(.+)/);
 
         let itemData = {
             type: "weapon",
-            name: tokens[1].trim(),
+            name: tokens[1].trim().replace(/[0-9]/g,""),
             img: CONFIG.splittermond.icons.weapon[tokens[1].trim()] || CONFIG.splittermond.icons.weapon.default,
             folder: folder,
             data: {}
