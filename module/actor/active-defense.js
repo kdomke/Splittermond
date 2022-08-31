@@ -25,4 +25,8 @@ export default class ActiveDefense {
 
         return this.skill.roll(options);
     }
+
+    tooltip() {
+        return this.skill.tooltip();
+    }
 }

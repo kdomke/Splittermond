@@ -2,6 +2,7 @@ import Modifiable from "./modifiable.js";
 import CheckDialog from "../apps/dialog/check-dialog.js"
 import * as Dice from "../util/dice.js"
 import * as Chat from "../util/chat.js";
+import * as Tooltip from "../util/tooltip.js";
 
 
 export default class Skill extends Modifiable {
@@ -158,6 +159,23 @@ export default class Skill extends Modifiable {
         }
 
         return ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
+    }
+
+    tooltip() {
+        let formula = new Tooltip.TooltipFormula();
+        if (this.attribute1) {
+            formula.addPart(this.attribute1.value, this.attribute1.label.short);
+            formula.addOperator("+");
+        }
+        if (this.attribute2) {
+            formula.addPart(this.attribute2.value, this.attribute2.label.short);
+            formula.addOperator("+");
+        }
+        formula.addPart(this.points, game.i18n.localize("splittermond.skillPointsAbbrev"));
+
+        this.addModifierTooltipFormulaElements(formula);
+
+        return formula.render();
     }
 
 }

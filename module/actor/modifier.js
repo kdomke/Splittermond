@@ -25,4 +25,13 @@ export default class Modifier {
         return this.value > 0;
     }
 
+    addTooltipFormulaElements(formula, bonusPrefix = "+", malusPrefix = "-") {
+        let val = Math.abs(this.value);
+        if (this.isBonus) {
+            formula.addBonus(bonusPrefix+val, this.name);
+        } else {
+            formula.addMalus(malusPrefix+val, this.name);
+        }
+    }
+
 }

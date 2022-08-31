@@ -79,7 +79,7 @@
             </div>
             <ol class="list-body" data-defense-type="defense">
                 {{#each activeDefense.defense}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -97,7 +97,7 @@
             </div>
             <ol class="list-body" data-defense-type="mindresist">
                 {{#each activeDefense.mindresist}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -114,7 +114,7 @@
             </div>
             <ol class="list-body" data-defense-type="bodyresist">
                 {{#each activeDefense.bodyresist}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}

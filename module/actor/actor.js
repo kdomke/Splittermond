@@ -912,50 +912,6 @@ export default class SplittermondActor extends Actor {
         return super.importFromJSON(json);
     }
 
-    _getActiveDefenseTooltip(defenseData, modifier = []) {
-
-        let content = '<span class="formula">';
-        let a = defenseData.attribute1;
-        content += `<span class="formula-part"><span class="value">${this.system.attributes[a].value}</span>
-                <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
-        a = defenseData.attribute2;
-        content += `<span class="operator">+</span>
-            <span class="formula-part"><span class="value">${this.system.attributes[a].value}</span>
-            <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
-            <span class="operator">+</span>`;
-
-        content += `<span class="formula-part"><span class="value">${defenseData.skill.points}</span>
-            <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
-        if (defenseData.skill?.mod) {
-            defenseData.skill.mod.sources.forEach(e => {
-                let val = e.value;
-                let cls = "malus";
-                if (val > 0) {
-                    val = "+" + val;
-                    cls = "bonus";
-                }
-
-                content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
-                <span class="description">${e.description}</span></span>`
-            });
-
-        }
-
-        modifier.forEach(e => {
-            let val = e.value;
-            let cls = "malus";
-            if (val > 0) {
-                val = "+" + val;
-                cls = "bonus";
-            }
-
-            content += `<span class="formula-part ${cls}"><span class="value">${val}</span>
-                        <span class="description">${e.description}</span></span>`
-        });
-        content += '</span>';
-        return content;
-    }
-
     async useSplinterpointBonus(message) {
         if (!message.data.flags.splittermond
             || !message.data.flags.splittermond.check

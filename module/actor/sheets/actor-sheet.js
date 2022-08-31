@@ -1,5 +1,6 @@
 import * as Dice from "../../util/dice.js"
 import * as Costs from "../../util/costs.js"
+import * as Tooltip from "../../util/tooltip.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
@@ -275,7 +276,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (type === "activeDefense") {
                 const itemId = $(event.currentTarget).closestData('defense-id');
                 const defenseType = $(event.currentTarget).closestData('defense-type');
-                this.actor.rollActiveDefense(defenseType, this.actor.system.activeDefense[defenseType].find(el => el._id === itemId));
+                this.actor.rollActiveDefense(defenseType, this.actor.activeDefense[defenseType].find(el => el.id === itemId));
             }
         });
 
@@ -392,28 +393,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             if (skillId && this.actor.skills[skillId]) {
                 const skillData = this.actor.skills[skillId];
-                content += '<span class="formula">';
-                if (CONFIG.splittermond.skillAttributes[skillId]) {
-                    content += `<span class="formula-part"><span class="value">${skillData.attribute1.value}</span>
-                        <span class="description">${game.i18n.localize(skillData.attribute1.label.short)}</span></span>`
-                    content += `<span class="operator">+</span>
-                        <span class="formula-part"><span class="value">${skillData.attribute2.value}</span>
-                        <span class="description">${game.i18n.localize(skillData.attribute1.label.short)}</span ></span>
-                        <span class="operator">+</span>`;
-                }
-                content += `<span class="formula-part"><span class="value">${skillData.points}</span>
-                        <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span> `
-
-                this.actor.modifier.static(skillData._modifierPath).forEach(e => {
-                    if (e.value != 0) {
-                        let val = e.isBonus ? "+" + e.value : e.value;
-                        let cls = e.isMalus ? "malus" : "bonus";
-                        content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
-                        <span class="description">${e.name}</span></span> `
-                    }
-
-                });
-                content += '</span>';
+                content += skillData.tooltip();
 
                 let masteryList = html.find(`.list.masteries li[data-skill="${skillId}"]`);
 
@@ -442,176 +422,45 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (this.actor.attacks.find(a => a.id === attackId)) {
                     let attack = this.actor.attacks.find(a => a.id === attackId);
                     let skill = attack.skill;
-                    content += '<span class="formula">';
-                    content += `<span class="formula-part"><span class="value">${skill.attribute1.value}</span>
-                        <span class="description">${game.i18n.localize(skill.attribute1.label.short)}</span></span>
-                        <span class="operator">+</span>
-                        <span class="formula-part"><span class="value">${skill.attribute2.value}</span>
-                        <span class="description">${game.i18n.localize(skill.attribute2.label.short)}</span></span>
-                        <span class="operator">+</span>
-                        <span class="formula-part" ><span class="value">${skill.points}</span>
-                        <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span> `
-
-                    this.actor.modifier.static(skill._modifierPath).forEach(e => {
-                        if (e.value != 0) {
-                            let val = e.isBonus ? "+" + e.value : e.value;
-                            let cls = e.isMalus ? "malus" : "bonus";
-                            content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
-                            <span class="description">${e.name}</span></span> `
-                        }
-
-                    });
-                    content += '</span>';
+                    content += skill.tooltip();
                 }
             }
 
             if ($(event.currentTarget).closestData('defense-id')) {
                 let defenseId = $(event.currentTarget).closestData('defense-id');
                 let defenseData = {}
-                if (this.actor.system.activeDefense.defense.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.system.activeDefense.defense.find(a => a._id === defenseId)
+                if (this.actor.activeDefense.defense.find(a => a.id === defenseId)) {
+                    defenseData = this.actor.activeDefense.defense.find(a => a.id === defenseId)
 
                 }
 
-                if (this.actor.system.activeDefense.mindresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.system.activeDefense.mindresist.find(a => a._id === defenseId)
-
-                }
-
-
-                if (this.actor.system.activeDefense.bodyresist.find(a => a._id === defenseId)) {
-                    defenseData = this.actor.system.activeDefense.bodyresist.find(a => a._id === defenseId)
+                if (this.actor.activeDefense.mindresist.find(a => a.id === defenseId)) {
+                    defenseData = this.actor.activeDefense.mindresist.find(a => a.id === defenseId)
 
                 }
 
 
-                content += '<span class="formula">';
-                let a = defenseData.attribute1;
-                content += `<span class="formula-part"><span class="value">${this.actor.system.attributes[a].value}</span>
-                        <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>`
-                a = defenseData.attribute2;
-                content += `<span class="operator"> +</span>
-                    <span class="formula-part"><span class="value">${this.actor.system.attributes[a].value}</span>
-                    <span class="description">` + game.i18n.localize(`splittermond.attribute.${a}.short`) + `</span></span>
-                    <span class="operator">+</span>`;
-
-                content += `<span class="formula-part" ><span class="value">${defenseData.skill.points}</span>
-                    <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
-                if (defenseData.skill?.mod) {
-                    defenseData.skill.mod.sources.forEach(e => {
-                        let val = e.value;
-                        let cls = "malus";
-                        if (val > 0) {
-                            val = "+" + val;
-                            cls = "bonus";
-                        }
-
-                        content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
-                        <span class="description">${e.description}</span></span > `
-                    });
+                if (this.actor.activeDefense.bodyresist.find(a => a.id === defenseId)) {
+                    defenseData = this.actor.activeDefense.bodyresist.find(a => a.id === defenseId)
 
                 }
-                content += '</span>';
+                if (defenseData) {
+                    content += defenseData.tooltip();
+                }
             }
 
             if (event.currentTarget.classList.contains("derived-attribute")) {
                 let attribute = event.currentTarget.id;
                 if (this.actor.derivedValues[attribute]) {
-                    content += '<span class="formula">';
-                    switch (attribute) {
-                        case "size":
-                            content += `<span class="formula-part"><span class="value">${this.actor.derivedValues.size.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span> `
-                            break;
-                        case "speed":
-                            content += `<span class="formula-part"><span class="value">${this.actor.attributes.agility.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.agility.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.derivedValues.size.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>`
-                            break;
-                        case "initiative":
-                            content += `<span class="operator"> 10 -</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.intuition.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.intuition.short`) + `</span></span>`
-                            break;
-                        case "healthpoints":
-                            content += `<span class="formula-part"><span class="value">${this.actor.derivedValues.size.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.constitution.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>`
-                            break;
-                        case "focuspoints":
-                            content += `<span class="operator"> 2 &times; (</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.mystic.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mystic.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.willpower.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
-                                <span class="operator">)</span>`
-                            break;
-                        case "defense":
-                            content += `<span class="operator"> 12 +</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.agility.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.agility.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.strength.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.strength.short`) + `</span></span>
-                                <span class="operator">+ 2 &times;(5 -</span>
-                                <span class="formula-part"><span class="value">${this.actor.derivedValues.size.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.derivedAttribute.size.short`) + `</span></span>
-                                <span class="operator">)</span >`
-                            break;
-                        case "mindresist":
-                            content += `<span class="operator"> 12 +</span >
-                                <span class="formula-part"><span class="value">${this.actor.attributes.willpower.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.mind.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.mind.short`) + `</span></span>
-                    `
-                            break;
-                        case "bodyresist":
-                            content += `<span class="operator"> 12 +</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.willpower.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.willpower.short`) + `</span></span>
-                                <span class="operator">+</span>
-                                <span class="formula-part"><span class="value">${this.actor.attributes.constitution.value}</span>
-                                <span class="description">`+ game.i18n.localize(`splittermond.attribute.constitution.short`) + `</span></span>
-                    `
-                            break;
-                    }
-
-                    this.actor.modifier.static(this.actor.derivedValues[attribute]._modifierPath).forEach(e => {
-                        if (e.value != 0) {
-                            let val = (attribute == "initiative") ? -parseInt(e.value) : parseInt(e.value);
-                            let cls = e.isMalus ? "malus" : "bonus";
-                            val = val > 0 ? "+" + val : val;
-                            content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
-                            <span class="description">${e.name}</span></span> `
-                        }
-
-                    });
-
-                    content += '</span>';
+                    content += this.actor.derivedValues[attribute].tooltip();
                 }
 
             }
 
             if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction > 0) {
-                content += '<span class="formula">';
-                this.actor.modifier.static("damagereduction").forEach(e => {
-                    if (e.value != 0) {
-                        let val = parseInt(e.value);
-                        let cls = e.isMalus ? "malus" : "bonus";
-                        val = val > 0 ? "+" + val : val;
-                        content += `<span class="formula-part ${cls}" ><span class="value">${val}</span>
-                        <span class="description">${e.name}</span></span> `
-                    }
-
-                });
-                content += '</span>';
+                let formula = new Tooltip.TooltipFormula();
+                this.actor.modifier.static("damagereduction").forEach(e => e.addTooltipFormulaElements(formula));
+                content += formula.render();
             }
 
             if (content) {

@@ -1,3 +1,4 @@
+import * as Tooltip from "../util/tooltip.js";
 import Modifiable from "./modifiable.js";
 
 export default class DerivedValue extends Modifiable {
@@ -71,6 +72,70 @@ export default class DerivedValue extends Modifiable {
         if (this._cache.enabled && this._cache.baseValue === null)
             this._cache.baseValue = baseValue;
         return baseValue;
+    }
+
+    tooltip() {
+        let formula = new Tooltip.TooltipFormula();
+        const attributes = this.actor.attributes;
+        const derivedValues = this.actor.derivedValues;
+        switch (this.id) {
+            case "size":
+                formula.addPart(this.baseValue, this.label.short);
+                break;
+            case "speed":
+                formula.addPart(attributes.agility.value, attributes.agility.label.short);
+                formula.addOperator("+");
+                formula.addPart(derivedValues.size.value, derivedValues.size.label.short);
+                break;
+            case "initiative":
+                formula.addOperator("10 -");
+                formula.addPart(attributes.intuition.value, attributes.intuition.label.short);
+                break;
+            case "healthpoints":
+                formula.addPart(derivedValues.size.value, derivedValues.size.label.short);
+                formula.addOperator("+");
+                formula.addPart(attributes.constitution.value, attributes.constitution.label.short);
+                break;
+            case "focuspoints":
+                formula.addOperator("2 &times; (");
+                formula.addPart(attributes.mystic.value, attributes.mystic.label.short);
+                formula.addOperator("+");
+                formula.addPart(attributes.willpower.value, attributes.willpower.label.short);
+                formula.addOperator(")");
+                break;
+            case "defense":
+                formula.addOperator("12 +");
+                formula.addPart(attributes.agility.value, attributes.agility.label.short);
+                formula.addOperator("+");
+                formula.addPart(attributes.strength.value, attributes.strength.label.short);
+                formula.addOperator("+");
+                formula.addOperator("2 &times; ( 5 -");
+                formula.addPart(derivedValues.size.value, derivedValues.size.label.short);
+                formula.addOperator(")");
+                break;
+            case "bodyresist":
+                formula.addOperator("12 +");
+                formula.addPart(attributes.willpower.value, attributes.willpower.label.short);
+                formula.addOperator("+");
+                formula.addPart(attributes.constitution.value, attributes.constitution.label.short);
+                break;
+            case "mindresist":
+                formula.addOperator("12 +");
+                formula.addPart(attributes.willpower.value, attributes.willpower.label.short);
+                formula.addOperator("+");
+                formula.addPart(attributes.mind.value, attributes.mind.label.short);
+                break;
+            default:
+                break;
+
+        }
+        if (this.id != "initiative") {
+            this.addModifierTooltipFormulaElements(formula);
+        } else {
+            this.addModifierTooltipFormulaElements(formula, "-", "+");
+        }
+
+        return formula.render();
     }
 
     get value() {

@@ -1,3 +1,5 @@
+import * as Tooltip from './tooltip.js';
+
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let templateContext = {
         ...data,
@@ -11,31 +13,27 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
     let flagsData = data;
 
-    let additionalTooltip = '<span class="formula">';
-    additionalTooltip = Object.keys(data.skillAttributes).reduce((p, key) =>
-        p + `<span class="formula-part"><span class="value">${data.skillAttributes[key]}</span>
-                    <span class="description">` + game.i18n.localize(`splittermond.attribute.${key}.short`) + `</span></span>
-                    <span class="operator">+</span>` , additionalTooltip);
+    let formula = new Tooltip.TooltipFormula();
 
-    additionalTooltip += `<span class="formula-part"><span class="value">${data.skillPoints}</span>
-                    <span class="description">` + game.i18n.localize(`splittermond.skillPointsAbbrev`) + `</span></span>`
+    Object.keys(data.skillAttributes).forEach(key => {
+        formula.addPart(data.skillAttributes[key], game.i18n.localize(`splittermond.attribute.${key}.short`));
+        formula.addOperator("+");
+    })
 
+    formula.addPart(data.skillPoints, game.i18n.localize(`splittermond.skillPointsAbbrev`));
     data.modifierElements.forEach(e => {
-        let val = e.value;
-        let cls = "malus";
-        if (val > 0) {
-            val = "+" + val;
-            cls = "bonus";
+        let val = Math.abs(e.value);
+        if (e.value > 0) {
+            formula.addBonus("+"+val, e.description);
+        } else {
+            formula.addMalus("-"+val, e.description);
         }
-
-        additionalTooltip += `<span class="formula-part ${cls}"><span class="value">${val}</span>
-                    <span class="description">${e.description}</span></span>`
     });
 
-    additionalTooltip += '</span>';
+
     templateContext.tooltip = $(templateContext.tooltip).prepend(`
         <section class="tooltip-part">
-        <p>${additionalTooltip}</p>
+        <p>${formula.render()}</p>
         </section>`).wrapAll('<div>').parent().html();
 
     templateContext.degreeOfSuccessMessage = game.i18n.localize(`splittermond.${data.succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(data.degreeOfSuccess), 5)}`);
