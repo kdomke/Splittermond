@@ -70,7 +70,7 @@ export default class ItemImporter {
 
         // Check Spell
 
-        if (rawData.match(/Schulen:/) && rawData.match(/Typus:/ && rawData.match(/Kosten:/))) {
+        if (rawData.includes("Schulen:") && rawData.includes("Typus:") && rawData.includes("Kosten:")) {
             let folder = await this._folderDialog();
             let spellTokens = rawData.replace(/^[0-9]{3}\n/g, "") // Remove page numbers
                 .split(/(.*\s+\((?:Spruch|Ritus)\))/gm); // Split into spell tokens
@@ -96,16 +96,18 @@ export default class ItemImporter {
         }
         
         // Check Weapons
-        let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
-        let weaponRegex =`${skills}|(.*?)\\s+(Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`
+        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
         let test = rawData.match(new RegExp(weaponRegex, "gm"));
-        if (test) {
-            if (test.length > 1) {
+        if (test && test.length > 0) {
+            let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
+            weaponRegex =`${skills}|${weaponRegex}`;
+            test = rawData.match(new RegExp(weaponRegex, "gm"));
+            if (test.length > 0) {
                 let folder = await this._folderDialog();
                 let skill = "";
                 
                 for (let k = 0; k < test.length; k++) {
-                    const m = test[k];
+                    const m = test[k].trim().replace(/\s{2,}/gm, " ").replace("(*)", "");
                     if (m.match(new RegExp(skills, "gm"))) {
                         skill = CONFIG.splittermond.skillGroups.fighting.find(s => game.i18n.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
                         continue;
@@ -778,10 +780,10 @@ export default class ItemImporter {
                         });
                         break;
                     case /Waffen Wert Schaden WGS.*/.test(tokenizedData[i]):
-                        let weaponRegExpStr = `(.*)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)*[\r\n]*`;
+                        let weaponRegExpStr = `([\\s\\S]*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)*[\r\n]*`;
                         let weaponData = tokenizedData[i+1].trim().match(new RegExp(weaponRegExpStr,"g")).map(weaponStr => {
-                            weaponStr = weaponStr.trim().replace(/\n/g, " ").replace(/\s{2,}/g," ");
-                            let weaponMatch = weaponStr.match(new RegExp(`(.*)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*(.*)`));
+                            weaponStr = weaponStr.trim().replace(/\s/g, " ").replace(/\s{2,}/g," ");
+                            let weaponMatch = weaponStr.match(new RegExp(`(.*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*(.*)`));
                             let weaponName = weaponMatch[1].trim();
                             return {
                                 name: weaponName,
