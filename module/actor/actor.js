@@ -566,7 +566,6 @@ export default class SplittermondActor extends Actor {
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
             let newData = this.toObject();
             let newItems = [];
-
             newData.data = {};
 
             newData.data.species = {
