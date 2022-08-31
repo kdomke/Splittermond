@@ -1,3 +1,6 @@
+import RequestCheckDialog from "../apps/dialog/request-check-dialog.js";
+
+
 export function skillCheck(skill, options = {}) {
     const speaker = ChatMessage.getSpeaker();
     let actor;
@@ -32,13 +35,13 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
     if (actor) {
         let item;
         if (itemId) {
-            item = actor.data.items.find(el => el.id === itemId)
+            item = actor.items.find(el => el.id === itemId)
             if (!item) {
                 item = game.data.items.find(el => el.id === itemId);
-                item = actor.data.items.find(el => el.name === item?.name && el.type === item?.type)
+                item = actor.items.find(el => el.name === item?.name && el.type === item?.type)
             }
         } else {
-            item = actor.data.items.find(el => el.name === itemName && el.type === itemType)
+            item = actor.items.find(el => el.name === itemName && el.type === itemType)
         }
         if (item) {
             if (item.type === "spell") {
@@ -61,53 +64,10 @@ export function itemCheck(itemType, itemName, actorId = "", itemId = "") {
 
 
 export function requestSkillCheck(preSelectedSkill="", difficulty=15) {
-    let optionsList = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].reduce((str, skill) => {
-        let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-        let selected = (skill === preSelectedSkill ? "selected" : "");
-        return `${str}<option value="${skill}" ${selected}>${skillLabel}</option>`;
-    }, "");
-
-    let content = `<form><div class="properties-editor">
-        <label>${game.i18n.localize(`splittermond.skill`)}</label>
-        <select name="skill">${optionsList} </select>
-        <label>${game.i18n.localize(`splittermond.difficulty`)}</label><input name='difficulty' type="text" data-dtype='Number' value="${difficulty}">
-        </div></form>`;
-    let d = new Dialog({
-        title: game.i18n.localize(`splittermond.requestSkillCheck`),
-        content: content,
-        buttons: {
-
-            cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: "Cancel"
-            },
-            ok: {
-                icon: '<i class="fas fa-check"></i>',
-                label: "OK",
-                callback: (html) => {
-                    let skill = html.find('[name="skill"]')[0].value;
-                    let difficulty = parseInt(html.find('[name="difficulty"]')[0].value);
-                    let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
-                    if (difficulty) {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            speaker: ChatMessage.getSpeaker(),
-                            content: `@SkillCheck[${skillLabel} ${game.i18n.localize(`splittermond.versus`)} ${difficulty}]`
-                        });
-                    } else {
-                        ChatMessage.create({
-                            user: game.user._id,
-                            speaker: ChatMessage.getSpeaker(),
-                            content: `@SkillCheck[${skillLabel}]`
-                        });
-                    }
-                    
-                }
-            },
-        },
-        default: "ok"
-    },{classes: ["splittermond", "dialog"]});
-    d.render(true);
+    RequestCheckDialog.create({
+        skill: preSelectedSkill,
+        difficulty: difficulty,
+    });
 }
 
 

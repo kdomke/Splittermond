@@ -56,6 +56,12 @@ Hooks.once("ready", function () {
 
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
+    if (CONFIG.compatibility) {
+        CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
+        CONFIG.compatibility.excludePatterns.push(new RegExp("Splittermond"));
+    }
+
+
     CONFIG.Actor.documentClass = SplittermondActor;
     CONFIG.Item.documentClass = SplittermondItem;
     CONFIG.Combat.documentClass = SplittermondCombat;
@@ -136,6 +142,36 @@ Hooks.once("init", function () {
     }
     */
 
+    if (game.release.generation < 10) {
+        for (const documentName of [...CONST.DOCUMENT_TYPES, "Token"]) {
+            Object.defineProperty(CONFIG[documentName].documentClass.prototype, "flags", {
+                get() {
+                    return this.data.flags;
+                },
+                enumerable: true,
+            });
+        }
+    
+        for (const Document of [Actor, Item]) {
+            Object.defineProperty(Document.prototype, "system", {
+                get() {
+                    return this.data.data;
+                },
+                enumerable: true,
+            });
+        }
+
+        Object.defineProperty(Item.prototype, "sort", {
+            get() {
+                return this.data.sort;
+            },
+            enumerable: true,
+        });
+
+    }
+
+    
+
     
 
 
@@ -184,7 +220,7 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
         let actorId = data.actorId || "";
         let actor = game.actors.get(actorId);
         if (!actor) return;
-        const attack = actor.data.data.attacks.find(a => a._id === data.attackId);
+        const attack = actor.attacks.find(a => a._id === data.attackId);
         if (!attack) return;
 
         macroData.name = attack.name;
@@ -239,11 +275,11 @@ Hooks.on('preCreateActor', (actor) => {
     }
 });
 
-Hooks.on('ready', function (content, { secrets = false, entities = true, links = true, rolls = true, rollData = null } = {}) {
+Hooks.on('init', function(){
     // Patch enrichHTML function for Custom Links
-    const oldEnrich = TextEditor.enrichHTML;
-    TextEditor.enrichHTML = function (content, { secrets = false, documents = true, links = true, rolls = true, rollData = null } = {}) {
-        content = oldEnrich.apply(this, [content, { secrets: secrets, documents: documents, links: links, rolls: rolls, rollData: rollData }]);
+    TextEditor._enrichHTML = TextEditor.enrichHTML;
+    TextEditor.enrichHTML = function (content, options = {}) {
+        content = TextEditor._enrichHTML(content, {...options, async: false});
 
         content = content.replace(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
             if (!label) {

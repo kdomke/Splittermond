@@ -392,7 +392,8 @@
       "language",
       "culturelore",
       "statuseffect",
-      "spelleffect"
+      "spelleffect",
+      "npcattack"
     ],
     "templates": {
       "description": {
@@ -448,6 +449,16 @@
         "minAttributes": "",
         "features": ""
       }
+    },
+    "npcattack": {
+      "templates": [
+        "description"
+      ],
+      "damage": "",
+      "range": 0,
+      "weaponSpeed": 0,
+      "skillValue": "",
+      "features": ""
     },
     "projectile": {
       "templates": [

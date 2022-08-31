@@ -14,22 +14,12 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
             scrollY: [".tab[data-tab='general']", ".tab[data-tab='spells']", ".tab[data-tab='inventory']"],
             submitOnClose: false,
-            overlays: ["#health","#focus"]
+            overlays: ["#health", "#focus"]
         });
     }
 
     getData() {
         const sheetData = super.getData();
-
-        for (let [attrId, attr] of Object.entries(sheetData.data.derivedAttributes)) {
-            attr.editable = true;
-        }
-
-        sheetData.data.damageReduction.editable = true;
-
-        sheetData.data.attacks.forEach(attack => {
-            attack.skill.editable = true;
-        });
 
         return sheetData;
     }
@@ -49,8 +39,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[1];
-        const newValue = (value - parseInt(this.actor.data.data.derivedAttributes[attrBaseName].value || 0)) +
-            parseInt(this.actor.data._source.data.derivedAttributes[attrBaseName].value || 0);
+        const newValue = (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) +
+            parseInt(this.actor.system.data.derivedAttributes[attrBaseName].value || 0);
         this.actor.update({
             [`data.derivedAttributes.${attrBaseName}.value`]: newValue
         });
@@ -62,8 +52,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
         const input = event.currentTarget;
         const value = parseInt(input.value);
-        const newValue = (value - parseInt(this.actor.data.data.damageReduction.value || 0)) +
-            parseInt(this.actor.data._source.data.damageReduction.value || 0);
+        const newValue = (value - parseInt(this.actor.system.damageReduction.value || 0)) +
+            parseInt(this.actor.actorData()._source.data.damageReduction.value || 0);
         this.actor.update({
             [`data.damageReduction.value`]: newValue
         });
@@ -78,23 +68,12 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         if (input.value) {
             const value = parseInt(input.value);
 
-            const skillValue = this._getClosestData($(input), 'skill-value');
-            if (skillValue) {
-
-                const newValue = (value - parseInt(skillValue)) +
-                    parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
-                this.actor.update({
-                    [`data.skills.${skillBaseName}.points`]: newValue,
-                    [`data.skills.${skillBaseName}.value`]: 0
-                });
-            } else {
-                const newValue = (value - parseInt(this.actor.data.data.skills[skillBaseName].value || 0)) +
-                    parseInt(this.actor.data.data.skills[skillBaseName].points || 0);
-                this.actor.update({
-                    [`data.skills.${skillBaseName}.points`]: newValue,
-                    [`data.skills.${skillBaseName}.value`]: 0
-                });
-            }
+            const newValue = (value - this.actor.skills[skillBaseName].value) +
+                parseInt(this.actor.skills[skillBaseName].points || 0);
+            this.actor.update({
+                [`data.skills.${skillBaseName}.points`]: newValue,
+                [`data.skills.${skillBaseName}.value`]: 0
+            });
         } else {
             this.actor.update({
                 [`data.skills.${skillBaseName}.points`]: 0
@@ -105,7 +84,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
     async _onDropItemCreate(itemData) {
 
-        if (["mastery", "npcfeature", "spell", "weapon", "equipment", "shield", "armor", "statuseffect", "spelleffect"].includes(itemData.type)) {
+        if (["mastery", "npcfeature", "spell", "weapon", "equipment", "shield", "armor", "statuseffect", "spelleffect", "npcattack"].includes(itemData.type)) {
             return super._onDropItemCreate(itemData);
         }
 

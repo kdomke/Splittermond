@@ -2,9 +2,8 @@
     {{#each derivedAttributes as |attribute attributeId|}}
     <div class="derived-attribute" id="{{attributeId}}">
         <label>{{localize attribute.label.short}}</label>
-        {{#if attribute.editable}}
-        <input name="derivedAttributes.{{attributeId}}" type="text" value="{{attribute.value}}"
-            data-dtype="Number">
+        {{#if ../editable}}
+        <input name="derivedAttributes.{{attributeId}}" type="text" value="{{attribute.value}}" data-dtype="Number">
         {{else}}
         <span>{{attribute.value}}</span>
         {{/if}}
@@ -12,11 +11,10 @@
     {{/each}}
     <div class="damage-reduction">
         <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
-        {{#if damageReduction.editable}}
-        <input name="damageReduction" type="text" value="{{damageReduction.value}}" data-dtype="Number">
+        {{#if ../editable}}
+        <input name="damageReduction" type="text" value="{{damageReduction}}" data-dtype="Number">
         {{else}}
-        <span>{{damageReduction.value}}</span>
+        <span>{{damageReduction}}</span>
         {{/if}}
     </div>
 </div>
-

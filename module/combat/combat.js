@@ -1,20 +1,28 @@
 export default class SplittermondCombat extends Combat {
     _sortCombatants(a, b) {
-        b.actor.data.data.attributes.intuition.value
         let iniA = parseFloat(a.initiative);
         let iniB = parseFloat(b.initiative);
 
+        // if equal initiative => compare intuition
         if (iniA === iniB) {
-            iniA = -a.actor.data.data.attributes.intuition.value;
-            iniB = -b.actor.data.data.attributes.intuition.value;
+            iniA = -a.actor.system.attributes.intuition.value;
+            iniB = -b.actor.system.attributes.intuition.value;
         }
 
+        // if equal intuition => player character first!
+        if (iniA === iniB) {
+            iniA = a.actor.type == "character" ? iniA - 1 : iniA;
+            iniB = b.actor.type == "character" ? iniB - 1 : iniB;
+        }
+
+        // if equal intuition => else random
         if (iniA === iniB) {
             iniA = Math.random();
             iniB = Math.random();
+            console.log("SplittermondCombat._sortCombatants: random INI!");
         }
 
-        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
+        return (iniA + (a.isDefeated ? 1000 : 0)) - (iniB + (b.isDefeated ? 1000 : 0));
 
     }
 
@@ -35,7 +43,7 @@ export default class SplittermondCombat extends Combat {
                 round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
-                tokenId: c ? c.data.tokenId : null
+                tokenId: c ? c.token.id : null
             };
             return this.turns = turns;
             
@@ -96,20 +104,20 @@ export default class SplittermondCombat extends Combat {
         });
         await this.nextRound();
     }
-
+/*
     get turn() {
         return 0;
     }
-
+*/
     get combatant() {
         return this.turns[0];
     }
-
+/*
     get round() {
         //return this.data.round;
         return Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999));
     }
-
+*/
     get started() {
         return (this.turns.length > 0);
     }
@@ -120,7 +128,9 @@ export default class SplittermondCombat extends Combat {
 
     async nextRound() {
         //await super.nextRound();
-        return this.update({ round: 0, turn: 0 });
+        this.setupTurns();
+        return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
+        //return this.update({ round: 0, turn: 0 });
     }
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
@@ -133,4 +143,12 @@ export default class SplittermondCombat extends Combat {
 
 
     }
+
+    _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+        //super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId);
+        this.setupTurns();
+        // Render the collection
+         if ( this.isActive && (options.render !== false) ) this.collection.render();
+    }
+  
 }

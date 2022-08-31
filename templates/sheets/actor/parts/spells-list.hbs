@@ -40,25 +40,27 @@
     </div>
     <ol class="list-body item-list">
         {{#each this.spells}}
-        <li class="list-item item {{#if this.enoughFocus}}available{{else}}not-available{{/if}}" data-item-id="{{this._id}}">
+        <li class="list-item item {{#if this.enoughFocus}}available{{else}}not-available{{/if}}"
+            data-item-id="{{this.id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>
                 <a class="rollable">{{localize this.name}}</a>
             </label>
-            <div class="difficulty">{{this.data.difficulty}}</div>
+            <div class="difficulty">{{this.difficulty}}</div>
             <div class="costs" data-type="focus" data-description="{{this.name}}">
-                <a class="consume" data-value="{{this.data.costs}}">{{this.data.costs}}</a>
-                &nbsp;(<a class="consume" data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
-                    data-value="{{this.data.enhancementCosts}}">{{this.data.enhancementCosts}}</a>)
-            </div> 
+                <a class="consume" data-value="{{this.costs}}">{{this.costs}}</a>
+                &nbsp;(<a class="consume"
+                    data-description="{{this.name}} - {{localize 'splittermond.enhancementCosts'}}"
+                    data-value="{{this.enhancementCosts}}">{{this.enhancementCosts}}</a>)
+            </div>
             <div class="cast-duration">
-                <a class="add-tick" data-ticks="{{this.data.castDuration}}" data-message="{{localize "
+                <a class="add-tick" data-ticks="{{this.castDuration}}" data-message="{{localize "
                     splittermond.castDuration"}}: {{this.name}}">
-                    {{this.data.castDuration}}
+                    {{this.castDuration}}
                 </a>
             </div>
-            <div class="range">{{this.data.range}}</div>
-            <div class="effect-duration">{{this.data.effectDuration}}</div>
+            <div class="range">{{this.range}}</div>
+            <div class="effect-duration">{{this.effectDuration}}</div>
             <div class="list-actions">
                 <button class="button-inline" type="button" data-action="edit-item">
                     <i class="fa fa-edit" aria-hidden="true"></i>

@@ -1,3 +1,11 @@
+import SplittermondWeaponItem from "./item/weapon.js";
+import SplittermondItem from "./item/item.js";
+import SplittermondShieldItem from "./item/shield.js";
+import SplittermondSpellItem from "./item/spell.js";
+import SplittermondArmorItem from "./item/armor.js";
+import SplittermondEquipmentItem from "./item/equipment.js";
+import SplittermondNPCAttackItem from "./item/npcattack.js";
+
 export const splittermond = {};
 
 splittermond.heroLevel = [0, 100, 300, 600];
@@ -10,7 +18,7 @@ splittermond.attributes = ["charisma", "agility", "intuition",
     "willpower"];
 
 splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "bodyresist", "mindresist"];
-
+splittermond.derivedValues = splittermond.derivedAttributes;
 splittermond.woundMalus = {
     "5": [
         {
@@ -56,7 +64,7 @@ splittermond.woundMalus = {
     ],
 };
 
-splittermond.damageLevel = ["splittermond.damageLevels.undamaged","splittermond.damageLevels.tarnished","splittermond.damageLevels.demolished","splittermond.damageLevels.destroyed"]
+splittermond.damageLevel = ["splittermond.damageLevels.undamaged", "splittermond.damageLevels.tarnished", "splittermond.damageLevels.demolished", "splittermond.damageLevels.destroyed"]
 
 splittermond.skillGroups = {
     fighting: [
@@ -114,6 +122,7 @@ splittermond.skillGroups = {
         "watermagic",
         "windmagic"]
 };
+splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]
 splittermond.resources = {
     core: ["reputation",
         "contacts",
@@ -931,6 +940,39 @@ splittermond.itemSheetProperties.moonsign = [
     }
 ]
 
+splittermond.itemSheetProperties.npcattack = [
+    {
+        groupName: "splittermond.weaponProperties",
+        properties: [
+            {
+                field: "data.skillValue",
+                label: "splittermond.skillValue",
+                template: "inputNumberWithSpinner"
+            },
+            {
+                field: "data.damage",
+                label: "splittermond.damage",
+                template: "input"
+            },
+            {
+                field: "data.range",
+                label: "splittermond.range",
+                template: "input"
+            },
+            {
+                field: "data.weaponSpeed",
+                label: "splittermond.weaponSpeed",
+                template: "inputNumberWithSpinner"
+            },
+            {
+                field: "data.features",
+                label: "splittermond.features",
+                template: "input"
+            }
+        ]
+    }
+]
+
 splittermond.icons = {
     equipment: {
         default: "icons/svg/chest.svg"
@@ -1128,7 +1170,70 @@ splittermond.fumbleTable = {
             }
         ]
     }
-}
+};
+
+splittermond.weaponFeatures = [ "Ablenkend",
+                                "Auslöser",
+                                "Deckung",
+                                "Defensiv",
+                                "Detonation",
+                                "Doppelwaffe",
+                                "Dornen",
+                                "Durchdringung",
+                                "Entwaffnend",
+                                "Entwaffnungsimmunität",
+                                "Entwaffnungsschutz",
+                                "Exakt",
+                                "Ferndistanz",
+                                "Freihändig",
+                                "Gehärtet",
+                                "Improvisiert",
+                                "Kälteschutz",
+                                "Kletterhilfe",
+                                "Kritisch",
+                                "Lange Waffe",
+                                "Nahkampftauglich",
+                                "Paarwaffe",
+                                "Parierwaffe",
+                                "Primitiv",
+                                "Reiterrüstung",
+                                "Reiterschild",
+                                "Reiterwaffe",
+                                "Rückkehrend",
+                                "Rückstoß",
+                                "Schadensschwund",
+                                "Scharf",
+                                "Schildwall",
+                                "Stabil",
+                                "Behinderung",
+                                "Standfestigkeit",
+                                "Stumpf",
+                                "Teilbar",
+                                "Treffsicher",
+                                "Umklammern",
+                                "Umwerfend",
+                                "Unauffällig",
+                                "Unhandlich",
+                                "Vielseitig",
+                                "Wattiert",
+                                "Wuchtig",
+                                "Wurffähig",
+                                "Wurfkörper",
+                                "Zerbrechlich",
+                                "Zweihändig"
+                            ];
+
+splittermond.Item = {
+    documentClasses: {
+        default: SplittermondItem,
+        weapon: SplittermondWeaponItem,
+        shield: SplittermondShieldItem,
+        armor: SplittermondArmorItem,
+        spell: SplittermondSpellItem,
+        equipment: SplittermondEquipmentItem,
+        npcattack: SplittermondNPCAttackItem
+    }
+};
 
 
 

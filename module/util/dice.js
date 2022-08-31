@@ -1,4 +1,4 @@
-export function check(skillValue, skillPoints, difficulty = 15, rollType = "standard", modifier = 0) {
+export function check(skill, difficulty = 15, rollType = "standard", modifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
@@ -6,20 +6,20 @@ export function check(skillValue, skillPoints, difficulty = 15, rollType = "stan
         rollFormula += " + @modifier";
     }
     let rollData = {
-        skillValue: skillValue,
+        skillValue: skill.value,
         modifier: modifier
     };
     difficulty = parseInt(difficulty);
     if (isNaN(difficulty)) {
         difficulty = 0;
     }
-    
-    const roll = new Roll(rollFormula, rollData).evaluate({async: false});
 
-    return evaluateCheck(roll, skillPoints, difficulty, rollType);
+    const roll = new Roll(rollFormula, rollData).evaluate({ async: false });
+
+    return evaluateCheck(roll, skill.points, difficulty, rollType);
 }
 
-export function evaluateCheck(roll, skillPoints,  difficulty, rollType) {
+export function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     const difference = roll.total - difficulty;
 
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
@@ -48,7 +48,7 @@ export function evaluateCheck(roll, skillPoints,  difficulty, rollType) {
     };
 }
 
-export async function damage(damageFormula, featureString, damageSource="") {
+export async function damage(damageFormula, featureString, damageSource = "") {
     let feature = {};
     featureString.split(',').forEach(feat => {
         let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
@@ -79,7 +79,7 @@ export async function damage(damageFormula, featureString, damageSource="") {
         damageFormula += damageModifier;
     }
 
-    const roll = new Roll(damageFormula, {}).evaluate({async: false});
+    const roll = new Roll(damageFormula, {}).evaluate({ async: false });
     if (feature["scharf"]) {
         let scharfBonus = 0;
         roll.terms[0].results.forEach(r => {
@@ -146,7 +146,7 @@ export async function damage(damageFormula, featureString, damageSource="") {
 
 export function riskModifier() {
     if (this.results.length == 4) {
-        const sortedResult = this.results.map( i=> {
+        const sortedResult = this.results.map(i => {
             return {
                 result: i.result,
                 item: i
@@ -177,7 +177,7 @@ export function riskModifier() {
     }
 
     if (this.results.length == 5) { // Grandmaster
-        let sortedResult = this.results.slice(0,-1).map( i=> {
+        let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,
                 item: i
@@ -198,7 +198,7 @@ export function riskModifier() {
             this.results[4].active = false;
             this.results[4].discarded = true;
         } else {
-            let sortedResult = this.results.map( i=> {
+            let sortedResult = this.results.map(i => {
                 return {
                     result: i.result,
                     item: i
@@ -220,7 +220,7 @@ export function riskModifier() {
     }
 
     if (this.results.length == 3) { // Grandmaster (Standard)
-        let sortedResult = this.results.slice(0,-1).map( i=> {
+        let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,
                 item: i
@@ -237,7 +237,7 @@ export function riskModifier() {
             this.results[2].active = false;
             this.results[2].discarded = true;
         } else {
-            let sortedResult = this.results.map( i=> {
+            let sortedResult = this.results.map(i => {
                 return {
                     result: i.result,
                     item: i

@@ -19,7 +19,8 @@
         "TypeLanguage": "Sprache",
         "TypeCulturelore": "Kulturkunde",
         "TypeStatuseffect": "Zustand",
-        "TypeSpelleffect": "Zaubereffekt"
+        "TypeSpelleffect": "Zaubereffekt",
+        "TypeNpcattack": "Angriff"
     },
     "ACTOR": {
         "TypeCharacter": "Spielercharakter",
@@ -58,6 +59,7 @@
         "statusEffects": "Zustände",
         "statusEffect": "Zustand",
         "statuseffect": "Zustand",
+        "npcattack": "Angriff",
         "combatEffect": {
             "statusEffectActivated": {
                 "subtitle": "in Tick {onTick} ({activationNo} von {maxActivation})",
@@ -150,7 +152,7 @@
         "languages": "Sprachen",
         "generalProperties": "Allgemein",
         "moonsign": "Mondzeichen",
-        "moonsigns":{
+        "moonsigns": {
             "add": {
                 "title": "Mondzeichen hinzufügen"
             }
@@ -404,29 +406,29 @@
         },
         "grandmaster": "Großmeister",
         "skillCheck": "Fertigkeitsprobe",
-        "successMessage": [
-            "(Knapp) gelungen",
-            "Gelungen",
-            "Gelungen",
-            "(Gut) gelungen",
-            "(Gut) gelungen",
-            "Herausragend gelungen"
-        ],
-        "failMessage": [
-            "Knapp misslungen",
-            "Misslungen",
-            "Misslungen",
-            "(Schwer) misslungen",
-            "(Schwer) misslungen",
-            "Verheerend misslungen"
-        ],
-        "heroLevels": [
-            "in Erstellung",
-            "Suchender",
-            "Wanderer",
-            "Veteran",
-            "Heroe"
-        ],
+        "successMessage": {
+            "0": "(Knapp) gelungen",
+            "1": "Gelungen",
+            "2": "Gelungen",
+            "3": "(Gut) gelungen",
+            "4": "(Gut) gelungen",
+            "5": "Herausragend gelungen"
+        },
+        "failMessage": {
+            "0": "Knapp misslungen",
+            "1": "Misslungen",
+            "2": "Misslungen",
+            "3": "(Schwer) misslungen",
+            "4": "(Schwer) misslungen",
+            "5": "Verheerend misslungen"
+        },
+        "heroLevels": {
+            "0": "in Erstellung",
+            "1": "Suchender",
+            "2": "Wanderer",
+            "3": "Veteran",
+            "4": "Heroe"
+        },
         "rollMode": "Wurfmodus",
         "sufferedDamage": "erlittener Schaden",
         "fumbleTable": {
@@ -511,9 +513,11 @@
                 "name": "Macroleiste zeitgleich mit Aktionsleiste anzeigen",
                 "hint": "Ist diese Option aktiviert, wird die Macroleiste nicht ausgeblendet, wenn die Token-Aktionsleiste angezeigt wird."
             }
+        },
+        "error": {
+            "parseError": "Fehler beim Parsen der Daten im Bereich: {section}"
         }
     },
-
     "COMBAT": {
         "Round": "Tick"
     }
