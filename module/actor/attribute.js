@@ -50,11 +50,9 @@ export default class Attribute {
     }
 
     get max() {
-        console.log(`Attribute (${this.id}) ${this.actor.name} get max`);
         if (this._cache.enabled && this._cache.max !== null) return this._cache.max;
         let val = this.start + (this.actor.system?.experience?.heroLevel || 0);
         if (this._cache.enabled && this._cache.max === null) this._cache.max = val;
-        console.log(`Attribute (${this.id}) ${this.actor.name} processed max`);
         return val;
     }
 

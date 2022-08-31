@@ -57,7 +57,8 @@ Hooks.once("ready", function () {
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
     if (CONFIG.compatibility) {
-        CONFIG.compatibility.excludePatterns.push(new RegExp("/systems/splittermond/"));
+        CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
+        CONFIG.compatibility.excludePatterns.push(new RegExp("Splittermond"));
     }
 
 

@@ -1,3 +1,15 @@
+## 0.9.1 ##
+2022-08-31
+
+* **added: Foundry VTT Version V10 Support!** Aufgrund umfangreicher Änderungen in Foundry VTT in Version 10 musste das System angepasst werden.
+* added: Den NSCs können zusätzlich zu Waffen (die eine Kampffertigkeit benötigen) auch NSC-Angriffe hinzugefügt werden. Dieser Item-Typ ermöglicht es Angriffe ohne zugehöriger Kampffertigkeit zu erstellen.
+* added: Neue Modifikatoren für Lebenspunkt-/Fokuspunktregeneration `healthregeneration.bonus` und `focusregeneration.bonus` (Issue #107)
+* added: +- Buttons für Schwierigkeit bei "Fertigkeitsprobe anfordern"-Dialog hinzugefügt (Issue #110)
+* fixed: Verstärkte Zauber-Kosten wurden falsch berechnet (Issue #108)
+* changed: Das System wurde an vielen Stellen komplett überarbeitet. Dadurch konnte redundanter Code entfernt werden.
+* changed: Copy-And-Paste-Importer wurde für NPCs, Waffen und Zauber überarbeitet.
+* changed: Die Tickleiste wurde intern überarbeitet, sodass die Reihenfolge der Spieler synchron ist.
+
 ## 0.8.5 HOTFIX ##
 2022-08-10
 
