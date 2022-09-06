@@ -457,7 +457,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             }
 
-            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction > 0) {
+            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction != 0) {
                 let formula = new Tooltip.TooltipFormula();
                 this.actor.modifier.static("damagereduction").forEach(e => e.addTooltipFormulaElements(formula));
                 content += formula.render();

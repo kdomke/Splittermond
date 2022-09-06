@@ -135,6 +135,13 @@ export default class SplittermondActor extends Actor {
             }
         }
 
+        if (this.type == "npc") {
+            if (parseInt(this.system.damageReduction.value) != 0) {
+                this.modifier.add("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), this.system.damageReduction.value);
+            }
+            
+        }
+
     }
 
     get bonusCap() {
@@ -556,7 +563,7 @@ export default class SplittermondActor extends Actor {
     }
 
     get damageReduction() {
-        return Math.max(this.modifier.value("damagereduction"), 0);
+        return this.modifier.value("damagereduction");
     }
 
     async importFromJSON(json) {

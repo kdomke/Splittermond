@@ -1,8 +1,9 @@
 {
   "name": "splittermond",
+  "id": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": "Simon",
   "authors": [{
     "name": "Simon"

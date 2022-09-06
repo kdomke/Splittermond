@@ -1,3 +1,11 @@
+## 0.9.2 ##
+2022-09-06
+* fixed: Im NSC-Charakterbogen konnten keine Abgeleiteten Werte und die Schadensreduktion überschrieben werden (Issue #119)
+* fixed: Beim Hinzufügen eines Angriffs im NSC-Charakterbogen wurde der Charakter fehlerhaft. (Issue #122)
+* fixed: Tickleiste wurde nicht auf aktuellen Tick gesetzt (Issue #121)
+* fixed: Nachträglich zum Kampf hinzugefügte NSCs werden auf der Tickleiste relativ zum aktuellen Tick positioniert. (Issue #115)
+* fixed: Feld "id" wurde in system.json für V10-Kompatibilität hinzugefügt. (Issue #118)
+
 ## 0.9.1 ##
 2022-08-31
 

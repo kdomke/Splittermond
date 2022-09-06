@@ -457,7 +457,7 @@
       "damage": "",
       "range": 0,
       "weaponSpeed": 0,
-      "skillValue": "",
+      "skillValue": 0,
       "features": ""
     },
     "projectile": {

@@ -137,18 +137,27 @@ export default class TickBarHud extends Application {
         if (temp != this.viewed) {
             this.viewedTick = null;
         }
+
+        if (this.viewedTick != this.viewedTick) {
+            this.viewedTick = null;
+        }
         
         this.viewed = temp;
         if (this.viewed) {
             const combat = this.viewed;
+            let wasOnCurrentTick = this.currentTick == this.viewedTick;
 
             this.currentTick = Math.round(combat.turns[combat.turn]?.initiative);
 
-            this.viewedTick = this.viewedTick || this.currentTick;
+            if (this.currentTick != this.currentTick) {
+                this.currentTick = null;
+            }
 
-            if (this.viewedTick < this.currentTick) {
+            this.viewedTick = this.viewedTick ?? this.currentTick;
+
+            if (this.viewedTick < this.currentTick || wasOnCurrentTick) {
                 this.viewedTick = this.currentTick
-            } 
+            }
 
             var virtualTokens = combat.combatants.contents.map(e => {
                 return {
