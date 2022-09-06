@@ -11,7 +11,7 @@
     {{/each}}
     <div class="damage-reduction">
         <label>{{localize "splittermond.damageReductionAbbrev"}}</label>
-        {{#if ../editable}}
+        {{#if editable}}
         <input name="damageReduction" type="text" value="{{damageReduction}}" data-dtype="Number">
         {{else}}
         <span>{{damageReduction}}</span>

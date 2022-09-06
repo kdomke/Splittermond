@@ -40,7 +40,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[1];
         const newValue = (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) +
-            parseInt(this.actor.system.data.derivedAttributes[attrBaseName].value || 0);
+            parseInt(this.actor.system.derivedAttributes[attrBaseName].value || 0);
         this.actor.update({
             [`data.derivedAttributes.${attrBaseName}.value`]: newValue
         });
@@ -52,8 +52,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
         const input = event.currentTarget;
         const value = parseInt(input.value);
-        const newValue = (value - parseInt(this.actor.system.damageReduction.value || 0)) +
-            parseInt(this.actor.actorData()._source.data.damageReduction.value || 0);
+        const newValue = (value - parseInt(this.actor.damageReduction || 0)) +
+            parseInt(this.actor.system.damageReduction.value || 0);
         this.actor.update({
             [`data.damageReduction.value`]: newValue
         });
