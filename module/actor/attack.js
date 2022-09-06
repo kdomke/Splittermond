@@ -40,7 +40,7 @@ export default class Attack {
         this.id = !this.isSecondaryAttack ? this.item.id : `${this.item.id}_secondary`;
         this.img = this.item.img;
         this.name = !this.isSecondaryAttack ? this.item.name : `${this.item.name} (${game.i18n.localize(`splittermond.skillLabel.${attackData.skill}`)})`;
-        this.skill = new Skill(this.actor, (attackData.skill || this.name), (attackData.attribute1 || ""), (attackData.attribute2 || ""), attackData.skillValue || null);
+        this.skill = new Skill(this.actor, (attackData.skill || this.name), (attackData.attribute1 || ""), (attackData.attribute2 || ""), attackData.skillValue ?? null);
         this.skill.addModifierPath(`skill.${this.id}`);
 
         if (minAttributeMalus) {
