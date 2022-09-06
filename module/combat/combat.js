@@ -137,7 +137,17 @@ export default class SplittermondCombat extends Combat {
         //if (updateTurn) {
         //    return super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
         //} else {
+        let started = this.started;
+        let tick = this.round;
         await super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
+
+        if (started) {
+            for ( let [i, id] of ids.entries() ) {
+                let combatant = this.combatants.get(id);
+                await this.setInitiative(combatant.id, Math.max(combatant.initiative + tick, tick));
+            }
+        }
+        
         return this.nextRound();
         //}
 
