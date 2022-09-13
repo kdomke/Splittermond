@@ -143,7 +143,7 @@ export default class TickBarHud extends Application {
         }
         
         this.viewed = temp;
-        if (this.viewed) {
+        if (this.viewed && this.viewed.started) {
             const combat = this.viewed;
             let wasOnCurrentTick = this.currentTick == this.viewedTick;
 

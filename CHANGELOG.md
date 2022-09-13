@@ -1,3 +1,8 @@
+## 0.9.3 ##
+2022-09-13
+* fixed: Im NSC-Charakterbogen wurden Abgeleiteten Werte nach Änderung teilweise wieder zurückgesetzt (Issue #119)
+* fixed: Einige Bugs bzgl. des Combat-Trackers. (Probleme mit negativen Tickwerten etc.)
+
 ## 0.9.2 ##
 2022-09-06
 * fixed: Im NSC-Charakterbogen konnten keine Abgeleiteten Werte und die Schadensreduktion überschrieben werden (Issue #119)
