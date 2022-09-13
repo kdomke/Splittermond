@@ -28,7 +28,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         html.find('input[name^="derivedAttributes"]').change(this._onChangeDerivedAttribute.bind(this));
         html.find('input[name="damageReduction"]').change(this._onChangeDamageReduction.bind(this));
 
-        html.find('input[name^="data.skills"]').change(this._onChangeSkill.bind(this));
+        html.find('input[name^="data.skills"][name$="value"]').change(this._onChangeSkill.bind(this));
 
         super.activateListeners(html);
     }
@@ -39,11 +39,15 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[1];
-        const newValue = (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) +
-            parseInt(this.actor.system.derivedAttributes[attrBaseName].value || 0);
-        this.actor.update({
-            [`data.derivedAttributes.${attrBaseName}.value`]: newValue
-        });
+        if ((value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) == 0 || input.value == "") {
+            this.actor.update({
+                [`data.derivedAttributes.${attrBaseName}.value`]: 0
+            });
+        } else {
+            this.actor.update({
+                [`data.derivedAttributes.${attrBaseName}.value`]: (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) + parseInt(this.actor.derivedValues[attrBaseName].baseValue || 0)
+            });
+        }
     }
 
     _onChangeDamageReduction(event) {
@@ -67,7 +71,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const skillBaseName = input.name.split('.')[2];
         if (input.value) {
             const value = parseInt(input.value);
-
+            
             const newValue = (value - this.actor.skills[skillBaseName].value) +
                 parseInt(this.actor.skills[skillBaseName].points || 0);
             this.actor.update({
