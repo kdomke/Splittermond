@@ -16,9 +16,15 @@ export default class SplittermondCombatTracker extends CombatTracker {
             }
 
         });
-
-        data.round = Math.round(combat.round) + "";
-
+        data.round = data.combat.started ?  Math.round(parseFloat(data.combat.turns[0]?.initiative)) + "" : "";
+        if (game.release.generation < 10) {
+            data.combat.data.round = data.round;
+        } else {
+            data.combat = data.combat.toObject();
+            data.combat.round = data.round;
+        }
+        
+        
         return data;
     }
 

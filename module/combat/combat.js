@@ -30,17 +30,18 @@ export default class SplittermondCombat extends Combat {
         await this.setupTurns();
         await this.setFlag("splittermond", "tickHistory", []);
 
-        this.current.round = this.combatants[0].initiative;
+        this.current.round = 0;
 
         return this.nextRound();
     }
+
 
     setupTurns() {
             const turns = this.combatants.contents.sort(this._sortCombatants)
 
             let c = turns[0];
             this.current = {
-                round: this.round,
+                round: 0,
                 turn: 0,
                 combatantId: c ? c.id : null,
                 tokenId: c ? c.token.id : null
@@ -119,7 +120,7 @@ export default class SplittermondCombat extends Combat {
     }
 */
     get started() {
-        return (this.turns.length > 0);
+        return ( this.turns.length > 0 ) && !this.turns.find(t => t.initiative === null);
     }
 
     async startCombat() {
@@ -129,8 +130,8 @@ export default class SplittermondCombat extends Combat {
     async nextRound() {
         //await super.nextRound();
         this.setupTurns();
-        return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
-        //return this.update({ round: 0, turn: 0 });
+        //return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
+        return this.update({ round: 0, turn: 0 });
     }
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
@@ -155,7 +156,7 @@ export default class SplittermondCombat extends Combat {
     }
 
     _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
-        //super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId);
+        //super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); otherwise the next player is not marked correctly
         this.setupTurns();
         // Render the collection
          if ( this.isActive && (options.render !== false) ) this.collection.render();
