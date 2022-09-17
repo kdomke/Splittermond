@@ -133,7 +133,7 @@ form h3.form-header,
 .telars,
 li.taglist-item,
 ul.checkbox-list li label,
-.tabs:not(#sidebar-tabs),
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs),
 .directory .directory-header .header-search input:hover,
 .directory .directory-header .header-search input:active,
 .directory .directory-header .header-search input:focus,
@@ -165,7 +165,7 @@ ul.checkbox-list li label,
 .shiny-background,
 .tabs-style,
 .splittermond .derived-attribute-list,
-.tabs:not(#sidebar-tabs),
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs),
 .splittermond .sheet-navigation,
 .splittermond .subnav {
   background-image: url(../../systems/splittermond/images/grunge_alpha.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
@@ -176,7 +176,7 @@ ul.checkbox-list li label,
 select,
 input[type="checkbox"],
 .directory .action-buttons button,
-.tabs:not(#sidebar-tabs) .item,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item,
 #chat-controls .roll-type-select,
 .splittermond .sheet-navigation .item,
 .splittermond .sheet-navigation-item,
@@ -212,8 +212,8 @@ input[type="checkbox"]:hover,
 input[type="checkbox"]:focus,
 .directory .action-buttons button:hover,
 .directory .action-buttons button:focus,
-.tabs:not(#sidebar-tabs) .item:hover,
-.tabs:not(#sidebar-tabs) .item:focus,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:hover,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:focus,
 #chat-controls .roll-type-select:hover,
 #chat-controls .roll-type-select:focus,
 .splittermond .sheet-navigation .item:hover,
@@ -234,9 +234,9 @@ input[type="checkbox"]:focus,
 select:active,
 input[type="checkbox"]:active,
 .directory .action-buttons button:active,
-.tabs:not(#sidebar-tabs) .item:active,
-.tabs:not(#sidebar-tabs) .item.active,
-.tabs:not(#sidebar-tabs) .item.active:hover,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:active,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active:hover,
 #chat-controls .roll-type-select:active,
 .splittermond .sheet-navigation .item:active,
 .splittermond .sheet-navigation .item.active,
@@ -260,7 +260,7 @@ input[type="checkbox"]:disabled,
 input[type="checkbox"]:disabled:checked,
 input[type="checkbox"]:disabled:hover,
 .directory .action-buttons button:disabled,
-.tabs:not(#sidebar-tabs) .item:disabled,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:disabled,
 #chat-controls .roll-type-select:disabled,
 .splittermond .sheet-navigation .item:disabled,
 .splittermond .sheet-navigation-item:disabled,
@@ -277,7 +277,7 @@ input[type="checkbox"]:disabled:hover,
 select:disabled::before,
 input[type="checkbox"]:disabled::before,
 .directory .action-buttons button:disabled::before,
-.tabs:not(#sidebar-tabs) .item:disabled::before,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:disabled::before,
 #chat-controls .roll-type-select:disabled::before,
 .splittermond .sheet-navigation .item:disabled::before,
 .splittermond .sheet-navigation-item:disabled::before,
@@ -319,6 +319,8 @@ input[type="checkbox"]:disabled::before,
   --color-border-highlight-alt: var(--color-primary);
   --color-border-highlight: var(--color-primary);
   --color-shadow-highlight: var(--color-primary);
+  --color-shadow-primary: var(--color-primary);
+  --color-text-hyperlink: var(--color-primary);
 }
 .system-splittermond[data-theme="dark"] {
   --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
@@ -570,14 +572,14 @@ img {
   background-color: var(--background-color-blind, #f5eaf5);
 }
 .tabs-style,
-.tabs:not(#sidebar-tabs),
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs),
 .splittermond .sheet-navigation,
 .splittermond .subnav {
   padding: 2px;
   justify-content: stretch;
 }
 .tabs-style .item,
-.tabs:not(#sidebar-tabs) .item,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item,
 .splittermond .sheet-navigation .item,
 .splittermond .sheet-navigation-item,
 .splittermond .subnav .item,
@@ -591,7 +593,7 @@ img {
   flex-grow: 1;
 }
 .tabs-style .item::before,
-.tabs:not(#sidebar-tabs) .item::before,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item::before,
 .splittermond .sheet-navigation .item::before,
 .splittermond .sheet-navigation-item::before,
 .splittermond .subnav .item::before,
@@ -599,7 +601,7 @@ img {
   content: unset;
 }
 .tabs-style .item:not(:last-child),
-.tabs:not(#sidebar-tabs) .item:not(:last-child),
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item:not(:last-child),
 .splittermond .sheet-navigation .item:not(:last-child),
 .splittermond .sheet-navigation-item:not(:last-child),
 .splittermond .subnav .item:not(:last-child),
@@ -608,8 +610,8 @@ img {
 }
 .tabs-style .item.active,
 .tabs-style .item.active:hover,
-.tabs:not(#sidebar-tabs) .item.active,
-.tabs:not(#sidebar-tabs) .item.active:hover,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active:hover,
 .splittermond .sheet-navigation .item.active,
 .splittermond .sheet-navigation .item.active:hover,
 .splittermond .sheet-navigation-item.active,
@@ -621,7 +623,7 @@ img {
   border-color: transparent;
 }
 .tabs-style .item.active,
-.tabs:not(#sidebar-tabs) .item.active,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active,
 .splittermond .sheet-navigation .item.active,
 .splittermond .sheet-navigation-item.active,
 .splittermond .subnav .item.active,
@@ -630,7 +632,7 @@ img {
   box-shadow: none;
 }
 .tabs-style .item.active:after,
-.tabs:not(#sidebar-tabs) .item.active:after,
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs) .item.active:after,
 .splittermond .sheet-navigation .item.active:after,
 .splittermond .sheet-navigation-item.active:after,
 .splittermond .subnav .item.active:after,
