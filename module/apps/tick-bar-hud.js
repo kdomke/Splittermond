@@ -167,7 +167,7 @@ export default class TickBarHud extends Application {
             });
 
             var iniData = combat.turns
-                .filter(e => e.initiative != null)
+                .filter(e => (e.initiative != null & !e.isDefeated))
                 .map(e => Math.round(e.initiative))
                 .filter(e => e < 9999);
             var maxStatusEffectTick = Math.max(...virtualTokens.map(e => {
@@ -220,7 +220,7 @@ export default class TickBarHud extends Application {
                     continue;
                 };
 
-                if ( !c.visible) continue;  
+                if ( !c.visible || c.isDefeated) continue;  
                 
                 data.ticks.find(t => t.tickNumber == Math.round(c.initiative)).combatants.push({
                     id: c.id,
