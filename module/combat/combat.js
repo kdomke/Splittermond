@@ -1,4 +1,13 @@
 export default class SplittermondCombat extends Combat {
+
+    constructor(data, context) {
+        super(data, context);
+
+        this.current.tick = this.current.tick === null ? null : this.current.tick;
+        this.previous.tick = this.current.tick === null ? null : this.previous.tick;
+
+      }
+
     _sortCombatants(a, b) {
         let iniA = parseFloat(a.initiative);
         let iniB = parseFloat(b.initiative);
@@ -28,12 +37,28 @@ export default class SplittermondCombat extends Combat {
 
     async startCombat() {
         await this.setupTurns();
-        await this.setFlag("splittermond", "tickHistory", []);
+        await this.setFlag("splittermond", "tickHistory", [{
+            round: 1,
+            turns: this.turns.map(c => {
+                return {
+                    _id: c.id,
+                    initiative: c.initiative,
+                    defeated: c.defeated
+                }
+            })
+        }]);
 
-        this.current.round = 0;
+        await this.setFlag("splittermond", "tickHistoryPointer", 0);
 
-        return this.nextRound();
+        return super.startCombat();
     }
+
+    async resetAll() {
+        await super.resetAll();
+
+        return this.update({round: 0});
+    }
+
 
 
     setupTurns() {
@@ -41,15 +66,13 @@ export default class SplittermondCombat extends Combat {
 
             let c = turns[0];
             this.current = {
-                round: 0,
+                round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
-                tokenId: c ? c.token.id : null
+                tokenId: c ? c.token.id : null,
+                tick: this.currentTick
             };
             return this.turns = turns;
-            
-
-
     }
 
     async nextTurn(nTicks = 0) {
@@ -81,6 +104,10 @@ export default class SplittermondCombat extends Combat {
         return this.setInitiative(combatant.id, newInitiative);
     }
 
+    async previousTurn() {
+        return this.previousRound();
+    }
+
     async setInitiative(id, value, first = false) {
         value = Math.round(value);
         if (value < 10000) {
@@ -103,63 +130,60 @@ export default class SplittermondCombat extends Combat {
         await this.combatants.get(id).update({
             initiative: value
         });
-        await this.nextRound();
+        if (this.started) {
+            await this.nextRound();
+        }
+        
     }
-/*
-    get turn() {
-        return 0;
-    }
-*/
+
     get combatant() {
         return this.turns[0];
     }
-/*
-    get round() {
-        //return this.data.round;
-        return Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999));
-    }
-*/
-    get started() {
-        return ( this.turns.length > 0 ) && !this.turns.find(t => t.initiative === null);
+
+    get currentTick() {
+        if (this.turns) {
+            return Math.round(parseFloat(this.turns[0]?.initiative));
+        } else {
+            return null;
+        }
+            
     }
 
-    async startCombat() {
-        return this.nextRound();
-    }
 
     async nextRound() {
         //await super.nextRound();
+        if (!this.started) return;
+
+        let nextRound = this.round + 1;
+        const updateData = { round: nextRound, turn: 0 };
         this.setupTurns();
-        //return this.update({ round: Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999)), turn: 0 });
-        return this.update({ round: 0, turn: 0 });
+        const updateOptions = {direction: 1 };
+        Hooks.callAll("combatRound", this, updateData, updateOptions);
+        return this.update(updateData);
     }
 
+    async previousRound() {
+        if (!this.started) return;
+        return;
+    }
+
+
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
-        //if (updateTurn) {
-        //    return super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
-        //} else {
-        let started = this.started;
         let tick = this.round;
         await super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
 
-        if (started) {
+        if (this.started) {
             for ( let [i, id] of ids.entries() ) {
                 let combatant = this.combatants.get(id);
                 await this.setInitiative(combatant.id, Math.max(combatant.initiative + tick, tick));
             }
+            return this.nextRound();
         }
-        
-        return this.nextRound();
-        //}
-
-
     }
 
     _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
-        //super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); otherwise the next player is not marked correctly
-        this.setupTurns();
-        // Render the collection
-         if ( this.isActive && (options.render !== false) ) this.collection.render();
+        this.setupTurns();//otherwise the next player is not marked correctly
+        super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); 
     }
   
 }
