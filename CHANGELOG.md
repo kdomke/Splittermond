@@ -1,3 +1,9 @@
+## 0.9.4 ##
+2022-09-20
+* added: Das Modul "Monks Little Details" kann mit der Tickleiste verwendet werden.
+* fixed: Einige Bugs bzgl. des Combat-Trackers wurden behoben.
+* fixed: Darstellungsfehler der Seitenleiste in den Foundry-Einstellungen wurden behoben.
+
 ## 0.9.3 ##
 2022-09-13
 * fixed: Im NSC-Charakterbogen wurden Abgeleiteten Werte nach Änderung teilweise wieder zurückgesetzt (Issue #119)
