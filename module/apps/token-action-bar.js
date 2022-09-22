@@ -94,7 +94,7 @@ export default class TokenActionBar extends Application {
 
             data.preparedSpell = this.currentActor.items.get(this.currentActor.getFlag("splittermond", "preparedSpell"));
 
-            data.derivedAttributes = this.currentActor.derivedAttributes;
+            data.derivedValues = this.currentActor.derivedValues;
 
 
         }
