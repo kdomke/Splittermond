@@ -1,10 +1,25 @@
+## 0.9.5 ##
+2022-09-20
+
+* fixed: Falscher Tick für nachträglich hinzugefügte Token mit negativer Initiative (Issue #127).
+* fixed: Combat-Tracker-Datenobjekt wurde fälschlicherweise überschrieben.
+
+## 0.9.4 ##
+2022-09-20
+
+* added: Das Modul "Monks Little Details" kann mit der Tickleiste verwendet werden.
+* fixed: Einige Bugs bzgl. des Combat-Trackers wurden behoben.
+* fixed: Darstellungsfehler der Seitenleiste in den Foundry-Einstellungen wurden behoben.
+
 ## 0.9.3 ##
 2022-09-13
+
 * fixed: Im NSC-Charakterbogen wurden Abgeleiteten Werte nach Änderung teilweise wieder zurückgesetzt (Issue #119)
 * fixed: Einige Bugs bzgl. des Combat-Trackers. (Probleme mit negativen Tickwerten etc.)
 
 ## 0.9.2 ##
 2022-09-06
+
 * fixed: Im NSC-Charakterbogen konnten keine Abgeleiteten Werte und die Schadensreduktion überschrieben werden (Issue #119)
 * fixed: Beim Hinzufügen eines Angriffs im NSC-Charakterbogen wurde der Charakter fehlerhaft. (Issue #122)
 * fixed: Tickleiste wurde nicht auf aktuellen Tick gesetzt (Issue #121)

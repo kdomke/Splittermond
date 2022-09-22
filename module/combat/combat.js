@@ -34,7 +34,7 @@ export default class SplittermondCombat extends Combat {
         return (iniA + (a.isDefeated ? 1000 : 0)) - (iniB + (b.isDefeated ? 1000 : 0));
 
     }
-
+/*
     async startCombat() {
         await this.setupTurns();
         await this.setFlag("splittermond", "tickHistory", [{
@@ -52,7 +52,7 @@ export default class SplittermondCombat extends Combat {
 
         return super.startCombat();
     }
-
+*/
     async resetAll() {
         await super.resetAll();
 
@@ -60,7 +60,7 @@ export default class SplittermondCombat extends Combat {
     }
 
 
-
+/*
     setupTurns() {
             const turns = this.combatants.contents.sort(this._sortCombatants)
 
@@ -74,7 +74,7 @@ export default class SplittermondCombat extends Combat {
             };
             return this.turns = turns;
     }
-
+*/
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
             let p = new Promise((resolve, reject) => {
@@ -169,7 +169,7 @@ export default class SplittermondCombat extends Combat {
 
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
-        let tick = this.round;
+        let tick = this.currentTick;
         await super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
 
         if (this.started) {
