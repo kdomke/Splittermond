@@ -1,5 +1,10 @@
+## 0.9.6 ##
+2022-09-22
+
+* fixed: In der Token Action Bar werden die Abgeleiteten Werte nicht mehr angezeigt.
+
 ## 0.9.5 ##
-2022-09-20
+2022-09-22
 
 * fixed: Falscher Tick für nachträglich hinzugefügte Token mit negativer Initiative (Issue #127).
 * fixed: Combat-Tracker-Datenobjekt wurde fälschlicherweise überschrieben.
