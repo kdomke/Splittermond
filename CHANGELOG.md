@@ -1,3 +1,48 @@
+## 0.9.6 ##
+2022-09-22
+
+* fixed: In der Token Action Bar werden die Abgeleiteten Werte nicht mehr angezeigt.
+
+## 0.9.5 ##
+2022-09-22
+
+* fixed: Falscher Tick für nachträglich hinzugefügte Token mit negativer Initiative (Issue #127).
+* fixed: Combat-Tracker-Datenobjekt wurde fälschlicherweise überschrieben.
+
+## 0.9.4 ##
+2022-09-20
+
+* added: Das Modul "Monks Little Details" kann mit der Tickleiste verwendet werden.
+* fixed: Einige Bugs bzgl. des Combat-Trackers wurden behoben.
+* fixed: Darstellungsfehler der Seitenleiste in den Foundry-Einstellungen wurden behoben.
+
+## 0.9.3 ##
+2022-09-13
+
+* fixed: Im NSC-Charakterbogen wurden Abgeleiteten Werte nach Änderung teilweise wieder zurückgesetzt (Issue #119)
+* fixed: Einige Bugs bzgl. des Combat-Trackers. (Probleme mit negativen Tickwerten etc.)
+
+## 0.9.2 ##
+2022-09-06
+
+* fixed: Im NSC-Charakterbogen konnten keine Abgeleiteten Werte und die Schadensreduktion überschrieben werden (Issue #119)
+* fixed: Beim Hinzufügen eines Angriffs im NSC-Charakterbogen wurde der Charakter fehlerhaft. (Issue #122)
+* fixed: Tickleiste wurde nicht auf aktuellen Tick gesetzt (Issue #121)
+* fixed: Nachträglich zum Kampf hinzugefügte NSCs werden auf der Tickleiste relativ zum aktuellen Tick positioniert. (Issue #115)
+* fixed: Feld "id" wurde in system.json für V10-Kompatibilität hinzugefügt. (Issue #118)
+
+## 0.9.1 ##
+2022-08-31
+
+* **added: Foundry VTT Version V10 Support!** Aufgrund umfangreicher Änderungen in Foundry VTT in Version 10 musste das System angepasst werden.
+* added: Den NSCs können zusätzlich zu Waffen (die eine Kampffertigkeit benötigen) auch NSC-Angriffe hinzugefügt werden. Dieser Item-Typ ermöglicht es Angriffe ohne zugehöriger Kampffertigkeit zu erstellen.
+* added: Neue Modifikatoren für Lebenspunkt-/Fokuspunktregeneration `healthregeneration.bonus` und `focusregeneration.bonus` (Issue #107)
+* added: +- Buttons für Schwierigkeit bei "Fertigkeitsprobe anfordern"-Dialog hinzugefügt (Issue #110)
+* fixed: Verstärkte Zauber-Kosten wurden falsch berechnet (Issue #108)
+* changed: Das System wurde an vielen Stellen komplett überarbeitet. Dadurch konnte redundanter Code entfernt werden.
+* changed: Copy-And-Paste-Importer wurde für NPCs, Waffen und Zauber überarbeitet.
+* changed: Die Tickleiste wurde intern überarbeitet, sodass die Reihenfolge der Spieler synchron ist.
+
 ## 0.8.5 HOTFIX ##
 2022-08-10
 

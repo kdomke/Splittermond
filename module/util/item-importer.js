@@ -69,47 +69,59 @@ export default class ItemImporter {
         console.log(rawData);
 
         // Check Spell
-        var spellRegex = new RegExp(/^(.*)(?:\s{1}|\n)\(((?:Spruch)|(?:Ritus))\)/, "gm");
 
-        if (rawData.match(spellRegex)) {
-            var currentExec;
-            var lastexec;
-            var indzies = [];
-            while ((currentExec = spellRegex.exec(rawData))) {
-                indzies.push({ start: lastexec?.index ?? 0, end: currentExec.index });
-                lastexec = currentExec;
+        if (rawData.includes("Schulen:") && rawData.includes("Typus:") && rawData.includes("Kosten:")) {
+            let folder = await this._folderDialog();
+            let spellTokens = rawData.replace(/^[0-9]{3}\n/g, "") // Remove page numbers
+                .split(/(.*\s+\((?:Spruch|Ritus)\))/gm); // Split into spell tokens
+            let spellName = "";
+            for (let k = 0; k < spellTokens.length; k++) {
+                const spellToken = spellTokens[k];
+                if (spellToken == "") {
+                    continue;
+                }
+                if (spellName != "") {
+                    this.importSpell(spellName, spellToken, folder);
+                    spellName = "";
+                    continue;
+                }
+                    
+                if (spellToken.match(/(.*\s+\((?:Spruch|Ritus)\))/gm)) {
+                    spellName = spellToken.match(/(.*?)\s+\((?:Spruch|Ritus)\)/m)[1];
+                    continue;
+                }
+
             }
-            indzies.push({ start: lastexec.index, end: currentExec?.index ?? rawData.length });
-            indzies = indzies.slice(1);
-            console.log("Found " + indzies.length + " spells:")
-            indzies.forEach(e => {
-                console.log("From: " + e.start + " to: " + e.end);
-                var spellData = rawData.substring(e.start, e.end);
-                console.log(spellData);
-                this.importSpell(spellData);
-                console.log("Imported.")
-            }); 
             return;      
         }
         
-        // Check multiple Weapons
-        let test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +(?:([0-9]+ [LST])(?: *\/ *[0-9]+ [LST])?) +([0-9]+) +([0-9]+) +([UGFMA]) +([0-9+\-W]+) +([0-9]+) +((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3}) +(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],? *)*|–) +(.+)/g);
-        if (test) {
-            if (test.length > 1) {
-                let skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+        // Check Weapons
+        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
+        let test = rawData.match(new RegExp(weaponRegex, "gm"));
+        if (test && test.length > 0) {
+            let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
+            weaponRegex =`${skills}|${weaponRegex}`;
+            test = rawData.match(new RegExp(weaponRegex, "gm"));
+            if (test.length > 0) {
                 let folder = await this._folderDialog();
-
-                test.forEach(m => {
+                let skill = "";
+                
+                for (let k = 0; k < test.length; k++) {
+                    const m = test[k].trim().replace(/\s{2,}/gm, " ").replace("(*)", "");
+                    if (m.match(new RegExp(skills, "gm"))) {
+                        skill = CONFIG.splittermond.skillGroups.fighting.find(s => game.i18n.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
+                        continue;
+                    }
+                    if (skill == "") {
+                        skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
+                    }
+                    
                     this.importWeapon(m, skill, folder);
-                });
+                }
                 return;
             }
         }
-        // Check Weapon
-        if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|) [0-9],?\s*)*|–)\s+([^]+)/)) {
-            this.importWeapon(rawData);
-            return;
-        }
+
 
         // Check multiple Armor
         test = rawData.match(/(.*?) +(Dorf|Kleinstadt|Großstadt|Metropole) +([0-9]+ [LST]) +([0-9]+) +([0-9]+) +([UGFMA]) +(\+[0-9]+|0) +([0-9]+) +([0-9]+) +([0-9]+) +([0-9]+) +(.+)/g);
@@ -384,11 +396,11 @@ export default class ItemImporter {
 
         let isRanged = ["throwing", "longrange"].includes(skill);
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST])(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL) [0-9],?\s*)*|–)\s+(.+)/);
+        let tokens = rawData.match(/([\s\S]*?)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+(?:([0-9]+ [LST]|-|–)(?:\s*\/\s*[0-9]+ [LST])?)\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+([0-9+\-W]+)\s+([0-9]+)\s+((?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\+){3})\s+((?:(?:AUS|BEW|INT|KON|MYS|STÄ|VER|WIL)\s*[0-9],?\s*)*|–)\s+(.+)/);
 
         let itemData = {
             type: "weapon",
-            name: tokens[1].trim(),
+            name: tokens[1].trim().replace(/[0-9]/g,""),
             img: CONFIG.splittermond.icons.weapon[tokens[1].trim()] || CONFIG.splittermond.icons.weapon.default,
             folder: folder,
             data: {}
@@ -468,96 +480,92 @@ export default class ItemImporter {
         ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeWeapon") }));
     }
 
-    static async importSpell(rawData) {
+    static async importSpell(spellName, rawData, folder) {
         let spellData = {
             type: "spell",
-            name: "",
+            name: spellName,
             img: CONFIG.splittermond.icons.spell.default,
+            folder: folder,
             data: {}
         };
-        let nameData = rawData.match(/([^(]+)\s(\(.*\))/);
-        spellData.name = `${nameData[1]} ${nameData[2]} `;
+        
+        const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
+        let tokens = rawData.split( new RegExp(`(${sectionLabels.map(sl => sl+":").join("|")})`,"gm"));
 
-        let skillsData = rawData.match(/Schulen: ([^:]+?)[^\s]+:/);
-        spellData.data.availableIn = skillsData[1].trim().split(",").map(s => {
-            let data = s.match(/([^ ]+)\s([0-5])/);
-            let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
-            spellData.data.skill = skill;
-            spellData.data.skillLevel = parseInt(data[2]);
-            return `${skill} ${data[2]} `;
-        }).join(", ");
+        for (let k = 0; k < tokens.length-1; k++) {
+            const sectionHeading = tokens[k].trim();
+            const sectionData = tokens[k+1].trim();
+            switch(sectionHeading) { 
+                case "Schulen:":
+                    spellData.data.availableIn = sectionData.split(",").map(s => {
+                        let data = s.match(/([^ ]+)\s([0-5])/);
+                        let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
+                        spellData.data.skill = skill;
+                        spellData.data.skillLevel = parseInt(data[2]);
+                        return `${skill} ${data[2]} `;
+                    }).join(", ");
+                    break;
+                case "Typus:":
+                    spellData.data.spellType = sectionData;
+                    break;
+                case "Schwierigkeit:":
+                    spellData.data.difficulty = sectionData;
+                    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
+                        spellData.data.difficulty.search("Geist") >= 0) {
+                        spellData.data.difficulty = "GW";
+                    }
 
-        let typeData = rawData.match(/Typus: ([^:]+?)[^\s]+:/);
-        spellData.data.spellType = typeData[1].trim();
+                    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
+                        spellData.data.difficulty.search("Körper") >= 0) {
+                        spellData.data.difficulty = "KW";
+                    }
 
-        let difficultyData = rawData.match(/Schwierigkeit: ([^:]+?)[^\s]+:/);
-        spellData.data.difficulty = difficultyData[1].trim();
-
-        if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
-            spellData.data.difficulty.search("Geist") >= 0) {
-            spellData.data.difficulty = "GW";
-        }
-
-        if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
-            spellData.data.difficulty.search("Körper") >= 0) {
-            spellData.data.difficulty = "KW";
-        }
-
-        if (spellData.data.difficulty.search("Verteidigung") >= 0) {
-            spellData.data.difficulty = "VTD";
-        }
-
-        let costsData = rawData.match(/Kosten:\s*([^:]+?)\s*[^\s]+:/);
-        spellData.data.costs = costsData[1];
-
-        let castDurationData = rawData.match(/Zauberdauer:\s*([^:]+?)[^\s]+:/);
-        spellData.data.castDuration = castDurationData[1].trim();
-
-        let descriptionData = rawData.match(/Wirkung:\s*([^]+?)\n[^\s]+:/);
-        spellData.data.description = descriptionData[1];
-        spellData.data.description = spellData.data.description.replace(/\n/g, " ");
-        spellData.data.description = spellData.data.description.replace(/  /g, " ");
-
-        let effectDurationData = rawData.match(/Wirkungsdauer:\s*([^:]+?)[^\s]+:/);
-        if (effectDurationData)
-            spellData.data.effectDuration = effectDurationData[1].trim();
-        else
-            spellData.data.effectDuration = "";
-
-        let effectAreaData = rawData.match(/Wirkungsbereich:\s*([^:]+?)[^\s]+:/);
-        if (effectAreaData)
-            spellData.data.effectArea = effectAreaData[1].trim();
-        else
-            spellData.data.effectArea = "";
-
-        let rangeData = rawData.match(/Reichweite:\s*([^:]+?)[^\s]+:/);
-        if (rangeData)
-            spellData.data.range = rangeData[1];
-        else
-            spellData.data.range = "";
-
-        let egData = rawData.match(/Erfolgsgrade:\s*([^]+)/);
-        let enhancementData = egData[1].match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-        spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
-        spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
-        spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
-        spellData.data.degreeOfSuccessOptions = {
-            castDuration: egData[1].search("Auslösezeit") >= 0,
-            consumedFocus: egData[1].search("Verzehrter") >= 0,
-            exhaustedFocus: egData[1].search("Erschöpfter") >= 0,
-            channelizedFocus: egData[1].search("Kanalisierter") >= 0,
-            effectDuration: egData[1].search("Wirkungsd") >= 0 || egData[1].search("dauer") >= 0,
-            damage: egData[1].search("Schaden,") >= 0,
-            range: egData[1].search("Reichw") >= 0,
-            effectArea: egData[1].search("Wirkungsb") >= 0 || egData[1].search("bereich") >= 0
+                    if (spellData.data.difficulty.search("Verteidigung") >= 0) {
+                        spellData.data.difficulty = "VTD";
+                    }
+                    break;
+                case "Kosten:":
+                    spellData.data.costs = sectionData;
+                    break;
+                case "Zauberdauer:":
+                    spellData.data.castDuration = sectionData;
+                    break;
+                case "Reichweite:":
+                    spellData.data.range = sectionData;
+                    break;
+                case "Wirkung:":
+                    spellData.data.description = sectionData;
+                    spellData.data.description = spellData.data.description.replace(/\n/g, " ");
+                    spellData.data.description = spellData.data.description.replace(/  /g, " ");
+                    break;
+                case "Wirkungsdauer:":
+                    spellData.data.effectDuration = sectionData;
+                    break;
+                case "Wirkungsbereich:":
+                    spellData.data.effectArea = sectionData;
+                    break;
+                case "Erfolgsgrade:":
+                    let enhancementData = sectionData.match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
+                    spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
+                    spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
+                    spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
+                    spellData.data.degreeOfSuccessOptions = {
+                        castDuration: sectionData.search("Auslösezeit") >= 0,
+                        consumedFocus: sectionData.search("Verzehrter") >= 0,
+                        exhaustedFocus: sectionData.search("Erschöpfter") >= 0,
+                        channelizedFocus: sectionData.search("Kanalisierter") >= 0,
+                        effectDuration: sectionData.search("Wirkungsd") >= 0 || sectionData.search("dauer") >= 0,
+                        damage: sectionData.search("Schaden,") >= 0,
+                        range: sectionData.search("Reichw") >= 0,
+                        effectArea: sectionData.search("Wirkungsb") >= 0 || sectionData.search("bereich") >= 0
+                    }
+            }
         }
 
         let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.data.description);
         if (damage) {
             spellData.data.damage = damage[0] || "";
         }
-
-
 
         Item.create(spellData);
 
@@ -567,529 +575,434 @@ export default class ItemImporter {
     }
 
     static async importNpc(rawData) {
-        let clipboard = rawData;
-        clipboard = clipboard.replace(/\r\n/g, "\n");
-        let stats = clipboard;
-        let name = "";
-        let description = "";
-        if (!(clipboard.startsWith("AUS") || clipboard.startsWith("GK") || clipboard.startsWith("waffen"))) {
-            let temp = clipboard.match(/([^]+?)\n([^]*?)(AUS BEW[^]+|GK GSW[^]+|Waffen\s+Wert\s+Schaden\s+WGS[^]+|Wichtige Attribute:[^]+)/);
-            if (temp) {
-                name = temp[1].trim();
-                temp[2] = temp[2].replace(/-\n/g, "");
-                description = temp[2].replace(/\n/g, " ");
-                stats = temp[3];
-            }
-
-        }
-        let d = new Dialog({
-            title: game.i18n.localize(`splittermond.importNpcData`),
-            content: `<form><label>Name</label><input type="text" name="name" value="${name}"><label>Beschreibung</label><textarea style="height: 300px" name='description'>${description}</textarea><label>Data</label><textarea style="height: 300px;" name='data'>${stats}</textarea></form>`,
-            buttons: {
-
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel"
+        let rawString = rawData.replace(/\r|\x02/g, "").replace(/\r\n/g, "\n");
+        let tokenizedData = rawString.split(/(AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|Fertigkeiten:|Monstergrad:|Zauber:|Meisterschaften:|Merkmale:|Beute:|Wichtige Attribute:|Wichtige abgeleitete Werte:|Waffen Wert Schaden WGS.*|Kampfweise:|Typus:|Übliche Anzahl:|Anmerkung:|Besonderheiten:)/);
+        let temp = tokenizedData[0].match(/([^]+?)\n([^]*?)/g);
+        
+        let actorData ={
+            name: temp[0].trim(),
+            type: "npc",
+            data: {
+                biography: "<p>"+(temp.slice(1)?.join(" ")?.replace(/\n/g,"") || "")+"</p>",
+                attributes: {
+                    "charisma": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "agility": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "intuition": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "constitution": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "mystic": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "strength": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "mind": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    },
+                    "willpower": {
+                        "species": 0,
+                        "initial": 0,
+                        "advances": 0,
+                        "value": 0
+                    }
                 },
-                import: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: "Import",
-                    callback: async (html) => {
-                        await SplittermondCompendium.updateIndex();
-                        let importData = html.find('[name="data"]')[0].value;
-                        let name = html.find('[name="name"]')[0].value;
-                        let description = html.find('[name="description"]')[0].value;
-                        let parsedData = /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
-                        let AUS = 0;
-                        let BEW = 0;
-                        let INT = 0;
-                        let KON = 0;
-                        let MYS = 0;
-                        let STÄ = 0;
-                        let VER = 0;
-                        let WIL = 0;
-                        if (parsedData) {
-                            let offset = 0;
-                            if (parsedData[9]) {
-                                offset = 8;
+                derivedAttributes: {
+                    "size": {
+                        "value": 0
+                    },
+                    "speed": {
+                        "value": 0
+                    },
+                    "initiative": {
+                        "value": 0
+                    },
+                    "healthpoints": {
+                        "value": 0
+                    },
+                    "focuspoints": {
+                        "value": 0
+                    },
+                    "defense": {
+                        "value": 0
+                    },
+                    "bodyresist": {
+                        "value": 0
+                    },
+                    "mindresist": {
+                        "value": 0
+                    }
+                },
+                damageReduction: {
+                    value: 0
+                },
+                skills: {},
+                level: "",
+                biography: "",
+            },
+            items: []
+        };
+
+        actorData.data.biography = "<p>"+(temp.slice(1)?.join(" ")?.replace(/\n/g,"") || "")+"</p>";
+
+        for (let i = 1; i < tokenizedData.length; i++) {
+            try {
+                switch(true) {
+                    case /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL/.test(tokenizedData[i]):
+                        let attributeData = tokenizedData[i+1].trim().split(/\s+/);
+                        actorData.data.attributes.charisma.value = parseInt(attributeData[0]);
+                        actorData.data.attributes.agility.value = parseInt(attributeData[1]);
+                        actorData.data.attributes.intuition.value = parseInt(attributeData[2]);
+                        actorData.data.attributes.constitution.value = parseInt(attributeData[3]);
+                        actorData.data.attributes.mystic.value = parseInt(attributeData[4]);
+                        actorData.data.attributes.strength.value = parseInt(attributeData[5]);
+                        actorData.data.attributes.mind.value = parseInt(attributeData[6]);
+                        actorData.data.attributes.willpower.value = parseInt(attributeData[7]);
+                        if (attributeData.length == 8) break;
+                        tokenizedData[i+1] = attributeData.slice(8).join(" ");
+                    case /GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW/.test(tokenizedData[i]):
+                        let derivedValueData = tokenizedData[i+1].trim().match(/([0-9]+(:?\s+\/\s+[0-9]+)*)/g);
+                        actorData.data.derivedAttributes.size.value = parseInt(derivedValueData[0]);
+                        actorData.data.derivedAttributes.speed.value = parseInt(derivedValueData[1]);
+                        actorData.data.derivedAttributes.healthpoints.value = parseInt(derivedValueData[2]);
+                        actorData.data.derivedAttributes.focuspoints.value = parseInt(derivedValueData[3]);
+                        actorData.data.derivedAttributes.defense.value = parseInt(derivedValueData[4]);
+                        actorData.data.damageReduction.value = parseInt(derivedValueData[5]);
+                        actorData.data.derivedAttributes.bodyresist.value = parseInt(derivedValueData[6]);
+                        actorData.data.derivedAttributes.mindresist.value = parseInt(derivedValueData[7]);
+                        break;
+                    case /Wichtige Attribute:/.test(tokenizedData[i]):
+                        tokenizedData[i+1].split(",").forEach((i) => {
+                            let iData = i.trim().split(" ");
+                            switch (iData[0]) {
+                                case "AUS":
+                                    actorData.data.attributes.charisma.value = parseInt(iData[1]);
+                                    break;
+                                case "BEW":
+                                    actorData.data.attributes.agility.value = parseInt(iData[1]);
+                                    break;
+                                case "INT":
+                                    actorData.data.attributes.intuition.value = parseInt(iData[1]);
+                                    break;
+                                case "KON":
+                                    actorData.data.attributes.constitution.value = parseInt(iData[1]);
+                                    break;
+                                case "MYS":
+                                    actorData.data.attributes.mystic.value = parseInt(iData[1]);
+                                    break;
+                                case "STÄ":
+                                    actorData.data.attributes.strength.value = parseInt(iData[1]);
+                                    break;
+                                case "VER":
+                                    actorData.data.attributes.mind.value = parseInt(iData[1]);
+                                    break;
+                                case "WILL":
+                                case "WIL":
+                                    actorData.data.attributes.willpower.value = parseInt(iData[1]);
+                                    break;
                             }
-                            AUS = parseInt(parsedData[offset + 1]);
-                            BEW = parseInt(parsedData[offset + 2]);
-                            INT = parseInt(parsedData[offset + 3]);
-                            KON = parseInt(parsedData[offset + 4]);
-                            MYS = parseInt(parsedData[offset + 5]);
-                            STÄ = parseInt(parsedData[offset + 6]);
-                            VER = parseInt(parsedData[offset + 7]);
-                            WIL = parseInt(parsedData[offset + 8]);
-                        }
-
-                        let importantAttributesData = importData.match(/Wichtige Attribute: ([^:]+)[^\s]:/);
-                        if (importantAttributesData) {
-                            importantAttributesData[1].split(",").forEach((i) => {
-                                let iData = i.trim().split(" ");
-                                switch (iData[0]) {
-                                    case "AUS":
-                                        AUS = parseInt(iData[1]);
-                                        break;
-                                    case "BEW":
-                                        BEW = parseInt(iData[1]);
-                                        break;
-                                    case "INT":
-                                        INT = parseInt(iData[1]);
-                                        break;
-                                    case "KON":
-                                        KON = parseInt(iData[1]);
-                                        break;
-                                    case "MYS":
-                                        MYS = parseInt(iData[1]);
-                                        break;
-                                    case "STÄ":
-                                        STÄ = parseInt(iData[1]);
-                                        break;
-                                    case "VER":
-                                        VER = parseInt(iData[1]);
-                                        break;
-                                    case "WILL":
-                                    case "WIL":
-                                        VER = parseInt(iData[1]);
-                                        break;
-                                }
-                            })
-                        }
-
-                        parsedData = /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*[0-9]+\s*([0-9]+)\s*([0-9]+|[0-9]+\s*\/\s*[0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)|GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW\s*([0-9]+)\s*([0-9]+|[0-9]+\s*\/\s*[0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)\s*([0-9]+)/.exec(importData);
-                        let GK = 0;
-                        let GSW = 0;
-                        let LP = 0;
-                        let FO = 0;
-                        let VTD = 0;
-                        let KW = 0;
-                        let GW = 0;
-                        let INI = 0;
-                        let SR = 0;
-                        if (parsedData) {
-                            let offset = 0;
-                            if (parsedData[9]) {
-                                offset = 8;
-                            }
-                            GK = parseInt(parsedData[offset + 1]);
-                            GSW = parsedData[offset + 2].trim();
-                            LP = parseInt(parsedData[offset + 3]);
-                            FO = parseInt(parsedData[offset + 4]);
-                            VTD = parseInt(parsedData[offset + 5]);
-                            SR = parseInt(parsedData[offset + 6]);
-                            KW = parseInt(parsedData[offset + 7]);
-                            GW = parseInt(parsedData[offset + 8]);
-                        }
-
-
-                        let importantDerivedValuesData = importData.match(/Wichtige abgeleitete Werte: ([^:]+)[^\s]:/);
-                        if (importantDerivedValuesData) {
-                            importantDerivedValuesData[1].split(",").forEach((i) => {
-                                let iData = i.trim().split(" ");
-                                switch (iData[0]) {
-                                    case "GK":
-                                        GK = parseInt(iData[1]);
-                                        break;
-                                    case "GSW":
-                                        GSW = parseInt(iData[1]);
-                                        break;
-                                    case "LP":
-                                        LP = parseInt(iData[1]);
-                                        break;
-                                    case "FO":
-                                        FO = parseInt(iData[1]);
-                                        break;
-                                    case "VTD":
-                                        VTD = parseInt(iData[1]);
-                                        break;
-                                    case "SR":
-                                        SR = parseInt(iData[1]);
-                                        break;
-                                    case "KW":
-                                        KW = parseInt(iData[1]);
-                                        break;
-                                    case "GW":
-                                        GW = parseInt(iData[1]);
-                                        break;
-                                }
-                            })
-                        }
-
-
-                        let skillData = /Fertigkeiten: ([^]*?)\n[^\s]+:/g.exec(importData);
-                        let skillObj = {};
-                        if (skillData[1]) {
-                            skillData[1].split(",").forEach(skillStr => {
-                                let skillData = skillStr.trim().match(/(.*?)\s+([0-9]+)/);
-                                let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].toLowerCase());
-                                skillObj[skill] = {
-                                    value: skillData[2]
-                                }
-                            });
-                        }
-
-                        let attributes = {
-                            "charisma": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": AUS
-                            },
-                            "agility": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": BEW
-                            },
-                            "intuition": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": INT
-                            },
-                            "constitution": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": KON
-                            },
-                            "mystic": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": MYS
-                            },
-                            "strength": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": STÄ
-                            },
-                            "mind": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": VER
-                            },
-                            "willpower": {
-                                "species": 0,
-                                "initial": 0,
-                                "advances": 0,
-                                "value": WIL
-                            }
-                        };
-
-                        Object.keys(skillObj).forEach(skill => {
-                            if (CONFIG.splittermond.skillAttributes[skill]) {
-                                skillObj[skill].points = skillObj[skill].value;
-                                skillObj[skill].points -= parseInt(attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
-                                skillObj[skill].points -= parseInt(attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
+                        })
+                        break;
+                    case /Wichtige abgeleitete Werte:/.test(tokenizedData[i]):
+                        tokenizedData[i+1].split(",").forEach((i) => {
+                            let iData = i.trim().split(" ");
+                            switch (iData[0]) {
+                                case "GK":
+                                    actorData.data.derivedAttributes.size.value = parseInt(iData[1]);
+                                    break;
+                                case "GSW":
+                                    actorData.data.derivedAttributes.speed.value = parseInt(iData[1]);
+                                    break;
+                                case "LP":
+                                    actorData.data.derivedAttributes.healthpoints.value = parseInt(iData[1]);
+                                    break;
+                                case "FO":
+                                    actorData.data.derivedAttributes.focuspoints.value = parseInt(iData[1]);
+                                    break;
+                                case "VTD":
+                                    actorData.data.derivedAttributes.defense.value = parseInt(iData[1]);
+                                    break;
+                                case "SR":
+                                    actorData.data.damageReduction.value = parseInt(iData[1]);
+                                    break;
+                                case "KW":
+                                    actorData.data.derivedAttributes.bodyresist.value = parseInt(iData[1]);
+                                    break;
+                                case "GW":
+                                    actorData.data.derivedAttributes.mindresist.value = parseInt(iData[1]);
+                                    break;
                             }
                         });
-
-
-                        let weaponData = /(Waffen Wert Schaden WGS.*)\n([^]*?)\n[^\s]+:/g.exec(importData);
-                        let weapons = [];
-                        if (weaponData) {
-                            if (weaponData[1].match(/Reichw/)) {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+([\-–]+|[0-9]+|[0-9]+\s*m)+\s+[0-9]+\-1?W6\s*.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([\-–]+|[0-9]+|[0-9]+\s*m)\s+([0-9\-–]*)\-1?W6\s*(.*)/);
-                                    INI = parseInt(weaponDataRaw[5].trim()) || 0;
-                                    let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
-                                        type: "weapon",
-                                        name: weaponName,
-                                        img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
-                                        data: {}
-                                    });
-                                    delete weaponData._id;
-                                    weaponData.data.damage = weaponDataRaw[3].trim();
-                                    weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
-                                    weaponData.data.range = parseInt(weaponDataRaw[6].trim()) || 0;
-                                    weaponData.data.features = weaponDataRaw[7].trim();
-                                    weaponData.skillValue = parseInt(weaponDataRaw[2]) || 0;
-                                    return weaponData;
-                                });
-                            } else {
-                                weapons = weaponData[2].match(/.*\s+[0-9]+\s+[0-9W\-+]+\s+[0-9]+(?:\s+Tick[s]?)?\s+[0-9\-–]+\-1?W6\s*.*/g).map(async (weaponStr) => {
-                                    let weaponDataRaw = weaponStr.match(/(.*)\s+([0-9]+)\s+([0-9W\-+]+)\s+([0-9]+)(?:\s+Tick[s]?)?\s+([0-9\-–]+)\-1?W6\s*(.*)/);
-                                    INI = parseInt(weaponDataRaw[5].trim()) || 0;
-                                    let weaponName = weaponDataRaw[1].trim();
-                                    let weaponData = duplicate(await SplittermondCompendium.findItem("weapon", weaponName) || {
-                                        type: "weapon",
-                                        name: weaponName,
-                                        img: CONFIG.splittermond.icons.weapon[weaponName] || CONFIG.splittermond.icons.weapon.default,
-                                        data: {}
-                                    });
-                                    delete weaponData._id;
-                                    weaponData.data.damage = weaponDataRaw[3].trim();
-                                    weaponData.data.weaponSpeed = parseInt(weaponDataRaw[4].trim()) || 0;
-                                    weaponData.data.range = 0;
-                                    weaponData.data.features = weaponDataRaw[6].trim();
-                                    weaponData.skillValue = parseInt(weaponDataRaw[2]) || 0;
-
-                                    return weaponData;
-                                });
+                        break;
+                    case /Fertigkeiten:/.test(tokenizedData[i]):
+                        tokenizedData[i+1].replace(/\n/g,"").split(",").forEach(skillStr => {
+                            let skillData = skillStr.trim().match(/(.*?)\s+([0-9]+)/);
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].toLowerCase());
+                            let skillValue = parseInt(skillData[2]) || 0;
+                            actorData.data.skills[skill] = {
+                                value: skillValue
                             }
-                            weapons = await Promise.all(weapons);
-
-                            weapons.forEach(weaponData => {
+                            if (CONFIG.splittermond.skillAttributes[skill]) {
+                                actorData.data.skills[skill].points = actorData.data.skills[skill].value;
+                                actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
+                                actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
+                                if (skill == "stealth") {
+                                    actorData.data.skills[skill].points -= 5-parseInt(actorData.data.derivedAttributes.size.value);
+                                }
+                            }
+                        });
+                        break;
+                    case /Waffen Wert Schaden WGS.*/.test(tokenizedData[i]):
+                        let weaponRegExpStr = `([\\s\\S]*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)*[\r\n]*`;
+                        let weaponData = tokenizedData[i+1].trim().match(new RegExp(weaponRegExpStr,"g")).map(weaponStr => {
+                            weaponStr = weaponStr.trim().replace(/\s/g, " ").replace(/\s{2,}/g," ");
+                            let weaponMatch = weaponStr.match(new RegExp(`(.*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*(.*)`));
+                            let weaponName = weaponMatch[1].trim();
+                            return {
+                                name: weaponName,
+                                skillValue: parseInt(weaponMatch[2].trim()) || 0,
+                                damage: weaponMatch[3].trim(),
+                                weaponSpeed: parseInt(weaponMatch[4].trim()) || 0,
+                                range: weaponMatch[6].trim() || "-",
+                                features: weaponMatch[7].trim(),
+                            };
+                        });
+                       
+                        actorData.items.push(...await Promise.all(weaponData.map(async data => {
+                            let weaponData = await SplittermondCompendium.findItem("weapon", data.name);
+                            if (!weaponData) {
+                                weaponData = {
+                                    type: "npcattack",
+                                    name: data.name,
+                                    img: CONFIG.splittermond.icons.weapon[data.name] || CONFIG.splittermond.icons.weapon.default,
+                                    data: {}
+                                };
+                            } else {
+                                weaponData = weaponData.toObject();
+                            }
+                            weaponData.data.damage = data.damage;
+                            weaponData.data.weaponSpeed =  data.weaponSpeed;
+                            weaponData.data.range =  data.range;
+                            weaponData.data.features =  data.features;
+                            if (weaponData.type == "npcattack") {
+                                weaponData.data.skillValue = data.skillValue;
+                            } else {
                                 if (!weaponData.data.skill) {
                                     weaponData.data.skill = "melee";
                                     weaponData.data.attribute1 = "agility";
                                     weaponData.data.attribute2 = "strength";
                                 }
-                                skillObj[weaponData.data.skill] = {
-                                    value: weaponData.skillValue,
-                                    points: weaponData.skillValue - attributes[weaponData.data.attribute1].value - attributes[weaponData.data.attribute2].value
+                                actorData.data.skills[weaponData.data.skill] = {
+                                    value: data.skillValue,
+                                    points: data.skillValue - actorData.data.attributes[weaponData.data.attribute1].value - actorData.data.attributes[weaponData.data.attribute2].value
                                 };
-
-                                delete weaponData.skillValue;
-                            });
-
-                        }
-
-
-
-
-                        let masteriesData = /Meisterschaften: ([^]*?)\n(Merkmale|Zauber|Beute|Fertigkeiten):/g.exec(importData);
+                            }
+                            return weaponData;
+                        })));
+                        break;
+                    case /Meisterschaften:/.test(tokenizedData[i]):
                         let masteries = [];
-                        if (masteriesData) {
-                            masteriesData[1].match(/[^(]+ \([^)]+\),?/g)?.forEach((skillEntryStr) => {
-                                let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
-                                let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
-                                let level = 1;
-                                masteryEntryData[2].split(/,|;|:/).forEach(masteryStr => {
-                                    masteryStr = masteryStr.trim();
-                                    if (masteryStr === "I") {
-                                        level = 1;
-                                    } else if (masteryStr === "II") {
-                                        level = 2;
-                                    } else if (masteryStr === "III") {
-                                        level = 3;
-                                    } else if (masteryStr === "IV") {
-                                        level = 4;
-                                    } else {
-                                        let masteryName = masteryStr.trim();
-                                        let masteryData = {
-                                            type: "mastery",
-                                            name: masteryName,
-                                            data: {}
-                                        };
-                                        masteryData.data.skill = skill;
-                                        masteryData.data.level = level;
-                                        masteries.push(masteryData)
-                                    }
-
-                                });
-                            });
-                            masteries = await Promise.all(masteries.map(async (masteryData) => {
-                                let searchString = masteryData.name.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
-                                let cMasteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
-                                if (cMasteryData) {
-                                    cMasteryData = duplicate(cMasteryData);
-                                    delete cMasteryData._id;
-                                    cMasteryData.data.skill = masteryData.data.skill;
-                                    cMasteryData.data.level = masteryData.data.level;
+                        tokenizedData[i+1].replace(/\n/g,"").match(/[^(]+ \([^)]+\),?/g)?.forEach((skillEntryStr) => {
+                            let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
+                            let level = 1;
+                            masteryEntryData[2].split(/,|;|:/).forEach((masteryStr) => {
+                                masteryStr = masteryStr.trim();
+                                if (masteryStr === "I") {
+                                    level = 1;
+                                } else if (masteryStr === "II") {
+                                    level = 2;
+                                } else if (masteryStr === "III") {
+                                    level = 3;
+                                } else if (masteryStr === "IV") {
+                                    level = 4;
                                 } else {
-                                    cMasteryData = masteryData;
-                                }
-                                return cMasteryData;
-                            }));
-                        }
-
-                        let featuresData = /Merkmale: ([^]+?)(?:\nBeute:|\nKampfweise:)/g.exec(importData);
-                        if (featuresData === null) {
-                            featuresData = /Merkmale: ([^]*)/g.exec(importData);
-                        }
-                        let features = [];
-                        if (featuresData) {
-                            featuresData[1].match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach((f) => {
-                                if (f.trim()) {
-                                    let featureName = f.trim();
-                                    let featureData = {
-                                        name: featureName,
-                                        type: "npcfeature",
-                                        data: {}
-                                    }
-
-                                    features.push(featureData);
+                                    let masteryName = masteryStr.trim();
+                                    masteries.push({
+                                        type: "mastery",
+                                        name: masteryName,
+                                        data: {
+                                            skill: skill,
+                                            level: level
+                                        }
+                                    });
                                 }
                             });
-
-                            features = await Promise.all(features.map(async (featureData) => {
-                                let searchString = featureData.name.match(/([^(,0-9]+)(?:\s*[0-9]+)?(?:\s*\([^)]+?\))?/);
-                                if (searchString[1].split(" ").length > 2) {
-                                    searchString[1] = searchString[1].split(" ")[0];
-                                }
-
-                                let cFeatureData = await SplittermondCompendium.findItem("npcfeature", searchString[1].trim());
-                                if (cFeatureData) {
-                                    cFeatureData = duplicate(cFeatureData);
-                                    delete cFeatureData._id;
-                                    cFeatureData.name = featureData.name;
-                                } else {
-                                    cFeatureData = featureData;
-                                }
-                                return cFeatureData;
-                            }));
-                        }
-
-
-                        let typeData = /Typus: ([^:]*)(\n[^:\s]+|Übliche Anzahl):/g.exec(importData);
-                        let type = "";
-                        if (typeData) {
-                            type = typeData[1];
-                        }
-
-                        let levelData = /Monstergrad: ([^:]*?)\n?[^:\s]+:/g.exec(importData);
-                        let level = "";
-                        if (levelData) {
-                            level = levelData[1];
-                        }
-
-                        let spellsData = /Zauber: ([^]*?)\n?(Meisterschaften|Merkmale|Beute):/g.exec(importData);
-                        let spells = [];
-                        if (spellsData) {
-                            let skill = ""
-                            spellsData[1].split(";")?.forEach(skillEntryStr => {
-                                let spellEntryData = skillEntryStr.trim().match(/([^ ]*)\s*([0IV]+):\s+([^]+)/);
-                                if (spellEntryData[1]) {
-                                    let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[1].toLowerCase()));
-                                    if (newSkill) {
-                                        skill = newSkill;
-                                    }
-                                }
-                                let level = 0;
-                                switch (spellEntryData[2]) {
-                                    case "0":
-                                        level = 0;
-                                        break;
-                                    case "I":
-                                        level = 1;
-                                        break;
-                                    case "II":
-                                        level = 2;
-                                        break;
-                                    case "III":
-                                        level = 3;
-                                        break;
-                                    case "IV":
-                                        level = 4;
-                                        break;
-                                    case "V":
-                                        level = 5;
-                                        break;
-                                    default:
-                                        level = 0;
-                                }
-
-                                spellEntryData[3].split(",").forEach((s) => {
-                                    let spellName = s.trim().replace(/\n/, " ");
-                                    let spellData = {
-                                        type: "spell",
-                                        name: spellName,
-                                        data: {}
-                                    };
-
-                                    spellData.data.skill = skill;
-                                    spellData.data.skillLevel = level;
-                                    spells.push(spellData);
-                                })
-                            });
-
-                            spells = await Promise.all(spells.map(async (spellData) => {
-                                let searchString = spellData.name.match(/([^\[]+)(?:\[[\[]+\])?/)
-                                let cSpellData = await SplittermondCompendium.findItem("spell", searchString[1]);
-                                if (cSpellData) {
-                                    cSpellData = duplicate(cSpellData);
-                                    delete cSpellData._id;
-                                    cSpellData.data.skill = spellData.data.skill;
-                                    cSpellData.data.skillLevel = spellData.data.skillLevel;
-                                } else {
-                                    cSpellData = spellData;
-                                }
-                                return cSpellData;
-                            }));
-                        }
-
-
-
-                        let lootData = /Beute: ([^]*)\n(Anmerkung:|Kampfweise:)?/g.exec(importData);
-                        let equipment = [];
-                        if (lootData) {
-                            lootData[1].match(/[^(,]+\([^)]+\)/g).forEach(lootEntryStr => {
-                                lootEntryStr = lootEntryStr.replace(/\n/, " ");
-                                let lootEntryData = lootEntryStr.match(/([^(,]+)\(([^)]+)\)/);
-                                let costs = 0;
-                                let description = lootEntryData[2];
-                                if (lootEntryData[2]) {
-                                    lootEntryStr.match(/([0-9]+) (L?|T?|S?)(.*)/);
-                                    costs = lootEntryStr[1] + " " + lootEntryStr[2];
-                                }
-                                equipment.push({
-                                    type: "equipment",
-                                    name: lootEntryData[1].trim(),
-                                    data: {
-                                        description: description,
-                                        costs: costs
-                                    }
-                                })
-                            });
-                        }
-
-
-
-
-                        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: name, type: game.i18n.localize(`ACTOR.TypeNpc`) }));
-
-                        return Actor.create({
-                            name: name,
-                            type: "npc",
-                            data: {
-                                biography: description,
-                                type: type,
-                                level: level,
-                                attributes: attributes,
-                                damageReduction: {
-                                    value: SR
-                                },
-                                derivedAttributes: {
-                                    "size": {
-                                        "value": GK
-                                    },
-                                    "speed": {
-                                        "value": GSW
-                                    },
-                                    "initiative": {
-                                        "value": INI
-                                    },
-                                    "healthpoints": {
-                                        "value": LP
-                                    },
-                                    "focuspoints": {
-                                        "value": FO
-                                    },
-                                    "defense": {
-                                        "value": VTD
-                                    },
-                                    "bodyresist": {
-                                        "value": KW
-                                    },
-                                    "mindresist": {
-                                        "value": GW
-                                    }
-                                },
-                                skills: skillObj
-                            },
-                            items: [...masteries, ...features, ...equipment, ...spells, ...weapons],
                         });
-                    }
-                },
-            },
-            default: "ok"
-        });
-        d.render(true);
+
+                        actorData.items.push(...await Promise.all(masteries.map(async data => {
+                            let searchString = data.name.match(/([^(,\[]+)(?:\([^)]+?\)|\[[^\]]+?\])?/);
+                            let masteryData = await SplittermondCompendium.findItem("mastery", searchString[1].trim());
+                            if (masteryData) {
+                                masteryData = masteryData.toObject();
+                                delete masteryData._id;
+                                masteryData.data.skill = data.data.skill;
+                                masteryData.data.level = data.data.level;
+                                return masteryData
+                            } 
+                            return data;
+                        })));
+                        break;
+                    case /Merkmale:/.test(tokenizedData[i]):
+                        let features = [];
+                        tokenizedData[i+1].replace(/\n/g,"").match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach((f) => {
+                            if (f.trim()) {
+                                features.push({
+                                    name: f.trim(),
+                                    type: "npcfeature",
+                                    data: {}
+                                });
+                            }
+                        });
+                        actorData.items.push(...await Promise.all(features.map(async data => {
+                            let searchString = data.name.match(/([^(,0-9]+)(?:\s*[0-9]+)?(?:\s*\([^)]+?\))?/);
+                            if (searchString[1].split(" ").length > 2) {
+                                searchString[1] = searchString[1].split(" ")[0];
+                            }
+                            let featureData = await SplittermondCompendium.findItem("npcfeature", searchString[1].trim());
+                            if (featureData) {
+                                featureData = featureData.toObject();
+                                delete featureData._id;
+                                featureData.name = data.name;
+                                return featureData
+                            } 
+                            return data;
+                        })));
+                        break;
+                    case /Typus:/.test(tokenizedData[i]):
+                        actorData.data.type = tokenizedData[i+1].trim();
+                        break;
+                    case /Monstergrad:/.test(tokenizedData[i]):
+                        actorData.data.level = tokenizedData[i+1].trim();
+                        break;
+                    case /Zauber:/.test(tokenizedData[i]):
+                        let spells = [];
+                        let skill = "";
+                        let level = 0;
+                        tokenizedData[i+1].replace(/\n/g,"").split(/;|,/)?.forEach(skillEntryStr => {
+                            let spellEntryData = skillEntryStr.trim().match(/(:?([^ ]{3,})?\s*([0IV]+):)?\s*([^]+)/)
+                            if (spellEntryData[2]) {
+                                let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[2].toLowerCase()));
+                                if (newSkill) {
+                                    skill = newSkill;
+                                }
+                            }
+                            
+                            switch (spellEntryData[3]) {
+                                case "0":
+                                    level = 0;
+                                    break;
+                                case "I":
+                                    level = 1;
+                                    break;
+                                case "II":
+                                    level = 2;
+                                    break;
+                                case "III":
+                                    level = 3;
+                                    break;
+                                case "IV":
+                                    level = 4;
+                                    break;
+                                case "V":
+                                    level = 5;
+                                    break;
+                            }
+
+                            spellEntryData[4].split(",").forEach((s) => {
+                                let spellName = s.trim().replace(/\n/g, " ");
+                                spells.push({
+                                    type: "spell",
+                                    name: spellName,
+                                    data: {
+                                        skill: skill,
+                                        skillLevel: level
+                                    }
+                                });
+                            })
+                        });
+                        actorData.items.push(...await Promise.all(spells.map(async data => {
+                            let searchString = data.name.match(/([^\[]+)(?:\[[\[]+\])?/)
+                            let spellData = await SplittermondCompendium.findItem("spell", searchString[1]);
+                            if (spellData) {
+                                spellData = spellData.toObject();
+                                delete spellData._id;
+                                spellData.name = data.name;
+                                spellData.data.skill = data.data.skill;
+                                spellData.data.skillLevel = data.data.level;
+                                return spellData
+                            } 
+                            return data;
+                        })));
+                        break;
+                    case /Beute:/.test(tokenizedData[i]):
+                        tokenizedData[i+1].match(/[^(,]+\([^)]+\)/g)?.forEach?.(lootEntryStr => {
+                            lootEntryStr = lootEntryStr.replace(/\n/, " ");
+                            let lootEntryData = lootEntryStr.match(/([^(,]+)\(([^)]+)\)/);
+                            let costs = 0;
+                            let description = lootEntryData[2];
+                            if (lootEntryData[2]) {
+                                lootEntryStr.match(/([0-9]+) (L?|T?|S?)(.*)/);
+                                costs = lootEntryStr[1] + " " + lootEntryStr[2];
+                            }
+                            actorData.items.push({
+                                type: "equipment",
+                                name: lootEntryData[1].trim(),
+                                data: {
+                                    description: description,
+                                    costs: costs
+                                }
+                            })
+                        });
+                    case /Besonderheiten:/.test(tokenizedData[i]):
+                        actorData.data.biography += `<h2>Besonderheiten</h2>`;
+                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        break;
+                    case /Kampfweise:/.test(tokenizedData[i]):
+                        actorData.data.biography += `<h2>Kampfweise</h2>`;
+                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        break;
+                    case /Anmerkung:/.test(tokenizedData[i]):
+                        actorData.data.biography += `<h2>Anmerkung</h2>`;
+                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        break;
+                }
+            } catch (e) {
+                ui.notifications.error(game.i18n.format("splittermond.error.parseError",{section: tokenizedData[i]}));
+                console.log(game.i18n.format("splittermond.error.parseError",{section: tokenizedData[i]}) + tokenizedData[i+1]);
+            }
+
+
+        }
+
+        Actor.create(actorData, {renderSheet: true})
+
     }
 }

@@ -17,13 +17,19 @@
                 <div class="features">{{localize
                     "splittermond.features"}}
                 </div>
+                <div class="list-actions">
+                    <button class="button-inline" type="button" data-action="add-item" data-item-type="npcattack">
+                        <i class="fa fa-plus-square" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
             <ol class="list-body">
                 {{#each attacks}}
-                <li class="list-item draggable" data-attack-id="{{this._id}}">
+                <li class="list-item draggable" data-attack-id="{{this.id}}">
                     <img width="32" height="32" src="{{{this.img}}}">
                     <label>
-                        <a class="rollable">{{localize this.name}} {{#if this.isDamaged}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}</a>
+                        <a class="rollable">{{localize this.name}} {{#if this.isDamaged}} ({{localize
+                            "splittermond.damageLevels.tarnished"}}){{/if}}</a>
                     </label>
                     <div class="value">
                         {{#if this.skill.editable}}
@@ -32,7 +38,6 @@
                         {{else}}
                         {{this.skill.value}}
                         {{/if}}
-
                     </div>
                     <div class="damage">
                         <a class="rollable" data-roll-type="damage" data-damage="{{this.damage}}"
@@ -46,6 +51,18 @@
                         </a>
                     </div>
                     <div class="features" title="{{this.features}}">{{this.features}}</div>
+                    <div class="list-actions" data-item-id="{{this.item.id}}">
+                        {{#if this.editable}}
+                        <button class="button-inline" type="button" data-action="edit-item">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                        </button>
+                        {{/if}}
+                        {{#if this.deletable}}
+                        <button class="button-inline" type="button" data-action="delete-item">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                        {{/if}}
+                    </div>
                 </li>
                 {{/each}}
             </ol>
@@ -62,7 +79,7 @@
             </div>
             <ol class="list-body" data-defense-type="defense">
                 {{#each activeDefense.defense}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -80,7 +97,7 @@
             </div>
             <ol class="list-body" data-defense-type="mindresist">
                 {{#each activeDefense.mindresist}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}
@@ -97,7 +114,7 @@
             </div>
             <ol class="list-body" data-defense-type="bodyresist">
                 {{#each activeDefense.bodyresist}}
-                <li class="list-item" data-defense-id="{{this._id}}">
+                <li class="list-item" data-defense-id="{{this.id}}">
                     {{#if this.img}}
                     <img width="32" height="32" src="{{{this.img}}}">
                     {{/if}}

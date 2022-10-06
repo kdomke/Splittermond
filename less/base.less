@@ -67,7 +67,7 @@ img {
     }
 }
 
-.window-app:not(.sidebar-popout):not(.dark) {
+.window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) {
     color: var(--color-text-secondary);
     background: var(--background-parchment);
 
@@ -108,7 +108,7 @@ img {
     }
 }
 
-.window-app:extend(.border-paper) {
+.window-app:not(.journal-entry):extend(.border-paper) {
     
 
     .window-header {
@@ -129,7 +129,21 @@ img {
     
 }
 
-.window-app.sheet.splittermond:not(.dark) .window-content {
+.sheet.journal-entry .journal-entry-content:extend(.border-paper) {
+    border-radius: 0;
+    color: var(--color-text-secondary);
+    background: var(--background-parchment);
+}
+
+
+.sheet.journal-entry .journal-entry-pages:extend(.border-double-corner-1) {
+    margin: 5px;
+    margin-top: 0px;
+    .scrollable {
+        padding: 8px;
+    }
+}
+.window-app.sheet.splittermond:not(.dark):not(.journal-entry) .window-content {
     background: var(--background-parchment-splittermond), var(--background-parchment);
     background-position: top right;
     background-blend-mode: var(--background-parchment-splittermond-blend-mode);
@@ -220,7 +234,7 @@ img {
     }
 }
 
-.tabs:not(#sidebar-tabs):extend(.tabs-style all) {};
+.tabs:not(#sidebar-tabs):not(.sidebar .tabs):extend(.tabs-style all) {};
 
 #sidebar-tabs {
     border-bottom-color: var(--color-primary);
@@ -565,5 +579,38 @@ a.rollable, a.request-skill-check, a.add-tick, a.entity-link, a.inline-roll, a.p
     }
     section.content {
         border: none;
+    }
+}
+
+.system-splittermond .filepicker {
+    .current-dir button {
+        .button-style();
+        .border-wobbly-line();
+    }
+}
+
+.system-splittermond .prosemirror {
+    menu {
+        background: transparent;
+
+        .pm-dropdown, button {
+            .button-style();
+            .border-wobbly-line();
+        }
+        button {
+            &.active {
+                box-shadow: inset 0 0px 20px rgba(0,0,0,0.8);
+                text-shadow:  0 0 3px rgb(0,0,0), 0px -1px 0px rgb(0, 0,0,0.3), 0px 1px 0px rgb(255,255,255,0.3);
+            }
+        }
+
+        .pm-dropdown {
+            ul {
+                color: var(--color-text-secondary);
+                li {
+                    text-shadow: none;
+                }
+            }
+        }
     }
 }

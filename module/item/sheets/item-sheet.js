@@ -8,8 +8,7 @@ export default class SplittermondItemSheet extends ItemSheet {
         });
     }
 
-    constructor(item, options)
-    {
+    constructor(item, options) {
         options = options || {};
 
         var displayProperties = CONFIG.splittermond.displayOptions.itemSheet[item.type] || CONFIG.splittermond.displayOptions.itemSheet["default"];
@@ -31,9 +30,7 @@ export default class SplittermondItemSheet extends ItemSheet {
         let sheetProperties = duplicate(CONFIG.splittermond.itemSheetProperties[item.type] || []);
         sheetProperties.forEach(grp => {
             grp.properties.forEach(prop => {
-                prop.value = prop.field.split('.').reduce(function (prev, curr) {
-                    return prev ? prev[curr] : null
-                }, item);
+                prop.value = foundry.utils.getProperty(item, prop.field);
                 if (prop.help) {
                     prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help));
                 }
@@ -57,13 +54,13 @@ export default class SplittermondItemSheet extends ItemSheet {
         html.find('[data-action="inc-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value+1).change();
+            $(html).find(query).val(value + 1).change();
         });
 
         html.find('[data-action="dec-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value-1).change();
+            $(html).find(query).val(value - 1).change();
         });
 
 

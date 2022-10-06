@@ -1,14 +1,27 @@
 export default class SplittermondItem extends Item {
 
-    prepareData() {
-        super.prepareData();
+    constructor(data, context = {}) {
+        if (context?.splittermond?.ready) {
+            super(data, context);
+        } else {
+            mergeObject(context, { splittermond: { ready: true } });
+            const ItemConstructor = CONFIG.splittermond.Item.documentClasses[data.type];
+            return ItemConstructor ? new ItemConstructor(data, context) : new SplittermondItem(data, context);
+        }
+    }
 
-        const itemData = this.data;
-        const data = itemData.data;
+
+    prepareBaseData() {
+        console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        super.prepareBaseData();
+
+        const data = this.system;
+
+
 
         if (data.id) {
             if (!data.description) {
-                const descriptionId = `${itemData.type}.${data.id}.desc`;
+                const descriptionId = `${this.type}.${data.id}.desc`;
                 const descriptionText = game.i18n.localize(descriptionId);
                 if (descriptionId !== descriptionText) {
                     data.description = descriptionText;
@@ -19,15 +32,15 @@ export default class SplittermondItem extends Item {
                 data.modifier = CONFIG.splittermond.modifier[data.id];
             }
 
-            if (itemData.type === "spell") {
-                const enhancementDescriptionId = `${itemData.type}.${data.id}.enhan`;
+            if (this.type === "spell") {
+                const enhancementDescriptionId = `${this.type}.${data.id}.enhan`;
                 const enhancementDescriptionText = game.i18n.localize(enhancementDescriptionId);
                 if (enhancementDescriptionText !== enhancementDescriptionId) {
                     data.enhancementDescription = enhancementDescriptionText;
                 }
             }
 
-            if (itemData.type === "strength") {
+            if (this.type === "strength") {
                 if (data.level === false || data.level === true) {
                     data.multiSelectable = data.level;
                     data.level = 1;
@@ -38,33 +51,45 @@ export default class SplittermondItem extends Item {
             }
         }
 
-        if (["strength", "mastery"].includes(itemData.type)) {
+        if (["strength", "mastery"].includes(this.type)) {
             if (!data.modifier) {
-                if (CONFIG.splittermond.modifier[itemData.name.toLowerCase()]) {
-                    data.modifier = CONFIG.splittermond.modifier[itemData.name.toLowerCase()];
+                if (CONFIG.splittermond.modifier[this.name.toLowerCase()]) {
+                    data.modifier = CONFIG.splittermond.modifier[this.name.toLowerCase()];
                 }
             }
         }
 
-        if (["weapon", "shield", "armor","equipment"].includes(itemData.type)) {
-            data.durability = parseInt(data.weight) + parseInt(data.hardness);
-            data.sufferedDamage = parseInt(data.sufferedDamage) || 0;
+    }
 
-            if (data.durability == 0) {
-                if (data.sufferedDamage > 0) {
-                    data.damageLevel = 3;
-                } else {
-                    data.damageLevel = 0;
+    prepareActorData() {
+        const data = this.system;
+        switch (this.type) {
+            case "weapon":
+            case "shield":
+            case "armor":
+                if (!data.equipped) {
+                    break;
                 }
-            } else {
-                data.damageLevel = Math.max(Math.min(Math.floor((parseInt(data.sufferedDamage)-1)/data.durability), 3),0);
-                if (data.sufferedDamage === 3*data.durability) {
-                    data.damageLevel = 3;
+            case "equipment":
+                this.actor.addModifier(this, this.name, data.modifier, "equipment");
+                break;
+            case "strength":
+                this.actor.addModifier(this, this.name, data.modifier, "strength", data.quantity)
+                break;
+            case "statuseffect":
+                this.actor.addModifier(this, this.name, data.modifier, "statuseffect", data.level);
+                break;
+            case "spelleffect":
+                if (data.active) {
+                    this.actor.addModifier(this, this.name, data.modifier, "magic");
                 }
-            }
+                break
+            default:
+                if (data.modifier) {
+                    this.actor.addModifier(this, this.name, data.modifier);
+                }
 
-            data.damageLevelText = CONFIG.splittermond.damageLevel[data.damageLevel];
-                
+                break;
         }
 
     }

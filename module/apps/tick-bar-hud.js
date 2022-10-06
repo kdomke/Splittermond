@@ -20,8 +20,8 @@ export default class TickBarHud extends Application {
     }
 
     get combats() {
-        const currentScene = game.scenes.current?.id || null;
-        return game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+        const currentScene = game.scenes.current || null;
+        return game.combats.filter(c => (c.scene === null) || (c.scene === currentScene));
     }
 
     _onDragStart(event) {
@@ -133,22 +133,31 @@ export default class TickBarHud extends Application {
         }
 
         const combats = this.combats;
-        let temp = combats.length ? combats.find(c => c.data.active) || combats[0] : null;
+        let temp = combats.length ? combats.find(c => c.isActive) || combats[0] : null;
         if (temp != this.viewed) {
+            this.viewedTick = null;
+        }
+
+        if (this.viewedTick != this.viewedTick) {
             this.viewedTick = null;
         }
         
         this.viewed = temp;
-        if (this.viewed) {
+        if (this.viewed && this.viewed.started) {
             const combat = this.viewed;
+            let wasOnCurrentTick = this.currentTick == this.viewedTick;
 
             this.currentTick = Math.round(combat.turns[combat.turn]?.initiative);
 
-            this.viewedTick = this.viewedTick || this.currentTick;
+            if (this.currentTick != this.currentTick) {
+                this.currentTick = null;
+            }
 
-            if (this.viewedTick < this.currentTick) {
+            this.viewedTick = this.viewedTick ?? this.currentTick;
+
+            if (this.viewedTick < this.currentTick || wasOnCurrentTick) {
                 this.viewedTick = this.currentTick
-            } 
+            }
 
             var virtualTokens = combat.combatants.contents.map(e => {
                 return {
@@ -158,8 +167,7 @@ export default class TickBarHud extends Application {
             });
 
             var iniData = combat.turns
-                .map(e => e.data)
-                .filter(e => e.initiative != null)
+                .filter(e => (e.initiative != null & !e.isDefeated))
                 .map(e => Math.round(e.initiative))
                 .filter(e => e < 9999);
             var maxStatusEffectTick = Math.max(...virtualTokens.map(e => {
@@ -183,41 +191,36 @@ export default class TickBarHud extends Application {
 
             for ( let [i, c] of combat.turns.entries() ) {
 
+                
+
                 if (c.initiative == null) continue;
 
                 if ( c.initiative > 9999) {
+
+                    let combatantData = {
+                        id: c.id,
+                        name: c.name,
+                        img: c.img,
+                        active: false,
+                        owner: c.isOwner,
+                        defeated: c.isDefeated,
+                        hidden: c.hidden,
+                        initiative: c.initiative,
+                        hasRolled: c.initiative !== null
+                    };
+                    
                     if (c.initiative === 10000) {
-                        data.wait.push({
-                            id: c.id,
-                            name: c.name,
-                            img: c.img,
-                            active: false,
-                            owner: c.isOwner,
-                            defeated: c.data.defeated,
-                            hidden: c.hidden,
-                            initiative: c.initiative,
-                            hasRolled: c.initiative !== null
-                        });
+                        data.wait.push(combatantData);
                     }
 
                     if (c.initiative === 20000) {
-                        data.keepReady.push({
-                            id: c.id,
-                            name: c.name,
-                            img: c.img,
-                            active: false,
-                            owner: c.isOwner,
-                            defeated: c.data.defeated,
-                            hidden: c.hidden,
-                            initiative: c.initiative,
-                            hasRolled: c.initiative !== null
-                        });
+                        data.keepReady.push(combatantData);
                     }
                     
                     continue;
                 };
 
-                if ( !c.isVisible) continue;  
+                if ( !c.visible || c.isDefeated) continue;  
                 
                 data.ticks.find(t => t.tickNumber == Math.round(c.initiative)).combatants.push({
                     id: c.id,
@@ -225,7 +228,7 @@ export default class TickBarHud extends Application {
                     img: c.img,
                     active: i === combat.turn,
                     owner: c.isOwner,
-                    defeated: c.data.defeated,
+                    defeated: c.isDefeated,
                     hidden: c.hidden,
                     initiative: c.initiative,
                     hasRolled: c.initiative !== null

@@ -1,32 +1,66 @@
 export default class SplittermondCombat extends Combat {
+
+    constructor(data, context) {
+        super(data, context);
+
+        this.current.tick = this.current.tick === null ? null : this.current.tick;
+        this.previous.tick = this.current.tick === null ? null : this.previous.tick;
+
+      }
+
     _sortCombatants(a, b) {
-        b.actor.data.data.attributes.intuition.value
         let iniA = parseFloat(a.initiative);
         let iniB = parseFloat(b.initiative);
 
+        // if equal initiative => compare intuition
         if (iniA === iniB) {
-            iniA = -a.actor.data.data.attributes.intuition.value;
-            iniB = -b.actor.data.data.attributes.intuition.value;
+            iniA = -a.actor.system.attributes.intuition.value;
+            iniB = -b.actor.system.attributes.intuition.value;
         }
 
+        // if equal intuition => player character first!
+        if (iniA === iniB) {
+            iniA = a.actor.type == "character" ? iniA - 1 : iniA;
+            iniB = b.actor.type == "character" ? iniB - 1 : iniB;
+        }
+
+        // if equal intuition => else random
         if (iniA === iniB) {
             iniA = Math.random();
             iniB = Math.random();
+            console.log("SplittermondCombat._sortCombatants: random INI!");
         }
 
-        return (iniA + (a.data.defeated ? 1000 : 0)) - (iniB + (b.data.defeated ? 1000 : 0));
+        return (iniA + (a.isDefeated ? 1000 : 0)) - (iniB + (b.isDefeated ? 1000 : 0));
 
     }
-
+/*
     async startCombat() {
         await this.setupTurns();
-        await this.setFlag("splittermond", "tickHistory", []);
+        await this.setFlag("splittermond", "tickHistory", [{
+            round: 1,
+            turns: this.turns.map(c => {
+                return {
+                    _id: c.id,
+                    initiative: c.initiative,
+                    defeated: c.defeated
+                }
+            })
+        }]);
 
-        this.current.round = this.combatants[0].initiative;
+        await this.setFlag("splittermond", "tickHistoryPointer", 0);
 
-        return this.nextRound();
+        return super.startCombat();
+    }
+*/
+    async resetAll() {
+        await super.resetAll();
+
+        return this.update({round: 0});
     }
 
+
+/*
     setupTurns() {
             const turns = this.combatants.contents.sort(this._sortCombatants)
 
@@ -35,14 +69,12 @@ export default class SplittermondCombat extends Combat {
                 round: this.round,
                 turn: 0,
                 combatantId: c ? c.id : null,
-                tokenId: c ? c.data.tokenId : null
+                tokenId: c ? c.token.id : null,
+                tick: this.currentTick
             };
             return this.turns = turns;
-            
-
-
     }
-
+*/
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
             let p = new Promise((resolve, reject) => {
@@ -72,6 +104,10 @@ export default class SplittermondCombat extends Combat {
         return this.setInitiative(combatant.id, newInitiative);
     }
 
+    async previousTurn() {
+        return this.previousRound();
+    }
+
     async setInitiative(id, value, first = false) {
         value = Math.round(value);
         if (value < 10000) {
@@ -94,43 +130,60 @@ export default class SplittermondCombat extends Combat {
         await this.combatants.get(id).update({
             initiative: value
         });
-        await this.nextRound();
-    }
-
-    get turn() {
-        return 0;
+        if (this.started) {
+            await this.nextRound();
+        }
+        
     }
 
     get combatant() {
         return this.turns[0];
     }
 
-    get round() {
-        //return this.data.round;
-        return Math.round(this.combatants.reduce((acc, c) => Math.min(c.initiative, acc), 99999));
+    get currentTick() {
+        if (this.turns) {
+            return Math.round(parseFloat(this.turns[0]?.initiative));
+        } else {
+            return null;
+        }
+            
     }
 
-    get started() {
-        return (this.turns.length > 0);
-    }
-
-    async startCombat() {
-        return this.nextRound();
-    }
 
     async nextRound() {
         //await super.nextRound();
-        return this.update({ round: 0, turn: 0 });
+        if (!this.started) return;
+
+        let nextRound = this.round + 1;
+        const updateData = { round: nextRound, turn: 0 };
+        this.setupTurns();
+        const updateOptions = {direction: 1 };
+        Hooks.callAll("combatRound", this, updateData, updateOptions);
+        return this.update(updateData);
     }
+
+    async previousRound() {
+        if (!this.started) return;
+        return;
+    }
+
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
-        //if (updateTurn) {
-        //    return super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
-        //} else {
+        let tick = this.currentTick;
         await super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
-        return this.nextRound();
-        //}
 
-
+        if (this.started) {
+            for ( let [i, id] of ids.entries() ) {
+                let combatant = this.combatants.get(id);
+                await this.setInitiative(combatant.id, Math.max(combatant.initiative + tick, tick));
+            }
+            return this.nextRound();
+        }
     }
+
+    _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
+        this.setupTurns();//otherwise the next player is not marked correctly
+        super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); 
+    }
+  
 }

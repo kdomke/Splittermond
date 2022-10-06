@@ -10,7 +10,7 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },
             { navSelector: ".subnav[data-group='fight-action-type']", contentSelector: "section div.tab-list", initial: "attack" }],
             scrollY: [, ".tab[data-tab='general']", ".list.skills", ".list.masteries", ".tab[data-tab='spells']", ".tab[data-tab='inventory']", ".tab[data-tab='status']"],
-            overlays: ["#health","#focus"],
+            overlays: ["#health", "#focus"],
             width: 750
         });
     }
@@ -57,12 +57,12 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             const input = event.currentTarget;
             const value = parseInt(input.value);
             const attrBaseName = input.name.split('.')[2];
-            const speciesValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.species`));
+            const speciesValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.species`));
             this.actor.update({
                 [`data.attributes.${attrBaseName}.initial`]: value - speciesValue
             });
         });
-        
+
         super.activateListeners(html);
     }
 
@@ -72,8 +72,8 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[2];
-        const initialValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.initial`));
-        const speciesValue = parseInt(getProperty(this.actor.data, `data.attributes.${attrBaseName}.species`));
+        const initialValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.initial`));
+        const speciesValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.species`));
         this.actor.update({
             [`data.attributes.${attrBaseName}.advances`]: value - initialValue - speciesValue
         });

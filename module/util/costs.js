@@ -1,18 +1,20 @@
-export function calcSpellCostReduction(reductions, costData) {
+export function calcSpellCostReduction(reductions, costData, enhancementCosts = false) {
     if (reductions?.length == 0) return costData;
+
+    let maxValue = enhancementCosts ? 0 : 1;
 
     var costs = parseCostsString(costData);
     reductions.forEach(reduction => {
         if (reduction.channeled > 0 && costs.channeled > 0) {
-            costs.channeled = Math.max(1, costs.channeled - reduction.channeled);
+            costs.channeled = Math.max(maxValue, costs.channeled - reduction.channeled);
         }
 
         if (reduction.consumed > 0 && costs.consumed > 0) {
-            costs.consumed = Math.max(1, costs.consumed - reduction.consumed);
+            costs.consumed = Math.max(maxValue, costs.consumed - reduction.consumed);
         }
 
         if (reduction.exhausted > 0 && costs.exhausted > 0) {
-            costs.exhausted = Math.max(1, costs.exhausted - reduction.exhausted);
+            costs.exhausted = Math.max(maxValue, costs.exhausted - reduction.exhausted);
         }
     });
 
