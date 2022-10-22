@@ -1,3 +1,12 @@
+## 0.9.7 ##
+2022-10-22
+
+* added: Das Löschen von Items vom Charakterbogen muss explizit bestätigt werden. (Issue #113)
+* fixed: Wurf auf Zauberpatzertabelle nicht möglich. (Issue #134)
+* fixed: Modifikator "GSW.mult" wird nach dem Löschen nicht zurückgesetzt. (Issue #133)
+* fixed: In der Chatnachricht für Angriffe auf Fernkampfwaffen wird die WGS als Tickanzahl verwendet anstatt 3 Ticks. (Issue #131)
+* fixed: Im NSC-Bogen kann kein 0-Attribut eingegeben werden. (Issue #128)
+
 ## 0.9.6 ##
 2022-09-22
 
