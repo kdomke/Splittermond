@@ -58,7 +58,7 @@ export default class SplittermondActor extends Actor {
             bodyresist: []
         }
 
-        data.lowerFumbleResult = 0;
+        this.system.lowerFumbleResult = 0;
 
         if (!data.health) {
             data.health = {
@@ -153,15 +153,22 @@ export default class SplittermondActor extends Actor {
     }
 
     prepareEmbeddedDocuments() {
+        [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.disableCaching());
+        Object.values(this.derivedValues).forEach(v => {
+            v.multiplier = 1;
+        });
         super.prepareEmbeddedDocuments();
         this.items.forEach(item => item.prepareActorData());
     }
 
     prepareDerivedData() {
         console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
+        
         super.prepareDerivedData();
+        
         this.spells = (this.items.filter(i => i.type === "spell") || []);
         this.spells.sort((a, b) => (a.sort - b.sort));
+        
         this._prepareModifier();
 
         this._prepareHealthFocus();
@@ -1020,7 +1027,7 @@ export default class SplittermondActor extends Actor {
     async rollMagicFumble(eg = 0, costs = 0) {
 
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = parseInt(systemData.lowerFumbleResult) || 0;
+        let lowerFumbleResult = parseInt(this.system.lowerFumbleResult) || 0;
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }
