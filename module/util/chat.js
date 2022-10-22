@@ -51,7 +51,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
         case "attack":
             templateContext.title = data.weapon.name;
             templateContext.img = data.weapon.img;
-            let ticks = ["longrange", "throwing"].includes(data.weapon.skillId) ? 3 : data.weapon.weaponSpeed;
+            let ticks = ["longrange", "throwing"].includes(data.weapon.skill.id) ? 3 : data.weapon.weaponSpeed;
             if (data.succeeded) {
                 templateContext.actions.push({
                     name: `${game.i18n.localize("splittermond.activeDefense")} (${game.i18n.localize("splittermond.derivedAttribute.defense.short")})`,
