@@ -157,8 +157,35 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         html.find('[data-action="delete-item"]').click(async event => {
             const itemId = $(event.currentTarget).closestData('item-id');
-            await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
-            await Hooks.call("redraw-combat-tick");
+            let p = new Promise((resolve, reject) => {
+                let dialog = new Dialog({
+                    title: game.i18n.localize("splittermond.deleteItem"),
+                    content: "<p>" + game.i18n.format("splittermond.deleteItemQuestion", {itemName: this.actor.items.get(itemId).name}) + "</p>",
+                    buttons: {
+                        delete: {
+                            label: game.i18n.localize("splittermond.delete"),
+                            callback: html => {
+                                
+                                resolve(true);
+                            }
+                        },
+                        cancel: {
+                            label: game.i18n.localize("splittermond.cancel"),
+                            callback: html => {
+                                resolve(false);
+                            }
+                        }
+                    }
+                });
+                dialog.render(true);
+            });
+
+            if (await p) {
+                await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+                await Hooks.call("redraw-combat-tick");
+            }
+           
+            
         });
 
         html.find('[data-action="edit-item"]').click(event => {

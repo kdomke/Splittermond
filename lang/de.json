@@ -191,6 +191,8 @@
             "nearmiss": "+ [[1d6]] Punkte Betäubungsschaden",
             "outstanding": "Die Aktion dauert nur 2 Tick."
         },
+        "deleteItemQuestion": "Soll \"{itemName}\" wirklich gelöscht werden?",
+        "deleteItem": "Item löschen",
         "fumbleTableLabel": "Patzertabelle",
         "shield": "Schild",
         "shields": "Schilde",
