@@ -35,7 +35,10 @@ export default class Attribute {
 
     get value() {
         if (this._cache.enabled && this._cache.value !== null) return this._cache.value;
-        let val = parseInt(this.actor.system.attributes[this.id].value) || (this.start + parseInt(this.actor.system.attributes[this.id].advances || 0));
+        let val = this.start + parseInt(this.actor.system.attributes[this.id].advances || 0);
+        if (this.actor.type=="npc") {
+            val = parseInt(this.actor.system.attributes[this.id].value ?? val);
+        }
         if (this._cache.enabled && this._cache.value === null) this._cache.value = val;
         return val;
     }
