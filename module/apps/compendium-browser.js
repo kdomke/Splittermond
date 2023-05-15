@@ -56,12 +56,12 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         if (this.allItems.spell) {
             this.allItems.spell.forEach(i => {
-                let availableIn = i.data.availableIn;
+                let availableIn = i.system.availableIn;
                 CONFIG.splittermond.skillGroups.magic.forEach(i => {
                     availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
                 });
-                i.data.availableIn = availableIn;
-                i.data.availableInArray = availableIn.split(",").map(i => {
+                i.system.availableIn = availableIn;
+                i.system.availableInArray = availableIn.split(",").map(i => {
                     let data = i.trim().split(" ");
                     return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1];
                 });
@@ -70,12 +70,12 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         if (this.allItems.mastery) {
             this.allItems.mastery.forEach(i => {
-                let availableIn = i.data.availableIn;
+                let availableIn = i.system.availableIn;
                 [...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
                     availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
                 });
-                i.data.availableIn = availableIn;
-                i.data.availableInArray = availableIn.split(",").map(i => {
+                i.system.availableIn = availableIn;
+                i.system.availableInArray = availableIn.split(",").map(i => {
                     let data = i.trim().split(" ");
                     return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`);
                 });
@@ -84,7 +84,7 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         if (this.allItems.weapon) {
             this.allItems.weapon.forEach(i => {
-                i.data.skillLabel = game.i18n.localize(`splittermond.skillLabel.${i.data.skill}`);
+                i.system.skillLabel = game.i18n.localize(`splittermond.skillLabel.${i.system.skill}`);
             });
         }
 

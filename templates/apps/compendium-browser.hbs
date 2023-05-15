@@ -35,12 +35,12 @@
                 <ol class="list-body">
                     {{#each items.spell}}
                     <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
-                        data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
-                        data-skill-level="this.data.skillLevel">
+                        data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
+                        data-skill-level="this.system.skillLevel">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist">
-                                    {{#each this.data.availableInArray}}
+                                    {{#each this.system.availableInArray}}
                                     <li class="taglist-item">
                                         <div class="taglist-item-name">{{this}}</div></li>
                                     {{/each}}
@@ -81,12 +81,12 @@
                 <ol class="list-body">
                     {{#each items.mastery}}
                     <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
-                        data-available-in="{{this.data.availableIn}}" data-skill="{{this.data.skill}}"
-                        data-level="{{this.data.level}}">
+                        data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
+                        data-level="{{this.system.level}}">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist">
-                                    {{#each this.data.availableInArray}}
+                                    {{#each this.system.availableInArray}}
                                     <li class="taglist-item">
                                         <div class="taglist-item-name">{{this}}</div></li>
                                     {{/each}}
@@ -94,7 +94,7 @@
                             </div>
                         </div>
                         <div class="level">
-                            {{localize "splittermond.masteryItem.level"}}&nbsp;{{this.data.level}}
+                            {{localize "splittermond.masteryItem.level"}}&nbsp;{{this.system.level}}
                         </div>
                         <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
                                 class="id">{{this.compendiumPackage}}</span></span></div>
@@ -119,19 +119,19 @@
                 <ol class="list-body">
                     {{#each items.weapon}}
                     <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
-                        data-skill="{{this.data.skill}}" data-secondary-skill="{{this.data.secondaryAttack.skill}}"
-                        data-features="{{this.data.features}}" data-damage="{{this.data.damage}}"
-                        data-secondary-damage="{{this.data.secondaryAttack.damage}}"
-                        data-secondary-features="{{this.data.secondaryAttack.features}}">
+                        data-skill="{{this.system.skill}}" data-secondary-skill="{{this.system.secondaryAttack.skill}}"
+                        data-features="{{this.system.features}}" data-damage="{{this.system.damage}}"
+                        data-secondary-damage="{{this.system.secondaryAttack.damage}}"
+                        data-secondary-features="{{this.system.secondaryAttack.features}}">
                         <div>
                             <label>{{this.name}}</label>
-                            <div class="features">{{this.data.features}}</div>
+                            <div class="features">{{this.system.features}}</div>
                         </div>
                         <div class="skill">
-                            {{this.data.skillLabel}}
+                            {{this.system.skillLabel}}
                         </div>
                         <div class="damage">
-                            {{this.data.damage}}
+                            {{this.system.damage}}
                         </div>
                         <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
                                 class="id">{{this.compendiumPackage}}</span></span></div>
