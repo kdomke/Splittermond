@@ -34,8 +34,8 @@ export default class SplittermondCompendiumBrowser extends Application {
                 if (!this.allItems[itemData.type]) {
                     this.allItems[itemData.type] = [];
                 }
-                itemData.compendiumPackage = item.compendium.metadata.package;
-                itemData.compendiumId = item.compendium.metadata.package + "." + item.compendium.metadata.name;
+                itemData.compendiumPackage = item.compendium.metadata.packageName;
+                itemData.compendiumId = item.compendium.metadata.id;
                 itemData.compendiumLabel = item.compendium.metadata.label;
                 this.allItems[itemData.type].push(itemData);
             })

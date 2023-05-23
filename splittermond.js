@@ -3,6 +3,10 @@ import SplittermondItem from "./module/item/item.js";
 import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
 import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
 import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
+import SplittermondSpellSheet from "./module/item/sheets/spell-sheet.js";
+import SplittermondWeaponSheet from "./module/item/sheets/weapon-sheet.js";
+import SplittermondShieldSheet from "./module/item/sheets/shield-sheet.js";
+import SplittermondArmorSheet from "./module/item/sheets/shield-sheet.js";
 import ApplyDamageDialog from "./module/apps/dialog/apply-damage-dialog.js";
 import { splittermond } from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
@@ -100,6 +104,27 @@ Hooks.once("init", function () {
     Items.registerSheet("splittermond", SplittermondItemSheet, {
         makeDefault: true
     });
+    Items.registerSheet("splittermond", SplittermondSpellSheet, {
+        types: ["spell"],
+        makeDefault: true,
+        label: "splittermond.spell"
+    });
+    Items.registerSheet("splittermond", SplittermondWeaponSheet, {
+        types: ["weapon", "npcattack"],
+        makeDefault: true,
+        label: "splittermond.weapon"
+    });
+    Items.registerSheet("splittermond", SplittermondShieldSheet, {
+        types: ["shield"],
+        makeDefault: true,
+        label: "splittermond.shield"
+    });
+    Items.registerSheet("splittermond", SplittermondArmorSheet, {
+        types: ["armor"],
+        makeDefault: true,
+        label: "splittermond.armor"
+    });
+
 
     const templateBasePath = "systems/splittermond/templates"
 
