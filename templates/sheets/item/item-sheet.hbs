@@ -3,13 +3,22 @@
         <div class="item-image">
             <img src="{{item.img}}" data-edit="img" title="{{item.name}}" height="92" width="92" />
         </div>
-        <div>
+        <div style="flex-grow: 1">
             <div class="item-type">
                 {{ localize typeLabel }}
             </div>
             <input class="item-name" name="name" type="text" value="{{item.name}}" placeholder="{{localize 'splittermond.name' }}" />
         </div>
+        
     </header>
+    <div class="item-sheet-stat-block">
+        {{#each statBlock}}
+        <div class="item-sheet-stat-block-item">
+        <label>{{localize this.label}}</label>
+        <span>{{this.value}}</span>
+        </div>
+        {{/each}}
+    </div>
     <nav class="sheet-navigation" data-group="primary">
         <a class="sheet-navigation-item active" data-tab="description">{{ localize "splittermond.description" }}</a>
         <a class="sheet-navigation-item" data-tab="properties">{{ localize "splittermond.properties" }}</a>

@@ -1,3 +1,9 @@
+## 0.9.8 ##
+2023-05-23
+
+* added: kleiner Wertekasten unterhalb des Item-Namens im Itemsheet
+* fixed: Compendium-Browser ist wieder nutzbar
+
 ## 0.9.7 ##
 2022-10-22
 

@@ -6,11 +6,20 @@ import * as Costs from "../util/costs.js";
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
     get costs() {
-        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
+        if (this.actor) {
+            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
+        } else {
+            return this.system.costs;
+        }
+        
     }
 
     get enhancementCosts() {
-        return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
+        if (this.actor) {
+            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
+        } else {
+            return this.system.enhancementCosts;
+        }
     }
 
     get skill() {
@@ -20,7 +29,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     get enoughFocus() {
         let costData = Costs.parseCostsString(this.costs);
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
-        return costTotal <= this.actor.system.focus.available.value;
+        return costTotal <= this.actor?.system.focus.available.value;
     }
 
     get difficulty() {

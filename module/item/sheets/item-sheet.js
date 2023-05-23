@@ -21,6 +21,7 @@ export default class SplittermondItemSheet extends ItemSheet {
         const data = super.getData();
         data.data = data.data.data;
         data.itemProperties = this._getItemProperties(data.document.data);
+        data.statBlock = this._getStatBlock(data.document);
         data.typeLabel = "splittermond." + data.document.data.type;
 
         return data;
@@ -38,6 +39,10 @@ export default class SplittermondItemSheet extends ItemSheet {
         });
 
         return sheetProperties;
+    }
+
+    _getStatBlock(item) {
+        return [];
     }
 
     activateListeners(html) {
