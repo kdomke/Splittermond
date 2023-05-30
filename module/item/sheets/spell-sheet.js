@@ -20,7 +20,7 @@ export default class SplittermondSpellSheet extends SplittermondItemSheet {
         
         return [
             {
-                label: "splittermond.skill",
+                label: "splittermond.magicSkills",
                 value: item.skill?.label || availableIn
             },
             {

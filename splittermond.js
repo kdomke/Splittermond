@@ -6,7 +6,7 @@ import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
 import SplittermondSpellSheet from "./module/item/sheets/spell-sheet.js";
 import SplittermondWeaponSheet from "./module/item/sheets/weapon-sheet.js";
 import SplittermondShieldSheet from "./module/item/sheets/shield-sheet.js";
-import SplittermondArmorSheet from "./module/item/sheets/shield-sheet.js";
+import SplittermondArmorSheet from "./module/item/sheets/armor-sheet.js";
 import ApplyDamageDialog from "./module/apps/dialog/apply-damage-dialog.js";
 import { splittermond } from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
@@ -302,90 +302,95 @@ Hooks.on('preCreateActor', (actor) => {
 
 Hooks.on('init', function(){
     // Patch enrichHTML function for Custom Links
-    TextEditor._enrichHTML = TextEditor.enrichHTML;
-    TextEditor.enrichHTML = function (content, options = {}) {
-        content = TextEditor._enrichHTML(content, {...options, async: false});
 
-        content = content.replace(/@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
-            if (!label) {
-                label = options;
-            }
-            let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(options);
-            let skill = "";
-            let difficulty = 0;
-            if (parsedString) {
-                let skillLabel = parsedString[0].trim().toLowerCase();
-                if (parsedString[3]) {
-                    skillLabel = parsedString[1].trim().toLowerCase();
-                    difficulty = parseInt(parsedString[3]);
+    CONFIG.TextEditor.enrichers.push(
+        {
+            pattern: /@SkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g,
+            enricher: (match, options) => {
+                let skillCheckOptions = match[1];
+                let label = skillCheckOptions;
+                if (match.length > 2) {
+                    label = match[2];
                 }
-                skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
-            }
-            if (skill) {
-                return `<a class="rollable" data-roll-type="skill" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-dice"></i> ${label}</a>`
-            } else {
-                return match;
-            }
-            
-        });
-
-        content = content.replace(/@RequestSkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
-            if (!label) {
-                label = options;
-            }
-            let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(options);
-            let skill = "";
-            let difficulty = 0;
-            if (parsedString) {
-                let skillLabel = parsedString[0].trim().toLowerCase();
-                if (parsedString[3]) {
-                    skillLabel = parsedString[1].trim().toLowerCase();
-                    difficulty = parseInt(parsedString[3]);
+                let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(skillCheckOptions);
+                let skill = "";
+                let difficulty = 0;
+                if (parsedString) {
+                    let skillLabel = parsedString[0].trim().toLowerCase();
+                    if (parsedString[3]) {
+                        skillLabel = parsedString[1].trim().toLowerCase();
+                        difficulty = parseInt(parsedString[3]);
+                    }
+                    skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
                 }
-                skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
+                if (skill) {
+                    return `<a class="rollable" data-roll-type="skill" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-dice"></i> ${label}</a>`
+                } else {
+                    return match;
+                }
             }
-            if (skill) {
-                return `<a class="request-skill-check" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-comment"></i> ${label}</a>`
-            } else {
-                return match;
+        },
+        {
+            pattern:/@RequestSkillCheck\[([^\]]+)\](?:\{([^}]*)\})?/g,
+            enricher: (match, options) => {
+                let requestSkillCheckOptions = match[1];
+                let label = requestSkillCheckOptions;
+                if (match.length > 2) {
+                    label = match[2];
+                }
+                let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(requestSkillCheckOptions);
+                let skill = "";
+                let difficulty = 0;
+                if (parsedString) {
+                    let skillLabel = parsedString[0].trim().toLowerCase();
+                    if (parsedString[3]) {
+                        skillLabel = parsedString[1].trim().toLowerCase();
+                        difficulty = parseInt(parsedString[3]);
+                    }
+                    skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
+                }
+                if (skill) {
+                    return `<a class="request-skill-check" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-comment"></i> ${label}</a>`
+                } else {
+                    return match;
+                }
             }
-            
+        },
+        {
+            pattern:/@Ticks\[([^\]]+)\](?:\{([^}]*)\})?/g,
+            enricher: (match, options) => {
+                let parsedString = match[1].split(",");
+                let ticks = parsedString[0];
+                let label = ticks;
+                let message = "";
+
+                if (match.length > 2) {
+                    label = match[2];
+                }
+                
+                if (parsedString[1]) {
+                    message = parsedString[1];
+                }
+
+                return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
+            }
+        },
+        {
+            pattern:/@PdfLink\[([^\]]+)\](?:\{([^}]*)\})?/g,
+            enricher: (match, options) => {
+                let parsedString = match[1].split(",");
+                let pdfcode = parsedString[0];
+                let pdfpage = parsedString[1];
+                let label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
+                
+                if (match.length > 2) {
+                    label = match[2];
+                }
+    
+                return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-file-pdf"></i> ${label}</a>`;
+            }
         });
 
-        content = content.replace(/@Ticks\[([^\]]+)\](?:\{([^}]*)\})?/g, (match, options, label) => {
-            
-            let parsedString = options.split(",");
-            let ticks = parsedString[0];
-            let message = "";
-
-            if (!label) {
-                label = ticks;
-            }
-            
-            if (parsedString[1]) {
-                message = parsedString[1];
-            }
-
-            return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
-        });
-
-        content = content.replace(/@PdfLink\[([^\]]+)\](?:\{([^}]*)\})?/g, ( match, options, label) => {
-            
-            let parsedString = options.split(",");
-            let pdfcode = parsedString[0];
-            let pdfpage = parsedString[1];
-            
-            if (!label) {
-                label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
-            }
-
-            return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-file-pdf"></i> ${label}</a>`;
-
-
-        });
-
-        return content;
-    };
 })
 
 function commonEventHandler(app, html, data) {

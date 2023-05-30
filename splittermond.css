@@ -2859,22 +2859,26 @@ ul.checkbox-list li input:checked ~ label::before {
   padding: 7px;
 }
 .splittermond .item-sheet-stat-block {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1em;
-  padding-top: 0.25em;
-  padding-bottom: 1em;
+  column-count: auto;
+  column-gap: 1em;
+  column-width: 13em;
+  margin-bottom: 1em;
+  margin-top: 1em;
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  break-inside: avoid-column;
+  margin-bottom: 1em;
+  color: var(--color-text-primary);
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item label {
-  font-weight: bold;
+  color: var(--color-tertiary);
   text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+  font-family: "Signika";
 }
 .system-splittermond .splittermond .row {
   display: flex;

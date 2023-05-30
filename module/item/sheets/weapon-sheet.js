@@ -3,7 +3,7 @@ import SplittermondItemSheet from "./item-sheet.js";
 export default class SplittermondWeaponSheet extends SplittermondItemSheet {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["splittermond", "sheet", "item", "spell"]
+            classes: ["splittermond", "sheet", "item", "weapon"]
         });
     }
 

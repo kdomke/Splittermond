@@ -11,21 +11,23 @@
         </div>
         
     </header>
-    <div class="item-sheet-stat-block">
-        {{#each statBlock}}
-        <div class="item-sheet-stat-block-item">
-        <label>{{localize this.label}}</label>
-        <span>{{this.value}}</span>
-        </div>
-        {{/each}}
-    </div>
     <nav class="sheet-navigation" data-group="primary">
         <a class="sheet-navigation-item active" data-tab="description">{{ localize "splittermond.description" }}</a>
         <a class="sheet-navigation-item" data-tab="properties">{{ localize "splittermond.properties" }}</a>
     </nav>
     <main>
         <section class="tab" data-group="primary" data-tab="description">
+            <div class="column">
+                <div class="item-sheet-stat-block">
+                    {{#each statBlock}}
+                    <div class="item-sheet-stat-block-item">
+                    <label>{{localize this.label}}</label>
+                    <span>{{this.value}}</span>
+                    </div>
+                    {{/each}}
+                </div>
             {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
+            </div>
         </section>
         <section class="tab" data-group="primary" data-tab="properties">
             {{#*inline "readonlyLocalize"}}
