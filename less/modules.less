@@ -45,6 +45,7 @@
         column-width: 12em;
         margin-bottom: 1em;
         margin-top: 1em;
+        column-fill: balance-all;
 
         .item-sheet-stat-block-item {
             display: flex;
@@ -56,13 +57,21 @@
                 color: var(--color-tertiary);
                 text-transform: uppercase;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: @fontSizeSmall;
             }
 
             > * {
                 text-align: center;
             }
             
+        }
+    }
+
+    &.dialog.selection {
+        .window-content {
+            .dialog-buttons {
+                flex-direction: column;
+            }
         }
     }
 }

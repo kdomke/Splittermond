@@ -17,12 +17,14 @@ export default class SplittermondItemSheet extends ItemSheet {
         super(item, options);
     }
 
-    getData() {
+    async getData() {
         const data = super.getData();
         data.data = data.data.data;
         data.itemProperties = this._getItemProperties(data.document.data);
         data.statBlock = this._getStatBlock(data.document);
         data.typeLabel = "splittermond." + data.document.data.type;
+
+        data.description = await TextEditor.enrichHTML(data.document.data.system.description, {async: true});
 
         return data;
     }

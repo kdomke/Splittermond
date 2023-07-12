@@ -2864,6 +2864,7 @@ ul.checkbox-list li input:checked ~ label::before {
   column-width: 12em;
   margin-bottom: 1em;
   margin-top: 1em;
+  column-fill: balance-all;
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item {
   display: flex;
@@ -2880,6 +2881,9 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item > * {
   text-align: center;
+}
+.splittermond.dialog.selection .window-content .dialog-buttons {
+  flex-direction: column;
 }
 .system-splittermond .splittermond .row {
   display: flex;

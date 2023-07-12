@@ -432,11 +432,6 @@ function commonEventHandler(app, html, data) {
         handlePdf(pdfcodelink);
     });
 
-}
-
-Hooks.on('renderJournalSheet',  function (app, html, data) {
-    commonEventHandler(app, html, data);
-
     html.find(".add-tick").click(event => {
         event.preventDefault();
         event.stopPropagation()
@@ -444,7 +439,7 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
         let message = $(event.currentTarget).closestData("message");
         let chatMessageId = $(event.currentTarget).closestData("message-id");
         
-        const speaker = ChatMessage.getSpeaker();
+        const speaker = game.messages.get(chatMessageId).data.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
@@ -454,8 +449,18 @@ Hooks.on('renderJournalSheet',  function (app, html, data) {
         };
         
         actor.addTicks(value, message);
-    })
+    });
 
+}
+
+Hooks.on('renderApplication',  function (app, html, data) {
+    commonEventHandler(app, html, data);
+
+
+});
+
+Hooks.on('renderItemSheet',  function (app, html, data) {
+    commonEventHandler(app, html, data);
 });
 
 Hooks.on('renderChatMessage', function (app, html, data) {
@@ -507,22 +512,6 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         const value = $(event.currentTarget).closestData('value');
         const description = $(event.currentTarget).closestData('description');
         actor.consumeCost(type, value, description);
-    });
-    
-
-    html.find(".add-tick").click(event => {
-        event.preventDefault();
-        event.stopPropagation()
-        let value = $(event.currentTarget).closestData("ticks");
-        let message = $(event.currentTarget).closestData("message");
-        let chatMessageId = $(event.currentTarget).closestData("message-id");
-        
-        const speaker = game.messages.get(chatMessageId).data.speaker;
-        let actor;
-        if (speaker.token) actor = game.actors.tokens[speaker.token];
-        if (!actor) actor = game.actors.get(speaker.actor);
-        
-        actor.addTicks(value, message);
     });
 
     html.find(".apply-damage").click(event => {
