@@ -309,7 +309,7 @@ Hooks.on('init', function(){
             enricher: (match, options) => {
                 let skillCheckOptions = match[1];
                 let label = skillCheckOptions;
-                if (match.length > 2) {
+                if (match.length > 2 && match[2]) {
                     label = match[2];
                 }
                 let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(skillCheckOptions);
@@ -324,7 +324,7 @@ Hooks.on('init', function(){
                     skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
                 }
                 if (skill) {
-                    return `<a class="rollable" data-roll-type="skill" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-dice"></i> ${label}</a>`
+                    return $(`<a class="rollable" data-roll-type="skill" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-dice"></i> ${label}</a>`)[0]
                 } else {
                     return match;
                 }
@@ -335,7 +335,7 @@ Hooks.on('init', function(){
             enricher: (match, options) => {
                 let requestSkillCheckOptions = match[1];
                 let label = requestSkillCheckOptions;
-                if (match.length > 2) {
+                if (match.length > 2 && match[2]) {
                     label = match[2];
                 }
                 let parsedString = /(.+)\s*(>|gegen|gg\.)\s*([0-9]*)|(.+)/.exec(requestSkillCheckOptions);
@@ -350,7 +350,7 @@ Hooks.on('init', function(){
                     skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].find((skill) => skill === skillLabel || game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase() === skillLabel);
                 }
                 if (skill) {
-                    return `<a class="request-skill-check" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-comment"></i> ${label}</a>`
+                    return $(`<a class="request-skill-check" data-skill="${skill}" data-difficulty="${difficulty}"><i class="fas fa-comment"></i> ${label}</a>`)[0]
                 } else {
                     return match;
                 }
@@ -364,7 +364,7 @@ Hooks.on('init', function(){
                 let label = ticks;
                 let message = "";
 
-                if (match.length > 2) {
+                if (match.length > 2 && match[2]) {
                     label = match[2];
                 }
                 
@@ -372,7 +372,7 @@ Hooks.on('init', function(){
                     message = parsedString[1];
                 }
 
-                return `<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`
+                return $(`<a class="add-tick" data-ticks="${ticks}" data-message="${message}"><i class="fas fa-stopwatch"></i> ${label}</a>`)[0]
             }
         },
         {
@@ -383,11 +383,11 @@ Hooks.on('init', function(){
                 let pdfpage = parsedString[1];
                 let label = `${pdfcode} ` + game.i18n.localize(`splittermond.pdfoundry.page`) + ` ${pdfpage}`;
                 
-                if (match.length > 2) {
+                if (match.length > 2 && match[2]) {
                     label = match[2];
                 }
     
-                return `<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-file-pdf"></i> ${label}</a>`;
+                return $(`<a class="pdflink" data-pdfcode="${pdfcode}" data-pdfpage="${pdfpage}"><i class="fas fa-file-pdf"></i> ${label}</a>`)[0];
             }
         });
 
