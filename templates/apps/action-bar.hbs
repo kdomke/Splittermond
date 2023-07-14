@@ -47,7 +47,7 @@
                         <label>{{localize "splittermond.castDurationAbbrev"}}</label>
                         <div>{{this.castDuration}}</div>
                     </div>
-                    {{#if this.data.damage}}
+                    {{#if this.system.damage}}
                     <div class="item-stat">
                         <label>{{localize "splittermond.damage"}}</label>
                         <div>{{this.damage}}</div>
@@ -141,7 +141,7 @@
             <div class="token-action-bar-popup">
                 <ul>
                     {{#each weapons}}
-                    <li class="toggle-equipped {{#if this.data.equipped}}equipped{{/if}}" data-item-id="{{this._id}}"><img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" /><label>{{this.name}}</label></li>
+                    <li class="toggle-equipped {{#if this.system.equipped}}equipped{{/if}}" data-item-id="{{this._id}}"><img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" /><label>{{this.name}}</label></li>
                     {{/each}}
                 </ul>
             </div>

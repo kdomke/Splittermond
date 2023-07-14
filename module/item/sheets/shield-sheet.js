@@ -7,7 +7,7 @@ export default class SplittermondShieldSheet extends SplittermondItemSheet {
         });
     }
 
-    _getStatBlock(item) {
+    _getStatBlock() {
 
 
         
@@ -15,23 +15,19 @@ export default class SplittermondShieldSheet extends SplittermondItemSheet {
 
             {
                 label: "splittermond.defenseBonus",
-                value: item.system.defenseBonus
+                value: this.item.system.defenseBonus
             },
             {
                 label: "splittermond.tickMalus",
-                value: item.system.tickMalus
+                value: this.item.system.tickMalus
             },
             {
                 label: "splittermond.handicap",
-                value: item.system.handicap
-            },
-            {
-                label: "splittermond.features",
-                value: item.system.features || "-"
+                value: this.item.system.handicap
             },
             {
                 label: "splittermond.minAttributes",
-                value: item.system.minAttributes || "-"
+                value: this.item.system.minAttributes || "-"
             }
         ];
             

@@ -12,7 +12,7 @@ export default class SplittermondItem extends Item {
 
 
     prepareBaseData() {
-        console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
         super.prepareBaseData();
 
         const data = this.system;

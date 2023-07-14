@@ -19,23 +19,22 @@ export default class SplittermondItemSheet extends ItemSheet {
 
     async getData() {
         const data = super.getData();
-        data.data = data.data.data;
-        data.itemProperties = this._getItemProperties(data.document.data);
-        data.statBlock = this._getStatBlock(data.document);
-        data.typeLabel = "splittermond." + data.document.data.type;
+        data.itemProperties = this._getItemProperties();
+        data.statBlock = this._getStatBlock();
+        data.typeLabel = "splittermond." + data.data.type;
 
-        data.description = await TextEditor.enrichHTML(data.document.data.system.description, {async: true});
+        data.description = await TextEditor.enrichHTML(data.data.system.description, {async: true});
 
         return data;
     }
 
-    _getItemProperties(item) {
-        let sheetProperties = duplicate(CONFIG.splittermond.itemSheetProperties[item.type] || []);
+    _getItemProperties() {
+        let sheetProperties = duplicate(CONFIG.splittermond.itemSheetProperties[this.item.type] || []);
         sheetProperties.forEach(grp => {
             grp.properties.forEach(prop => {
-                prop.value = foundry.utils.getProperty(item, prop.field);
+                prop.value = foundry.utils.getProperty(this.item, prop.field);
                 if (prop.help) {
-                    prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help));
+                    prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help), {async: false});
                 }
             });
         });
@@ -43,7 +42,7 @@ export default class SplittermondItemSheet extends ItemSheet {
         return sheetProperties;
     }
 
-    _getStatBlock(item) {
+    _getStatBlock() {
         return [];
     }
 

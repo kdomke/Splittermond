@@ -60,11 +60,6 @@ Hooks.once("ready", function () {
 
 Hooks.once("init", function () {
     console.log("Splittermond | Initialising Splittermond System ...");
-    if (CONFIG.compatibility) {
-        CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
-        CONFIG.compatibility.excludePatterns.push(new RegExp("Splittermond"));
-    }
-
 
     CONFIG.Actor.documentClass = SplittermondActor;
     CONFIG.Item.documentClass = SplittermondItem;
@@ -165,39 +160,8 @@ Hooks.once("init", function () {
             reservedModifiers: [ "ALT", "SHIFT" ]
         });
     }
-    */
+    */  
 
-    if (game.release.generation < 10) {
-        for (const documentName of [...CONST.DOCUMENT_TYPES, "Token"]) {
-            Object.defineProperty(CONFIG[documentName].documentClass.prototype, "flags", {
-                get() {
-                    return this.data.flags;
-                },
-                enumerable: true,
-            });
-        }
-    
-        for (const Document of [Actor, Item]) {
-            Object.defineProperty(Document.prototype, "system", {
-                get() {
-                    return this.data.data;
-                },
-                enumerable: true,
-            });
-        }
-
-        Object.defineProperty(Item.prototype, "sort", {
-            get() {
-                return this.data.sort;
-            },
-            enumerable: true,
-        });
-
-    }
-
-    
-
-    
 
 
     console.log("Splittermond | DONE!");

@@ -10,34 +10,34 @@
                     placeholder="{{localize 'splittermond.name' }}" />
                 <div class="experience">
                     <div class="bar">
-                        <div style="width: {{data.experience.percentage}}%"></div>
+                        <div style="width: {{data.system.experience.percentage}}%"></div>
                     </div>
                     <div class="experience-label">
-                        {{localize "splittermond.heroLevel"}} {{data.experience.heroLevel}} -
-                        {{data.experience.heroLevelName}}
+                        {{localize "splittermond.heroLevel"}} {{data.system.experience.heroLevel}} -
+                        {{data.system.experience.heroLevelName}}
                     </div>
                     <div class="experience-value">
-                        <input class="autoexpand" name="data.experience.free" type="text"
-                            value="{{data.experience.free}}" placeholder="{{localize 'splittermond.xpFree'}}" /> -
-                        <input class="autoexpand" name="data.experience.spent" type="text"
-                            value="{{data.experience.spent}}" placeholder="{{localize 'splittermond.xpSpent'}}" /> -
-                        {{data.experience.nextLevelValue}}
+                        <input class="autoexpand" name="system.experience.free" type="text"
+                            value="{{data.system.experience.free}}" placeholder="{{localize 'splittermond.xpFree'}}" /> -
+                        <input class="autoexpand" name="system.experience.spent" type="text"
+                            value="{{data.system.experience.spent}}" placeholder="{{localize 'splittermond.xpSpent'}}" /> -
+                        {{data.system.experience.nextLevelValue}}
                     </div>
                 </div>
                 <div>
-                    <input class="autoexpand" name="data.species.value" type="text" value="{{data.species.value}}"
+                    <input class="autoexpand" name="system.species.value" type="text" value="{{data.system.species.value}}"
                         placeholder="{{localize 'splittermond.species'}}" />
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.sex" type="text" value="{{data.sex}}"
+                    <input class="autoexpand" name="system.sex" type="text" value="{{data.system.sex}}"
                         placeholder="{{localize 'splittermond.sex'}}" />
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.culture" type="text" value="{{data.culture}}"
+                    <input class="autoexpand" name="system.culture" type="text" value="{{data.system.culture}}"
                         placeholder="{{localize 'splittermond.culture'}}" />
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.ancestry" type="text" value="{{data.ancestry}}"
+                    <input class="autoexpand" name="system.ancestry" type="text" value="{{data.system.ancestry}}"
                         placeholder="{{localize 'splittermond.ancestry'}}" />
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.education" type="text" value="{{data.education}}"
+                    <input class="autoexpand" name="system.education" type="text" value="{{data.system.education}}"
                         placeholder="{{localize 'splittermond.education'}}" />
                 </div>
 
@@ -46,14 +46,14 @@
 
                 <div class="moonsign-splinterpoints" title="{{localize 'splittermond.splinterpoints'}}">
                     <button class="button-inline" type="button" data-action="dec-value"
-                        data-input-query="input[name='data.splinterpoints.value']">
+                        data-input-query="input[name='system.splinterpoints.value']">
                         <i class="fa fa-minus" aria-hidden="true"></i>
                     </button>
-                    <input type="text" name="data.splinterpoints.value" value="{{data.splinterpoints.value}}"
+                    <input type="text" name="system.splinterpoints.value" value="{{data.system.splinterpoints.value}}"
                         data-dtype="Number">
-                    <span> / {{data.splinterpoints.max}}</span>
+                    <span> / {{data.system.splinterpoints.max}}</span>
                     <button class="button-inline" type="button" data-action="inc-value"
-                        data-input-query="input[name='data.splinterpoints.value']">
+                        data-input-query="input[name='system.splinterpoints.value']">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -71,8 +71,8 @@
         </section>
         {{#unless limited}}
         <section class="column">
-            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
-            health=data.health hasRestActions=true}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.system.focus
+            health=data.system.health hasRestActions=true}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
             derivedAttributes=actor.derivedValues damageReduction=actor.damageReduction editable=false}}
         </section>
@@ -90,7 +90,7 @@
     </nav>
     <main>
         <section class="tab" data-group="primary" data-tab="biography">
-            {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
+            {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="general">
             <div class="list list-attributes">
@@ -103,15 +103,15 @@
                 <ul class="list-body">
                     {{#each actor.attributes as |attribute attributeId|}}
                     <li class="list-item attribute">
-                        <label for="data.attributes.{{attributeId}}.value"
+                        <label for="system.attributes.{{attributeId}}.value"
                             title="{{localize attribute.label.long}}">{{localize
                             attribute.label.long}}</label>
                         <div class="start">
-                            <input name="data.attributes.{{attributeId}}.start" type="text" value="{{attribute.start}}"
+                            <input name="system.attributes.{{attributeId}}.start" type="text" value="{{attribute.start}}"
                                 data-dtype="Number">
                         </div>
                         <div class="value">
-                            <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
+                            <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}"
                                 data-dtype="Number">
                         </div>
                         <div class="max">{{attribute.max}}</div>
@@ -133,7 +133,7 @@
                     <li class="list-item" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}
                             {{#if this.multiple}}
-                            (x{{this.data.quantity}})
+                            (x{{this.system.quantity}})
                             {{/if}}
                         </div>
                         <div class="list-actions">
@@ -187,7 +187,7 @@
                     {{#each itemsByType.resource}}
                     <li class="list-item" data-item-id="{{this._id}}">
                         <div><input class="name" type="text" data-field="name" value="{{this.name}}"></div>
-                        <div class="value"><input type="text" data-field="data.value" value="{{this.data.value}}"
+                        <div class="value"><input type="text" data-field="system.value" value="{{this.system.value}}"
                                 data-dtype="Number"></div>
                         <div class="list-actions">
                             <button class="button-inline" data-action="edit-item" type="button"><i class="fa fa-edit"
@@ -276,7 +276,7 @@
                             </a>
                         </label>
                         <div class="points">
-                            <input class="spinner spinner-horizontal" name="data.skills.{{skillId}}.points" type="text"
+                            <input class="spinner spinner-horizontal" name="system.skills.{{skillId}}.points" type="text"
                                 value="{{skill.points}}">
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label.short}}</div>
@@ -304,7 +304,7 @@
                             {{localize skill.label}}
                         </label>
                         <div class="points">
-                            <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                            <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
                     </li>
                     {{/each}}
@@ -328,7 +328,7 @@
                             <a class="rollable">{{localize skill.label}}</a>
                         </label>
                         <div class="points">
-                            <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                            <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
                         <div class="attribute">{{localize skill.attribute1.label.short}}</div>
                         <div class="attribute">{{localize skill.attribute2.label.short}}</div>
@@ -344,7 +344,7 @@
         <section class="tab" data-group="primary" data-tab="spells">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
-                channeledSpells=data.focus.channeled.entries}}
+                channeledSpells=data.system.focus.channeled.entries}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="fight">
@@ -356,12 +356,12 @@
         <section class="tab" data-group="primary" data-tab="inventory">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType
-                currency=data.currency}}
+                currency=data.system.currency}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="status">
             {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
-            channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
+            channeledHealthEntries=data.system.health.channeled.entries statuseffects=itemsByType.statuseffect
             spelleffects=itemsByType.spelleffect
             hasRestActions=true}}
         </section>

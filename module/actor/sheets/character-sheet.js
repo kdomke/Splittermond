@@ -15,14 +15,14 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         });
     }
 
-    getData() {
-        const sheetData = super.getData();
+    async getData() {
+        const sheetData = await super.getData();
 
-        sheetData.data.experience.heroLevelName = game.i18n.localize(`splittermond.heroLevels.${sheetData.data.experience.heroLevel}`);
+        sheetData.data.system.experience.heroLevelName = game.i18n.localize(`splittermond.heroLevels.${sheetData.actor.system.experience.heroLevel}`);
 
         sheetData.items.forEach(i => {
             if (i.type === "strength") {
-                i.multiple = i.data.quantity > 1;
+                i.multiple = i.system.quantity > 1;
             }
         })
 
@@ -57,9 +57,9 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
             const input = event.currentTarget;
             const value = parseInt(input.value);
             const attrBaseName = input.name.split('.')[2];
-            const speciesValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.species`));
+            const speciesValue = parseInt(getProperty(this.actor.toObject(), `system.attributes.${attrBaseName}.species`));
             this.actor.update({
-                [`data.attributes.${attrBaseName}.initial`]: value - speciesValue
+                [`system.attributes.${attrBaseName}.initial`]: value - speciesValue
             });
         });
 
@@ -72,10 +72,10 @@ export default class SplittermondCharacterSheet extends SplittermondActorSheet {
         const input = event.currentTarget;
         const value = parseInt(input.value);
         const attrBaseName = input.name.split('.')[2];
-        const initialValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.initial`));
-        const speciesValue = parseInt(getProperty(this.actor.toObject(), `data.attributes.${attrBaseName}.species`));
+        const initialValue = parseInt(getProperty(this.actor.toObject(), `system.attributes.${attrBaseName}.initial`));
+        const speciesValue = parseInt(getProperty(this.actor.toObject(), `system.attributes.${attrBaseName}.species`));
         this.actor.update({
-            [`data.attributes.${attrBaseName}.advances`]: value - initialValue - speciesValue
+            [`system.attributes.${attrBaseName}.advances`]: value - initialValue - speciesValue
         });
     }
 

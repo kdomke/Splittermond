@@ -23,6 +23,10 @@ const AttackableItem = (superclass) => class extends superclass {
 
     }
 
+    get featuresList() {
+        return this.system.features?.split(",").map(str => str.trim());
+    }
+
 };
 
 export default AttackableItem

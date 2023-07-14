@@ -15,9 +15,9 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
     }
 
-    getData() {
+    async getData() {
         const sheetData = super.getData();
-        sheetData.data = sheetData.data.data;
+        //sheetData.data = sheetData.data.data;
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
@@ -43,20 +43,26 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         sheetData.fightingSkills = {};
         CONFIG.splittermond.skillGroups.fighting.filter(s => !sheetData.hideSkills
-            || (sheetData.data.skills[s]?.points || 0) > 0
+            || (sheetData.data.system.skills[s]?.points || 0) > 0
             || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
-                if (!sheetData.data.skills[skill]) {
-                    sheetData.data.skills[skill] = {
+                if (!sheetData.data.system.skills[skill]) {
+                    sheetData.data.system[skill] = {
                         points: 0
                     }
                 }
-                sheetData.fightingSkills[skill] = duplicate(sheetData.data.skills[skill]);
+                sheetData.fightingSkills[skill] = duplicate(sheetData.data.system.skills[skill]);
                 sheetData.fightingSkills[skill].label = `splittermond.skillLabel.${skill}`;
             });
+        
+        sheetData.data.system.biographyHTML = await TextEditor.enrichHTML(sheetData.data.system.biography, {
+            relativeTo: this.actor,
+            rolls: true,
+            links: true,
+            documents: true,
+            secrets: true,
+            async: true
+        });
 
-        sheetData.data.damageReduction = {
-            value: this.actor.damageReduction
-        }
         this._prepareItems(sheetData);
 
 
@@ -79,7 +85,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         if (sheetData.itemsByType.mastery) {
             sheetData.masteriesBySkill = sheetData.itemsByType.mastery.reduce((result, item) => {
-                let skill = item.data.skill || "none";
+                let skill = item.system.skill || "none";
                 if (!(skill in result)) {
                     result[skill] = {
                         label: `splittermond.skillLabel.${skill}`,
@@ -196,7 +202,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.actor.items.get(itemId);
-            item.update({ "data.equipped": !item.data.data.equipped });
+            item.update({ "data.equipped": !item.system.equipped });
         });
 
         html.find('[data-field]').change(event => {
@@ -392,7 +398,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
         }).attr('draggable', true);
 
-        html.find("[data-item-id], .list.skills [data-skill], .derived-attribute, .damage-reduction, .list.attack .value, .list.active-defense .value").hover(event => {
+        html.find("[data-item-id], .list.skills [data-skill], .derived-attribute, .damage-reduction, .list.attack .value, .list.active-defense .value").hover(async event => {
             const itemId = event.currentTarget.dataset.itemId;
             let content = "";
             let css = {
@@ -406,7 +412,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 if (!item) return;
 
                 if (item.system.description) {
-                    content = TextEditor.enrichHTML(item.system.description);
+                    content = await TextEditor.enrichHTML(item.system.description, { async: true });
                     if (!content.startsWith("<p>")) {
                         content = `<p>${content}</p>`;
                     }
@@ -537,8 +543,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     async _onDropItemCreate(itemData) {
         if (itemData.type === "spell") {
-            if (itemData.data.availableIn) {
-                let availableIn = itemData.data.availableIn.trim().toLowerCase();
+            if (itemData.system.availableIn) {
+                let availableIn = itemData.system.availableIn.trim().toLowerCase();
                 CONFIG.splittermond.skillGroups.magic.forEach(i => {
                     availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
                 });
@@ -586,8 +592,8 @@ export default class SplittermondActorSheet extends ActorSheet {
 
                 if (selectedSkill) {
                     let skillData = selectedSkill.split(" ");
-                    itemData.data.skill = skillData[0];
-                    itemData.data.skillLevel = skillData[1];
+                    itemData.system.skill = skillData[0];
+                    itemData.system.skillLevel = skillData[1];
                 }
 
                 if (!itemData.data.skill) {
@@ -597,12 +603,12 @@ export default class SplittermondActorSheet extends ActorSheet {
         }
 
         if (itemData.type === "mastery") {
-            if (itemData.data.availableIn) {
-                let availableIn = itemData.data.availableIn.trim().toLowerCase();
+            if (itemData.system.availableIn) {
+                let availableIn = itemData.system.availableIn.trim().toLowerCase();
                 [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
                     availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
                 });
-                let selectedSkill = itemData.data.skill;
+                let selectedSkill = itemData.system.skill;
                 if (availableIn.split(",").length > 1) {
                     let p = new Promise((resolve, reject) => {
                         let buttons = {};
@@ -611,7 +617,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                         availableIn.split(",").forEach(item => {
                             let data = item.trim().toLowerCase().split(" ");
                             if (data.length < 2) {
-                                data[1] = itemData.data.level;
+                                data[1] = itemData.system.level;
                             }
                             if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(data[0])) {
                                 buttons[data[0]] = {
@@ -651,11 +657,11 @@ export default class SplittermondActorSheet extends ActorSheet {
                 }
 
                 let skillData = selectedSkill.split(" ");
-                itemData.data.skill = skillData[0];
+                itemData.system.skill = skillData[0];
                 if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(skillData[0])) {
-                    itemData.data.skill = skillData[0];
+                    itemData.system.skill = skillData[0];
                     if (skillData.length > 1) {
-                        itemData.data.level = skillData[1];
+                        itemData.system.level = skillData[1];
                     }
                 } else {
                     return;
@@ -667,7 +673,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         var rerenderCombatTracker = false;
         if (itemData.type === "statuseffect") {
             const currentScene = game.scenes.current?.id || null;
-            let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
+            let combats = game.combats.filter(c => (c.scene === null) || (c.scene.id === currentScene));
             if (combats.length > 0) {
                 var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
                 if (activeCombat != null) {
@@ -675,12 +681,12 @@ export default class SplittermondActorSheet extends ActorSheet {
                     //check if this status is already present
                     var hasSameStatus = this.actor.items
                         .filter(e => {
-                            return e.data.type == "statuseffect" && e.name == itemData.name && e.data.data.startTick;
+                            return e.type == "statuseffect" && e.name == itemData.name && e.system.startTick;
                         })
                         .map(e => {
                             var ticks = [];
-                            for (let index = 0; index < parseInt(e.data.data.times); index++) {
-                                ticks.push(parseInt(e.data.data.startTick) + (index * parseInt(e.data.data.interval)));
+                            for (let index = 0; index < parseInt(e.system.times); index++) {
+                                ticks.push(parseInt(e.system.startTick) + (index * parseInt(e.system.interval)));
                             }
                             return {
                                 ticks: ticks.filter(f => f >= currentTick),
@@ -693,7 +699,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                         itemData.data.startTick = hasSameStatus[0].ticks[0];
                     }
                     else {
-                        itemData.data.startTick = parseInt(activeCombat.data.round) + parseInt(itemData.data.interval);
+                        itemData.system.startTick = parseInt(activeCombat.round) + parseInt(itemData.system.interval);
                     }
                     rerenderCombatTracker = true;
                 }

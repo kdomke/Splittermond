@@ -2859,19 +2859,19 @@ ul.checkbox-list li input:checked ~ label::before {
   padding: 7px;
 }
 .splittermond .item-sheet-stat-block {
-  column-count: auto;
-  column-gap: 1em;
-  column-width: 12em;
-  margin-bottom: 1em;
+  display: flex;
+  flex-direction: row;
   margin-top: 1em;
-  column-fill: balance-all;
+  gap: 1em;
+  justify-content: space-around;
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   break-inside: avoid-column;
   margin-bottom: 1em;
   color: var(--color-text-primary);
+  font-size: 18px;
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item label {
   color: var(--color-tertiary);
@@ -2884,6 +2884,27 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .splittermond.dialog.selection .window-content .dialog-buttons {
   flex-direction: column;
+}
+.splittermond ul.taglist-small {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 3px;
+  font-family: Signika;
+  font-size: 12px;
+}
+.splittermond ul.taglist-small li {
+  display: inline-block;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+.splittermond ul.taglist-small li.active {
+  background-color: var(--color-primary);
+  color: white;
 }
 .system-splittermond .splittermond .row {
   display: flex;

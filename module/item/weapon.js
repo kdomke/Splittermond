@@ -25,4 +25,5 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
 
         this.activeDefense.forEach(d => this.actor.activeDefense.defense.push(d));
     }
+    
 }

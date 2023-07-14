@@ -5,6 +5,7 @@ import SplittermondSpellItem from "./item/spell.js";
 import SplittermondArmorItem from "./item/armor.js";
 import SplittermondEquipmentItem from "./item/equipment.js";
 import SplittermondNPCAttackItem from "./item/npcattack.js";
+import SplittermondMastery from "./item/mastery.js";
 
 export const splittermond = {};
 
@@ -376,17 +377,17 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.size",
+                    field: "system.size",
                     label: "splittermond.derivedAttribute.size.long",
                     template: "input"
                 },
                 {
-                    field: "data.attributeMod",
+                    field: "system.attributeMod",
                     label: "splittermond.attributeModifiers",
                     template: "input"
                 },
                 {
-                    field: "data.strengths",
+                    field: "system.strengths",
                     label: "splittermond.strengths",
                     template: "input"
                 }
@@ -399,29 +400,29 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.availableIn",
+                    field: "system.availableIn",
                     label: "splittermond.availableIn",
                     template: "input"
                 },
                 {
-                    field: "data.skill",
+                    field: "system.skill",
                     label: "splittermond.skill",
                     template: "select",
                     choices: splittermond.masterySkillsOption
                 },
                 {
-                    field: "data.level",
+                    field: "system.level",
                     label: "splittermond.masteryItem.level",
                     template: "input"
                 },
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
                 },
                 {
-                    field: "data.isGrandmaster",
+                    field: "system.isGrandmaster",
                     label: "splittermond.grandmaster",
                     template: "bool",
                 }]
@@ -432,28 +433,28 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.quantity",
+                    field: "system.quantity",
                     label: "splittermond.quantity",
                     template: "input"
                 },
                 {
-                    field: "data.level",
+                    field: "system.level",
                     label: "splittermond.strengthItem.level",
                     template: "input"
                 },
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
                 },
                 {
-                    field: "data.multiSelectable",
+                    field: "system.multiSelectable",
                     label: "splittermond.multiSelectable",
                     template: "bool"
                 },
                 {
-                    field: "data.onCreationOnly",
+                    field: "system.onCreationOnly",
                     label: "splittermond.onCreationOnly",
                     template: "bool"
                 }
@@ -465,27 +466,27 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.level",
+                    field: "system.level",
                     label: "splittermond.level",
                     template: "input"
                 },
                 {
-                    field: "data.startTick",
+                    field: "system.startTick",
                     label: "splittermond.combatEffect.statusEffect.startTick",
                     template: "input"
                 },
                 {
-                    field: "data.interval",
+                    field: "system.interval",
                     label: "splittermond.combatEffect.statusEffect.interval",
                     template: "input"
                 },
                 {
-                    field: "data.times",
+                    field: "system.times",
                     label: "splittermond.combatEffect.statusEffect.times",
                     template: "input"
                 },
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
@@ -499,12 +500,12 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.active",
+                    field: "system.active",
                     label: "splittermond.active",
                     template: "bool"
                 },
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
@@ -518,59 +519,59 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.physicalProperties",
             properties: [
                 {
-                    field: "data.quantity",
+                    field: "system.quantity",
                     label: "splittermond.quantity",
                     template: "inputNumberWithSpinner"
                 },
                 {
-                    field: "data.price",
+                    field: "system.price",
                     label: "splittermond.price",
                     template: "input"
                 },
                 {
-                    field: "data.weight",
+                    field: "system.weight",
                     label: "splittermond.load",
                     template: "inputNumberWithSpinner"
                 },
                 {
-                    field: "data.hardness",
+                    field: "system.hardness",
                     label: "splittermond.hardness",
                     template: "inputNumberWithSpinner"
                 },
                 {
-                    field: "data.durability",
+                    field: "system.durability",
                     label: "splittermond.durability",
                     template: "readonly"
                 },
                 {
-                    field: "data.sufferedDamage",
+                    field: "system.sufferedDamage",
                     label: "splittermond.sufferedDamage",
                     template: "inputNumberWithSpinner"
                 },
                 {
-                    field: "data.damageLevelText",
+                    field: "system.damageLevelText",
                     label: "splittermond.damageLevel",
                     template: "readonlyLocalize"
                 },
                 {
-                    field: "data.complexity",
+                    field: "system.complexity",
                     label: "splittermond.complexity",
                     template: "select",
                     choices: splittermond.complexityOptions
                 },
                 {
-                    field: "data.availability",
+                    field: "system.availability",
                     label: "splittermond.availability",
                     template: "select",
                     choices: splittermond.availabilityOptions
                 },
                 {
-                    field: "data.quality",
+                    field: "system.quality",
                     label: "splittermond.quality",
                     template: "input"
                 },
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
@@ -583,7 +584,7 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "data.modifier",
+                    field: "system.modifier",
                     label: "splittermond.modifier",
                     template: "input",
                     help: "splittermond.modificatorHelpText"
@@ -599,51 +600,51 @@ splittermond.itemSheetProperties.weapon = [
         groupName: "splittermond.weaponProperties",
         properties: [
             {
-                field: "data.skill",
+                field: "system.skill",
                 label: "splittermond.fightingSkill",
                 template: "select",
                 choices: splittermond.fightingSkillOptions
             },
             {
-                field: "data.skillMod",
+                field: "system.skillMod",
                 label: "splittermond.skillMod",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.attribute1",
+                field: "system.attribute1",
                 label: "splittermond.attributes",
                 template: "select",
                 choices: splittermond.attributeOptions
             },
             {
-                field: "data.attribute2",
+                field: "system.attribute2",
                 label: "",
                 template: "select",
                 choices: splittermond.attributeOptions
             },
             {
-                field: "data.damage",
+                field: "system.damage",
                 label: "splittermond.damage",
                 template: "input"
             },
             {
-                field: "data.range",
+                field: "system.range",
                 label: "splittermond.range",
                 template: "input"
             },
             {
-                field: "data.weaponSpeed",
+                field: "system.weaponSpeed",
                 label: "splittermond.weaponSpeed",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.minAttributes",
+                field: "system.minAttributes",
                 label: "splittermond.minAttributes",
                 template: "input",
                 help: "splittermond.minAttributesHelpText"
             },
             {
-                field: "data.features",
+                field: "system.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -653,50 +654,50 @@ splittermond.itemSheetProperties.weapon = [
         groupName: "splittermond.secondaryWeaponProperties",
         properties: [
             {
-                field: "data.secondaryAttack.skill",
+                field: "system.secondaryAttack.skill",
                 label: "splittermond.fightingSkill",
                 template: "select",
                 choices: { none: "splittermond.skillLabel.none", ...splittermond.fightingSkillOptions }
             },
             {
-                field: "data.secondaryAttack.skillMod",
+                field: "system.secondaryAttack.skillMod",
                 label: "splittermond.skillMod",
                 template: "input"
             },
             {
-                field: "data.secondaryAttack.attribute1",
+                field: "system.secondaryAttack.attribute1",
                 label: "splittermond.attributes",
                 template: "select",
                 choices: splittermond.attributeOptions
             },
             {
-                field: "data.secondaryAttack.attribute2",
+                field: "system.secondaryAttack.attribute2",
                 label: "",
                 template: "select",
                 choices: splittermond.attributeOptions
             },
             {
-                field: "data.secondaryAttack.damage",
+                field: "system.secondaryAttack.damage",
                 label: "splittermond.damage",
                 template: "input"
             },
             {
-                field: "data.secondaryAttack.range",
+                field: "system.secondaryAttack.range",
                 label: "splittermond.range",
                 template: "input"
             },
             {
-                field: "data.secondaryAttack.weaponSpeed",
+                field: "system.secondaryAttack.weaponSpeed",
                 label: "splittermond.weaponSpeed",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.secondaryAttack.minAttributes",
+                field: "system.secondaryAttack.minAttributes",
                 label: "splittermond.minAttributes",
                 template: "input"
             },
             {
-                field: "data.secondaryAttack.features",
+                field: "system.secondaryAttack.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -710,32 +711,32 @@ splittermond.itemSheetProperties.armor = [
         groupName: "splittermond.armorProperties",
         properties: [
             {
-                field: "data.tickMalus",
+                field: "system.tickMalus",
                 label: "splittermond.tickMalus",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.defenseBonus",
+                field: "system.defenseBonus",
                 label: "splittermond.defenseBonus",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.handicap",
+                field: "system.handicap",
                 label: "splittermond.handicap",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.damageReduction",
+                field: "system.damageReduction",
                 label: "splittermond.damageReduction",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.minStr",
+                field: "system.minStr",
                 label: "splittermond.minStrength",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.features",
+                field: "system.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -749,34 +750,34 @@ splittermond.itemSheetProperties.shield = [
         groupName: "splittermond.shieldProperties",
         properties: [
             {
-                field: "data.skill",
+                field: "system.skill",
                 label: "splittermond.fightingSkill",
                 template: "select",
                 choices: splittermond.meleeFightingSkillOptions
             },
             {
-                field: "data.tickMalus",
+                field: "system.tickMalus",
                 label: "splittermond.tickMalus",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.defenseBonus",
+                field: "system.defenseBonus",
                 label: "splittermond.defenseBonus",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.handicap",
+                field: "system.handicap",
                 label: "splittermond.handicap",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.minAttributes",
+                field: "system.minAttributes",
                 label: "splittermond.minAttributes",
                 template: "input",
                 help: "splittermond.minAttributesHelpText"
             },
             {
-                field: "data.features",
+                field: "system.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -789,73 +790,73 @@ splittermond.itemSheetProperties.spell = [
         groupName: "splittermond.generalProperties",
         properties: [
             {
-                field: "data.availableIn",
+                field: "system.availableIn",
                 label: "splittermond.availableIn",
                 template: "input"
             },
             {
-                field: "data.skill",
+                field: "system.skill",
                 label: "splittermond.skill",
                 template: "select",
                 choices: splittermond.spellSkillsOption
             },
             {
-                field: "data.skillLevel",
+                field: "system.skillLevel",
                 label: "splittermond.spellLevel",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.spellType",
+                field: "system.spellType",
                 label: "splittermond.spellType",
                 template: "input"
             },
             {
-                field: "data.costs",
+                field: "system.costs",
                 label: "splittermond.focusCosts",
                 template: "input"
             },
             {
-                field: "data.difficulty",
+                field: "system.difficulty",
                 label: "splittermond.difficulty",
                 template: "input"
             },
             {
-                field: "data.damage",
+                field: "system.damage",
                 label: "splittermond.damage",
                 template: "input"
             },
             {
-                field: "data.range",
+                field: "system.range",
                 label: "splittermond.range",
                 template: "input"
             },
             {
-                field: "data.castDuration",
+                field: "system.castDuration",
                 label: "splittermond.castDuration",
                 template: "input"
             },
             {
-                field: "data.effectDuration",
+                field: "system.effectDuration",
                 label: "splittermond.effectDuration",
                 template: "input"
             },
             {
-                field: "data.effectArea",
+                field: "system.effectArea",
                 label: "splittermond.effectArea",
                 template: "input"
             },
             {
-                field: "data.enhancementCosts",
+                field: "system.enhancementCosts",
                 label: "splittermond.enhancementCosts",
                 template: "input"
             },
             {
-                field: "data.enhancementDescription",
+                field: "system.enhancementDescription",
                 label: "splittermond.enhancementDescription",
                 template: "input"
             },
             {
-                field: "data.features",
+                field: "system.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -865,42 +866,42 @@ splittermond.itemSheetProperties.spell = [
         groupName: "splittermond.degreeOfSuccessOptionsHeader",
         properties: [
             {
-                field: "data.degreeOfSuccessOptions.castDuration",
+                field: "system.degreeOfSuccessOptions.castDuration",
                 label: "splittermond.degreeOfSuccessOptions.castDuration",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.consumedFocus",
+                field: "system.degreeOfSuccessOptions.consumedFocus",
                 label: "splittermond.degreeOfSuccessOptions.consumedFocus",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.exhaustedFocus",
+                field: "system.degreeOfSuccessOptions.exhaustedFocus",
                 label: "splittermond.degreeOfSuccessOptions.exhaustedFocus",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.channelizedFocus",
+                field: "system.degreeOfSuccessOptions.channelizedFocus",
                 label: "splittermond.degreeOfSuccessOptions.channelizedFocus",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.effectDuration",
+                field: "system.degreeOfSuccessOptions.effectDuration",
                 label: "splittermond.degreeOfSuccessOptions.effectDuration",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.damage",
+                field: "system.degreeOfSuccessOptions.damage",
                 label: "splittermond.degreeOfSuccessOptions.damage",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.range",
+                field: "system.degreeOfSuccessOptions.range",
                 label: "splittermond.degreeOfSuccessOptions.range",
                 template: "bool"
             },
             {
-                field: "data.degreeOfSuccessOptions.effectArea",
+                field: "system.degreeOfSuccessOptions.effectArea",
                 label: "splittermond.degreeOfSuccessOptions.effectArea",
                 template: "bool"
             }
@@ -913,7 +914,7 @@ splittermond.itemSheetProperties.npcfeature = [
         groupName: "splittermond.generalProperties",
         properties: [
             {
-                field: "data.modifier",
+                field: "system.modifier",
                 label: "splittermond.modifier",
                 template: "input",
                 help: "splittermond.modificatorHelpText"
@@ -927,12 +928,12 @@ splittermond.itemSheetProperties.moonsign = [
         groupName: "splittermond.generalProperties",
         properties: [
             {
-                field: "data.enhancement",
+                field: "system.enhancement",
                 label: "splittermond.enhancementDescription",
                 template: "input"
             },
             {
-                field: "data.secretGift",
+                field: "system.secretGift",
                 label: "splittermond.secretGift",
                 template: "input"
             }
@@ -945,27 +946,27 @@ splittermond.itemSheetProperties.npcattack = [
         groupName: "splittermond.weaponProperties",
         properties: [
             {
-                field: "data.skillValue",
+                field: "system.skillValue",
                 label: "splittermond.skillValue",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.damage",
+                field: "system.damage",
                 label: "splittermond.damage",
                 template: "input"
             },
             {
-                field: "data.range",
+                field: "system.range",
                 label: "splittermond.range",
                 template: "input"
             },
             {
-                field: "data.weaponSpeed",
+                field: "system.weaponSpeed",
                 label: "splittermond.weaponSpeed",
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "data.features",
+                field: "system.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -1231,7 +1232,8 @@ splittermond.Item = {
         armor: SplittermondArmorItem,
         spell: SplittermondSpellItem,
         equipment: SplittermondEquipmentItem,
-        npcattack: SplittermondNPCAttackItem
+        npcattack: SplittermondNPCAttackItem,
+        mastery: SplittermondMastery
     }
 };
 

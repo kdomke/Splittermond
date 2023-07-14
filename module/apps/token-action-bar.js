@@ -64,7 +64,7 @@ export default class TokenActionBar extends Application {
         if (this.currentActor) {
             data.name = this.currentActor.isToken ? this.currentActor.token.name : this.currentActor.name;
             data.actorId = this.currentActor.id;
-            data.img = this.currentActor.isToken ? this.currentActor.token.data.img : this.currentActor.img;
+            data.img = this.currentActor.isToken ? this.currentActor.token.texture.src : this.currentActor.img;
             data.skills = {
                 general: CONFIG.splittermond.skillGroups.general.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
                 (parseInt(this.currentActor.skills[skillId].points) > 0)).map(skillId => this.currentActor.skills[skillId]),
