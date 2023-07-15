@@ -15,7 +15,7 @@ const AttackableItem = (superclass) => class extends superclass {
 
         this.attacks.push(new Attack(this.actor, this));
 
-        if (this.system.secondaryAttack && this.system.secondaryAttack.skill !== "" && this.system.secondaryAttack.skill !== "none") {
+        if (this.hasSecondaryAttack) {
             this.attacks.push(new Attack(this.actor, this, true));
         }
 
@@ -24,7 +24,12 @@ const AttackableItem = (superclass) => class extends superclass {
     }
 
     get featuresList() {
+        if (this.system.features.trim() == "" || this.system.features.trim() == "-") return [];
         return this.system.features?.split(",").map(str => str.trim());
+    }
+
+    get hasSecondaryAttack() {
+        return this.system.secondaryAttack && this.system.secondaryAttack.skill !== "" && this.system.secondaryAttack.skill !== "none";
     }
 
 };

@@ -39,10 +39,12 @@
                         data-skill-level="this.system.skillLevel">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
-                                <ul class="taglist">
+                                <ul class="taglist-small">
                                     {{#each this.availableInList}}
-                                    <li class="taglist-item">
-                                        <div class="taglist-item-name">{{this.label}}</div></li>
+                                    <li class="active">{{this.label}}</li>
+                                    {{/each}}
+                                    {{#each this.spellTypeList}}
+                                    <li>{{this}}</li>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -92,10 +94,9 @@
                         data-level="{{this.system.level}}">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
-                                <ul class="taglist">
-                                    {{#each this.system.availableInArray}}
-                                    <li class="taglist-item">
-                                        <div class="taglist-item-name">{{this}}</div></li>
+                                <ul class="taglist-small">
+                                    {{#each this.availableInList}}
+                                    <li class="active">{{localize (lookup (concat "splittermond.skillLabel." this) 'string')}}</li>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -139,10 +140,22 @@
                         data-secondary-features="{{this.system.secondaryAttack.features}}">
                         <div>
                             <label>{{this.name}}</label>
-                            <div class="features">{{this.system.features}}</div>
+                            <div class="features">
+                                <ul class="taglist-small">
+                                    {{#each this.featuresList}}
+                                    <li>{{this}}</li>
+                                    {{/each}}
+                                </ul>
+                            </div>
                         </div>
                         <div class="skill">
-                            {{this.system.skillLabel}}
+                            <ul class="taglist-small">
+                                <li class="active">{{localize (lookup (concat "splittermond.skillLabel." this.system.skill) 'string')}}</li>
+                                {{#if this.hasSecondaryAttack}}
+                                <li>{{localize (lookup (concat "splittermond.skillLabel." this.system.secondaryAttack.skill) 'string')}}</li>
+                                {{/if}}
+                            </ul>
+                            
                         </div>
                         <div class="damage">
                             {{this.system.damage}}
