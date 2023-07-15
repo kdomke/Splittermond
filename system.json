@@ -93,7 +93,7 @@
   "compatibility": {
     "minimum": 10,
     "verified": 10, 
-    "maximum": 10
+    "maximum": 11
   },
   "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
   "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
