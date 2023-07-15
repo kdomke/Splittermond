@@ -34,21 +34,28 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.spell}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-item-id="{{this.uuid}}"
                         data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
                         data-skill-level="this.system.skillLevel">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist">
-                                    {{#each this.system.availableInArray}}
+                                    {{#each this.availableInList}}
                                     <li class="taglist-item">
-                                        <div class="taglist-item-name">{{this}}</div></li>
+                                        <div class="taglist-item-name">{{this.label}}</div></li>
                                     {{/each}}
                                 </ul>
                             </div>
                         </div>
-                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
-                                class="id">{{this.compendiumPackage}}</span></span></div>
+                        <div class="compendium">
+                            {{#if this.compendium}}
+                            <span class="label">{{this.compendium.metadata.label}}</span>
+                            <span class="id">{{this.compendium.metadata.id}}</span></span>
+                            {{else}}
+                            <span class="label">{{this.collection.name}}</span>
+                            <span class="id">world.{{this.collectionName}}</span></span>
+                            {{/if}}
+                        </div>
 
                     </li>
                     {{/each}}
@@ -80,7 +87,7 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.mastery}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-item-id="{{this.uuid}}"
                         data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
                         data-level="{{this.system.level}}">
                         <div><label>{{this.name}}</label>
@@ -96,8 +103,15 @@
                         <div class="level">
                             {{localize "splittermond.masteryItem.level"}}&nbsp;{{this.system.level}}
                         </div>
-                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
-                                class="id">{{this.compendiumPackage}}</span></span></div>
+                        <div class="compendium">
+                            {{#if this.compendium}}
+                            <span class="label">{{this.compendium.metadata.label}}</span>
+                            <span class="id">{{this.compendium.metadata.id}}</span></span>
+                            {{else}}
+                            <span class="label">{{this.collection.name}}</span>
+                            <span class="id">world.{{this.collectionName}}</span></span>
+                            {{/if}}
+                        </div>
 
                     </li>
                     {{/each}}
@@ -118,7 +132,7 @@
             <div class="list">
                 <ol class="list-body">
                     {{#each items.weapon}}
-                    <li class="list-item draggable" data-compendium="{{this.compendiumId}}" data-item-id="{{this._id}}"
+                    <li class="list-item draggable" data-item-id="{{this.uuid}}"
                         data-skill="{{this.system.skill}}" data-secondary-skill="{{this.system.secondaryAttack.skill}}"
                         data-features="{{this.system.features}}" data-damage="{{this.system.damage}}"
                         data-secondary-damage="{{this.system.secondaryAttack.damage}}"
@@ -133,8 +147,15 @@
                         <div class="damage">
                             {{this.system.damage}}
                         </div>
-                        <div class="compendium"><span class="label">{{this.compendiumLabel}}</span><span
-                                class="id">{{this.compendiumPackage}}</span></span></div>
+                        <div class="compendium">
+                            {{#if this.compendium}}
+                            <span class="label">{{this.compendium.metadata.label}}</span>
+                            <span class="id">{{this.compendium.metadata.id}}</span></span>
+                            {{else}}
+                            <span class="label">{{this.collection.name}}</span>
+                            <span class="id">world.{{this.collectionName}}</span></span>
+                            {{/if}}
+                        </div>
                     </li>
                     {{/each}}
                 </ol>

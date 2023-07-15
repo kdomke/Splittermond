@@ -75,7 +75,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     get availableInList() {
         if (this.system.availableIn.trim() == '') return [];
         let list = this.system.availableIn.split(",").map(item => {
-            let data = item.trim().toLowerCase().split(" ");
+            let data = item.trim().toLowerCase().split(/[ :]/);
             return {
                 label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
                 skillId: data[0].trim(),

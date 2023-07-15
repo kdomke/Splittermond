@@ -30,63 +30,37 @@ export default class SplittermondCompendiumBrowser extends Application {
         let indexes = await Promise.all(packs.map(p => p.getDocuments()));
         indexes.forEach((index, idx) => {
             index.forEach((item, idx) => {
-                let itemData = duplicate(item.data);
-                if (!this.allItems[itemData.type]) {
-                    this.allItems[itemData.type] = [];
+                if (!this.allItems[item.type]) {
+                    this.allItems[item.type] = [];
                 }
-                itemData.compendiumPackage = item.compendium.metadata.packageName;
-                itemData.compendiumId = item.compendium.metadata.id;
+                /*
+                let itemData = duplicate(item);
+                
+                
                 itemData.compendiumLabel = item.compendium.metadata.label;
-                this.allItems[itemData.type].push(itemData);
+                itemData.uuid = item.uuid;
+                */
+                this.allItems[item.type].push(item);
             })
         });
 
         game.items.forEach((item, idx) => {
-            let itemData = duplicate(item.data);
-            if (!this.allItems[itemData.type]) {
-                this.allItems[itemData.type] = [];
+            if (!this.allItems[item.type]) {
+                this.allItems[item.type] = [];
             }
+            /*
+            let itemData = duplicate(item);
+            
             itemData.compendiumId = "world";
-            this.allItems[itemData.type].push(itemData);
+            itemData.uuid = item.uuid;
+            */
+
+            this.allItems[item.type].push(item);
         });
 
         Object.keys(this.allItems).forEach(k => {
             this.allItems[k].sort((a, b) => (a.name < b.name) ? -1 : 1)
         });
-
-        if (this.allItems.spell) {
-            this.allItems.spell.forEach(i => {
-                let availableIn = i.system.availableIn;
-                CONFIG.splittermond.skillGroups.magic.forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
-                });
-                i.system.availableIn = availableIn;
-                i.system.availableInArray = availableIn.split(",").map(i => {
-                    let data = i.trim().split(" ");
-                    return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1];
-                });
-            });
-        }
-
-        if (this.allItems.mastery) {
-            this.allItems.mastery.forEach(i => {
-                let availableIn = i.system.availableIn;
-                [...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
-                });
-                i.system.availableIn = availableIn;
-                i.system.availableInArray = availableIn.split(",").map(i => {
-                    let data = i.trim().split(" ");
-                    return game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`);
-                });
-            });
-        }
-
-        if (this.allItems.weapon) {
-            this.allItems.weapon.forEach(i => {
-                i.system.skillLabel = game.i18n.localize(`splittermond.skillLabel.${i.system.skill}`);
-            });
-        }
 
         data.spellFilter = {
             skills: CONFIG.splittermond.spellSkillsOption
@@ -113,23 +87,14 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         super.activateListeners(html);
 
-        html.find('.list li').click(ev => {
+        html.find('.list li').click(async ev => {
             let itemId = $(ev.currentTarget).closestData('item-id');
-            let compendium = $(ev.currentTarget).closestData('compendium');
-            if (compendium === "world") {
-                let sheet = game.items.get(itemId).sheet;
-                sheet = Object.values(ui.windows).find(app => app.id === sheet.id) ?? sheet;
-                if (sheet._minimized) return sheet.maximize();
-                sheet.render(true);
+            let item = await fromUuid(itemId);
+            let sheet = item.sheet;
+            sheet = Object.values(ui.windows).find(app => app.id === sheet.id) ?? sheet;
+            if (sheet._minimized) return sheet.maximize();
+            sheet.render(true);
 
-            } else {
-                game.packs.get(compendium).getDocument(itemId).then(e => {
-                    let sheet = e.sheet;
-                    sheet = Object.values(ui.windows).find(app => app.id === sheet.id) ?? sheet;
-                    if (sheet._minimized) return sheet.maximize();
-                    sheet.render(true);
-                });
-            }
 
 
         });
@@ -146,15 +111,13 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     /** @override */
+    
     _canDragStart(selector) {
-        const packName = $(selector).closestData('compendium');
-        if (packName === "world")
-            return true;
-        const pack = game.packs.get(packName);
-
-        if (pack.documentName === "Item") return true;
-        return false;
+        const itemId = $(selector).closestData('item-id');
+        
+        return itemId != undefined;
     }
+    
 
     /* -------------------------------------------- */
 
@@ -170,20 +133,10 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         // Get the Compendium pack
         const li = event.currentTarget;
-        const packName = $(li).closestData('compendium');
-        const pack = game.packs.get(packName);
-        if (!pack) {
-            event.dataTransfer.setData("text/plain", JSON.stringify({
-                type: pack.documentName,
-                id: li.dataset.itemId
-            }));
-        } else {
-            event.dataTransfer.setData("text/plain", JSON.stringify({
-                type: pack.documentName,
-                pack: pack.collection,
-                id: li.dataset.itemId
-            }));
-        };
+        event.dataTransfer.setData("text/plain", JSON.stringify({
+            type: "Item",
+            uuid: li.dataset.itemId
+        }));
 
     }
 
@@ -213,8 +166,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             let availableIn = $(li).closestData("available-in");
             let skill = $(li).closestData("skill");
             let skillLevel = $(li).closestData("skill-level");
-            let compendium = $(li).closestData("compendium");
-
+            let itemId = $(li).closestData("item-id");
             let test = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
 
             if (test && filterSkillLevel.includes(true)) {
@@ -227,7 +179,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             }
 
             if (!filterWorldItems) {
-                test = test && compendium != "world";
+                test = test && itemId.startsWith("Compendium");
             }
             li.style.display = test ? "flex" : "none";
 
@@ -266,7 +218,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             let availableIn = $(li).closestData("available-in").split(",").map(s => s.trim());
             let skill = $(li).closestData("skill");
             let skillLevel = $(li).closestData("level");
-            let compendium = $(li).closestData("compendium");
+            let itemId = $(li).closestData("item-id");
 
             let test = rgx.test(name) && (!filterSkill || availableIn.includes(filterSkill) || skill === filterSkill);
 
@@ -280,7 +232,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             }
 
             if (!filterWorldItems) {
-                test = test && compendium != "world";
+                test = test && itemId.startsWith("Compendium");
             }
             li.style.display = test ? "flex" : "none";
 
@@ -314,12 +266,12 @@ export default class SplittermondCompendiumBrowser extends Application {
             let secondarySkill = $(li).closestData("secondary-skill");
             let features = $(li).closestData("features") + " " + $(li).closestData("secondary-features");
             let damage = $(li).closestData("damage") + $(li).closestData("secondary-damage");
-            let compendium = $(li).closestData("compendium");
+            let itemId = $(li).closestData("item-id");
 
             let test = (rgx.test(name + " " + features + " " + damage)) && (skill === filterSkill || secondarySkill === filterSkill || filterSkill === "");
 
             if (!filterWorldItems) {
-                test = test && compendium != "world";
+                test = test && itemId.startsWith("Compendium");
             }
             li.style.display = test ? "flex" : "none";
 
