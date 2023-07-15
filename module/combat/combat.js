@@ -1,13 +1,5 @@
 export default class SplittermondCombat extends Combat {
 
-    constructor(data, context) {
-        super(data, context);
-
-        this.current.tick = this.current.tick === null ? null : this.current.tick;
-        this.previous.tick = this.current.tick === null ? null : this.previous.tick;
-
-      }
-
     _sortCombatants(a, b) {
         let iniA = parseFloat(a.initiative);
         let iniB = parseFloat(b.initiative);
@@ -184,6 +176,13 @@ export default class SplittermondCombat extends Combat {
     _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
         this.setupTurns();//otherwise the next player is not marked correctly
         super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); 
+    }
+
+    
+    _onUpdateDescendantDocuments(parent, collection, documents, changes, options, userId) {
+        this.setupTurns();//otherwise the next player is not marked correctly
+        super._onUpdateDescendantDocuments(parent, collection, documents, changes, options, userId); 
+
     }
   
 }
