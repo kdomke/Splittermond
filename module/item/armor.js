@@ -34,4 +34,8 @@ export default class SplittermondArmorItem extends SplittermondPhysicalItem {
         if (!this.system.equipped) return 0;
         return parseInt(this.system.tickMalus) + this.attributeMalus;
     }
+
+    get featuresList() {
+        return this.system.features?.split(",").map(str => str.trim());
+    }
 }

@@ -1,13 +1,20 @@
 <form>
+    <div class="row" style="align-items: center; gap: 1em">
+        <div class="character-image">
+                <img src="{{skill.actor.img}}" data-edit="img" title="{{skill.actor.name}}" height="48" width="48"
+                    class="profile-img" />
+        </div>
+        <div class="character-name">
+            {{skill.actor.name}}
+        </div>
+    </div>
+    <div class="skill">
+        {{skill.label}}
+        <div class="tooltip-part">
+            {{{skillTooltip}}}
+        </div>
+    </div>
     <div class="properties-editor">
-        <label>{{localize "splittermond.difficulty"}}</label>
-        <div class="row">
-            <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='difficulty']">
-                        <i class="fa fa-minus" aria-hidden="true"></i></button>
-            <input name="difficulty" value="{{difficulty}}" type="text">
-            <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='difficulty']">
-                        <i class="fa fa-plus" aria-hidden="true"></i></button>
-            </div>
         <label>{{localize "splittermond.modifier"}}</label>
         <div class="row">
             <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='modifier']">
@@ -28,6 +35,19 @@
             {{/each}}
         </ul>
         {{/if}}
+        <label>{{localize "splittermond.difficulty"}}</label>
+        <div class="row">
+            <button class="button-inline" type="button" data-action="dec-value-3" data-input-query="input[name='difficulty']">
+            -3</button>
+            <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='difficulty']">
+                        <i class="fa fa-minus" aria-hidden="true"></i></button>
+            <input name="difficulty" value="{{difficulty}}" type="text">
+            <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='difficulty']">
+                        <i class="fa fa-plus" aria-hidden="true"></i></button>
+            <button class="button-inline" type="button" data-action="inc-value-3" data-input-query="input[name='difficulty']">
+            +3</button>
+        </div>
+        
         <label>{{localize "splittermond.rollMode"}}</label>
         <select name="rollMode">
             {{#select rollMode}}

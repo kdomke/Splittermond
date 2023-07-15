@@ -1,3 +1,16 @@
+## 0.10.0 ##
+2023-07-15
+
+Diese Version ist nicht mehr V9 kompatibel. Bitte updatet auf V10.
+
+* added: Neuer Fertigkeitsproben-Dialog mit mehr Informationen
+* added: V11 support. Das System ist nun auch mit Foundry VTT V11 kompatibel.
+* changed: alter pre-V10 Code wurde entfernt
+* changed: Stat-Block der Itemsheets wurde angepasst
+* fixed: @-Befehle sind nun auch in Item/Actor-Descriptions möglich
+* fixed: Fertigkeitsauswahldialog für Zauber und Meisterschaften
+* fixed: Compendium-Browser wieder funktionstüchtig
+
 ## 0.9.8 ##
 2023-05-23
 

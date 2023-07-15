@@ -72,6 +72,19 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.damage;
     }
 
+    get availableInList() {
+        if (this.system.availableIn.trim() == '') return [];
+        let list = this.system.availableIn.split(",").map(item => {
+            let data = item.trim().toLowerCase().split(/[ :]/);
+            return {
+                label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
+                skillId: data[0].trim(),
+                spellLevel: data[1].trim()
+            }
+        });
+        return list;
+    }
+
     async roll(options) {
         if (!this.actor) return false;
 

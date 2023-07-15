@@ -18,8 +18,8 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         });
     }
 
-    getData() {
-        const sheetData = super.getData();
+    async getData() {
+        const sheetData = await super.getData();
 
         return sheetData;
     }
@@ -41,11 +41,11 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const attrBaseName = input.name.split('.')[1];
         if ((value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) == 0 || input.value == "") {
             this.actor.update({
-                [`data.derivedAttributes.${attrBaseName}.value`]: 0
+                [`system.derivedAttributes.${attrBaseName}.value`]: 0
             });
         } else {
             this.actor.update({
-                [`data.derivedAttributes.${attrBaseName}.value`]: (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) + parseInt(this.actor.derivedValues[attrBaseName].baseValue || 0)
+                [`system.derivedAttributes.${attrBaseName}.value`]: (value - parseInt(this.actor.derivedValues[attrBaseName].value || 0)) + parseInt(this.actor.derivedValues[attrBaseName].baseValue || 0)
             });
         }
     }
@@ -59,7 +59,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         const newValue = (value - parseInt(this.actor.damageReduction || 0)) +
             parseInt(this.actor.system.damageReduction.value || 0);
         this.actor.update({
-            [`data.damageReduction.value`]: newValue
+            [`system.damageReduction.value`]: newValue
         });
     }
 
@@ -75,12 +75,12 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
             const newValue = (value - this.actor.skills[skillBaseName].value) +
                 parseInt(this.actor.skills[skillBaseName].points || 0);
             this.actor.update({
-                [`data.skills.${skillBaseName}.points`]: newValue,
-                [`data.skills.${skillBaseName}.value`]: 0
+                [`system.skills.${skillBaseName}.points`]: newValue,
+                [`system.skills.${skillBaseName}.value`]: 0
             });
         } else {
             this.actor.update({
-                [`data.skills.${skillBaseName}.points`]: 0
+                [`system.skills.${skillBaseName}.points`]: 0
             });
         }
 

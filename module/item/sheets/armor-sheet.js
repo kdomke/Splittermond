@@ -3,11 +3,11 @@ import SplittermondItemSheet from "./item-sheet.js";
 export default class SplittermondArmorSheet extends SplittermondItemSheet {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["splittermond", "sheet", "item", "spell"]
+            classes: ["splittermond", "sheet", "item", "armor"]
         });
     }
 
-    _getStatBlock(item) {
+    _getStatBlock() {
 
 
         
@@ -15,27 +15,23 @@ export default class SplittermondArmorSheet extends SplittermondItemSheet {
 
             {
                 label: "splittermond.defenseBonus",
-                value: item.system.defenseBonus
+                value: this.item.system.defenseBonus || 0
             },
             {
                 label: "splittermond.tickMalus",
-                value: item.system.tickMalus
+                value: this.item.system.tickMalus || 0
             },
             {
                 label: "splittermond.handicap",
-                value: item.system.handicap
+                value: this.item.system.handicap || 0
             },
             {
-                label: "splittermond.damageReduction",
-                value: item.system.damageReduction
-            },
-            {
-                label: "splittermond.features",
-                value: item.system.features || "-"
+                label: "splittermond.damageReductionAbbrev",
+                value: this.item.system.damageReduction || 0
             },
             {
                 label: "splittermond.minStrength",
-                value: item.system.minStrength || "-"
+                value: this.item.system.minStrength || "-"
             }
         ];
             

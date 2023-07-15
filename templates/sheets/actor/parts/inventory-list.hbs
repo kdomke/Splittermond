@@ -1,9 +1,9 @@
 <div class="currency">
-    <div class="solars"><input name="data.currency.S" type="text" value="{{currency.S}}" placeholder="0"
+    <div class="solars"><input name="system.currency.S" type="text" value="{{currency.S}}" placeholder="0"
             data-dtype="Number" /></div>
-    <div class="lunars"><input name="data.currency.L" type="text" value="{{currency.L}}" placeholder="0"
+    <div class="lunars"><input name="system.currency.L" type="text" value="{{currency.L}}" placeholder="0"
             data-dtype="Number" /></div>
-    <div class="telars"><input name="data.currency.T" type="text" value="{{currency.T}}" placeholder="0"
+    <div class="telars"><input name="system.currency.T" type="text" value="{{currency.T}}" placeholder="0"
             data-dtype="Number" /></div>
 </div>
 
@@ -13,7 +13,7 @@
         <div class="damage">{{localize "splittermond.damage"}}</div>
         <div class="range">{{localize "splittermond.rangeAbbrev"}}</div>
         <div class="weapon-speed">{{localize "splittermond.weaponSpeedAbbrev"}}</div>
-        <div class="features" title="{{this.data.features}}">{{localize "splittermond.features"}}</div>
+        <div class="features" title="{{localize "splittermond.features"}}">{{localize "splittermond.features"}}</div>
         <div class="load">{{localize "splittermond.load"}}</div>
         <div class="list-actions">
             <button class="button-inline" type="button" data-action="add-item">
@@ -26,18 +26,18 @@
         <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
-                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                {{#if (eq this.system.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
                 <button class="button-inline" type="button" data-action="toggle-equipped">
-                    <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
+                    <i class="fa {{#if this.system.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
-            <div class="damage">{{this.data.damage}}</div>
-            <div class="range">{{this.data.range}}</div>
-            <div class="weapon-speed">{{this.data.weaponSpeed}}</div>
-            <div class="features" title="{{this.data.features}}">{{this.data.features}}</div>
-            <div class="load">{{this.data.weight}}</div>
+            <div class="damage">{{this.system.damage}}</div>
+            <div class="range">{{this.system.range}}</div>
+            <div class="weapon-speed">{{this.system.weaponSpeed}}</div>
+            <div class="features" title="{{this.system.features}}">{{this.system.features}}</div>
+            <div class="load">{{this.system.weight}}</div>
             <div class="list-actions">
                 <button class="button-inline" type="button" data-action="edit-item">
                     <i class="fa fa-edit" aria-hidden="true"></i>
@@ -57,7 +57,7 @@
         <div class="defense-bonus">{{localize "splittermond.defenseBonus"}}</div>
         <div class="tick-malus">{{localize "splittermond.tickMalus"}}</div>
         <div class="handicap">{{localize "splittermond.handicapAbbrev"}}</div>
-        <div class="features" title="{{this.data.features}}">{{localize "splittermond.features"}}</div>
+        <div class="features" title="{{localize "splittermond.features"}}">{{localize "splittermond.features"}}</div>
         <div class="load">{{localize "splittermond.load"}}</div>
         <div class="list-actions">
             <button class="button-inline" type="button" data-action="add-item">
@@ -70,19 +70,19 @@
         <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
-                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                {{#if (eq this.system.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
                 <button class="button-inline" type="button" data-action="toggle-equipped">
-                    <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
+                    <i class="fa {{#if this.system.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
-            <div class="damage-reduction">{{this.data.damageReduction}}</div>
-            <div class="defense-bonus">{{this.data.defenseBonus}}</div>
-            <div class="tick-malus">{{this.data.tickMalus}}</div>
-            <div class="handicap">{{this.data.handicap}}</div>
-            <div class="features">{{this.data.features}}</div>
-            <div class="load">{{this.data.weight}}</div>
+            <div class="damage-reduction">{{this.system.damageReduction}}</div>
+            <div class="defense-bonus">{{this.system.defenseBonus}}</div>
+            <div class="tick-malus">{{this.system.tickMalus}}</div>
+            <div class="handicap">{{this.system.handicap}}</div>
+            <div class="features" title="{{this.system.features}}">{{this.system.features}}</div>
+            <div class="load">{{this.system.weight}}</div>
             <div class="list-actions">
 
                 <button class="button-inline" type="button" data-action="edit-item">
@@ -116,18 +116,18 @@
         <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
-                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                {{#if (eq this.system.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
                 <button class="button-inline" type="button" data-action="toggle-equipped">
-                    <i class="fa {{#if this.data.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
+                    <i class="fa {{#if this.system.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"
                         aria-hidden="true"></i>
                 </button></label>
-            <div class="defense-bonus">{{this.data.defenseBonus}}</div>
-            <div class="tick-malus">{{this.data.tickMalus}}</div>
-            <div class="handicap">{{this.data.handicap}}</div>
-            <div class="features">{{this.data.features}}</div>
-            <div class="load">{{this.data.weight}}</div>
+            <div class="defense-bonus">{{this.system.defenseBonus}}</div>
+            <div class="tick-malus">{{this.system.tickMalus}}</div>
+            <div class="handicap">{{this.system.handicap}}</div>
+            <div class="features" title="{{this.system.features}}">{{this.system.features}}</div>
+            <div class="load">{{this.system.weight}}</div>
             <div class="list-actions">
                 <button class="button-inline" type="button" data-action="edit-item">
                     <i class="fa fa-edit" aria-hidden="true"></i>
@@ -156,12 +156,12 @@
         <li class="list-item item" data-item-id="{{this._id}}">
             <img width="32" height="32" src="{{{this.img}}}">
             <label>{{this.name}}
-                {{#if (eq this.data.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
-                {{#if (eq this.data.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
+                {{#if (eq this.system.damageLevel 1)}} ({{localize "splittermond.damageLevels.tarnished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 2)}} ({{localize "splittermond.damageLevels.demolished"}}){{/if}}
+                {{#if (eq this.system.damageLevel 3)}} ({{localize "splittermond.damageLevels.destroyed"}}){{/if}}
             </label>
-            <div class="qty">{{this.data.quantity}}</div>
-            <div class="load">{{this.data.weight}}</div>
+            <div class="qty">{{this.system.quantity}}</div>
+            <div class="load">{{this.system.weight}}</div>
             <div class="list-actions">
                 <button class="button-inline" type="button" data-action="edit-item">
                     <i class="fa fa-edit" aria-hidden="true"></i>

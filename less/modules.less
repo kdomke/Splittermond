@@ -40,26 +40,90 @@
     }
 
     .item-sheet-stat-block {
-        display: flex;
+        display:flex;
         flex-direction: row;
-        flex-wrap: wrap;
-
-        justify-content: center;
+        margin-top: 1em;
         gap: 1em;
-        padding-top: 0.25em;
-        padding-bottom: 1em;
+        justify-content: space-around;
+        
 
         .item-sheet-stat-block-item {
             display: flex;
             flex-direction: column;
-            align-items: center;
-
+            break-inside: avoid-column;
+            margin-bottom: 1em;
+            color: var(--color-text-primary);
+            font-size: @fontSizeLarge;
             label {
-                font-weight: bold;
+                color: var(--color-tertiary);
                 text-transform: uppercase;
+                font-weight: bold;
+                font-size: @fontSizeSmall;
+            }
+
+            > * {
+                text-align: center;
             }
             
         }
+    }
+
+    &.dialog.selection {
+        .window-content {
+            .dialog-buttons {
+                flex-direction: column;
+            }
+        }
+    }
+
+    ul.taglist-small {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        margin-bottom: @paddingSmall;
+
+        font-family: Signika;
+        font-size: @fontSizeSmall;
+
+        li {
+            display: inline-block;
+            margin-right: @paddingSmall;
+            margin-bottom: @paddingSmall;
+            padding-left: @paddingSmall;
+            padding-right: @paddingSmall;
+            background-color: rgba(0, 0, 0, 0.2);
+
+            border-radius: @paddingSmall;
+
+            &.active {
+                background-color: var(--color-primary);
+                color: white;
+            }
+        }
+    }
+
+    &.dialog-check {
+        .character-name {
+            font-size: @fontSizeLarger;
+            align-self: center;
+            padding: 0.5em;
+            font-family: @font-secondary;
+        }
+        .skill:extend(.border-paper-small) {
+            padding: 5px;
+            text-align: center;
+            font-size: @fontSizeLarge;
+            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.8);
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+
+            .tooltip-part {
+                font-family: @font-primary;
+                font-weight: normal;
+                font-size: @fontSizeNormal;
+            }
+        }
+
     }
 }
 

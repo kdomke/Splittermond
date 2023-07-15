@@ -14,14 +14,14 @@ import ActiveDefense from "./active-defense.js";
 export default class SplittermondActor extends Actor {
 
     actorData() {
-        return !this.system ? this.data : this;
+        return this.system;
     }
 
     /*
     Prepare Base Data Model
     */
     prepareBaseData() {
-        console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
         super.prepareBaseData();
         this.modifier = new ModifierManager();
 
@@ -162,7 +162,7 @@ export default class SplittermondActor extends Actor {
     }
 
     prepareDerivedData() {
-        console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
+        //console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
         
         super.prepareDerivedData();
         
@@ -192,18 +192,18 @@ export default class SplittermondActor extends Actor {
                 return e.type == "statuseffect";
             })
             .filter(e => {
-                return e.data.data.startTick != null && e.data.data.startTick > 0 &&
-                    e.data.data.interval != null && e.data.data.interval > 0;
+                return e.system.startTick != null && e.system.startTick > 0 &&
+                    e.system.interval != null && e.system.interval > 0;
             })
             .map(e => {
                 return {
                     name: e.name,
-                    startTick: parseInt(e.data.data.startTick),
-                    interval: parseInt(e.data.data.interval),
-                    times: e.data.data.times ? parseInt(e.data.data.times) : 90,
-                    description: e.data.data.description,
+                    startTick: parseInt(e.system.startTick),
+                    interval: parseInt(e.system.interval),
+                    times: e.system.times ? parseInt(e.system.times) : 90,
+                    description: e.system.description,
                     img: e.img,
-                    level: e.data.data.level,
+                    level: e.system.level,
                     statusId: e.id
                 }
             });
@@ -1192,7 +1192,7 @@ export default class SplittermondActor extends Actor {
 
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
-                title: this.data.name + " - Ticks",
+                title: this.name + " - Ticks",
                 content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
                 buttons: {
                     ok: {

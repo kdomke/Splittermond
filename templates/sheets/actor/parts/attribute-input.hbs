@@ -1,9 +1,9 @@
 <div class="attributes">
     {{#each attributes as |attribute attributeId|}}
     <div class="attribute" id="{{attributeId}}">
-        <label for="data.attributes.{{attributeId}}.value" title="{{localize attribute.label.long}}">{{localize
+        <label for="system.attributes.{{attributeId}}.value" title="{{localize attribute.label.long}}">{{localize
             attribute.label.short}}</label>
-        <input name="data.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
+        <input name="system.attributes.{{attributeId}}.value" type="text" value="{{attribute.value}}" data-dtype="Number">
     </div>
     {{/each}}
 </div>

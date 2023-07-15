@@ -24,7 +24,7 @@ export default class ApplyDamageDialog extends Dialog {
             if (!actor) {
                 return
             };
-            data.message = game.i18n.format("splittermond.applyDamageOnToken", actor.data);
+            data.message = game.i18n.format("splittermond.applyDamageOnToken", actor);
         }
 
         const html = await renderTemplate("systems/splittermond/templates/apps/dialog/apply-damage-dialog.hbs", data);

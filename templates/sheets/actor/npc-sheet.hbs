@@ -9,13 +9,13 @@
                 <input class="character-name" name="name" type="text" value="{{actor.name}}"
                     placeholder="{{localize 'splittermond.name' }}" />
                 <div>
-                    <input class="autoexpand" name="data.type" type="text" value="{{data.type}}"
+                    <input class="autoexpand" name="system.type" type="text" value="{{data.type}}"
                         placeholder="{{localize 'splittermond.opponenttype'}}" />
                     {{#unless this.limited}}
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.level" type="text" value="{{data.level}}"
+                    <input class="autoexpand" name="system.level" type="text" value="{{data.level}}"
                         placeholder="{{localize 'splittermond.opponentlevel'}}" />&nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="data.sex" type="text" value="{{data.sex}}"
+                    <input class="autoexpand" name="system.sex" type="text" value="{{data.sex}}"
                         placeholder="{{localize 'splittermond.sex'}}" />
                     {{/unless}}
                 </div>
@@ -43,8 +43,8 @@
         </section>
         {{#unless limited}}
         <section class="column">
-            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.focus
-            health=data.health}}
+            {{> "systems/splittermond/templates/sheets/actor/parts/focus-health.hbs" focus=data.system.focus
+            health=data.system.health}}
             {{> "systems/splittermond/templates/sheets/actor/parts/derived-attributes.hbs"
             derivedAttributes=actor.derivedValues damageReduction=actor.damageReduction editable=editable}}
         </section>
@@ -60,7 +60,7 @@
     </nav>
     <main>
         <section class="tab" data-group="primary" data-tab="biography">
-            {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
+            {{editor data.system.biographyHTML target="system.biography" button=true owner=owner editable=editable}}
         </section>
         <section class="tab" data-group="primary" data-tab="general">
             {{> "systems/splittermond/templates/sheets/actor/parts/attribute-input.hbs" attributes=actor.attributes}}
@@ -87,7 +87,7 @@
                                 </a>
                             </label>
                             <div class="value">
-                                <input name="data.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
+                                <input name="system.skills.{{skillId}}.value" type="text" value="{{skill.value}}"
                                     data-dtype="Number">
                             </div>
                         </li>
@@ -114,7 +114,7 @@
                                 {{localize skill.label}}
                             </label>
                             <div class="points">
-                                <input name="data.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
+                                <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                             </div>
                         </li>
                         {{/each}}
@@ -139,7 +139,7 @@
                             <label>
                                 <a class="rollable">{{localize skill.label}}</a>
                             </label>
-                            <div class="value"><input name="data.skills.{{skillId}}.value" type="text"
+                            <div class="value"><input name="system.skills.{{skillId}}.value" type="text"
                                     value="{{skill.value}}" data-dtype="Number">
                             </div>
                         </li>
@@ -162,18 +162,18 @@
         <section class="tab" data-group="primary" data-tab="spells">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/spells-list.hbs" spellsBySkill=spellsBySkill
-                channeledSpells=data.focus.channeled.entries}}
+                channeledSpells=data.system.focus.channeled.entries}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="inventory">
             <div>
                 {{> "systems/splittermond/templates/sheets/actor/parts/inventory-list.hbs" itemsByType=itemsByType
-                currency=data.currency}}
+                currency=data.system.currency}}
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="status">
             {{> "systems/splittermond/templates/sheets/actor/parts/status-tab.hbs"
-            channeledHealthEntries=data.health.channeled.entries statuseffects=itemsByType.statuseffect
+            channeledHealthEntries=data.system.health.channeled.entries statuseffects=itemsByType.statuseffect
             spelleffects=itemsByType.spelleffect
             hasRestActions=false}}
         </section>
