@@ -101,6 +101,30 @@
             }
         }
     }
+
+    &.dialog-check {
+        .character-name {
+            font-size: @fontSizeLarger;
+            align-self: center;
+            padding: 0.5em;
+            font-family: @font-secondary;
+        }
+        .skill:extend(.border-paper-small) {
+            padding: 5px;
+            text-align: center;
+            font-size: @fontSizeLarge;
+            box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.8);
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+
+            .tooltip-part {
+                font-family: @font-primary;
+                font-weight: normal;
+                font-size: @fontSizeNormal;
+            }
+        }
+
+    }
 }
 
 

@@ -7,6 +7,7 @@ import SplittermondSpellSheet from "./module/item/sheets/spell-sheet.js";
 import SplittermondWeaponSheet from "./module/item/sheets/weapon-sheet.js";
 import SplittermondShieldSheet from "./module/item/sheets/shield-sheet.js";
 import SplittermondArmorSheet from "./module/item/sheets/armor-sheet.js";
+import SplittermondAttackSheet from "./module/item/sheets/attack-sheet.js";
 import ApplyDamageDialog from "./module/apps/dialog/apply-damage-dialog.js";
 import { splittermond } from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
@@ -105,7 +106,7 @@ Hooks.once("init", function () {
         label: "splittermond.spell"
     });
     Items.registerSheet("splittermond", SplittermondWeaponSheet, {
-        types: ["weapon", "npcattack"],
+        types: ["weapon"],
         makeDefault: true,
         label: "splittermond.weapon"
     });
@@ -118,6 +119,11 @@ Hooks.once("init", function () {
         types: ["armor"],
         makeDefault: true,
         label: "splittermond.armor"
+    });
+    Items.registerSheet("splittermond", SplittermondAttackSheet, {
+        types: ["npcattack"],
+        makeDefault: true,
+        label: "splittermond.npcattack"
     });
 
 
@@ -417,7 +423,7 @@ function commonEventHandler(app, html, data) {
 
 }
 
-Hooks.on('renderApplication',  function (app, html, data) {
+Hooks.on('renderJournalPageSheet',  function (app, html, data) {
     commonEventHandler(app, html, data);
 
 

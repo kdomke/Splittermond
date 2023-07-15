@@ -94,11 +94,17 @@ export default class Skill extends Modifiable {
         if (options.subtitle)
             title = `${title} - ${options.subtitle}`;
 
+        let skillFormula = this.getFormula();
+        skillFormula.addOperator("=")
+        skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
+
         let checkData = await CheckDialog.create({
             difficulty: options.difficulty || 15,
             modifier: options.modifier || 0,
             emphasis: emphasisData,
-            title: title
+            title: title,
+            skill: this,
+            skillTooltip: skillFormula.render(),
         });
 
         if (!checkData) return false;
@@ -158,10 +164,10 @@ export default class Skill extends Modifiable {
             ...(options.checkMessageData || {})
         }
 
-        return ChatMessage.create(await Chat.prepareCheckMessageData(this, checkData.rollMode, data.roll, checkMessageData));
+        return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, data.roll, checkMessageData));
     }
 
-    tooltip() {
+    getFormula() {
         let formula = new Tooltip.TooltipFormula();
         if (this.attribute1) {
             formula.addPart(this.attribute1.value, this.attribute1.label.short);
@@ -174,8 +180,11 @@ export default class Skill extends Modifiable {
         formula.addPart(this.points, game.i18n.localize("splittermond.skillPointsAbbrev"));
 
         this.addModifierTooltipFormulaElements(formula);
+        return formula;
+    }
 
-        return formula.render();
+    tooltip() {
+        return this.getFormula().render();
     }
 
 }
