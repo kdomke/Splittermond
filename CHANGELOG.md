@@ -1,3 +1,10 @@
+## 0.10.2 HOTFIX##
+2023-07-15
+
+* fixed: Rüstungs- und Schild-Items lassen sich nicht mehr öffnen (Issue #132)
+* added: Schwierigkeit einer Fertigkeitsprobe kann mit Mausrad erhöht/erniedrigt werden (Issue #141)
+* added: Waffenmerkmal "Unhandlich" wird berücksichtigt (Issue #98)
+
 ## 0.10.1 HOTFIX##
 2023-07-15
 
