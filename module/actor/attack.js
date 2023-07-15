@@ -58,7 +58,7 @@ export default class Attack {
 
         this.range = attackData.range || 0;
         this.features = attackData.features || "";
-        this.damage = attackData.damage || "1W6+1";
+        this._damage = attackData.damage || "1W6+1";
         this._weaponSpeed = attackData.weaponSpeed || 7;
         this.editable = ["weapon", "shield", "npcattack"].includes(this.item.type);
         this.deletable = ["npcattack"].includes(this.item.type);
@@ -81,9 +81,27 @@ export default class Attack {
         }
     }
 
+
+
+    get damage() {
+        let damage = this._damage;
+        let mod = parseInt(this.actor.modifier.value(`damage.${this.id}`));
+        mod += parseInt(this.actor.modifier.value(`damage.${this.item.name}`));
+        if (this.actor.items.find(i => i.type == "mastery" && i.system.skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
+            mod += 2;
+        }
+        if (mod != 0)
+            damage += (mod < 0 ? "" : "+") + mod;
+        return damage;
+    }
+
     get weaponSpeed() {
         let weaponSpeed = this._weaponSpeed;
         weaponSpeed -= parseInt(this.actor.modifier.value(`weaponspeed.${this.id}`));
+        weaponSpeed -= parseInt(this.actor.modifier.value(`weaponspeed.${this.item.name}`));
+        if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
+            weaponSpeed -= 2;
+        }
         if (["melee", "slashing", "chains", "blades", "staffs"].includes(this.skill.id))
             weaponSpeed += parseInt(this.actor.tickMalus);
         return weaponSpeed;
