@@ -24,6 +24,7 @@ const AttackableItem = (superclass) => class extends superclass {
     }
 
     get featuresList() {
+        if (Array.isArray(this.system.features)) return [];
         if (this.system.features.trim() == "" || this.system.features.trim() == "-") return [];
         return this.system.features?.split(",").map(str => str.trim());
     }

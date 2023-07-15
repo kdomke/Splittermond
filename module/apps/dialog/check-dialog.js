@@ -130,6 +130,15 @@ export default class CheckDialog extends Dialog {
             $(html).find(query).val(value-3).change();
         });
 
+        html.find('input[name="difficulty"]').on("wheel", (event) => {
+            let value = parseInt($(html).find('input[name="difficulty"]').val()) || 0;
+            if (event.originalEvent.deltaY < 0) {
+                $(html).find('input[name="difficulty"]').val(value+1).change();
+            } else {
+                $(html).find('input[name="difficulty"]').val(value-1).change();
+            }
+        });
+
         super.activateListeners(html);
     }
 
