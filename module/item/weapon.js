@@ -11,6 +11,9 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
     }
     prepareActorData() {
         super.prepareActorData();
+        if (this.system.equipped && this.system.features.toLowerCase().includes("unhandlich")) {
+            this.actor.addModifier(this, this.name, "VTD -2", "equipment");
+        }
         this.prepareActiveDefense();
     }
 
