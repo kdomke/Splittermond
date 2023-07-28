@@ -28,7 +28,7 @@ export default class SplittermondNPCSheet extends SplittermondActorSheet {
         html.find('input[name^="derivedAttributes"]').change(this._onChangeDerivedAttribute.bind(this));
         html.find('input[name="damageReduction"]').change(this._onChangeDamageReduction.bind(this));
 
-        html.find('input[name^="data.skills"][name$="value"]').change(this._onChangeSkill.bind(this));
+        html.find('input[name^="system.skills"][name$="value"]').change(this._onChangeSkill.bind(this));
 
         super.activateListeners(html);
     }
