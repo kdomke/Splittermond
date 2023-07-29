@@ -1,3 +1,10 @@
+## 0.10.3##
+2023-07-29
+
+* fixed: Im NPC-Sheet konnten manche Felder nicht editiert werden (Issue #145/#146)
+* fixed: Der "minimale Stärke"-Wert wurde im Rüstungs-Sheet nicht angezeigt (Issue #143)
+* added: Waffenmerkmal "improvisierte Waffe" sowie die Meisterschaft "Improvisation" implementiert
+
 ## 0.10.2 HOTFIX##
 2023-07-15
 

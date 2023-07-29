@@ -9,13 +9,13 @@
                 <input class="character-name" name="name" type="text" value="{{actor.name}}"
                     placeholder="{{localize 'splittermond.name' }}" />
                 <div>
-                    <input class="autoexpand" name="system.type" type="text" value="{{data.type}}"
+                    <input class="autoexpand" name="system.type" type="text" value="{{actor.system.type}}"
                         placeholder="{{localize 'splittermond.opponenttype'}}" />
                     {{#unless this.limited}}
                     &nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="system.level" type="text" value="{{data.level}}"
+                    <input class="autoexpand" name="system.level" type="text" value="{{actor.system.level}}"
                         placeholder="{{localize 'splittermond.opponentlevel'}}" />&nbsp;&middot;&nbsp;
-                    <input class="autoexpand" name="system.sex" type="text" value="{{data.sex}}"
+                    <input class="autoexpand" name="system.sex" type="text" value="{{actor.system.sex}}"
                         placeholder="{{localize 'splittermond.sex'}}" />
                     {{/unless}}
                 </div>

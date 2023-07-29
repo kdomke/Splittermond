@@ -31,7 +31,7 @@ export default class SplittermondArmorSheet extends SplittermondItemSheet {
             },
             {
                 label: "splittermond.minStrength",
-                value: this.item.system.minStrength || "-"
+                value: this.item.system.minStr || "-"
             }
         ];
             

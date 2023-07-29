@@ -462,6 +462,12 @@ export default class SplittermondActor extends Actor {
                             addModifierHelper(skill, emphasis);
                         });
                         break;
+                    case "damage":
+                        this.modifier.add("damage."+emphasis, name, value, item, type, false);
+                        break;
+                    case "weaponspeed":
+                        this.modifier.add("weaponspeed."+emphasis, name, value, item, type, false);
+                        break;
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
                             var labelParts = modifierLabel.split(".");
