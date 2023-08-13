@@ -64,6 +64,27 @@ export default class RequestCheckDialog extends Dialog {
             $(html).find(query).val(value-1).change();
         });
 
+        html.find('[data-action="inc-value-3"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value+3).change();
+        });
+
+        html.find('[data-action="dec-value-3"]').click((event) => {
+            const query = $(event.currentTarget).closestData('input-query');
+            let value = parseInt($(html).find(query).val()) || 0;
+            $(html).find(query).val(value-3).change();
+        });
+
+        html.find('input[name="difficulty"]').on("wheel", (event) => {
+            let value = parseInt($(html).find('input[name="difficulty"]').val()) || 0;
+            if (event.originalEvent.deltaY < 0) {
+                $(html).find('input[name="difficulty"]').val(value+1).change();
+            } else {
+                $(html).find('input[name="difficulty"]').val(value-1).change();
+            }
+        });
+
         super.activateListeners(html);
     }
 
