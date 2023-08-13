@@ -74,6 +74,10 @@ export default class Skill extends Modifiable {
         this._cache.value = null;
     }
 
+    get maneuvers() {
+        return this.actor.items.filter(i => i.type == "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
+    }
+
     async roll(options = {}) {
         let emphasisData = [];
         let selectableModifier = this.selectableModifier;
@@ -161,6 +165,7 @@ export default class Skill extends Modifiable {
             degreeOfSuccess: data.degreeOfSuccess,
             availableSplinterpoints: this.actor.type === "character" ? this.actor.system.splinterpoints.value : 0,
             hideDifficulty: hideDifficulty,
+            maneuvers: checkData.maneuvers || [],
             ...(options.checkMessageData || {})
         }
 

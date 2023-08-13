@@ -62,7 +62,12 @@
         }
 
         &.success {
-
+            &.grazing-hit {
+                .degree-of-success,
+                .roll-total {
+                    color: var(--color-grazing-hit);
+                }
+            }
             .degree-of-success,
             .roll-total {
                 color: var(--color-success);

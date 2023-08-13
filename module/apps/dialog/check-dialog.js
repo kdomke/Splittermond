@@ -1,10 +1,17 @@
 export default class CheckDialog extends Dialog {
     constructor(checkData, dialogData = {}, options = {}) {
         super(dialogData, options);
-        this.options.classes = ["splittermond", "dialog","dialog-check"];
 
         this.checkData = checkData;
     }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes:["splittermond", "dialog","dialog-check"],
+            width: 450,
+        });
+    }
+
 
     static async create(checkData) {
 
@@ -63,6 +70,12 @@ export default class CheckDialog extends Dialog {
                                         value: parseInt(this.value) || 0,
                                         description: this.dataset.name
                                     });
+                                }
+                            });
+                            fd.maneuvers = [];
+                            $(html).find("[name='maneuvers']").each(function () {
+                                if (this.checked) {
+                                    fd.maneuvers.push(this.value);
                                 }
                             });
 
@@ -137,6 +150,18 @@ export default class CheckDialog extends Dialog {
             } else {
                 $(html).find('input[name="difficulty"]').val(value-1).change();
             }
+        });
+
+        html.find('[data-action="difficulty-vtd"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("VTD").change();
+        });
+
+        html.find('[data-action="difficulty-kw"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("KW").change();
+        });
+
+        html.find('[data-action="difficulty-gw"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("GW").change();
         });
 
         super.activateListeners(html);

@@ -53,6 +53,20 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             templateContext.img = data.weapon.img;
             let ticks = ["longrange", "throwing"].includes(data.weapon.skill.id) ? 3 : data.weapon.weaponSpeed;
             if (data.succeeded) {
+                if (data.maneuvers.length > data.degreeOfSuccess) {
+                    templateContext.degreeOfSuccessMessage = game.i18n.localize(`splittermond.grazingHit`);
+                    templateContext.isGrazingHit = true;
+                }
+
+                if (data.maneuvers.length > 0) {
+                    templateContext.degreeOfSuccessDescription = "<h3>" + game.i18n.localize(`splittermond.maneuver`) + "</h3>";
+                    templateContext.degreeOfSuccessDescription += "<ul>";
+                    for (let i = 0; i < data.maneuvers.length; i++) {
+                        templateContext.degreeOfSuccessDescription += "<li>" + data.maneuvers[i] + "</li>";
+                    }
+                    templateContext.degreeOfSuccessDescription += "</ul>";
+                }
+
                 templateContext.actions.push({
                     name: `${game.i18n.localize("splittermond.activeDefense")} (${game.i18n.localize("splittermond.derivedAttribute.defense.short")})`,
                     icon: "fa-shield-alt",

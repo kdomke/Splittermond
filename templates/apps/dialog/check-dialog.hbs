@@ -47,6 +47,29 @@
             <button class="button-inline" type="button" data-action="inc-value-3" data-input-query="input[name='difficulty']">
             +3</button>
         </div>
+        <label></label>
+        <div class="row">
+            <button class="button" type="button" data-action="difficulty-vtd">
+            VTD</button>
+            <button class="button" type="button" data-action="difficulty-kw">
+            KW</button>
+            <button class="button" type="button" data-action="difficulty-gw">
+            GW</button>
+        </div>
+        {{#if skill.maneuvers}}
+        <label>{{localize "splittermond.maneuvers"}}</label>
+        <div class="row">
+            <ul class="checkbox-list">
+                {{#each skill.maneuvers}}
+                <li>
+                    <input type="checkbox" name="maneuvers" data-name="{{this.name}}" id="emphasis_{{@index}}"
+                        value="{{this.name}}"><label
+                        for="emphasis_{{@index}}">{{this.name}}</label>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+        {{/if}}
         
         <label>{{localize "splittermond.rollMode"}}</label>
         <select name="rollMode">

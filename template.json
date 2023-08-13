@@ -555,6 +555,7 @@
       "availableIn": "",
       "skill": "",
       "isGrandmaster": 0,
+      "isManeuver": false,
       "level": 1
     },
     "strength": {
