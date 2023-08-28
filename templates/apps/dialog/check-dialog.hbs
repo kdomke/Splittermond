@@ -62,9 +62,9 @@
             <ul class="checkbox-list">
                 {{#each skill.maneuvers}}
                 <li>
-                    <input type="checkbox" name="maneuvers" data-name="{{this.name}}" id="emphasis_{{@index}}"
-                        value="{{this.name}}"><label
-                        for="emphasis_{{@index}}">{{this.name}}</label>
+                    <input type="checkbox" name="maneuvers" data-name="{{this.name}}" id="maneuver_{{@index}}"
+                        value="{{@index}}"><label
+                        for="maneuver_{{@index}}">{{this.name}}</label>
                 </li>
                 {{/each}}
             </ul>

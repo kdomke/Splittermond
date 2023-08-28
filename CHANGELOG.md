@@ -1,3 +1,11 @@
+## 0.10.4##
+2023-08-28
+
+* fixed: Kompendium-Browser
+* added: Meisterschaften können als Manöver gekennzeichnet werden (Issue #139)
+* added: Manöver können beim Fertigkeitswürfen ausgewählt werden (Issue #139)
+* added: *Streiftreffer* bei nicht erreichten EG für Manöver wird berücksichtigt (Issue #139)
+
 ## 0.10.3##
 2023-07-29
 
