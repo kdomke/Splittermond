@@ -2467,6 +2467,19 @@ li.taglist-item:hover .taglist-item-actions {
   background-color: var(--color-primary);
   color: white;
 }
+.splittermond.check li.maneuver,
+.splittermond.damage li.maneuver,
+.splittermond.status-effect-message li.maneuver {
+  font-weight: bold;
+}
+.splittermond.check li.maneuver .description,
+.splittermond.damage li.maneuver .description,
+.splittermond.status-effect-message li.maneuver .description {
+  font-weight: normal;
+  font-family: Signika;
+  font-size: normal;
+  display: none;
+}
 .fumble-table-result-item {
   display: none;
   padding-top: 3px;
@@ -3050,7 +3063,7 @@ ul.checkbox-list li input:checked ~ label::before {
 .sheet.journal-entry .journal-entry-content .box-blue {
   padding: var(--line-height);
   background: rgba(0, 133, 255, 0.1);
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.3);
   margin-top: var(--line-height);
   margin-bottom: var(--line-height);
 }
@@ -3062,9 +3075,10 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .sheet.journal-entry .journal-entry-content .example {
   padding: var(--line-height);
+  background-color: rgba(255, 255, 255, 0.1);
   margin-top: var(--line-height);
   margin-bottom: var(--line-height);
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.3);
 }
 .sheet.journal-entry .journal-entry-content .example::before {
   content: "Beispiel: ";
@@ -3084,10 +3098,10 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .sheet.journal-entry .journal-entry-content table th,
 .sheet.journal-entry .journal-entry-content table td {
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
   font-weight: 400;
 }
 .sheet.journal-entry .journal-entry-content table thead {

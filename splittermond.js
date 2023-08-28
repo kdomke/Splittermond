@@ -425,6 +425,20 @@ function commonEventHandler(app, html, data) {
         actor.addTicks(value, message);
     });
 
+    html.find(".maneuver").click(event => {
+        let descriptionElement = $(event.currentTarget).find(".description")
+
+        if (descriptionElement.hasClass("expanded")) {
+            descriptionElement.slideUp(200);
+        } else {
+            descriptionElement.slideDown(200);
+        }
+
+        descriptionElement.toggleClass("expanded");
+
+
+    });
+
 }
 
 Hooks.on('renderJournalPageSheet',  function (app, html, data) {
@@ -469,8 +483,9 @@ Hooks.on('renderChatMessage', function (app, html, data) {
             event.stopPropagation()
             const eg = $(event.currentTarget).closestData("success");
             const costs = $(event.currentTarget).closestData("costs");
+            const skill = $(event.currentTarget).closestData("skill");
 
-            actor.rollMagicFumble(eg,costs);
+            actor.rollMagicFumble(eg, costs, skill);
         }
 
         if (type === "attackFumble") {

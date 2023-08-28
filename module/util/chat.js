@@ -60,11 +60,14 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
                 if (data.maneuvers.length > 0) {
                     templateContext.degreeOfSuccessDescription = "<h3>" + game.i18n.localize(`splittermond.maneuver`) + "</h3>";
-                    templateContext.degreeOfSuccessDescription += "<ul>";
+                    templateContext.degreeOfSuccessDescription += "<ol>";
                     for (let i = 0; i < data.maneuvers.length; i++) {
-                        templateContext.degreeOfSuccessDescription += "<li>" + data.maneuvers[i] + "</li>";
+                        templateContext.degreeOfSuccessDescription += `<li class="maneuver">
+                        ${data.maneuvers[i].name}
+                        <div class="description">${data.maneuvers[i].system.description}</div>
+                        </li>`;
                     }
-                    templateContext.degreeOfSuccessDescription += "</ul>";
+                    templateContext.degreeOfSuccessDescription += "</ol>";
                 }
 
                 templateContext.actions.push({
@@ -239,7 +242,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     data: {
                         "roll-type": "magicFumble",
                         success: -data.degreeOfSuccess,
-                        costs: data.spell.costs
+                        costs: data.spell.costs,
+                        skill: data.spell.skill.id
                     }
                 });
             }

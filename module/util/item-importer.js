@@ -256,7 +256,7 @@ export default class ItemImporter {
             if (descriptionData === null) {
                 descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
             }
-            itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+            itemData.data.description = descriptionData[1].replaceAll("\n", " ").replaceAll("", "").replaceAll("  ", " ");
 
             Item.create(itemData);
 

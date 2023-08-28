@@ -393,7 +393,7 @@ export async function importNpc() {
     d.render(true);
 }
 
-export function magicFumble(eg = 0, costs = 0) {
+export function magicFumble(eg = 0, costs = 0, skill = "") {
     const speaker = ChatMessage.getSpeaker();
     let actor;
     if (speaker.token) actor = game.actors.tokens[speaker.token];
@@ -402,7 +402,7 @@ export function magicFumble(eg = 0, costs = 0) {
         ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
         return
     };
-    actor.rollMagicFumble(eg,costs);
+    actor.rollMagicFumble(eg, costs, skill);
 }
 
 export function attackFumble(eg = 0, costs = 0) {
