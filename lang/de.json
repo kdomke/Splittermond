@@ -518,7 +518,10 @@
         },
         "error": {
             "parseError": "Fehler beim Parsen der Daten im Bereich: {section}"
-        }
+        },
+        "maneuver": "Manöver",
+        "maneuvers": "Manöver",
+        "grazingHit": "Streiftreffer"
     },
     "COMBAT": {
         "Round": "Tick"

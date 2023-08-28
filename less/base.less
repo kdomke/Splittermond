@@ -135,7 +135,7 @@ img {
     background: var(--background-parchment);
 }
 
-
+/*
 .sheet.journal-entry .journal-entry-pages:extend(.border-double-corner-1) {
     margin: 5px;
     margin-top: 0px;
@@ -143,6 +143,16 @@ img {
         padding: 8px;
     }
 }
+*/
+.sheet.journal-entry .journal-entry-pages {
+    margin: 5px;
+    margin-top: 0px;
+    .scrollable {
+        padding: 8px;
+    }
+}
+
+
 .window-app.sheet.splittermond:not(.dark):not(.journal-entry) .window-content {
     background: var(--background-parchment-splittermond), var(--background-parchment);
     background-position: top right;
@@ -479,7 +489,7 @@ label.checkbox {
     }
     
 }
-
+/*
 h1, h2, h3, .window-header .window-title {
     &::first-letter {
         font-size: 160%;
@@ -488,7 +498,7 @@ h1, h2, h3, .window-header .window-title {
     }
     
 }
-
+*/
 form h1.form-header, form h2.form-header, form h3.form-header {
     &:extend(.border-wobbly-line);
     margin: 0 0 5px;

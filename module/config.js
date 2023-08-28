@@ -422,6 +422,11 @@ splittermond.itemSheetProperties = {
                     help: "splittermond.modificatorHelpText"
                 },
                 {
+                    field: "system.isManeuver",
+                    label: "splittermond.maneuver",
+                    template: "bool",
+                },
+                {
                     field: "system.isGrandmaster",
                     label: "splittermond.grandmaster",
                     template: "bool",

@@ -63,15 +63,15 @@ export default class SplittermondCompendiumBrowser extends Application {
         });
 
         data.spellFilter = {
-            skills: CONFIG.splittermond.spellSkillsOption
+            skills: deepClone(CONFIG.splittermond.spellSkillsOption)
         }
 
         data.masteryFilter = {
-            skills: CONFIG.splittermond.masterySkillsOption
+            skills: deepClone(CONFIG.splittermond.masterySkillsOption)
         }
 
         data.weaponFilter = {
-            skills: CONFIG.splittermond.fightingSkillOptions
+            skills: deepClone(CONFIG.splittermond.fightingSkillOptions)
         }
 
         delete (data.spellFilter.skills.arcanelore);

@@ -354,14 +354,14 @@ export default class SplittermondActor extends Actor {
             let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-]?(?:k?[0-9\.]+v?[0-9]*))/i);
             if (temp) {
                 let modifierLabel = temp[1].trim();
-                let value = temp[2].replace("AUS", this.attributes.charisma.value + "")
-                    .replace("BEW", this.attributes.agility.value + "")
-                    .replace("INT", this.attributes.intuition.value + "")
-                    .replace("KON", this.attributes.constitution.value + "")
-                    .replace("MYS", this.attributes.mystic.value + "")
-                    .replace("STÄ", this.attributes.strength.value + "")
-                    .replace("VER", this.attributes.mind.value + "")
-                    .replace("WIL", this.attributes.willpower.value + "");
+                let value = temp[2].replaceAll("AUS", this.attributes.charisma.value + "")
+                    .replaceAll("BEW", this.attributes.agility.value + "")
+                    .replaceAll("INT", this.attributes.intuition.value + "")
+                    .replaceAll("KON", this.attributes.constitution.value + "")
+                    .replaceAll("MYS", this.attributes.mystic.value + "")
+                    .replaceAll("STÄ", this.attributes.strength.value + "")
+                    .replaceAll("VER", this.attributes.mind.value + "")
+                    .replaceAll("WIL", this.attributes.willpower.value + "");
                 let emphasis = "";
                 let modifierLabelParts = modifierLabel.split("/");
                 if (modifierLabelParts[1]) {
@@ -442,10 +442,11 @@ export default class SplittermondActor extends Actor {
                         data.focusRegeneration.bonus += parseFloat(value);
                         break;
                     case "lowerfumbleresult":
-                        if (!data.lowerFumbleResult) {
-                            data.lowerFumbleResult = 0;
+                        let skill = item.system.skill;
+                        if (!skill) {
+                            skill = "*";
                         }
-                        data.lowerFumbleResult += parseFloat(value) * multiplier;
+                        addModifierHelper(modifierLabel.toLowerCase() + "/" + skill);
                         break;
                     case "generalskills":
                         CONFIG.splittermond.skillGroups.general.forEach((skill) => {
@@ -480,6 +481,10 @@ export default class SplittermondActor extends Actor {
                                 }
                             }
 
+                            if (spellGroup == "*" && item.system.skill) {
+                                spellGroup = item.system.skill;
+                            }
+
                             var group = data.spellCostReduction[spellGroup.toLowerCase()] = data.spellCostReduction[spellGroup.toLowerCase()] || {
                                 consumed: 0,
                                 exhausted: 0,
@@ -501,6 +506,10 @@ export default class SplittermondActor extends Actor {
                                 if (labelParts.length == 3) {
                                     spellGroup += "." + labelParts[2].trim();
                                 }
+                            }
+
+                            if (spellGroup == "*" && item.system.skill) {
+                                spellGroup = item.system.skill;
                             }
 
                             var group = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
@@ -1030,10 +1039,11 @@ export default class SplittermondActor extends Actor {
         ChatMessage.create(chatData);
     }
 
-    async rollMagicFumble(eg = 0, costs = 0) {
+    async rollMagicFumble(eg = 0, costs = 0, skill = "") {
 
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = parseInt(this.system.lowerFumbleResult) || 0;
+        let lowerFumbleResult = this.modifier.value("lowerfumbleresult/"+skill) 
+        lowerFumbleResult += this.modifier.value("lowerfumbleresult/*");
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }

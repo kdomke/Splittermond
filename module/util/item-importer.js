@@ -256,7 +256,7 @@ export default class ItemImporter {
             if (descriptionData === null) {
                 descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
             }
-            itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+            itemData.data.description = descriptionData[1].replaceAll("\n", " ").replaceAll("", "").replaceAll("  ", " ");
 
             Item.create(itemData);
 
@@ -966,18 +966,18 @@ export default class ItemImporter {
                         tokenizedData[i+1].match(/[^(,]+\([^)]+\)/g)?.forEach?.(lootEntryStr => {
                             lootEntryStr = lootEntryStr.replace(/\n/, " ");
                             let lootEntryData = lootEntryStr.match(/([^(,]+)\(([^)]+)\)/);
-                            let costs = 0;
+                            let price = 0;
                             let description = lootEntryData[2];
                             if (lootEntryData[2]) {
                                 lootEntryStr.match(/([0-9]+) (L?|T?|S?)(.*)/);
-                                costs = lootEntryStr[1] + " " + lootEntryStr[2];
+                                price = lootEntryStr[1] + " " + lootEntryStr[2];
                             }
                             actorData.items.push({
                                 type: "equipment",
                                 name: lootEntryData[1].trim(),
                                 data: {
                                     description: description,
-                                    costs: costs
+                                    price: price
                                 }
                             })
                         });

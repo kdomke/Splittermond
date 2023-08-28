@@ -84,6 +84,15 @@ export default class SplittermondItem extends Item {
                     this.actor.addModifier(this, this.name, data.modifier, "magic");
                 }
                 break
+            case "mastery":
+                let modifier = data.modifier.replaceAll("${skill}", data.skill);
+                let name = this.name;
+                if (name.startsWith("Schwerpunkt")) {
+                    name = this.name.substring(12).trim();
+                }
+                modifier = modifier.replaceAll("${name}", name);
+                this.actor.addModifier(this, name, modifier);
+                break;
             default:
                 if (data.modifier) {
                     this.actor.addModifier(this, this.name, data.modifier);

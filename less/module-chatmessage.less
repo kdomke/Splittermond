@@ -62,7 +62,12 @@
         }
 
         &.success {
-
+            &.grazing-hit {
+                .degree-of-success,
+                .roll-total {
+                    color: var(--color-grazing-hit);
+                }
+            }
             .degree-of-success,
             .roll-total {
                 color: var(--color-success);
@@ -123,6 +128,17 @@
                     background-color: var(--color-primary);
                     color: white;
                 }
+            }
+        }
+
+        li.maneuver {
+            font-weight: bold;
+
+            .description {
+                font-weight: normal;
+                font-family: Signika;
+                font-size: normal;
+                display: none;
             }
         }
     }

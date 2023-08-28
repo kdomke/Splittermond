@@ -1,10 +1,17 @@
 export default class CheckDialog extends Dialog {
     constructor(checkData, dialogData = {}, options = {}) {
         super(dialogData, options);
-        this.options.classes = ["splittermond", "dialog","dialog-check"];
 
         this.checkData = checkData;
     }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes:["splittermond", "dialog","dialog-check"],
+            width: 450,
+        });
+    }
+
 
     static async create(checkData) {
 
@@ -22,25 +29,8 @@ export default class CheckDialog extends Dialog {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg'   style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/><img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.rollType.risk"),
                         callback: (html) => {
-                            let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+                            let fd = CheckDialog._prepareFormData(html, checkData);
                             fd.rollType = "risk";
-                            fd.modifierElements = [];
-                            if (parseInt(fd.modifier) || 0) {
-                                fd.modifierElements.push({
-                                    value: parseInt(fd.modifier) || 0,
-                                    description: game.i18n.localize("splittermond.modifier")
-                                });
-                            }
-                            $(html).find("[name='emphasis']").each(function () {
-                                if (this.checked) {
-                                    fd.modifierElements.push({
-                                        value: parseInt(this.value) || 0,
-                                        description: this.dataset.name
-                                    });
-                                }
-                            });
-
-                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
                             resolve(fd);
                         }
                     },
@@ -48,25 +38,8 @@ export default class CheckDialog extends Dialog {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/><img src='../../icons/dice/d10black.svg'  style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.rollType.standard"),
                         callback: (html) => {
-                            let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+                            let fd = CheckDialog._prepareFormData(html, checkData);
                             fd.rollType = "standard";
-                            fd.modifierElements = [];
-                            if (parseInt(fd.modifier) || 0) {
-                                fd.modifierElements.push({
-                                    value: parseInt(fd.modifier) || 0,
-                                    description: game.i18n.localize("splittermond.modifier")
-                                });
-                            }
-                            $(html).find("[name='emphasis']").each(function () {
-                                if (this.checked) {
-                                    fd.modifierElements.push({
-                                        value: parseInt(this.value) || 0,
-                                        description: this.dataset.name
-                                    });
-                                }
-                            });
-
-                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
                             resolve(fd);
                         }
                     },
@@ -74,25 +47,8 @@ export default class CheckDialog extends Dialog {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg'  style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.rollType.safety"),
                         callback: (html) => {
-                            let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+                            let fd = CheckDialog._prepareFormData(html, checkData);
                             fd.rollType = "safety";
-                            fd.modifierElements = [];
-                            if (parseInt(fd.modifier) || 0) {
-                                fd.modifierElements.push({
-                                    value: parseInt(fd.modifier) || 0,
-                                    description: game.i18n.localize("splittermond.modifier")
-                                });
-                            }
-                            $(html).find("[name='emphasis']").each(function () {
-                                if (this.checked) {
-                                    fd.modifierElements.push({
-                                        value: parseInt(this.value) || 0,
-                                        description: this.dataset.name
-                                    });
-                                }
-                            });
-
-                            fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
                             resolve(fd);
                         }
                     },
@@ -102,6 +58,35 @@ export default class CheckDialog extends Dialog {
             });
             dlg.render(true);
         });
+    }
+
+    static _prepareFormData(html, checkData) {
+        let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+        fd.modifierElements = [];
+        if (parseInt(fd.modifier) || 0) {
+            fd.modifierElements.push({
+                value: parseInt(fd.modifier) || 0,
+                description: game.i18n.localize("splittermond.modifier")
+            });
+        }
+        $(html).find("[name='emphasis']").each(function () {
+            if (this.checked) {
+                fd.modifierElements.push({
+                    value: parseInt(this.value) || 0,
+                    description: this.dataset.name
+                });
+            }
+        });
+        fd.maneuvers = [];
+        $(html).find("[name='maneuvers']").each(function () {
+            if (this.checked) {
+                fd.maneuvers.push(checkData.skill.maneuvers[parseInt(this.value)]);
+            }
+        });
+
+        fd.modifier = fd.modifierElements.reduce((acc, el) => acc + el.value, 0);
+
+        return fd;
     }
 
 
@@ -137,6 +122,18 @@ export default class CheckDialog extends Dialog {
             } else {
                 $(html).find('input[name="difficulty"]').val(value-1).change();
             }
+        });
+
+        html.find('[data-action="difficulty-vtd"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("VTD").change();
+        });
+
+        html.find('[data-action="difficulty-kw"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("KW").change();
+        });
+
+        html.find('[data-action="difficulty-gw"]').click((event) => {
+            $(html).find('input[name="difficulty"]').val("GW").change();
         });
 
         super.activateListeners(html);

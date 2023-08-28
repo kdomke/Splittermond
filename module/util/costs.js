@@ -4,19 +4,22 @@ export function calcSpellCostReduction(reductions, costData, enhancementCosts = 
     let maxValue = enhancementCosts ? 0 : 1;
 
     var costs = parseCostsString(costData);
+    var oldCosts = JSON.parse(JSON.stringify(costs));
     reductions.forEach(reduction => {
         if (reduction.channeled > 0 && costs.channeled > 0) {
             costs.channeled = Math.max(maxValue, costs.channeled - reduction.channeled);
         }
 
         if (reduction.consumed > 0 && costs.consumed > 0) {
-            costs.consumed = Math.max(maxValue, costs.consumed - reduction.consumed);
+            costs.consumed = Math.max(0, costs.consumed - reduction.consumed);
         }
 
         if (reduction.exhausted > 0 && costs.exhausted > 0) {
             costs.exhausted = Math.max(maxValue, costs.exhausted - reduction.exhausted);
         }
     });
+
+
 
     return formatCosts(costs);
 }
