@@ -11,7 +11,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         } else {
             return this.system.costs;
         }
-        
+
     }
 
     get enhancementCosts() {
@@ -72,17 +72,41 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.damage;
     }
 
+    /**
+     * Transforms the comma-separated list of spell schools in which this spell is available into a presentable,
+     * localized list
+     * @returns {SpellAvailabilityDisplay[]}
+     */
     get availableInList() {
-        if (this.system.availableIn.trim() == '') return [];
-        let list = this.system.availableIn.split(",").map(item => {
-            let data = item.trim().toLowerCase().split(/[ :]/);
-            return {
-                label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
-                skillId: data[0].trim(),
-                spellLevel: data[1].trim()
-            }
-        });
-        return list;
+        const availablityFromField = this.#sourceAvailablityFromField();
+        const availabilityFromSpellData = [[this.system.skill, `${this.system.skillLevel}`]];
+        const protoAvailability = availablityFromField.length > 0 ? availablityFromField
+            : availabilityFromSpellData;
+
+        return protoAvailability.map(item => (
+            {
+                label: game.i18n.localize(`splittermond.skillLabel.${item[0].trim()}`) + " " + item[1],
+                skillId: item[0].trim(),
+                spellLevel: item[1].trim()
+            })
+        );
+    }
+
+    /**
+     * @private
+     * @returns {[string[string]]|[]}
+     */
+    #sourceAvailablityFromField() {
+        const availability = this.system.availableIn;
+        const availabilityExists = availability && typeof availability == "string" && availability.trim() !== '';
+        let protoAvailability = [];
+        if (availabilityExists) {
+            protoAvailability = availability.split(",")
+                .map(item => item.trim().toLowerCase().split(/[ :]/))
+                .filter(item => item.length === 2)
+                .map(item => [item[0].trim(), item[1].trim()]);
+        }
+        return protoAvailability.length > 0 ? protoAvailability : [];
     }
 
     async roll(options) {
