@@ -1,4 +1,4 @@
-import a from "../../mocks.js";
+import a from "../../foundryMocks.js";
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../module/item/spell.js";
 
@@ -47,9 +47,7 @@ describe("Availability display", () => {
         const actual = sampleSpell.availableInList;
         expect(actual.length).to.eq(1);
         expect(actual[0]).to.deep.equal({label: "splittermond.skillLabel.illusionmagic 1", skillId: "illusionmagic", spellLevel: "1"});
-
     })
-
 
     it("Uses default for null availability", () => {
         testWithInvalidAvailibility(null);

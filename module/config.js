@@ -371,10 +371,26 @@ splittermond.displayOptions = {
     }
 }
 
+/**
+ * @typedef SplittermondItemSheetProperties
+ * @type {[{groupName: string, properties: [InputItemProperty|ItemSheetPropertyDisplayProperty]}]}
+ */
+/**
+ * @typedef ItemSheetPropertyDisplayProperty
+ * @type {{field: !string, template: "readonly"|"readonlyLocalize"|"input"|"select"|"bool"|"inputNumberWithSpinner", label: string, help: ?string}}
+ */
+/**
+ * @typedef InputItemProperty
+ * @type {ItemSheetPropertyDisplayProperty & {template: "input", placeholderText: label: string}}
+*/
+
 splittermond.itemSheetProperties = {
     species: [
         {
             groupName: "splittermond.general",
+            /**
+             * @type SplittermondItemSheetProperties
+             */
             properties: [
                 {
                     field: "system.size",
@@ -599,6 +615,9 @@ splittermond.itemSheetProperties = {
     ]
 }
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.weapon = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -710,6 +729,9 @@ splittermond.itemSheetProperties.weapon = [
     }
 ]
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.armor = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -749,6 +771,9 @@ splittermond.itemSheetProperties.armor = [
     }
 ]
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.shield = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -789,13 +814,13 @@ splittermond.itemSheetProperties.shield = [
         ]
     }
 ]
-
 splittermond.itemSheetProperties.spell = [
     {
         groupName: "splittermond.generalProperties",
         properties: [
             {
                 field: "system.availableIn",
+                placeholderText: "splittermond.availableInPlaceholderText",
                 label: "splittermond.availableIn",
                 template: "input"
             },
@@ -813,11 +838,13 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "system.spellType",
                 label: "splittermond.spellType",
+                placeholderText: "splittermond.spellTypePlaceholderText",
                 template: "input"
             },
             {
                 field: "system.costs",
                 label: "splittermond.focusCosts",
+                placeholderText: "splittermond.focusCostsPlaceholderText",
                 template: "input"
             },
             {

@@ -17,22 +17,41 @@ export default class SplittermondItemSheet extends ItemSheet {
         super(item, options);
     }
 
-    async getData() {
+    /**
+     * @override
+     * @typedef SplittermondItemSheetData
+     * @type {ItemSheetData & { itemProperties: any, statBlock: any, typeLabel: string}}
+     * @public
+     * @returns SplittermondItemSheetData
+     */
+    getData() {
+        /**
+         * @typedef ItemSheetData
+         * @type {{cssClass:string, editable:any, document: ClientDocument, data: any, limited: any, options: any, owner: any,title: string, type: string}}
+         */
         const data = super.getData();
         data.itemProperties = this._getItemProperties();
         data.statBlock = this._getStatBlock();
         data.typeLabel = "splittermond." + data.data.type;
 
-        data.description = await TextEditor.enrichHTML(data.data.system.description, {async: true});
+        data.description = TextEditor.enrichHTML(data.data.system.description, {async: false});
 
         return data;
     }
 
+    /**
+     * @returns {!SplittermondItemSheetProperties}
+     * @private
+     */
     _getItemProperties() {
+        /**
+         * @type SplittermondItemSheetProperties
+         */
         let sheetProperties = duplicate(CONFIG.splittermond.itemSheetProperties[this.item.type] || []);
         sheetProperties.forEach(grp => {
-            grp.properties.forEach(prop => {
+            grp.properties.forEach(/** @type {ChoiceItemProperty|InputItemProperty|InputNumberWithSpinnerItemProperty}*/prop => {
                 prop.value = foundry.utils.getProperty(this.item, prop.field);
+                prop.placeholderText = prop.placeholderText ?? prop.label;
                 if (prop.help) {
                     prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help), {async: false});
                 }
