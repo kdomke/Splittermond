@@ -1,4 +1,5 @@
-import SplittermondCompendium from "./compendium.js"
+import SplittermondCompendium from "./compendium.js";
+import {getSpellAvailabilityParser} from "../item/availabilityParser.js";
 
 export default class ItemImporter {
 
@@ -77,10 +78,10 @@ export default class ItemImporter {
             let spellName = "";
             for (let k = 0; k < spellTokens.length; k++) {
                 const spellToken = spellTokens[k];
-                if (spellToken == "") {
+                if (spellToken === "") {
                     continue;
                 }
-                if (spellName != "") {
+                if (spellName !== "") {
                     this.importSpell(spellName, spellToken, folder);
                     spellName = "";
                     continue;
@@ -88,9 +89,7 @@ export default class ItemImporter {
                     
                 if (spellToken.match(/(.*\s+\((?:Spruch|Ritus)\))/gm)) {
                     spellName = spellToken.match(/(.*?)\s+\((?:Spruch|Ritus)\)/m)[1];
-                    continue;
                 }
-
             }
             return;      
         }
@@ -112,7 +111,7 @@ export default class ItemImporter {
                         skill = CONFIG.splittermond.skillGroups.fighting.find(s => game.i18n.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
                         continue;
                     }
-                    if (skill == "") {
+                    if (skill === "") {
                         skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
                     }
                     
@@ -129,7 +128,7 @@ export default class ItemImporter {
             if (test.length > 1) {
                 let folder = await this._folderDialog();
                 test.forEach(m => {
-                    this.importArmor(m, folder)
+                    this.importArmor(m, folder);
                 });
                 return;
             }
@@ -216,7 +215,7 @@ export default class ItemImporter {
                         level: level,
                         modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
                     }
-                }
+                };
                 let escapeStr = token[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 let descriptionData = levelData[1].match(new RegExp(`${escapeStr} ([^]+?(?:Voraussetzung:[^]+?))(?=^.*:)`, "m"));
                 if (descriptionData === null) {
@@ -497,13 +496,7 @@ export default class ItemImporter {
             const sectionData = tokens[k+1].trim();
             switch(sectionHeading) { 
                 case "Schulen:":
-                    spellData.data.availableIn = sectionData.split(",").map(s => {
-                        let data = s.match(/([^ ]+)\s([0-5])/);
-                        let skill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(data[1].toLowerCase()));
-                        spellData.data.skill = skill;
-                        spellData.data.skillLevel = parseInt(data[2]);
-                        return `${skill} ${data[2]} `;
-                    }).join(", ");
+                    spellData.data.availableIn = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic).toInternalRepresentation(sectionData);
                     break;
                 case "Typus:":
                     spellData.data.spellType = sectionData;
@@ -685,7 +678,7 @@ export default class ItemImporter {
                         actorData.data.attributes.strength.value = parseInt(attributeData[5]);
                         actorData.data.attributes.mind.value = parseInt(attributeData[6]);
                         actorData.data.attributes.willpower.value = parseInt(attributeData[7]);
-                        if (attributeData.length == 8) break;
+                        if (attributeData.length === 8) break;
                         tokenizedData[i+1] = attributeData.slice(8).join(" ");
                     case /GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW/.test(tokenizedData[i]):
                         let derivedValueData = tokenizedData[i+1].trim().match(/([0-9]+(:?\s+\/\s+[0-9]+)*)/g);
@@ -728,7 +721,7 @@ export default class ItemImporter {
                                     actorData.data.attributes.willpower.value = parseInt(iData[1]);
                                     break;
                             }
-                        })
+                        });
                         break;
                     case /Wichtige abgeleitete Werte:/.test(tokenizedData[i]):
                         tokenizedData[i+1].split(",").forEach((i) => {
@@ -768,12 +761,12 @@ export default class ItemImporter {
                             let skillValue = parseInt(skillData[2]) || 0;
                             actorData.data.skills[skill] = {
                                 value: skillValue
-                            }
+                            };
                             if (CONFIG.splittermond.skillAttributes[skill]) {
                                 actorData.data.skills[skill].points = actorData.data.skills[skill].value;
                                 actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
                                 actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
-                                if (skill == "stealth") {
+                                if (skill === "stealth") {
                                     actorData.data.skills[skill].points -= 5-parseInt(actorData.data.derivedAttributes.size.value);
                                 }
                             }
@@ -833,7 +826,7 @@ export default class ItemImporter {
                             let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
                             let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
                             let level = 1;
-                            masteryEntryData[2].split(/,|;|:/).forEach((masteryStr) => {
+                            masteryEntryData[2].split(/[,;:]/).forEach((masteryStr) => {
                                 masteryStr = masteryStr.trim();
                                 if (masteryStr === "I") {
                                     level = 1;
@@ -906,8 +899,8 @@ export default class ItemImporter {
                         let spells = [];
                         let skill = "";
                         let level = 0;
-                        tokenizedData[i+1].replace(/\n/g,"").split(/;|,/)?.forEach(skillEntryStr => {
-                            let spellEntryData = skillEntryStr.trim().match(/(:?([^ ]{3,})?\s*([0IV]+):)?\s*([^]+)/)
+                        tokenizedData[i+1].replace(/\n/g,"").split(/[;,]/)?.forEach(skillEntryStr => {
+                            let spellEntryData = skillEntryStr.trim().match(/(:?([^ ]{3,})?\s*([0IV]+):)?\s*([^]+)/);
                             if (spellEntryData[2]) {
                                 let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[2].toLowerCase()));
                                 if (newSkill) {
@@ -949,7 +942,7 @@ export default class ItemImporter {
                             })
                         });
                         actorData.items.push(...await Promise.all(spells.map(async data => {
-                            let searchString = data.name.match(/([^\[]+)(?:\[[\[]+\])?/)
+                            let searchString = data.name.match(/([^\[]+)(?:\[[\[]+\])?/);
                             let spellData = await SplittermondCompendium.findItem("spell", searchString[1]);
                             if (spellData) {
                                 spellData = spellData.toObject();
@@ -957,7 +950,7 @@ export default class ItemImporter {
                                 spellData.name = data.name;
                                 spellData.data.skill = data.data.skill;
                                 spellData.data.skillLevel = data.data.level;
-                                return spellData
+                                return spellData;
                             } 
                             return data;
                         })));
@@ -979,7 +972,7 @@ export default class ItemImporter {
                                     description: description,
                                     price: price
                                 }
-                            })
+                            });
                         });
                     case /Besonderheiten:/.test(tokenizedData[i]):
                         actorData.data.biography += `<h2>Besonderheiten</h2>`;
@@ -1002,7 +995,7 @@ export default class ItemImporter {
 
         }
 
-        Actor.create(actorData, {renderSheet: true})
+        Actor.create(actorData, {renderSheet: true});
 
     }
 }

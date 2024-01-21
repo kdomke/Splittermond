@@ -9,11 +9,31 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     constructor(
         data,
         context = {},
-        availabilityParser= getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic)
+        availabilityParser = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic)
     ) {
         super(data, context);
         this.availabilityParser = availabilityParser;
+
+        /**
+         * @returns {string[]}
+         */
+        this.sourceAvailabilityFromField = function () {
+            if(typeof this.system.availableIn !== "string"){
+                return [];
+            }
+
+            const availability = this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
+            const availabilityExists = !!availability && availability.trim() !== '';
+            if (availabilityExists) {
+                return availability.split(",")
+                    .map(item => item.trim())
+                    .filter(this.availabilityParser.isWellFormattedAvailability);
+            }
+
+            return [];
+        };
     }
+
     get costs() {
         if (this.actor) {
             return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
@@ -23,14 +43,14 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
     }
 
-    get availableIn(){
+    get availableIn() {
         return this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
     }
 
     /**
      * @override
      */
-    update(data, context){
+    update(data, context) {
         if ("availableIn" in data) {
             data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
             delete data.availableIn;
@@ -102,37 +122,23 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
      * @returns {SpellAvailabilityDisplay[]}
      */
     get availableInList() {
-        const availablityFromField = this.#sourceAvailablityFromField();
-    const availabilityFromSpellData = [this.availabilityParser.parseInternalToken([this.system.skill, `${this.system.skillLevel}`])];
+        const availablityFromField = this.sourceAvailabilityFromField();
+        const availabilityFromSpellData = this.availabilityParser
+            .toDisplayRepresentation(`${this.system.skill} ${this.system.skillLevel}`);
         const protoAvailability = availablityFromField.length > 0 ? availablityFromField
-            : availabilityFromSpellData;
+            : [availabilityFromSpellData];
 
         return protoAvailability
+            .map(item => ({label: item, internal: this.availabilityParser.toInternalRepresentation(item).split(" ")}))
             .map(item => (
-            {
-                label: `${item[0]} ${item[1]}`,
-                skillId: this.availabilityParser.parseDisplayToken(item)[0],
-                spellLevel: item[1]
-            })
-        );
+                {
+                    label: item.label,
+                    skillId: item.internal[0],
+                    spellLevel: item.internal[1]
+                })
+            );
     }
 
-    /**
-     * @private
-     * @returns {[string[string]]|[]}
-     */
-    #sourceAvailablityFromField() {
-        const availability = this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
-        const availabilityExists = availability && typeof availability == "string" && availability.trim() !== '';
-        let protoAvailability = [];
-        if (availabilityExists) {
-            protoAvailability = availability.split(",")
-                .map(item => item.trim().split(/[ :]/))
-                .filter(item => item.length === 2)
-                .map(item => [item[0], item[1]]);
-        }
-        return protoAvailability.length > 0 ? protoAvailability : [];
-    }
 
     async roll(options) {
         if (!this.actor) return false;
@@ -160,7 +166,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                 spellTypeList: this.spellTypeList,
                 damage: this.damage
             }
-        }
+        };
 
         return this.skill.roll(options);
     }

@@ -1,17 +1,30 @@
-/**
- * @type AvailabilityParser
- */
 let singletonSpellAvailabilityParser;
+let singletonMasteryAvailabilityParser;
+
+/**
+ * Returns the singleton instance of the mastery availability parser or creates it if it does not exist.
+ * @param i18n
+ * @param {string[]} masterySkills
+ * @returns {MasteryAvailabilityParser}
+ */
+export function getMasteryAvailabilityParser(i18n, masterySkills) {
+    "use strict";
+    if (!singletonMasteryAvailabilityParser) {
+        singletonMasteryAvailabilityParser = new MasteryAvailabilityParser(i18n, masterySkills);
+    }
+    return singletonMasteryAvailabilityParser;
+}
+
 
 /**
  * Returns the singleton instance of the spell availability parser or creates it if it does not exist.
  * @param i18n
  * @param {string[]}magicSkills
- * @returns {AvailabilityParser}
+ * @returns {SpellAvailabilityParser}
  */
 export function getSpellAvailabilityParser(i18n, magicSkills) {
     if (!singletonSpellAvailabilityParser) {
-        singletonSpellAvailabilityParser = new AvailabilityParser(i18n, magicSkills);
+        singletonSpellAvailabilityParser = new SpellAvailabilityParser(i18n, magicSkills);
     }
     return singletonSpellAvailabilityParser;
 }
@@ -19,10 +32,22 @@ export function getSpellAvailabilityParser(i18n, magicSkills) {
 /**
  * used for testing
  * @param i18n
- * @param {string[]}magicSkills
- * @returns {AvailabilityParser}
+ * @param {string[]} masteries
+ * @returns {MasteryAvailabilityParser}
  */
-export function newSpellAvailabilityParser(i18n, magicSkills){
+export function newMasteryAvailabilityParser(i18n, masteries) {
+    "use strict";
+    singletonMasteryAvailabilityParser = null;
+    return getMasteryAvailabilityParser(i18n, masteries);
+}
+
+/**
+ * used for testing
+ * @param i18n
+ * @param {string[]}magicSkills
+ * @returns {SpellAvailabilityParser}
+ */
+export function newSpellAvailabilityParser(i18n, magicSkills) {
     singletonSpellAvailabilityParser = null;
     return getSpellAvailabilityParser(i18n, magicSkills);
 }
@@ -33,19 +58,32 @@ export function newSpellAvailabilityParser(i18n, magicSkills){
  * the localized version of the magic skill or the internal representation, while preserving the rest of the string.
  */
 class AvailabilityParser {
+
     /**
      * @param {{localize: (string)=>string}} i18n
-     * @param {Iterable<any>} magicSkills
-     * @private
+     * @param {Iterable<any>} skills
+     * @public
      */
-    constructor(i18n, magicSkills) {
+    constructor(i18n, skills) {
         this._internalsAsKeys = new Map();
         this._translationsAsKeys = new Map();
-        for (const skill of magicSkills) {
-            const translation = i18n.localize(`splittermond.skillLabel.${skill}`)
+        for (const skill of skills) {
+            const translation = i18n.localize(`splittermond.skillLabel.${skill}`);
             this._translationsAsKeys.set(translation.toLowerCase(), skill);
             this._internalsAsKeys.set(skill, translation);
         }
+
+        this.processString = function (availability, translationsMap) {
+            const availabilityExists = availability && typeof availability === "string" && availability.trim() !== '';
+            let transformed;
+            if (availabilityExists) {
+                transformed = availability.split(",")
+                    .map(item => item.trim())
+                    .map(item => this._translateSingleItem(item, translationsMap))
+                    .join(", ");
+            }
+            return transformed ? transformed : availability;
+        };
     }
 
 
@@ -57,18 +95,7 @@ class AvailabilityParser {
      * @returns {string}
      */
     toDisplayRepresentation(availability) {
-        return this.#processString(availability, this._internalsAsKeys);
-    }
-
-    /**
-     * transforms a single availability token of the form "skill level", into the display representation
-     * @public
-     * @param {string|string[]} singleAvailability
-     * @returns {string[]}
-     */
-    parseInternalToken(singleAvailability){
-        const splitToken = typeof singleAvailability === "string" ? singleAvailability.split(" "): singleAvailability;
-        return this.#translateSingleItem(splitToken, this._internalsAsKeys);
+        return this.processString(availability, this._internalsAsKeys);
     }
 
     /**
@@ -77,49 +104,76 @@ class AvailabilityParser {
      * @returns {string}
      */
     toInternalRepresentation(availability) {
-        return this.#processString(availability, this._translationsAsKeys);
+        return this.processString(availability, this._translationsAsKeys);
     }
 
     /**
-     * transforms a single availability token of the form "skill level", into the internal representation
-     * @public
-     * @param {string|string[]} singleAvailability
-     * @returns {string[]}
-     */
-    parseDisplayToken(singleAvailability){
-        const splitToken = typeof singleAvailability === "string" ? singleAvailability.split(" "): singleAvailability;
-        return this.#translateSingleItem(singleAvailability, this._internalsAsKeys);
-    }
-
-    /**
-     * @param {string} availability
-     * @param {Map<string,string>} translationsMap
-     * @returns {string[]}
-     */
-    #processString(availability, translationsMap) {
-        const availabilityExists = availability && typeof availability == "string" && availability.trim() !== '';
-        let transformed;
-        if (availabilityExists) {
-            transformed = availability.split(",")
-                .map(item => item.trim().split(/[ :]/))
-                .map(item => this.#translateSingleItem(item, translationsMap))
-                .map(item => item.join(" "))
-                .join(", ")
-        }
-        return transformed ? transformed : availability;
-    }
-
-    /**
-     * @param {string | string[2]}availablityItem
+     * @protected
+     * @param {string}availablityItem
      * @param {Map<string,string>}translationsMap
-     * @returns {string[]}
+     * @returns {string}
      */
-    #translateSingleItem(availablityItem, translationsMap){
-        const isWellFormattedAvailability = Array.isArray(availablityItem) && availablityItem.length === 2
-        if(isWellFormattedAvailability) {
-            const hasTranslation  =translationsMap.get(availablityItem[0].trim().toLowerCase())
-            return [hasTranslation ?? availablityItem[0], availablityItem[1].trim()];
-        } else
-            return [availablityItem];
+    _translateSingleItem(availablityItem, translationsMap) { throw new Error("Use derived class");
+    }
+}
+
+class SpellAvailabilityParser extends AvailabilityParser {
+
+    /**
+     * @param {{localize: (string)=>string}} i18n
+     * @param {Iterable<any>} magicSkills
+     */
+    constructor(i18n, magicSkills) {
+        super(i18n, magicSkills);
+    }
+
+    /**
+     * @protected
+     * @param {string}availablityItem
+     * @param {Map<string,string>}translationsMap
+     * @returns {string}
+     */
+    _translateSingleItem(availablityItem, translationsMap) {
+        if (this.isWellFormattedAvailability(availablityItem)) {
+            const splitItem = availablityItem.trim().split(/[ :]/);
+            const hasTranslation = translationsMap.get(splitItem[0].trim().toLowerCase());
+            return `${hasTranslation ?? splitItem[0]} ${splitItem[1].trim()}`;
+        } else {
+            return availablityItem;
+        }
+    }
+
+    /**
+     * checks whether a single spell availability token is well formatted
+     * @param {string}availability
+     * @returns {boolean}
+     */
+    isWellFormattedAvailability(availability) {
+        const splitItem = availability.trim().split(/[ :]/);
+        return Array.isArray(splitItem) &&
+            splitItem.length === 2 &&
+            !isNaN(parseFloat(splitItem[1]));
+    }
+}
+
+class MasteryAvailabilityParser extends AvailabilityParser {
+
+    /**
+     * @param {{localize: (string)=>string}} i18n
+     * @param {Iterable<string>} masteries
+     */
+    constructor(i18n, masteries) {
+        super(i18n, masteries);
+    }
+
+    /**
+     * @protected
+     * @param {string} availablityItem
+     * @param {Map<string,string>} translationsMap
+     * @returns {string}
+     */
+    _translateSingleItem(availablityItem, translationsMap) {
+        const hasTranslation = translationsMap.get(availablityItem.trim().toLowerCase());
+        return hasTranslation ?? availablityItem;
     }
 }

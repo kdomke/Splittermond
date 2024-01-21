@@ -416,7 +416,7 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "system.availableIn",
+                    field: "availableIn",
                     label: "splittermond.availableIn",
                     template: "input"
                 },
