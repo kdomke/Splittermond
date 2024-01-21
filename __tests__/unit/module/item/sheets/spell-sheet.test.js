@@ -7,6 +7,8 @@ import SplittermondSpellItem from "../../../../module/item/spell.js";
 
 
 describe("Properties display", () => {
+    const testParser = newSpellAvailabilityParser({localize: (str) => str}, ["illusionmagic", "deathmagic"])
+
     global.ItemSheet.prototype.getData = function () {
         return {data: this.item}
     };
@@ -23,7 +25,7 @@ describe("Properties display", () => {
             label: "splittermond.availableIn",
             template: "input"
         };
-        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}});
+        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}}, testParser);
         spellItem.system = {availableIn: "deathmagic 1"};
         spellItem.type = "spell"
 
@@ -39,7 +41,7 @@ describe("Properties display", () => {
             label: "splittermond.availableIn",
             template: "input"
         };
-        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}});
+        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}}, testParser);
         spellItem.system = {availableIn: ""};
         spellItem.type = "spell"
 
@@ -55,7 +57,7 @@ describe("Properties display", () => {
             label: "splittermond.availableIn",
             template: "input"
         };
-        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}});
+        const spellItem = new SplittermondSpellItem({}, {splittermond: {ready: true}}, testParser);
         spellItem.system = {availableIn: ""};
         spellItem.type = "spell"
 

@@ -2,9 +2,18 @@ import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
 import * as Costs from "../util/costs.js";
+import {getSpellAvailabilityParser} from "./availabilityParser.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
+    constructor(
+        data,
+        context = {},
+        availabilityParser= getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic)
+    ) {
+        super(data, context);
+        this.availabilityParser = availabilityParser;
+    }
     get costs() {
         if (this.actor) {
             return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
@@ -12,6 +21,21 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             return this.system.costs;
         }
 
+    }
+
+    get availableIn(){
+        return this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
+    }
+
+    /**
+     * @override
+     */
+    update(data, context){
+        if ("availableIn" in data) {
+            data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
+            delete data.availableIn;
+        }
+        return super.update(data, context);
     }
 
     get enhancementCosts() {
@@ -79,15 +103,16 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
      */
     get availableInList() {
         const availablityFromField = this.#sourceAvailablityFromField();
-        const availabilityFromSpellData = [[this.system.skill, `${this.system.skillLevel}`]];
+    const availabilityFromSpellData = [this.availabilityParser.parseInternalToken([this.system.skill, `${this.system.skillLevel}`])];
         const protoAvailability = availablityFromField.length > 0 ? availablityFromField
             : availabilityFromSpellData;
 
-        return protoAvailability.map(item => (
+        return protoAvailability
+            .map(item => (
             {
-                label: game.i18n.localize(`splittermond.skillLabel.${item[0].trim()}`) + " " + item[1],
-                skillId: item[0].trim(),
-                spellLevel: item[1].trim()
+                label: `${item[0]} ${item[1]}`,
+                skillId: this.availabilityParser.parseDisplayToken(item)[0],
+                spellLevel: item[1]
             })
         );
     }
@@ -97,14 +122,14 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
      * @returns {[string[string]]|[]}
      */
     #sourceAvailablityFromField() {
-        const availability = this.system.availableIn;
+        const availability = this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
         const availabilityExists = availability && typeof availability == "string" && availability.trim() !== '';
         let protoAvailability = [];
         if (availabilityExists) {
             protoAvailability = availability.split(",")
-                .map(item => item.trim().toLowerCase().split(/[ :]/))
+                .map(item => item.trim().split(/[ :]/))
                 .filter(item => item.length === 2)
-                .map(item => [item[0].trim(), item[1].trim()]);
+                .map(item => [item[0], item[1]]);
         }
         return protoAvailability.length > 0 ? protoAvailability : [];
     }

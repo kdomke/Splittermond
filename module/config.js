@@ -819,7 +819,7 @@ splittermond.itemSheetProperties.spell = [
         groupName: "splittermond.generalProperties",
         properties: [
             {
-                field: "system.availableIn",
+                field: "availableIn",
                 placeholderText: "splittermond.availableInPlaceholderText",
                 label: "splittermond.availableIn",
                 template: "input"
