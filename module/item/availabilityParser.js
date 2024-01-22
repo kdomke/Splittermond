@@ -79,6 +79,7 @@ class AvailabilityParser {
             if (availabilityExists) {
                 transformed = availability.split(",")
                     .map(item => item.trim())
+                    .filter(item => item !== "")
                     .map(item => this._translateSingleItem(item, translationsMap))
                     .join(", ");
             }
@@ -135,7 +136,7 @@ class SpellAvailabilityParser extends AvailabilityParser {
      */
     _translateSingleItem(availablityItem, translationsMap) {
         if (this.isWellFormattedAvailability(availablityItem)) {
-            const splitItem = availablityItem.trim().split(/[ :]/);
+            const splitItem = availablityItem.trim().split(/[ :]/).filter(item=>!!item);
             const hasTranslation = translationsMap.get(splitItem[0].trim().toLowerCase());
             return `${hasTranslation ?? splitItem[0]} ${splitItem[1].trim()}`;
         } else {
@@ -149,7 +150,7 @@ class SpellAvailabilityParser extends AvailabilityParser {
      * @returns {boolean}
      */
     isWellFormattedAvailability(availability) {
-        const splitItem = availability.trim().split(/[ :]/);
+        const splitItem = availability.trim().split(/[ :]/).filter(item=>!!item);
         return Array.isArray(splitItem) &&
             splitItem.length === 2 &&
             !isNaN(parseFloat(splitItem[1]));

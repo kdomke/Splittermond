@@ -78,6 +78,11 @@ describe("spell availabilty internal transformation", () => {
             .to.equal("Cederion2, deathmagic 1, GRW 234");
     });
 
+    it("should remove superfluous whitespace",()=>{
+        expect(parser.toInternalRepresentation("  Cederion2    ,    todesmagie    1, "))
+            .to.equal("Cederion2, deathmagic 1");
+    });
+
 });
 describe("mastery availability display transformation", () => {
     'use strict';
@@ -133,6 +138,11 @@ describe("mastery availabilty internal transformation", () => {
     it("should pass on illegal values inbetween legal values",()=>{
         expect(parser.toInternalRepresentation("Cederion2, sTANGenWAffeN, GRW 234"))
             .to.equal("Cederion2, staffs, GRW 234");
+    });
+
+    it("should remove superfluous whitespace",()=>{
+        expect(parser.toInternalRepresentation("  Cederion2    ,    stAnGenWAffen   , "))
+            .to.equal("Cederion2, staffs");
     });
 
 });
