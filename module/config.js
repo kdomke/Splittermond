@@ -123,7 +123,7 @@ splittermond.skillGroups = {
         "watermagic",
         "windmagic"]
 };
-splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]
+splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic];
 splittermond.resources = {
     core: ["reputation",
         "contacts",
@@ -212,7 +212,7 @@ splittermond.rollType = {
         label: "splittermond.rollType.safetyGrandmaster",
         rollFormula: "3d10kh1"
     }
-}
+};
 
 splittermond.complexityOptions = {
     U: "splittermond.complexityOptions.untrained",
@@ -220,14 +220,14 @@ splittermond.complexityOptions = {
     F: "splittermond.complexityOptions.expert",
     M: "splittermond.complexityOptions.master",
     A: "splittermond.complexityOptions.instruction",
-}
+};
 
 splittermond.availabilityOptions = {
     village: "splittermond.availabilityOptions.village",
     town: "splittermond.availabilityOptions.town",
     city: "splittermond.availabilityOptions.city",
     metropolis: "splittermond.availabilityOptions.metropolis",
-}
+};
 
 splittermond.fightingSkillOptions = {
     melee: "splittermond.skillLabel.melee",
@@ -237,7 +237,7 @@ splittermond.fightingSkillOptions = {
     longrange: "splittermond.skillLabel.longrange",
     staffs: "splittermond.skillLabel.staffs",
     throwing: "splittermond.skillLabel.throwing"
-}
+};
 
 splittermond.meleeFightingSkillOptions = {
     melee: "splittermond.skillLabel.melee",
@@ -245,7 +245,7 @@ splittermond.meleeFightingSkillOptions = {
     chains: "splittermond.skillLabel.chains",
     blades: "splittermond.skillLabel.blades",
     staffs: "splittermond.skillLabel.staffs"
-}
+};
 
 splittermond.attributeOptions = {
     charisma: "splittermond.attribute.charisma.long",
@@ -256,7 +256,7 @@ splittermond.attributeOptions = {
     strength: "splittermond.attribute.strength.long",
     mind: "splittermond.attribute.mind.long",
     willpower: "splittermond.attribute.willpower.long",
-}
+};
 
 splittermond.spellSkillsOption = {
     "arcanelore": "splittermond.skillLabel.arcanelore",
@@ -279,7 +279,7 @@ splittermond.spellSkillsOption = {
     "transformationmagic": "splittermond.skillLabel.transformationmagic",
     "watermagic": "splittermond.skillLabel.watermagic",
     "windmagic": "splittermond.skillLabel.windmagic"
-}
+};
 
 splittermond.masterySkillsOption = {
     "melee": "splittermond.skillLabel.melee",
@@ -336,7 +336,7 @@ splittermond.masterySkillsOption = {
     "watermagic": "splittermond.skillLabel.watermagic",
     "windmagic": "splittermond.skillLabel.windmagic",
     "none": "splittermond.skillLabel.none"
-}
+};
 
 splittermond.displayOptions = {
     itemSheet: {
@@ -417,6 +417,7 @@ splittermond.itemSheetProperties = {
             properties: [
                 {
                     field: "availableIn",
+                    placeholderText: "splittermond.masteryAvailableInPlaceholderText",
                     label: "splittermond.availableIn",
                     template: "input"
                 },
@@ -613,7 +614,7 @@ splittermond.itemSheetProperties = {
             ]
         }
     ]
-}
+};
 
 /**
  * @type SplittermondItemSheetProperties
@@ -769,7 +770,7 @@ splittermond.itemSheetProperties.armor = [
             }
         ]
     }
-]
+];
 
 /**
  * @type SplittermondItemSheetProperties
@@ -813,14 +814,14 @@ splittermond.itemSheetProperties.shield = [
             }
         ]
     }
-]
+];
 splittermond.itemSheetProperties.spell = [
     {
         groupName: "splittermond.generalProperties",
         properties: [
             {
                 field: "availableIn",
-                placeholderText: "splittermond.availableInPlaceholderText",
+                placeholderText: "splittermond.spellAvailableInPlaceholderText",
                 label: "splittermond.availableIn",
                 template: "input"
             },
@@ -939,7 +940,7 @@ splittermond.itemSheetProperties.spell = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.npcfeature = [
     {
@@ -953,7 +954,7 @@ splittermond.itemSheetProperties.npcfeature = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.moonsign = [
     {
@@ -971,7 +972,7 @@ splittermond.itemSheetProperties.moonsign = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.npcattack = [
     {
@@ -1004,7 +1005,7 @@ splittermond.itemSheetProperties.npcattack = [
             }
         ]
     }
-]
+];
 
 splittermond.icons = {
     equipment: {
@@ -1022,7 +1023,7 @@ splittermond.icons = {
     spell: {
         default: "icons/svg/daze.svg"
     }
-}
+};
 
 splittermond.modifier = {
     addsplinter: "splinterpoints +2",
@@ -1070,7 +1071,7 @@ splittermond.modifier = {
     "schildträger ii": "tickMalus.shield.mod -1",
     "schildträger 2": "tickMalus.shield.mod -1",
     "natürlicher rüstungsschutz": "SR +1"
-}
+};
 
 splittermond.fumbleTable = {
     fight: [
