@@ -3,18 +3,36 @@ export default class SplittermondItemSheet extends ItemSheet {
         return mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/item/item-sheet.hbs",
             classes: ["splittermond", "sheet", "item"],
-            tabs: [{ navSelector: ".sheet-navigation", contentSelector: "main", initial: "description" }],
+            tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "description"}],
             scrollY: [".tab[data-tab='properties']"]
         });
     }
 
-    constructor(item, options) {
-        options = options || {};
+    /**
+     * @param {!SplittermondItem} item
+     * @param options
+     * @param {{getProperty:(object, string)=> unknown}} propertyResolver
+     * @param {{localize:(string)=>string}} localizer
+     * @param config
+     * @param {enrichHTML:(string)=>{string}} textEditor
+     */
+    constructor(
+        item,
+        options = {},
+        propertyResolver = foundry.utils,
+        localizer = game.i18n,
+        config = CONFIG.splittermond,
+        textEditor = TextEditor
+    ) {
 
-        var displayProperties = CONFIG.splittermond.displayOptions.itemSheet[item.type] || CONFIG.splittermond.displayOptions.itemSheet["default"];
+        var displayProperties = (config.displayOptions.itemSheet)[item.type] || (config.displayOptions.itemSheet)["default"];
         options.width = displayProperties.width;
         options.height = displayProperties.height;
         super(item, options);
+        this.propertyResolver = propertyResolver;
+        this.localizer = localizer;
+        this.itemSheetProperties =config.itemSheetProperties[this.item.type] || [];
+        this.textEditor = textEditor;
     }
 
     /**
@@ -34,7 +52,7 @@ export default class SplittermondItemSheet extends ItemSheet {
         data.statBlock = this._getStatBlock();
         data.typeLabel = "splittermond." + data.data.type;
 
-        data.description = TextEditor.enrichHTML(data.data.system.description, {async: false});
+        data.description = this.textEditor.enrichHTML(data.data.system.description, {async: false});
 
         return data;
     }
@@ -47,13 +65,13 @@ export default class SplittermondItemSheet extends ItemSheet {
         /**
          * @type SplittermondItemSheetProperties
          */
-        let sheetProperties = duplicate(CONFIG.splittermond.itemSheetProperties[this.item.type] || []);
+        let sheetProperties = duplicate(this.itemSheetProperties);
         sheetProperties.forEach(grp => {
-            grp.properties.forEach(/** @type {ChoiceItemProperty|InputItemProperty|InputNumberWithSpinnerItemProperty}*/prop => {
-                prop.value = foundry.utils.getProperty(this.item, prop.field);
+            grp.properties.forEach(/** @type {InputItemProperty|ItemSheetPropertyDisplayProperty}*/prop => {
+                prop.value = this.propertyResolver.getProperty(this.item, prop.field);
                 prop.placeholderText = prop.placeholderText ?? prop.label;
                 if (prop.help) {
-                    prop.help = TextEditor.enrichHTML(game.i18n.localize(prop.help), {async: false});
+                    prop.help = this.textEditor.enrichHTML(this.localizer.localize(prop.help), {async: false});
                 }
             });
         });
@@ -72,7 +90,7 @@ export default class SplittermondItemSheet extends ItemSheet {
             dummyElement.text($(this).val() || $(this).text() || $(this).attr('placeholder'));
             $(this).css({
                 width: dummyElement.width()
-            })
+            });
             dummyElement.remove();
         }).trigger('input');
 

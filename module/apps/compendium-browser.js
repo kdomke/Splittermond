@@ -41,7 +41,7 @@ export default class SplittermondCompendiumBrowser extends Application {
                 itemData.uuid = item.uuid;
                 */
                 this.allItems[item.type].push(item);
-            })
+            });
         });
 
         game.items.forEach((item, idx) => {

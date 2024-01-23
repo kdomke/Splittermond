@@ -29,7 +29,6 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                     .map(item => item.trim())
                     .filter(this.availabilityParser.isWellFormattedAvailability);
             }
-
             return [];
         };
     }
@@ -138,7 +137,6 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                 })
             );
     }
-
 
     async roll(options) {
         if (!this.actor) return false;
