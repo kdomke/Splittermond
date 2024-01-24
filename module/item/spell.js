@@ -128,14 +128,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             : [availabilityFromSpellData];
 
         return protoAvailability
-            .map(item => ({label: item, internal: this.availabilityParser.toInternalRepresentation(item).split(" ")}))
-            .map(item => (
-                {
-                    label: item.label,
-                    skillId: item.internal[0],
-                    spellLevel: item.internal[1]
-                })
-            );
+            .map(item => ({label: item}));
     }
 
     async roll(options) {

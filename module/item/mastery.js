@@ -1,7 +1,6 @@
 import SplittermondItem from "./item.js";
 import {getMasteryAvailabilityParser} from "./availabilityParser.js";
 
-
 export default class SplittermondMasteryItem extends SplittermondItem {
 
     /**
@@ -12,7 +11,7 @@ export default class SplittermondMasteryItem extends SplittermondItem {
      */
     constructor(data, context = {},
                 availabilityParser = getMasteryAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.all)) {
-        super(data, context)
+        super(data, context);
         this.availabilityParser = availabilityParser;
     }
 
@@ -46,10 +45,7 @@ export default class SplittermondMasteryItem extends SplittermondItem {
         if (transformedSkill && !list.includes(transformedSkill)) {
             list.push(transformedSkill);
         }
-        return list.map(item => ({
-                    label: item,
-                    skillId: this.availabilityParser.toInternalRepresentation(item)
-                })
-        );
+         return list.map(item => ({label: item}));
+
     }
 }
