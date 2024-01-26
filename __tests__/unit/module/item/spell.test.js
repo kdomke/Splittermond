@@ -1,10 +1,10 @@
 import a from "../../foundryMocks.js";
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
-import {newSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
+import {getSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
 
 describe("Availability display", () => {
-    const sampleSpell = new SplittermondSpellItem({}, {splittermond: {ready: true}}, newSpellAvailabilityParser({localize: (str) => str.split(".").pop()}, ["illusionmagic", "deathmagic"]));
+    const sampleSpell = new SplittermondSpellItem({}, {splittermond: {ready: true}}, getSpellAvailabilityParser({localize: (str) => str.split(".").pop()}, ["illusionmagic", "deathmagic"]));
     sampleSpell.system = {skill: "illusionmagic", skillLevel: 1, availableIn: ""};
 
     it("Sources spell school and level from data when availaility is not set", () => {

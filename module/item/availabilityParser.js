@@ -1,57 +1,36 @@
-let singletonSpellAvailabilityParser;
-let singletonMasteryAvailabilityParser;
+/**
+ * This module transformes the internal representation of the availability of spells and masteries into a
+ * localized string. It caches the generated parsers, because in production there is only one real set of
+ * localizer and skills that is required. In testing, however, the localizer and skills can change between tests.
+ */
+let cachedSpellAvailabilityParser;
+let cachedMasteryAvailabilityParser;
 
 /**
- * Returns the singleton instance of the mastery availability parser or creates it if it does not exist.
+ * Returns a cached instance of the spell availability parser or creates a new one if inputs don't match.
  * @param i18n
  * @param {string[]} masterySkills
  * @returns {MasteryAvailabilityParser}
  */
 export function getMasteryAvailabilityParser(i18n, masterySkills) {
-    "use strict";
-    if (!singletonMasteryAvailabilityParser) {
-        singletonMasteryAvailabilityParser = new MasteryAvailabilityParser(i18n, masterySkills);
+    if (!cachedMasteryAvailabilityParser || !cachedMasteryAvailabilityParser.isSame(i18n, masterySkills)){
+        cachedMasteryAvailabilityParser = new MasteryAvailabilityParser(i18n, masterySkills);
     }
-    return singletonMasteryAvailabilityParser;
+    return cachedMasteryAvailabilityParser;
 }
 
-
 /**
- * Returns the singleton instance of the spell availability parser or creates it if it does not exist.
+ * Returns a cached instance of the spell availability parser or creates a new one if inputs don't match.
  * @param i18n
  * @param {string[]}magicSkills
  * @returns {SpellAvailabilityParser}
  */
 export function getSpellAvailabilityParser(i18n, magicSkills) {
-    if (!singletonSpellAvailabilityParser) {
-        singletonSpellAvailabilityParser = new SpellAvailabilityParser(i18n, magicSkills);
+    if (!cachedSpellAvailabilityParser || !cachedSpellAvailabilityParser.isSame(i18n, magicSkills)){
+        cachedSpellAvailabilityParser = new SpellAvailabilityParser(i18n, magicSkills);
     }
-    return singletonSpellAvailabilityParser;
+    return cachedSpellAvailabilityParser;
 }
-
-/**
- * used for testing
- * @param i18n
- * @param {string[]} masteries
- * @returns {MasteryAvailabilityParser}
- */
-export function newMasteryAvailabilityParser(i18n, masteries) {
-    "use strict";
-    singletonMasteryAvailabilityParser = null;
-    return getMasteryAvailabilityParser(i18n, masteries);
-}
-
-/**
- * used for testing
- * @param i18n
- * @param {string[]}magicSkills
- * @returns {SpellAvailabilityParser}
- */
-export function newSpellAvailabilityParser(i18n, magicSkills) {
-    singletonSpellAvailabilityParser = null;
-    return getSpellAvailabilityParser(i18n, magicSkills);
-}
-
 
 /**
  * In a comma separated list of string this class translates entries of the form "magicSkill level" into either
@@ -67,6 +46,8 @@ class AvailabilityParser {
     constructor(i18n, skills) {
         this._internalsAsKeys = new Map();
         this._translationsAsKeys = new Map();
+        this.__skills = skills;
+        this.__i18n = i18n;
         for (const skill of skills) {
             const translation = i18n.localize(`splittermond.skillLabel.${skill}`);
             this._translationsAsKeys.set(translation.toLowerCase(), skill);
@@ -85,6 +66,14 @@ class AvailabilityParser {
             }
             return transformed ? transformed : availability;
         };
+    }
+
+    /**
+     * @param {{localize: (string)=>string}} i18n
+     * @param {Iterable<any>} skills
+     */
+    isSame(i18n, skills) {
+        return this.__i18n === i18n && this.skills === skills;
     }
 
 
