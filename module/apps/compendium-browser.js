@@ -3,9 +3,7 @@ export default class SplittermondCompendiumBrowser extends Application {
         super(app);
 
         this.allItems = {};
-
-        this.itemType = "spell";
-
+        this.skillsFilter = {};
     }
 
     static get defaultOptions() {
@@ -23,13 +21,60 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     async getData() {
+        const getDataStart = performance.now();
         const data = super.getData();
-
+//    .then(i => i.get("4Yxv7HI45xuoQlHV"))
         this.allItems = {};
-        const packs = game.packs.filter(p => p.documentName == "Item")
+        const packs = game.packs.filter(p => p.documentName == "Item");
+        /**
+         * @typedef ItemIndexEntry
+         * @type {folder:string, img:string, name:string, sort:numbe, uuid:string, _id:string, system:{availableIn:string, skill:string, skillLevel:number}}
+         *
+         */
+        /**
+         * @type {{metadata: *,index: ItemIndexEntry[]}[]}
+         */
+        const indizes = await Promise.all(game.packs
+            .filter(pack => pack.documentName === "Item")
+            .map(async pack => ({
+                metadata: {id:pack.metadata.id,label:pack.metadata.label},
+                index: await pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel"]})
+                })
+            ));
+
+
+        indizes.forEach(processIndex.bind(this));
+
+        /**
+         * @param {metadata: *, index: ItemIndexEntry[]}compendium
+         */
+        function processIndex(compendium) {
+            const metadata = compendium.metadata;
+            return compendium.index.filter(indexEntry => ["mastery", "spell", "weapon"].includes(indexEntry.type))
+                .forEach(
+                    item => {
+                        item.compendium={metadata};
+                        item.availableInList = [{label:item.system.availableIn}];
+                        /**@type string*/
+                        const uuid = item.uuid;
+                        const pack = compendium.metadata.id;
+                        const id = uuid.replace(/^.+Item./, "");
+                        //TODO: we need to define availabilities correctly on the object
+                        if (!this.allItems[item.type]) {
+                            this.allItems[item.type] = [];
+                        }
+                        this.allItems[item.type].push(item);
+                    }
+                );
+        }
+
+        /*
         let indexes = await Promise.all(packs.map(p => p.getDocuments()));
         indexes.forEach((index, idx) => {
             index.forEach((item, idx) => {
+                if (!["mastery","spell","weapon"].includes(item.type)){
+                    return;
+                }
                 if (!this.allItems[item.type]) {
                     this.allItems[item.type] = [];
                 }
@@ -39,10 +84,11 @@ export default class SplittermondCompendiumBrowser extends Application {
                 
                 itemData.compendiumLabel = item.compendium.metadata.label;
                 itemData.uuid = item.uuid;
-                */
+                /
                 this.allItems[item.type].push(item);
             });
         });
+        */
 
         game.items.forEach((item, idx) => {
             if (!this.allItems[item.type]) {
@@ -54,32 +100,48 @@ export default class SplittermondCompendiumBrowser extends Application {
             itemData.compendiumId = "world";
             itemData.uuid = item.uuid;
             */
-
+            item.getMe = () => Promise.resolve(item);
             this.allItems[item.type].push(item);
         });
+        const collecting = performance.now();
+        console.debug(`Splittermond|Compendium Browser collecting items took ${collecting - getDataStart} ms`);
 
         Object.keys(this.allItems).forEach(k => {
-            this.allItems[k].sort((a, b) => (a.name < b.name) ? -1 : 1)
+            this.allItems[k].sort((a, b) => (a.name < b.name) ? -1 : 1);
         });
+
+        const sorting = performance.now();
+        console.debug(`Splittermond|Compendium Browser sorting Items took ${sorting - collecting} ms`);
 
         data.spellFilter = {
             skills: deepClone(CONFIG.splittermond.spellSkillsOption)
-        }
+        };
 
         data.masteryFilter = {
             skills: deepClone(CONFIG.splittermond.masterySkillsOption)
-        }
+        };
 
         data.weaponFilter = {
             skills: deepClone(CONFIG.splittermond.fightingSkillOptions)
-        }
+        };
+
+        const filterCloning = performance.now();
+        console.debug(`Splittermond|Compendium Browser cloning Items took ${filterCloning - sorting} ms`);
 
         delete (data.spellFilter.skills.arcanelore);
 
         data.spellFilter.skills.none = "splittermond.skillLabel.none";
         data.weaponFilter.skills.none = "splittermond.skillLabel.none";
 
-        data.items = this.allItems;
+        data.items = {};
+        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataStart} ms`);
+        for (const key in this.allItems) {
+            data.items[key] = [];
+            for (const item in this.allItems[key]) {
+                data.items[key].push(await this.allItems[key][item]);
+            }
+        }
+        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataStart} ms`);
         return data;
     }
 
