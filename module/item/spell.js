@@ -2,7 +2,7 @@ import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
 import * as Costs from "../util/costs.js";
-import {getSpellAvailabilityParser} from "./availabilityParser.js";
+import {getSpellAvailabilityParser} from "./availability/availabilityParser.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 

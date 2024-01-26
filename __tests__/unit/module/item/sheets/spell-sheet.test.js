@@ -4,7 +4,7 @@ import {createHtml} from "../../../../handlebarHarness.js";
 import {produceJQuery} from "../../../../jQueryHarness.js";
 import SplittermondSpellSheet from "../../../../../module/item/sheets/spell-sheet.js";
 import SplittermondSpellItem from "../../../../../module/item/spell.js";
-import {newSpellAvailabilityParser} from "../../../../../module/item/availabilityParser.js";
+import {newSpellAvailabilityParser} from "../../../../../module/item/availability/availabilityParser.js";
 
 
 describe("Spell Properties display", () => {

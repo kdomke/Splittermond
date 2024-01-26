@@ -1,7 +1,7 @@
 import a from "../../foundryMocks.js";
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
-import {newSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
+import {newSpellAvailabilityParser} from "../../../../module/item/availability/availabilityParser.js";
 
 describe("Availability display", () => {
     const sampleSpell = new SplittermondSpellItem({}, {splittermond: {ready: true}}, newSpellAvailabilityParser({localize: (str) => str.split(".").pop()}, ["illusionmagic", "deathmagic"]));
