@@ -1,4 +1,4 @@
-import {newMasteryAvailabilityParser, newSpellAvailabilityParser} from "../../../../../module/item/availability/availabilityParser.js";
+import {newMasteryAvailabilityParser, newSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
 

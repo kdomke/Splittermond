@@ -1,5 +1,7 @@
 import {prepareSpellItemIndex} from "./prepareSpellItemIndex.js";
 import {prepareMasteryItemIndex} from "./prepareMasteryItemIndex.js";
+import {initializeMetadata} from "./metadataInitializer.js";
+import {prepareWeaponItemIndex} from "./prepareWeaponsIndex.js";
 
 /**
  * @typedef {{id:string, label:string}} CompendiumMetadata
@@ -45,18 +47,9 @@ function getTransformer(itemType){
             return prepareSpellItemIndex;
         case "mastery":
             return prepareMasteryItemIndex;
+        case "weapon":
+            return prepareWeaponItemIndex;
         default:
-            return addMetadata;
+            return initializeMetadata;
     }
-}
-
-/**
- * @template T
- * @param {CompendiumMetadata} metadata
- * @param {T} input
- * @returns {T & CompendiumMetadata} the selfsame input
- */
-function addMetadata(metadata, input){
-    input.metadata = {id: metadata.id, label: metadata.label};
-    return input;
 }

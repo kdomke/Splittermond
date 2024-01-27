@@ -1,6 +1,6 @@
 import SplittermondItem from "./item.js";
-import {getMasteryAvailabilityParser} from "./availability/availabilityParser.js";
-import {produceMasteryTags} from "./availability/masteryTags.js";
+import {getMasteryAvailabilityParser} from "./availabilityParser.js";
+import {produceMasteryTags} from "./tags/masteryTags.js";
 
 export default class SplittermondMasteryItem extends SplittermondItem {
 

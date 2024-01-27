@@ -1,5 +1,5 @@
-import {getMasteryAvailabilityParser} from "../../item/availability/availabilityParser.js";
-import {produceMasteryTags} from "../../item/availability/masteryTags.js";
+import {getMasteryAvailabilityParser} from "../../item/availabilityParser.js";
+import {produceMasteryTags} from "../../item/tags/masteryTags.js";
 import {initializeMetadata} from "./metadataInitializer.js";
 
 /**
@@ -11,6 +11,7 @@ export function prepareMasteryItemIndex(compendiumMetadata, itemIndexEntity) {
     if(!isDisplayableMastery(itemIndexEntity)){
         throw new Error(`Item '${itemIndexEntity.name}' is not a mastery`);
     }
+    delete itemIndexEntity.system.features;
     initializeTagGenerator(itemIndexEntity);
     return initializeMetadata(compendiumMetadata, itemIndexEntity);
 }

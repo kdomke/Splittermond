@@ -1,5 +1,5 @@
 import SplittermondCompendium from "./compendium.js";
-import {getSpellAvailabilityParser} from "../item/availability/availabilityParser.js";
+import {getSpellAvailabilityParser} from "../item/availabilityParser.js";
 
 export default class ItemImporter {
 

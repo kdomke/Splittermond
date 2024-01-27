@@ -1,6 +1,7 @@
-import {produceSpellTags} from "../../item/availability/spellTags.js";
-import {getSpellAvailabilityParser} from "../../item/availability/availabilityParser.js";
+import {produceSpellTags} from "../../item/tags/spellTags.js";
+import {getSpellAvailabilityParser} from "../../item/availabilityParser.js";
 import {initializeMetadata} from "./metadataInitializer.js";
+import {it} from "mocha";
 
 /**
  * @param {CompendiumMetadata} compendiumMetadata
@@ -11,6 +12,7 @@ export function prepareSpellItemIndex(compendiumMetadata, itemIndexEntity) {
     if(!isDisplayableSpell(itemIndexEntity)){
         throw new Error(`Item '${itemIndexEntity.name}' is not a spell`);
     }
+    delete itemIndexEntity.system.features;
     initializeTagGenerator(itemIndexEntity);
     return initializeMetadata(compendiumMetadata, itemIndexEntity);
 }
