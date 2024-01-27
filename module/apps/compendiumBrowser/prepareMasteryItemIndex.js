@@ -19,12 +19,14 @@ export function initializeMasteryItemPreparation(masteryAvailabiltyParser) {
             throw new Error(`Item '${itemIndexEntity.name}' is not a mastery`);
         }
         delete itemIndexEntity.system.features;
+        delete itemIndexEntity.system.skillLevel;
         initializeTagGenerator(itemIndexEntity);
         return initializeMetadata(compendiumMetadata, itemIndexEntity);
     }
 
     function isDisplayableMastery(itemIndexEntity) {
         return itemIndexEntity.type === "mastery" && typeof itemIndexEntity.system === "object" &&
+            itemIndexEntity.system.level !== undefined &&
             itemIndexEntity.system.skill !== undefined &&
             itemIndexEntity.system.availableIn !== undefined;
     }

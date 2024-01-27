@@ -19,6 +19,7 @@ export function initializeSpellItemPreparation(spellAvailabilityParser) {
             throw new Error(`Item '${itemIndexEntity.name}' is not a spell`);
         }
         delete itemIndexEntity.system.features;
+        delete itemIndexEntity.system.level;
         initializeTagGenerator(itemIndexEntity);
         return initializeMetadata(compendiumMetadata, itemIndexEntity);
     }

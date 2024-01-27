@@ -1,23 +1,25 @@
 import {initializeDisplayPreparation} from "./itemDisplayPreparation.js";
 
+/**
+ * @returns {typeof indexSearchParameters};
+ */
 export default class SplittermondCompendiumBrowser extends Application {
     constructor(app) {
         super(app);
 
         /** @type {object} */
         this.allItems = {};
-        console.log(`Splittermond|Magic skills ${CONFIG.splittermond.skillGroups.magic}`)
         this.skillsFilter = {};
 
         this._produceDisplayableItems;
-        this.produceDisplayableItems = {get: function (){
-                //lazy initialize property, because this class is instantiated at startup and the translations are not loaded at that point
-                if(!this._produceDisplayableItems) {
-                    this._produceDisplayableItems = initializeDisplayPreparation(
-                        game.i18n, CONFIG.splittermond.skillGroups.magic, CONFIG.splittermond.skillGroups.all);
-                }
-                return this._produceDisplayableItems;
-            }}
+        this.produceDisplayableItems = () => {
+            //lazy initialize property, because this class is instantiated at startup and the translations are not loaded at that point
+            if (!this._produceDisplayableItems) {
+                this._produceDisplayableItems = initializeDisplayPreparation(
+                    game.i18n, CONFIG.splittermond.skillGroups.magic, CONFIG.splittermond.skillGroups.all);
+            }
+            return this._produceDisplayableItems;
+        };
     }
 
 
@@ -25,13 +27,13 @@ export default class SplittermondCompendiumBrowser extends Application {
         return mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/compendium-browser.hbs",
             classes: ["splittermond", "compendium-browser"],
-            tabs: [{ navSelector: ".sheet-navigation", contentSelector: "main", initial: "spell" }],
+            tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "spell"}],
             width: 600,
             top: 70,
             left: 120,
             height: window.innerHeight - 100,
             resizable: true,
-            dragDrop: [{ dragSelector: ".list > ol > li" }],
+            dragDrop: [{dragSelector: ".list > ol > li"}],
         });
     }
 
@@ -46,15 +48,15 @@ export default class SplittermondCompendiumBrowser extends Application {
         const indizes = game.packs
             .filter(pack => pack.documentName === "Item")
             .map(pack => ({
-                metadata: {id:pack.metadata.id,label:pack.metadata.label},
-                index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features"]})
+                    metadata: {id: pack.metadata.id, label: pack.metadata.label},
+                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features", "system.level"]})
                 })
             );
 
         await Promise.all(
             indizes.map(
                 /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
-                (compendiumBrowserCompendium) => this.produceDisplayableItems(
+                (compendiumBrowserCompendium) => this.produceDisplayableItems()(
                     compendiumBrowserCompendium.metadata,
                     compendiumBrowserCompendium.index,
                     this.allItems
@@ -124,28 +126,33 @@ export default class SplittermondCompendiumBrowser extends Application {
             sheet.render(true);
 
 
-
         });
 
-        html.on("change", '[data-tab="spell"] input, [data-tab="spell"] select', ev => { this._onSearchFilterSpell(html) });
+        html.on("change", '[data-tab="spell"] input, [data-tab="spell"] select', ev => {
+            this._onSearchFilterSpell(html)
+        });
         this._onSearchFilterSpell(html);
 
-        html.on("change", '[data-tab="mastery"] input, [data-tab="mastery"] select', ev => { this._onSearchFilterMastery(html) });
+        html.on("change", '[data-tab="mastery"] input, [data-tab="mastery"] select', ev => {
+            this._onSearchFilterMastery(html)
+        });
         this._onSearchFilterMastery(html);
 
-        html.on("change", '[data-tab="weapon"] input, [data-tab="weapon"] select', ev => { this._onSearchFilterWeapon(html) });
+        html.on("change", '[data-tab="weapon"] input, [data-tab="weapon"] select', ev => {
+            this._onSearchFilterWeapon(html)
+        });
         this._onSearchFilterWeapon(html);
 
     }
 
     /** @override */
-    
+
     _canDragStart(selector) {
         const itemId = $(selector).closestData('item-id');
-        
-        return itemId != undefined;
+
+        return itemId !== undefined;
     }
-    
+
 
     /* -------------------------------------------- */
 
@@ -167,7 +174,6 @@ export default class SplittermondCompendiumBrowser extends Application {
         }));
 
     }
-
 
 
     /** @override */

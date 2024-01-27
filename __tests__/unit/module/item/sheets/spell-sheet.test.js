@@ -5,6 +5,7 @@ import {produceJQuery} from "../../../../jQueryHarness.js";
 import SplittermondSpellSheet from "../../../../../module/item/sheets/spell-sheet.js";
 import SplittermondSpellItem from "../../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "../../../../../module/item/availabilityParser.js";
+import {simplePropertyResolver} from "../../../../util.js";
 
 
 describe("Spell Properties display", () => {
@@ -76,11 +77,5 @@ describe("Spell Properties display", () => {
         const domUnderTest = produceJQuery(createHtml("./templates/sheets/item/item-sheet.hbs", objectUnderTest.getData()));
 
         return domUnderTest(`.properties-editor input[name='${displayProperty.field}']`);
-    }
-
-    function simplePropertyResolver(a,property){
-        let member = a;
-        property.split(".").forEach(prop => member = member[prop]);
-        return member;
     }
 });

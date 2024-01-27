@@ -11,8 +11,8 @@ export function prepareWeaponItemIndex(compendiumMetadata, itemIndexEntity) {
         throw new Error(`Item '${itemIndexEntity.name}' is not a weapon`);
     }
     initializeTagGenerator(itemIndexEntity);
-    delete itemIndexEntity.system.skill;
     delete itemIndexEntity.system.skillLevel;
+    delete itemIndexEntity.system.level;
     return initializeMetadata(compendiumMetadata, itemIndexEntity);
 }
 
@@ -22,6 +22,7 @@ export function prepareWeaponItemIndex(compendiumMetadata, itemIndexEntity) {
  */
 function isDisplayableWeapon(itemIndexEntity) {
     return itemIndexEntity.type === "weapon" && typeof itemIndexEntity.system === "object" &&
+        itemIndexEntity.system.skill !== undefined &&
         itemIndexEntity.system.features !== undefined;
 }
 
@@ -29,7 +30,7 @@ function isDisplayableWeapon(itemIndexEntity) {
  * @param {ItemIndexEntity} item
  */
 function initializeTagGenerator(item){
-    const property = "featureList";
+    const property = "featuresList";
     if(!(property in item)) {
         Object.defineProperty(item,
             property,
