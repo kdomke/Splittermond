@@ -1,5 +1,4 @@
-/*jshint esversion: 11 */
-import {newMasteryAvailabilityParser, newSpellAvailabilityParser} from "../../../../module/item/availability/availabilityParser.js";
+import {newMasteryAvailabilityParser, newSpellAvailabilityParser} from "../../../../../module/item/availability/availabilityParser.js";
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
 
@@ -14,11 +13,11 @@ const masterySkills = [
 ];
 
 const masteryI18n = {
-    localize: (str) => {'use strict'; return str === `splittermond.skillLabel.${masterySkills[0]}` ? "Stangenwaffen" : "Klingenwaffen";}
+    localize: (str) => str === `splittermond.skillLabel.${masterySkills[0]}` ? "Stangenwaffen" : "Klingenwaffen"
 };
 
 const spellI18n = {
-    localize: (str) => {'use strict'; return str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie";}
+    localize: (str) => str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie"
 };
 describe("spell availabilty display transformation", () => {
     'use strict';
@@ -62,7 +61,7 @@ describe("spell availabilty internal transformation", () => {
     });
 
     it("should handle null input", () => {
-        expect(parser.toInternalRepresentation(null)).to.equal(null);
+        expect(parser.toInternalRepresentation(/**@type {string}*/null )).to.equal(null);
     });
     it("should handle empty input", () => {
         expect(parser.toInternalRepresentation("")).to.equal("");
@@ -122,12 +121,12 @@ describe("mastery availabilty internal transformation", () => {
     });
 
     it("should translate localized availabilities", () => {
-        const expectedString = "staffs, swords"
+        const expectedString = "staffs, swords";
         expect(parser.toInternalRepresentation(`Stangenwaffen, Klingenwaffen`)).to.equal(expectedString);
     });
 
     it("should handle null input", () => {
-        expect(parser.toInternalRepresentation(null)).to.equal(null);
+        expect(parser.toInternalRepresentation(/**@type string*/null)).to.equal(null);
     });
 
     it("should handle typing errors", () => {

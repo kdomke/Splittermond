@@ -3,6 +3,7 @@ import AttackableItem from "./attackable-item.js";
 
 import * as Costs from "../util/costs.js";
 import {getSpellAvailabilityParser} from "./availability/availabilityParser.js";
+import {produceSpellTags} from "./availability/spellTags.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
@@ -13,24 +14,6 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     ) {
         super(data, context);
         this.availabilityParser = availabilityParser;
-
-        /**
-         * @returns {string[]}
-         */
-        this.sourceAvailabilityFromField = function () {
-            if(typeof this.system.availableIn !== "string"){
-                return [];
-            }
-
-            const availability = this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
-            const availabilityExists = !!availability && availability.trim() !== '';
-            if (availabilityExists) {
-                return availability.split(",")
-                    .map(item => item.trim())
-                    .filter(this.availabilityParser.isWellFormattedAvailability);
-            }
-            return [];
-        };
     }
 
     get costs() {
@@ -115,20 +98,8 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.damage;
     }
 
-    /**
-     * Transforms the comma-separated list of spell schools in which this spell is available into a presentable,
-     * localized list
-     * @returns {SpellAvailabilityDisplay[]}
-     */
-    get availableInList() {
-        const availablityFromField = this.sourceAvailabilityFromField();
-        const availabilityFromSpellData = this.availabilityParser
-            .toDisplayRepresentation(`${this.system.skill} ${this.system.skillLevel}`);
-        const protoAvailability = availablityFromField.length > 0 ? availablityFromField
-            : [availabilityFromSpellData];
-
-        return protoAvailability
-            .map(item => ({label: item}));
+    get availableInList(){
+        return produceSpellTags(this.system, this.availabilityParser);
     }
 
     async roll(options) {

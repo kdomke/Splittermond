@@ -15,7 +15,7 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
-import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
+import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 import TokenActionBar from "./module/apps/token-action-bar.js";

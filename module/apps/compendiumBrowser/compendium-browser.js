@@ -1,7 +1,10 @@
+import {produceDisplayableItems} from "./itemDisplayPreparation.js";
+
 export default class SplittermondCompendiumBrowser extends Application {
     constructor(app) {
         super(app);
 
+        /** @type {object} */
         this.allItems = {};
         this.skillsFilter = {};
     }
@@ -23,84 +26,35 @@ export default class SplittermondCompendiumBrowser extends Application {
     async getData() {
         const getDataStart = performance.now();
         const data = super.getData();
-//    .then(i => i.get("4Yxv7HI45xuoQlHV"))
         this.allItems = {};
-        const packs = game.packs.filter(p => p.documentName == "Item");
         /**
-         * @typedef ItemIndexEntry
-         * @type {folder:string, img:string, name:string, sort:numbe, uuid:string, _id:string, system:{availableIn:string, skill:string, skillLevel:number}}
-         *
+         * @typedef {{metadata: CompendiumMetadata, index: Promise<ItemIndexEntity[]>}} CompendiumBrowserCompenidumType
+         * @type {CompendiumBrowserCompenidumType[]}
          */
-        /**
-         * @type {{metadata: *,index: ItemIndexEntry[]}[]}
-         */
-        const indizes = await Promise.all(game.packs
+        const indizes = game.packs
             .filter(pack => pack.documentName === "Item")
-            .map(async pack => ({
+            .map(pack => ({
                 metadata: {id:pack.metadata.id,label:pack.metadata.label},
-                index: await pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel"]})
+                index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features"]})
                 })
-            ));
+            );
 
+        await Promise.all(
+            indizes.map(
+                /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
+                (compendiumBrowserCompendium) => produceDisplayableItems(
+                    compendiumBrowserCompendium.metadata,
+                    compendiumBrowserCompendium.index,
+                    this.allItems
+                )
+            )
+        );
 
-        indizes.forEach(processIndex.bind(this));
-
-        /**
-         * @param {metadata: *, index: ItemIndexEntry[]}compendium
-         */
-        function processIndex(compendium) {
-            const metadata = compendium.metadata;
-            return compendium.index.filter(indexEntry => ["mastery", "spell", "weapon"].includes(indexEntry.type))
-                .forEach(
-                    item => {
-                        item.compendium={metadata};
-                        item.availableInList = [{label:item.system.availableIn}];
-                        /**@type string*/
-                        const uuid = item.uuid;
-                        const pack = compendium.metadata.id;
-                        const id = uuid.replace(/^.+Item./, "");
-                        //TODO: we need to define availabilities correctly on the object
-                        if (!this.allItems[item.type]) {
-                            this.allItems[item.type] = [];
-                        }
-                        this.allItems[item.type].push(item);
-                    }
-                );
-        }
-
-        /*
-        let indexes = await Promise.all(packs.map(p => p.getDocuments()));
-        indexes.forEach((index, idx) => {
-            index.forEach((item, idx) => {
-                if (!["mastery","spell","weapon"].includes(item.type)){
-                    return;
-                }
-                if (!this.allItems[item.type]) {
-                    this.allItems[item.type] = [];
-                }
-                /*
-                let itemData = duplicate(item);
-                
-                
-                itemData.compendiumLabel = item.compendium.metadata.label;
-                itemData.uuid = item.uuid;
-                /
-                this.allItems[item.type].push(item);
-            });
-        });
-        */
 
         game.items.forEach((item, idx) => {
             if (!this.allItems[item.type]) {
                 this.allItems[item.type] = [];
             }
-            /*
-            let itemData = duplicate(item);
-            
-            itemData.compendiumId = "world";
-            itemData.uuid = item.uuid;
-            */
-            item.getMe = () => Promise.resolve(item);
             this.allItems[item.type].push(item);
         });
         const collecting = performance.now();

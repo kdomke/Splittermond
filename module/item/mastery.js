@@ -1,5 +1,6 @@
 import SplittermondItem from "./item.js";
 import {getMasteryAvailabilityParser} from "./availability/availabilityParser.js";
+import {produceMasteryTags} from "./availability/masteryTags.js";
 
 export default class SplittermondMasteryItem extends SplittermondItem {
 
@@ -31,21 +32,10 @@ export default class SplittermondMasteryItem extends SplittermondItem {
     }
 
     /**
-     * @returns {{skillId: string, label: string}[]}
+     * a list of nicely formatted tags, based on the mastery's availability
+     * @returns {MasteryAvailabilityTag[]}
      */
     get availableInList() {
-        const availableInIsUsable = this.system.availableIn && typeof this.system.availableIn === "string";
-        const transformedAvailabilities = this.availabilityParser.toDisplayRepresentation(availableInIsUsable ? this.system.availableIn: null);
-        const transformedSkill = this.availabilityParser.toDisplayRepresentation(this.system.skill);
-
-        let list = [];
-        if (transformedAvailabilities) {
-            transformedAvailabilities.split(",").forEach(item => list.push(item.trim()));
-        }
-        if (transformedSkill && !list.includes(transformedSkill)) {
-            list.push(transformedSkill);
-        }
-         return list.map(item => ({label: item}));
-
+        return produceMasteryTags(this.system, this.availabilityParser);
     }
 }
