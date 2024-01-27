@@ -342,7 +342,7 @@ export default class ItemImporter {
     static async importArmor(rawData, folder = "") {
         rawData = rawData.replace(/\n/g, " ");
 
-        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/)
+        let tokens = rawData.match(/(.*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(.+)/);
 
         let itemData = {
             type: "armor",
@@ -448,6 +448,7 @@ export default class ItemImporter {
                 case "WIL":
                     return "willpower";
             }
+            throw new Error(`Consumed unknown attribute token ${i}`);
         });
 
         itemData.data.attribute1 = attributes[0];

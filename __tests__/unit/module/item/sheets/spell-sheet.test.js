@@ -4,11 +4,11 @@ import {createHtml} from "../../../../handlebarHarness.js";
 import {produceJQuery} from "../../../../jQueryHarness.js";
 import SplittermondSpellSheet from "../../../../../module/item/sheets/spell-sheet.js";
 import SplittermondSpellItem from "../../../../../module/item/spell.js";
-import {newSpellAvailabilityParser} from "../../../../../module/item/availabilityParser.js";
+import {getSpellAvailabilityParser} from "../../../../../module/item/availabilityParser.js";
 
 
 describe("Spell Properties display", () => {
-    const testParser = newSpellAvailabilityParser({localize: (str) => str}, ["illusionmagic", "deathmagic"]);
+    const testParser = getSpellAvailabilityParser({localize: (str) => str}, ["illusionmagic", "deathmagic"]);
     global.ItemSheet.prototype.getData = function () {
         return {data: this.item};
     };

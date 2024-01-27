@@ -1,4 +1,4 @@
-import {produceDisplayableItems} from "./itemDisplayPreparation.js";
+import {initializeDisplayPreparation} from "./itemDisplayPreparation.js";
 
 export default class SplittermondCompendiumBrowser extends Application {
     constructor(app) {
@@ -6,8 +6,20 @@ export default class SplittermondCompendiumBrowser extends Application {
 
         /** @type {object} */
         this.allItems = {};
+        console.log(`Splittermond|Magic skills ${CONFIG.splittermond.skillGroups.magic}`)
         this.skillsFilter = {};
+
+        this._produceDisplayableItems;
+        this.produceDisplayableItems = {get: function (){
+                //lazy initialize property, because this class is instantiated at startup and the translations are not loaded at that point
+                if(!this._produceDisplayableItems) {
+                    this._produceDisplayableItems = initializeDisplayPreparation(
+                        game.i18n, CONFIG.splittermond.skillGroups.magic, CONFIG.splittermond.skillGroups.all);
+                }
+                return this._produceDisplayableItems;
+            }}
     }
+
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -42,7 +54,7 @@ export default class SplittermondCompendiumBrowser extends Application {
         await Promise.all(
             indizes.map(
                 /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
-                (compendiumBrowserCompendium) => produceDisplayableItems(
+                (compendiumBrowserCompendium) => this.produceDisplayableItems(
                     compendiumBrowserCompendium.metadata,
                     compendiumBrowserCompendium.index,
                     this.allItems
@@ -170,7 +182,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             html.find(`[data-tab="spell"] input#skill-level-spell-3`)[0].checked,
             html.find(`[data-tab="spell"] input#skill-level-spell-4`)[0].checked,
             html.find(`[data-tab="spell"] input#skill-level-spell-5`)[0].checked
-        ]
+        ];
 
         //let filterSkillLevel = html.find(`[data-tab="spell"] select[name="skill"]`)[0].value;
         if (filterSkill === "none") {

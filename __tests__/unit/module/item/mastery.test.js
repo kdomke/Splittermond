@@ -1,10 +1,10 @@
 import foundryMocks from "../../foundryMocks.js";
 import SplittermondMasteryItem from "../../../../module/item/mastery.js";
 import {expect} from 'chai';
-import {newMasteryAvailabilityParser} from "../../../../module/item/availabilityParser.js";
+import {getMasteryAvailabilityParser} from "../../../../module/item/availabilityParser.js";
 
 describe("availableInList",() => {
-    const mastery = new SplittermondMasteryItem({},{splittermond: {ready: true}}, newMasteryAvailabilityParser({localize: (str) => str.split(".").pop()}, ["staffs", "swords"]));
+    const mastery = new SplittermondMasteryItem({},{splittermond: {ready: true}}, getMasteryAvailabilityParser({localize: (str) => str.split(".").pop()}, ["staffs", "swords"]));
 
     it("should return an empty list if availableIn is not set", () => {
         mastery.system = {skill : "staffs", availableIn:""};

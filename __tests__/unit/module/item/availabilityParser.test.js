@@ -1,6 +1,7 @@
-import {newMasteryAvailabilityParser, newSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
+import {getMasteryAvailabilityParser, getSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
+import {identity} from "../../foundryMocks.js";
 
 const magicSkills = [
     "fatemagic",
@@ -20,8 +21,7 @@ const spellI18n = {
     localize: (str) => str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie"
 };
 describe("spell availabilty display transformation", () => {
-    'use strict';
-    const parser = newSpellAvailabilityParser(spellI18n, magicSkills);
+    const parser = getSpellAvailabilityParser(spellI18n, magicSkills);
     it("should return the input if no transformation is set", () => {
         const input = "Maggie";
         expect(parser.toDisplayRepresentation(input)).to.equal(input);
@@ -49,7 +49,7 @@ describe("spell availabilty display transformation", () => {
 
 describe("spell availabilty internal transformation", () => {
     'use strict';
-    const parser = newSpellAvailabilityParser(spellI18n, magicSkills);
+    const parser = getSpellAvailabilityParser(spellI18n, magicSkills);
     it("should return the input if no transformation is set", () => {
         const input = "Maggie";
         expect(parser.toInternalRepresentation(input)).to.equal(input);
@@ -84,8 +84,7 @@ describe("spell availabilty internal transformation", () => {
 
 });
 describe("mastery availability display transformation", () => {
-    'use strict';
-    const parser = newMasteryAvailabilityParser(masteryI18n, masterySkills);
+    const parser = getMasteryAvailabilityParser(masteryI18n, masterySkills);
     it("should return the input if no transformation is set", () => {
         const input = "Maggie";
         expect(parser.toDisplayRepresentation(input)).to.equal(input);
@@ -113,8 +112,7 @@ describe("mastery availability display transformation", () => {
 
 
 describe("mastery availabilty internal transformation", () => {
-    'use strict';
-    const parser = newMasteryAvailabilityParser(masteryI18n, masterySkills);
+    const parser = getMasteryAvailabilityParser(masteryI18n, masterySkills);
     it("should return the input if no transformation is set", () => {
         const input = "Maggie";
         expect(parser.toInternalRepresentation(input)).to.equal(input);
@@ -143,5 +141,20 @@ describe("mastery availabilty internal transformation", () => {
         expect(parser.toInternalRepresentation("  Cederion2    ,    stAnGenWAffen   , "))
             .to.equal("Cederion2, staffs");
     });
+});
+describe("cache consistency", () => {
 
+    it("should return new instance if skillsets differs", () => {
+        const firstParser = getSpellAvailabilityParser({localize: identity}, ["fatemagic", "deathmagic"]);
+        const secondParser= getSpellAvailabilityParser({localize: identity}, ["deathmagic", "fatemagic"]);
+
+        expect(firstParser).not.to.equal(secondParser);
+    });
+
+    it("should return new instance if localizer differs", () => {
+        const firstParser = getSpellAvailabilityParser({localize: identity}, ["fatemagic", "deathmagic"]);
+        const secondParser= getSpellAvailabilityParser({localize: (a)=> a}, ["fatemagic", "deathmagic"]);
+
+        expect(firstParser).not.to.equal(secondParser);
+    });
 });

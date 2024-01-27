@@ -1,28 +1,19 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {produceDisplayableItems} from "../../../../../module/apps/compendiumBrowser/itemDisplayPreparation.js";
+import {initializeDisplayPreparation} from "../../../../../module/apps/compendiumBrowser/itemDisplayPreparation.js";
 import {identity} from "../../../foundryMocks.js";
 
-global.CONFIG = {
-    splittermond: {
-        skillGroups: {
-            magic: ["lightmagic", "shadowmagic"]
-        }
-    }
+const defautItem = {
+    folder: "",
+    sort: 0,
+    img: "",
+    uuid: "",
+    _id: "",
 };
-
-const masteryI18n = {
-    localize: (str) => str === `splittermond.skillLabel.staffs` ? "Stangenwaffen" : "Klingenwaffen"
-};
-
-const spellI18n = {
-    localize: (str) => str === `splittermond.skillLabel.lightmagic` ? "Lichtmagie" : "Schattenmagie"
-};
-
-
 /**@returns{ItemIndexEntity}*/
 function getSampleSpellItem() {
     return {
+        ...defautItem,
         type: "spell",
         name: "Licht",
         system: {
@@ -37,11 +28,12 @@ function getSampleSpellItem() {
 /**@returns {ItemIndexEntity}*/
 function getSampleMasteryItem() {
     return {
+        ...defautItem,
         type: "mastery",
-        name: "Rasende Untote",
+        name: "Abdrängen",
         system: {
-            availableIn: "deathamagic",
-            skill: "deathmagic",
+            availableIn: "staffs",
+            skill: "staffs",
             features: "",
             skillLevel: 1
         }
@@ -50,32 +42,37 @@ function getSampleMasteryItem() {
 
 function getSampleWeaponItem() {
     return {
+        ...defautItem,
         type: "weapon",
         name: "Schwert",
         system: {
             availableIn: "",
-            skill: "deathmagic",
+            skill: "",
             features: "Scharf 2",
-            skillLevel: 1
+            skillLevel: 0
         }
     };
 }
 
 const sampleCompendiumData = {id: "world.discarded", label: "Ablage P"};
-const allItemData = [getSampleSpellItem(), getSampleMasteryItem(), getSampleWeaponItem()];
+const getAllItemData = () => [getSampleSpellItem(), getSampleMasteryItem(), getSampleWeaponItem()];
 
 describe("spell item preparation for compendium browser", () => {
-    game.i18n = spellI18n;
+    /** @type {{localize: (x:string)=>string}} */
+    const spellI18n = {
+        localize: /**@param {string} str*/(str) => str === `splittermond.skillLabel.lightmagic` ? "Lichtmagie" : "Schattenmagie"
+    };
+    const produceDisplayableItems =initializeDisplayPreparation(spellI18n, ["lightmagic", "shadowmagic"], [])
     it("should sort item types into separate arrays", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("spell");
         expect(collector.spell[0]).to.deep.contain(withoutSystemProperty(getSampleSpellItem(), "features"));
     });
 
     it("should add metadata to spells", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.spell[0]).to.deep.contain({compendium: {metadata: sampleCompendiumData}});
     });
 
@@ -104,17 +101,21 @@ describe("spell item preparation for compendium browser", () => {
 });
 
 describe("mastery item preparation for compendium browser", () => {
-    //game.i18n = masteryI18n;
+    /** @type {{localize: (x:string)=>string}} */
+    const masteryI18n = {
+        localize: /*@param {string} str*/(str) => str === `splittermond.skillLabel.staffs` ? "Stangenwaffen" : "Klingenwaffen"
+    };
+    const produceDisplayableItems = initializeDisplayPreparation(masteryI18n, [], ["swords", "staffs"])
     it("should sort item types into separate arrays", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve([getSampleSpellItem(), getSampleMasteryItem()]), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("mastery");
         expect(collector.mastery[0]).to.deep.contain(withoutSystemProperty(getSampleMasteryItem(), "features"));
     });
 
     it("should add metadata to masteries", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve([getSampleSpellItem(), getSampleMasteryItem(), getSampleWeaponItem()]), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.mastery[0]).to.deep.contain({compendium: {metadata: sampleCompendiumData}});
     });
 
@@ -128,17 +129,24 @@ describe("mastery item preparation for compendium browser", () => {
             });
     });
 
+    it("should produce mastery tags", async () => {
+        const collector = {};
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve([getSampleMasteryItem()]), collector);
+        expect(collector.mastery[0].availableInList).to.deep.equal([{label: "Stangenwaffen"}]);
+    });
+
     it("should not have features", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.mastery[0].features).to.be.undefined; //jshint ignore:line
     });
 });
 
 describe("weapon item preparation for compendium browser", () => {
+    const produceDisplayableItems = initializeDisplayPreparation({localize: identity}, [], []);
     it("should sort item types into separate arrays", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("weapon");
         expect(collector.weapon[0]).to.deep
             .contain(withoutSystemProperty(withoutSystemProperty(getSampleWeaponItem(), "skill"), "skillLevel"));
@@ -146,16 +154,22 @@ describe("weapon item preparation for compendium browser", () => {
     it("should throw an error if the item is not a weapon", async () => {
         const malformedWeapon = getSampleWeaponItem();
         delete malformedWeapon.system.features;
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), {})
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), {})
             .catch(err => {
                 expect(err).to.be.an.instanceOf(Error);
                 expect(err.message).to.equal(`Item '${malformedWeapon.name}' is not a weapon`);
             });
     });
 
+    it("should produce weapon tags", async () => {
+        const collector = {};
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
+        expect(collector.weapon[0].featureList).to.deep.equal(["Scharf 2"]);
+    });
+
     it("should neither have skill, nor skill level", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(allItemData), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.mastery[0].skill).to.be.undefined; //jshint ignore:line
         expect(collector.mastery[0].skillLevel).to.be.undefined; //jshint ignore:line
     });

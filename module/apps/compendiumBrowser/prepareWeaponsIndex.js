@@ -29,7 +29,7 @@ function isDisplayableWeapon(itemIndexEntity) {
  * @param {ItemIndexEntity} item
  */
 function initializeTagGenerator(item){
-    const property = "availableInList";
+    const property = "featureList";
     if(!(property in item)) {
         Object.defineProperty(item,
             property,
