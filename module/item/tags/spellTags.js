@@ -6,7 +6,7 @@
  * @param {SpellAvailabilityParser} availabilityParser
  * @returns {SpellAvailabilityTag[]}
  */
-export function produceSpellTags(system, availabilityParser) {
+export function produceSpellAvailabilityTags(system, availabilityParser) {
     const availablityFromField = sourceAvailabilityFromField(system.availableIn, availabilityParser);
     const availabilityFromSpellData = availabilityParser
         .toDisplayRepresentation(`${system.skill} ${system.skillLevel}`);

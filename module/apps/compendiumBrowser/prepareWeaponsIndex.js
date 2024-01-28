@@ -7,12 +7,11 @@ import {initializeMetadata} from "./metadataInitializer.js";
  * @returns {ItemIndexEntity}
  */
 export function prepareWeaponItemIndex(compendiumMetadata, itemIndexEntity) {
-    if(!isDisplayableWeapon(itemIndexEntity)){
+    if (!isDisplayableWeapon(itemIndexEntity)) {
         throw new Error(`Item '${itemIndexEntity.name}' is not a weapon`);
     }
     initializeTagGenerator(itemIndexEntity);
-    delete itemIndexEntity.system.skillLevel;
-    delete itemIndexEntity.system.level;
+    initializeSecondaryAttack(itemIndexEntity);
     return initializeMetadata(compendiumMetadata, itemIndexEntity);
 }
 
@@ -23,15 +22,18 @@ export function prepareWeaponItemIndex(compendiumMetadata, itemIndexEntity) {
 function isDisplayableWeapon(itemIndexEntity) {
     return itemIndexEntity.type === "weapon" && typeof itemIndexEntity.system === "object" &&
         itemIndexEntity.system.skill !== undefined &&
-        itemIndexEntity.system.features !== undefined;
+        itemIndexEntity.system.features !== undefined &&
+        itemIndexEntity.system.damage !== undefined &&
+        itemIndexEntity.system.secondaryAttack !== undefined &&
+        itemIndexEntity.system.secondaryAttack.skill !== undefined;
 }
 
 /**
  * @param {ItemIndexEntity} item
  */
-function initializeTagGenerator(item){
+function initializeTagGenerator(item) {
     const property = "featuresList";
-    if(!(property in item)) {
+    if (!(property in item)) {
         Object.defineProperty(item,
             property,
             {
@@ -41,4 +43,12 @@ function initializeTagGenerator(item){
 
             });
     }
+}
+
+function initializeSecondaryAttack(item) {
+    const property = "hasSecondaryAttack";
+    if (!(property in item)) {
+        item[property] = !["none", ""].includes(item.system.secondaryAttack.skill);
+    }
+
 }

@@ -21,7 +21,8 @@ function getSampleSpellItem() {
             availableIn: "lightmagic 1, shadowmagic 3",
             skill: "lightmagic",
             features: "",
-            skillLevel: 1
+            skillLevel: 1,
+            spellType: "Leuchten"
         }
     };
 }
@@ -38,6 +39,7 @@ function getSampleMasteryItem() {
             skill: "staffs",
             features: "",
             skillLevel: 0,
+            damage: "",
         }
     };
 }
@@ -50,9 +52,14 @@ function getSampleWeaponItem() {
         system: {
             level: "",
             availableIn: "",
+            spellType: "",
             skill: "swords",
             features: "Scharf 2",
-            skillLevel: 0
+            skillLevel: 0,
+            damage: "1W6+2",
+            secondaryAttack: {
+                skill: "staffs",
+            }
         }
     };
 }
@@ -70,7 +77,7 @@ describe("spell item preparation for compendium browser", () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("spell");
-        expect(collector.spell[0]).to.deep.contain(withoutSystemProperties(getSampleSpellItem(), "level","features"));
+        expect(collector.spell[0]).to.deep.contain(getSampleSpellItem());
     });
 
     it("should add metadata to spells", async () => {
@@ -90,18 +97,18 @@ describe("spell item preparation for compendium browser", () => {
             });
     });
 
-    it("should produce spell tags", async () => {
+    it("should produce tags for skills where the spell is available in", async () => {
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve([getSampleSpellItem(), getSampleMasteryItem()]), collector);
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.spell[0].availableInList).to.deep.equal([{label: "Lichtmagie 1"}, {label: "Schattenmagie 3"}]);
     });
 
-    it("should not have features, nor level", async () => {
+    it ("should produce tags for the spell type", async ()=>{
         const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve([getSampleSpellItem(), getSampleMasteryItem()]), collector);
-        expect(collector.spell[0].level).to.be.undefined; //jshint ignore:line
-        expect(collector.spell[0].features).to.be.undefined; //jshint ignore:line
+        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
+        expect(collector.spell[0].spellTypeList).to.deep.equal(["Leuchten"]);
     });
+
     it("should have skill, and skill level", async () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
@@ -120,7 +127,7 @@ describe("mastery item preparation for compendium browser", () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("mastery");
-        expect(collector.mastery[0]).to.deep.contain(withoutSystemProperties(getSampleMasteryItem(), "features","skillLevel"));
+        expect(collector.mastery[0]).to.deep.contain(getSampleMasteryItem());
     });
 
     it("should add metadata to masteries", async () => {
@@ -152,12 +159,6 @@ describe("mastery item preparation for compendium browser", () => {
         expect(collector.mastery[0].features).to.be.undefined; //jshint ignore:line
     });
 
-    it("should have skill, and skill level", async () => {
-        const collector = {};
-        await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
-        expect(collector.mastery[0].system.level).not.to.be.undefined; //jshint ignore:line
-        expect(collector.mastery[0].system.skill).not.to.be.undefined; //jshint ignore:line
-    });
 });
 
 describe("weapon item preparation for compendium browser", () => {
@@ -167,7 +168,7 @@ describe("weapon item preparation for compendium browser", () => {
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector).to.include.keys("weapon");
         expect(collector.weapon[0]).to.deep
-            .contain(withoutSystemProperties(getSampleWeaponItem() , "skillLevel","level"));
+            .contain(getSampleWeaponItem());
     });
     it("should throw an error if the item is not a weapon", async () => {
         const malformedWeapon = getSampleWeaponItem();
@@ -185,29 +186,27 @@ describe("weapon item preparation for compendium browser", () => {
         expect(collector.weapon[0].featuresList).to.deep.equal(["Scharf 2"]);
     });
 
-    it("should neither have skill, nor skill level, nor level", async () => {
+    it("should tell that weapon has a secondary attack",async ()=>{
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
-        expect(collector.weapon[0].system.skillLevel).to.be.undefined; //jshint ignore:line
-        expect(collector.weapon[0].system.level).to.be.undefined; //jshint ignore:line
+        expect(collector.weapon[0].hasSecondaryAttack).to.be.true; //jshint ignore:line
     });
 
-    it("should have features, and skill level", async () => {
+    ["none", ""].forEach(value => {
+        it(`should tell weapon does not have a secondary attack when skill is ${value}`, async () => {
+            const probe = getSampleWeaponItem();
+            probe.system.secondaryAttack.skill = value;
+            const collector = {};
+            await produceDisplayableItems(sampleCompendiumData, Promise.resolve([probe]), collector);
+            expect(collector.weapon[0].hasSecondaryAttack).to.be.false; //jshint ignore:line
+        });
+    });
+
+
+    it("should have features, skill and secondary attack skill", async () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.weapon[0].system.features).not.to.be.undefined; //jshint ignore:line
         expect(collector.weapon[0].system.skill).not.to.be.undefined; //jshint ignore:line
     });
 });
-
-/**
- * @template T
- * @param {T} obj
- * @param {string[]} properties
- * @returns {T & {[x:property]:never}}
- */
-function withoutSystemProperties(obj, ...properties) {
-    properties.forEach(prop => delete obj.system[prop]);
-    return obj;
-}
-

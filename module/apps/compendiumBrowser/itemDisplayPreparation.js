@@ -24,7 +24,8 @@ export function initializeDisplayPreparation(i18n, magicSkills, masterySkills) {
 
     /**
      * @typedef {{id:string, label:string}} CompendiumMetadata
-     * @typedef {{type:string, folder:string, img:string, name:string, sort:number, uuid:string, _id:string, system:{availableIn:string, skill:string, skillLevel:number, features:string}}} ItemIndexEntity
+     * @typedef {{availableIn:string, skill:string, skillLevel:number, features:string, level:string, secondaryAttack:{skill:string}, spellTags:string, spellType:string}} ItemIndexSystem
+     * @typedef {{type:string, folder:string, img:string, name:string, sort:number, uuid:string, _id:string, system: ItemIndexSystem}} ItemIndexEntity
      * @param {CompendiumMetadata} metadata
      * @param {Promise<ItemIndexEntity[]>} index
      * @param {object} data

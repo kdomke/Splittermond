@@ -61,12 +61,11 @@ export default class SplittermondCompendiumBrowser extends Application {
         const allItems = this.recordCompendiaItemsInCategories(game.packs)
             .then(record => this.appendWorldItemsToRecord(record, game.items))
             .then(this.sortCategories);
-        const returnValue = new Promise(async (resolve,__) =>{
+        return new Promise(async (resolve, __) => {
             data.items = await allItems;
+            console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataTimerStart} ms`);
             resolve(data);
         });
-        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataTimerStart} ms`);
-        return returnValue;
     }
 
     /**
@@ -82,7 +81,8 @@ export default class SplittermondCompendiumBrowser extends Application {
             .filter(pack => pack.documentName === "Item")
             .map(pack => ({
                     metadata: {id: pack.metadata.id, label: pack.metadata.label},
-                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features", "system.level"]})
+                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features",
+                            "system.level", "system.spellType", "system.secondaryAttack.skill", "system.damage"]})
                 })
             );
 

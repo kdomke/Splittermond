@@ -1,4 +1,4 @@
-import {produceSpellTags} from "../../item/tags/spellTags.js";
+import {produceSpellAvailabilityTags} from "../../item/tags/spellTags.js";
 import {initializeMetadata} from "./metadataInitializer.js";
 
 /**
@@ -18,9 +18,7 @@ export function initializeSpellItemPreparation(spellAvailabilityParser) {
         if (!isDisplayableSpell(itemIndexEntity)) {
             throw new Error(`Item '${itemIndexEntity.name}' is not a spell`);
         }
-        delete itemIndexEntity.system.features;
-        delete itemIndexEntity.system.level;
-        initializeTagGenerator(itemIndexEntity);
+        initializeTagGenerators(itemIndexEntity);
         return initializeMetadata(compendiumMetadata, itemIndexEntity);
     }
 
@@ -32,23 +30,26 @@ export function initializeSpellItemPreparation(spellAvailabilityParser) {
         return itemIndexEntity.type === "spell" && typeof itemIndexEntity.system === "object" &&
             itemIndexEntity.system.skill !== undefined &&
             itemIndexEntity.system.skillLevel !== undefined &&
+            itemIndexEntity.system.spellType !== undefined &&
             itemIndexEntity.system.availableIn !== undefined;
     }
 
     /**
      * @param {ItemIndexEntity} item
      */
-    function initializeTagGenerator(item) {
-        const property = "availableInList";
-        if (!(property in item)) {
-            Object.defineProperty(item,
-                property,
-                {
+    function initializeTagGenerators(item) {
+        const properties = {
+            availableInList: {
                     get: function () {
-                        return produceSpellTags(this.system, spellAvailabilityParser);
+                        return produceSpellAvailabilityTags(this.system, spellAvailabilityParser);
                     }
-
-                });
+                },
+            spellTypeList:  {value: item.system.spellType?.split(",")}
+        };
+        for (const key in properties) {
+            if (!(key in item)) {
+                Object.defineProperty(item, key, properties[key]);
+            }
         }
     }
 }
