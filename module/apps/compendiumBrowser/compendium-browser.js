@@ -70,16 +70,15 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     /**
-     * @param compendia
+     * @typedef {{metadata: CompendiumMetadata, index: Promise<ItemIndexEntity[]>, documentName:string}} CompendiumBrowserCompendiumType
+     * @typedef {Map<string,CompendiumBrowserCompendiumType> & {filter: (CompendiumBrowserCompendiumType)=>boolean}} CompendiumBrowserCompendiumPacks
+     * @param {CompendiumBrowserCompendiumPacks} compendia
      * @returns {Promise<Record<string,ItemIndexEntity[]>>} the mutated record
      */
     recordCompendiaItemsInCategories(compendia){
         let allItems = {};
-        /**
-         * @typedef {{metadata: CompendiumMetadata, index: Promise<ItemIndexEntity[]>}} CompendiumBrowserCompenidumType
-         * @type {CompendiumBrowserCompenidumType[]}
-         */
-        const indizes = compendia
+
+        const indices = compendia
             .filter(pack => pack.documentName === "Item")
             .map(pack => ({
                     metadata: {id: pack.metadata.id, label: pack.metadata.label},
@@ -88,8 +87,8 @@ export default class SplittermondCompendiumBrowser extends Application {
             );
 
         return Promise.all(
-            indizes.map(
-                /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
+            indices.map(
+                /** @param {CompendiumBrowserCompendiumType} compendiumBrowserCompendium*/
                 (compendiumBrowserCompendium) => this.produceDisplayableItems()(
                     compendiumBrowserCompendium.metadata,
                     compendiumBrowserCompendium.index,
