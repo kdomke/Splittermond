@@ -140,12 +140,12 @@ export default class SplittermondCompendiumBrowser extends Application {
         });
 
         html.on("change", '[data-tab="spell"] input, [data-tab="spell"] select', ev => {
-            this._onSearchFilterSpell(html)
+            this._onSearchFilterSpell(html);
         });
         this._onSearchFilterSpell(html);
 
         html.on("change", '[data-tab="mastery"] input, [data-tab="mastery"] select', ev => {
-            this._onSearchFilterMastery(html)
+            this._onSearchFilterMastery(html);
         });
         this._onSearchFilterMastery(html);
 
@@ -189,7 +189,7 @@ export default class SplittermondCompendiumBrowser extends Application {
 
     /** @override */
     _onSearchFilterSpell(html) {
-        const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="spell"] input[name="search"]`)[0].value), "i");
+        const rgx = new RegExp(this._escape_regex(html.find(`[data-tab="spell"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="spell"] select[name="skill"]`)[0].value;
         let filterWorldItems = html.find(`[data-tab="spell"] input[name="show-world-items-spell"]`)[0].checked;
         let filterSkillLevel = [
@@ -212,23 +212,23 @@ export default class SplittermondCompendiumBrowser extends Application {
             let skill = $(li).closestData("skill");
             let skillLevel = $(li).closestData("skill-level");
             let itemId = $(li).closestData("item-id");
-            let test = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
+            let displayListItem = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
 
-            if (test && filterSkillLevel.includes(true)) {
-                test = test && filterSkillLevel.reduce((acc, element, idx) => {
+            if (displayListItem && filterSkillLevel.includes(true)) {
+                displayListItem = displayListItem && filterSkillLevel.reduce((acc, element, idx) => {
                     if (element) {
-                        return acc || (availableIn.includes(filterSkill + " " + idx) || (skill === filterSkill && skillLevel == idx));
+                        return acc || (availableIn.includes(filterSkill + " " + idx) || skillLevel === idx);
                     }
                     return acc;
                 }, false);
             }
 
             if (!filterWorldItems) {
-                test = test && itemId.startsWith("Compendium");
+                displayListItem = displayListItem && itemId.startsWith("Compendium");
             }
-            li.style.display = test ? "flex" : "none";
+            li.style.display = displayListItem ? "flex" : "none";
 
-            if (test) {
+            if (displayListItem) {
                 idx++;
                 if (idx % 2) {
                     $(li).addClass("odd");
@@ -243,7 +243,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     _onSearchFilterMastery(html) {
-        const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="mastery"] input[name="search"]`)[0].value), "i");
+        const rgx = new RegExp(this._escape_regex(html.find(`[data-tab="mastery"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="mastery"] select[name="skill"]`)[0].value;
         let filterWorldItems = html.find(`[data-tab="mastery"] input[name="show-world-items-mastery"]`)[0].checked;
         let filterSkillLevel = [
@@ -251,7 +251,7 @@ export default class SplittermondCompendiumBrowser extends Application {
             html.find(`[data-tab="mastery"] input#skill-level-mastery-2`)[0].checked,
             html.find(`[data-tab="mastery"] input#skill-level-mastery-3`)[0].checked,
             html.find(`[data-tab="mastery"] input#skill-level-mastery-4`)[0].checked
-        ]
+        ];
 
         //let filterSkillLevel = html.find(`[data-tab="spell"] select[name="skill"]`)[0].value;
         if (filterSkill === "none") {
@@ -296,7 +296,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     _onSearchFilterWeapon(html) {
-        const rgx = new RegExp(RegExp.escape(html.find(`[data-tab="weapon"] input[name="search"]`)[0].value), "i");
+        const rgx = new RegExp(this._escape_regex(html.find(`[data-tab="weapon"] input[name="search"]`)[0].value), "i");
         let filterSkill = html.find(`[data-tab="weapon"] select[name="skill"]`)[0].value;
         let filterWorldItems = html.find(`[data-tab="weapon"] input[name="show-world-items-weapon"]`)[0].checked;
 
@@ -336,6 +336,15 @@ export default class SplittermondCompendiumBrowser extends Application {
 
     get title() {
         return "Compendium Browser";
+    }
+    /**
+     * A copy of foundry's escapeRegExp. For functitons of this complexity I prefer copying over relying on somebody
+     * sneakily mixing in things into global objects
+     * @private
+     * @param {string} pattern
+     */
+    _escape_regex(pattern) {
+        return pattern.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     }
 
 
