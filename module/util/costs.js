@@ -1,12 +1,23 @@
 const zeroCosts = {channeled: 0, exhausted: 0, consumed: 0};
 
+/**
+ * @typedef {{channeled: number, exhausted: number, consumed: number}} SpellCosts
+ */
+
+/**
+ *  @param {SpellCosts[]} reductions
+ * @param {string} costData
+ * @param {boolean} enhancementCosts
+ * @return {string}
+ */
 export function calcSpellCostReduction(reductions, costData, enhancementCosts = false) {
-    if (reductions?.length == 0) return costData;
+    if (reductions?.length === 0) {
+        return costData;
+    }
 
-    let maxValue = enhancementCosts ? 0 : 1;
+    const maxValue = enhancementCosts ? 0 : 1;
 
-    var costs = parseCostsString(costData);
-    var oldCosts = JSON.parse(JSON.stringify(costs));
+    const costs = parseCostsString(costData);
     reductions.forEach(reduction => {
         if (reduction.channeled > 0 && costs.channeled > 0) {
             costs.channeled = Math.max(maxValue, costs.channeled - reduction.channeled);
@@ -20,8 +31,6 @@ export function calcSpellCostReduction(reductions, costData, enhancementCosts = 
             costs.exhausted = Math.max(maxValue, costs.exhausted - reduction.exhausted);
         }
     });
-
-
     return formatCosts(costs);
 }
 
@@ -34,8 +43,12 @@ export function getReductionsBySpell(spellData, reductions) {
     }).map(reductionItem => reductions[reductionItem]);
 }
 
+/**
+ * @param {SpellCosts} spellCostData
+ * @return {string}
+ */
 export function formatCosts(spellCostData) {
-    var display = "";
+    let display = "";
     if (spellCostData.channeled > 0) {
         display = "K";
     }
@@ -48,12 +61,11 @@ export function formatCosts(spellCostData) {
 
 /**
  * @param {any} str
- * @typedef {{consumed: number, channeled: number, exhausted: number}} SpellCosts
- * @return SpellCosts
+ * @return {SpellCosts}
  */
 export function parseCostsString(str) {
     if (!str || typeof str !== "string") {
-        return {channeled: 0, exhausted: 0, consumed: 0};
+        return zeroCosts;
     }
     let strParts = str?.split("/");
     if (strParts.length > 1) {
@@ -65,7 +77,7 @@ export function parseCostsString(str) {
 
 /**
  * @param {string} str
- * @return SpellCosts
+ * @return {SpellCosts}
  */
 function actuallyParseCosts(str) {
     const costDataRaw = /^\s*(-)?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(str.toLowerCase());
