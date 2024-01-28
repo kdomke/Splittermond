@@ -11,7 +11,7 @@ export default class SplittermondCompendiumBrowser extends Application {
         this.allItems = {};
         this.skillsFilter = {};
 
-        this._produceDisplayableItems;
+        this._produceDisplayableItems = undefined;
         this.produceDisplayableItems = () => {
             //lazy initialize property, because this class is instantiated at startup and the translations are not loaded at that point
             if (!this._produceDisplayableItems) {
@@ -38,49 +38,8 @@ export default class SplittermondCompendiumBrowser extends Application {
     }
 
     async getData() {
-        const getDataStart = performance.now();
+        const getDataTimerStart = performance.now();
         const data = super.getData();
-        this.allItems = {};
-        /**
-         * @typedef {{metadata: CompendiumMetadata, index: Promise<ItemIndexEntity[]>}} CompendiumBrowserCompenidumType
-         * @type {CompendiumBrowserCompenidumType[]}
-         */
-        const indizes = game.packs
-            .filter(pack => pack.documentName === "Item")
-            .map(pack => ({
-                    metadata: {id: pack.metadata.id, label: pack.metadata.label},
-                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features", "system.level"]})
-                })
-            );
-
-        await Promise.all(
-            indizes.map(
-                /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
-                (compendiumBrowserCompendium) => this.produceDisplayableItems()(
-                    compendiumBrowserCompendium.metadata,
-                    compendiumBrowserCompendium.index,
-                    this.allItems
-                )
-            )
-        );
-
-
-        game.items.forEach((item, idx) => {
-            if (!this.allItems[item.type]) {
-                this.allItems[item.type] = [];
-            }
-            this.allItems[item.type].push(item);
-        });
-        const collecting = performance.now();
-        console.debug(`Splittermond|Compendium Browser collecting items took ${collecting - getDataStart} ms`);
-
-        Object.keys(this.allItems).forEach(k => {
-            this.allItems[k].sort((a, b) => (a.name < b.name) ? -1 : 1);
-        });
-
-        const sorting = performance.now();
-        console.debug(`Splittermond|Compendium Browser sorting Items took ${sorting - collecting} ms`);
-
         data.spellFilter = {
             skills: deepClone(CONFIG.splittermond.spellSkillsOption)
         };
@@ -93,24 +52,77 @@ export default class SplittermondCompendiumBrowser extends Application {
             skills: deepClone(CONFIG.splittermond.fightingSkillOptions)
         };
 
-        const filterCloning = performance.now();
-        console.debug(`Splittermond|Compendium Browser cloning Items took ${filterCloning - sorting} ms`);
-
+        //arcanelore may be a spell option, when concerning scrolls, but it is not an innate spell category
         delete (data.spellFilter.skills.arcanelore);
-
+        //for some reason, the mastery filter already has a none option in the config.
         data.spellFilter.skills.none = "splittermond.skillLabel.none";
         data.weaponFilter.skills.none = "splittermond.skillLabel.none";
 
-        data.items = {};
-        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataStart} ms`);
-        for (const key in this.allItems) {
-            data.items[key] = [];
-            for (const item in this.allItems[key]) {
-                data.items[key].push(await this.allItems[key][item]);
+        const allItems = this.recordCompendiaItemsInCategories(game.packs)
+            .then(record => this.appendWorldItemsToRecord(record, game.items))
+            .then(this.sortCategories);
+        const returnValue = new Promise(async (resolve,__) =>{
+            data.items = await allItems;
+            resolve(data);
+        });
+        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataTimerStart} ms`);
+        return returnValue;
+    }
+
+    /**
+     * @param compendia
+     * @returns {Promise<Record<string,ItemIndexEntity[]>>} the mutated record
+     */
+    recordCompendiaItemsInCategories(compendia){
+        let allItems = {};
+        /**
+         * @typedef {{metadata: CompendiumMetadata, index: Promise<ItemIndexEntity[]>}} CompendiumBrowserCompenidumType
+         * @type {CompendiumBrowserCompenidumType[]}
+         */
+        const indizes = compendia
+            .filter(pack => pack.documentName === "Item")
+            .map(pack => ({
+                    metadata: {id: pack.metadata.id, label: pack.metadata.label},
+                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features", "system.level"]})
+                })
+            );
+
+        return Promise.all(
+            indizes.map(
+                /** @param {CompendiumBrowserCompenidumType} compendiumBrowserCompendium*/
+                (compendiumBrowserCompendium) => this.produceDisplayableItems()(
+                    compendiumBrowserCompendium.metadata,
+                    compendiumBrowserCompendium.index,
+                    allItems
+                )
+            )
+        ).then(() => allItems);
+    }
+
+    /**
+     * @param {Record<string, ItemIndexEntity[]>}record
+     * @param items
+     * @returns {Record<string, ItemIndexEntity[]>} the mutated record
+     */
+    appendWorldItemsToRecord(record, items){
+        items.forEach((item, idx) => {
+            if (!(item.type in record)) {
+                record[item.type] = [];
             }
-        }
-        console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataStart} ms`);
-        return data;
+            record[item.type].push(item);
+        });
+        return record;
+    }
+
+    /**
+     * @param {Record<string, ItemIndexEntity[]>} record
+     * @returns {Record<string, ItemIndexEntity[]>}
+     */
+    sortCategories(record) {
+        Object.keys(record).forEach(k => {
+            record[k].sort((a, b) => (a.name < b.name) ? -1 : 1);
+        });
+        return record;
     }
 
     activateListeners(html) {
