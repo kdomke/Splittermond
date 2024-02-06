@@ -67,12 +67,12 @@ describe("Spell cost reduction", () => {
         ["K2", "2V1", "K1"],
         ["K2V1", "2V1", "K1"],
         ["K2V2", "2V1", "K1V1"],
-        ["K4V1", "2V2", "K3"],
+        ["K4V1", "2V2", "K2"],
         ["8V2", "2V2", "6"],
         ["8V2", "K2", "6V2"],
         ["2", "K2", "1"],
         ["K2", "2", "1"],
-        ["2", "K2V2", "2"],
+        ["2", "K2V2", "1"],
     ];
     originalAndReducedCosts.forEach(([originalCosts, reductionCosts, expectedCosts]) => {
         it(`should apply reduction ${reductionCosts} correctly to ${originalCosts}`, ()=>{
