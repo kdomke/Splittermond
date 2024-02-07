@@ -5,7 +5,11 @@ import { Costs } from "./Cost.js";
  * @return {Costs}
  */
 export function parseCostString(costString) {
-    const costDataRaw = /^\s*(-)?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(str.toLowerCase());
+    if (!costString || typeof costString !== "string") {
+        return new Costs(0, 0, false);
+    }
+
+    const costDataRaw = /^\s*(-)?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(costString.toLowerCase());
     if (!costDataRaw) {
         return new Costs(0,0, false);
     }
