@@ -1,6 +1,8 @@
-import {calcSpellCostReduction, parseCostsString} from '../../../../module/util/costs.js';
+import {calcSpellCostReduction} from '../../../../module/util/costs.js';
+import {parseCostString} from "../../../../module/util/costs/costParser.js";
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
+import {Cost} from "../../../../module/util/costs/Cost.js";
 
 describe("Spell cost reduction", () => {
     const originalAndReducedCosts = [
@@ -11,35 +13,42 @@ describe("Spell cost reduction", () => {
         ["8V2", "2V2", "6"],
         ["8V2", "K2", "6V2"],
         ["2", "K2", "1"],
-        ["K2", "2", "1"],
+        ["K2", "2", "K1"],
         ["2", "K2V2", "1"],
     ];
     originalAndReducedCosts.forEach(([originalCosts, reductionCosts, expectedCosts]) => {
         it(`should apply reduction ${reductionCosts} correctly to ${originalCosts}`, ()=>{
-            const reduction = parseCostsString(reductionCosts);
+            const reduction = parseCostString(reductionCosts);
             const actualCosts = calcSpellCostReduction([reduction], originalCosts, false);
           expect(actualCosts).to.equal(expectedCosts);
         });
     });
 
+    it ( "enhancement costs can be reduced to zero", () =>{
+        const reduction = [new Cost(0,2, false)];
+        const orginalCosts = "K2V2";
+        const reducedCosts = calcSpellCostReduction(reduction, orginalCosts, true);
+        expect(reducedCosts).to.deep.equal("0");
+    });
+
     it ("exhausted reductions affect channeled costs", () => {
-        const reductions = [{channeled: 0, exhausted: 2, consumed: 1}];
+        const reductions = [new Cost(2,  1, false)];
         const orginalCosts = "K4V2";
         const reducedCosts = calcSpellCostReduction(reductions, orginalCosts, false);
-        expect(reducedCosts).to.deep.equal("K3V1");
+        expect(reducedCosts).to.deep.equal("K1V1");
     });
 
     it("channeled reductions affect exhausted costs", () => {
-        const reductions = [{channeled: 2, exhausted: 0, consumed: 1}];
+        const reductions = [new Cost( 2,  1, true)];
         const orginalCosts = "4V2";
         const reducedCosts = calcSpellCostReduction(reductions, orginalCosts, false);
-        expect(reducedCosts).to.deep.equal("3V1");
+        expect(reducedCosts).to.deep.equal("1V1");
     });
 
     it("spell costs are reduced if there is a reduction", () => {
-        const reductions = [{channeled: 2, exhausted: 0, consumed: 1}];
+        const reductions = [new Cost (2,  1,true)];
         const orginalCosts = "4V2";
         const reducedCosts = calcSpellCostReduction(reductions, orginalCosts, false);
-        expect(reducedCosts).to.deep.equal("3V1");
+        expect(reducedCosts).to.deep.equal("1V1");
     });
 });
