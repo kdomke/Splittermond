@@ -1,15 +1,16 @@
 import { Cost } from "./Cost.js";
 
 /**
- * @param {string} costString
+ * @param {string} cost
  * @return {Cost}
  */
-export function parseCostString(costString) {
+export function parseCostString(cost) {
+    const costString = formatCostInput(cost);
     if (!costString || typeof costString !== "string") {
         return new Cost(0, 0, false);
     }
 
-    const costDataRaw = /^\s*(-)?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(costString.toLowerCase());
+    const costDataRaw = /^\s*([+-])?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(costString.toLowerCase());
     if (!costDataRaw) {
         return new Cost(0,0, false);
     }
@@ -22,4 +23,17 @@ export function parseCostString(costString) {
     const isChanneled = costDataRaw[2] === "k";
     const costs = new Cost(rawNonConsumed - rawConsumed, rawConsumed, isChanneled);
     return isNegative ? costs.negate() : costs;
+}
+
+/** @return {string} */
+function formatCostInput(str) {
+    if (!str || typeof str !== "string") {
+        return "";
+    }
+    let strParts = str?.split("/");
+    if (strParts.length > 1) {
+        return strParts[1] ; //parsing Enhanced cost string
+    } else {
+        return strParts[0];
+    }
 }

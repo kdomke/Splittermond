@@ -10,7 +10,14 @@ describe("Parses costs correctly", () => {
                 expect(parseCostString(unparseableString)).to.deep.equal(new Cost(0, 0, false));
             });
         });
+
+        ["1 EG/K4V1", "1EG/+K4V1", " 2EG /  +K4V1"].forEach((enhancedCostString) => {
+            it(`parses en enhanced cost string ${enhancedCostString}`, () => {
+                expect(parseCostString(enhancedCostString)).to.deep.equal(new Cost(3, 1, true));
+            });
+        });
     });
+
     describe("Actual costs", () => {
         const validCosts = {
             K2: new Cost(2, 0, true),

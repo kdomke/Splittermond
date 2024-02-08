@@ -48,7 +48,7 @@ export class Cost {
      */
     add(costs) {
         if ((this.strict || costs.strict) && this.isChanneled !== costs.isChanneled){
-           return new this.constructor(this.nonConsumed, this._consumed, this.isChanneled, this.strict);
+           return new Cost(this.nonConsumed, this._consumed, this.isChanneled, this.strict);
         }
         const rawConsumed = this._consumed += costs._consumed;
         const remainder = rawConsumed < 0 ? rawConsumed : 0; //overflow of consumed costs for non consumed costs
@@ -56,7 +56,7 @@ export class Cost {
 
         const rawNonConsumed = this.nonConsumed += costs.nonConsumed + remainder;
         const nonConsumed = Math.max(rawNonConsumed, 0); //we don't store negative cost values.
-        return new this.constructor(nonConsumed, consumed, this.isChanneled, this.strict);
+        return new Cost(nonConsumed, consumed, this.isChanneled, this.strict);
     }
 
     /**
@@ -67,7 +67,7 @@ export class Cost {
     }
 
     negate() {
-        return new this.constructor(-this.nonConsumed, -this._consumed, this.isChanneled);
+        return new Cost(-this.nonConsumed, -this._consumed, this.isChanneled);
     }
 
     /**

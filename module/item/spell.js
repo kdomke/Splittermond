@@ -4,6 +4,7 @@ import AttackableItem from "./attackable-item.js";
 import * as Costs from "../util/costs.js";
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
+import {parseCostString} from "../util/costs/costParser.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
@@ -42,7 +43,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
     get enhancementCosts() {
         if (this.actor) {
-            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
+            return Costs.calcEnhancementCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts);
         } else {
             return this.system.enhancementCosts;
         }
@@ -53,7 +54,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get enoughFocus() {
-        let costData = Costs.parseCostsString(this.costs);
+        let costData = parseCostString(this.costs);
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
         return costTotal <= this.actor?.system.focus.available.value;
     }

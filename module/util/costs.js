@@ -1,36 +1,9 @@
 import {Cost} from "./costs/Cost.js";
-import {parseCostString as newCostParser} from "./costs/costParser.js";
+import {parseCostString} from "./costs/costParser.js";
 
 /**
- * @typedef {{channeled: number, exhausted: number, consumed: number}} SpellCosts
- */
-
-/**
- *  @param {Cost[]} reductions
- * @param {string} costData
- * @param {boolean} enhancementCosts
- * @return {string}
- */
-export function calcSpellCostReduction(reductions, costData, enhancementCosts = false) {
-
-    if (reductions?.length === 0) {
-        return costData;
-    }
-
-    const initialCosts = newCostParser(costData);
-    const reducedCosts = reductions.reduce((costs, reduction) => costs.subtract(reduction), initialCosts);
-    const finalCosts = ensureMinimiumCosts(reducedCosts, enhancementCosts);
-    return finalCosts.render();
-}
-
-function ensureMinimiumCosts(cost, isEnhancementCost) {
-    return cost.isZero() && !isEnhancementCost ? cost.add(new Cost(1, 0, false)) : cost;
-}
-
-/**
- *
  * @param spellData
- * @param {SpellCosts[]} reductions
+ * @param {RawCosts[]} reductions
  * @return {Cost[]}
  */
 export function getReductionsBySpell(spellData, reductions) {
@@ -39,45 +12,53 @@ export function getReductionsBySpell(spellData, reductions) {
     return Object.keys(reductions).filter(key => {
         let group = key.split(".");
         return (group[0] === "*" || group[0] === skillId) & (group[1] === undefined || spellType.includes(group[1]));
-    }).map(reductionItem => reductions[reductionItem])
-        .map(red => new Cost(red.channeled + red.exhausted, red.consumed, red.channeled > 0));
+    }).map(reductionItem => reductions[reductionItem]).map(fromRawCosts);
+}
+
+function fromRawCosts(rawCosts) {
+    const nonConsumed = rawCosts.channeled + rawCosts.exhausted;
+    return new Cost(nonConsumed, rawCosts.consumed, rawCosts.channeled > 0);
 }
 
 /**
- * @param {any} str
- * @return {SpellCosts}
+ * @typedef {{channeled: number, exhausted: number, consumed: number}} RawCosts
+ * @param {RawCosts[]} reductions
+ * @param {string} costData
+ * @return {string}
  */
-export function parseCostsString(str) {
-    if (!str || typeof str !== "string") {
-        return zeroCosts;
-    }
-    let strParts = str?.split("/");
-    if (strParts.length > 1) {
-        return actuallyParseCosts(strParts[1]); //parsing Enhanced cost string
-    } else {
-        return actuallyParseCosts(strParts[0]);
-    }
+export function calcSpellCostReduction(reductions, costData) {
+    const reducedCosts = applyReduction(costData, reductions);
+    const finalCosts = ensureMinimumCosts(reducedCosts, reducedCosts);
+    return finalCosts.render();
 }
 
 /**
- * @param {string} str
- * @return {SpellCosts}
+ * @typedef {{channeled: number, exhausted: number, consumed: number}} RawCosts
+ * @param {RawCosts[]} reductions
+ * @param {string} costData
+ * @return {string}
  */
-function actuallyParseCosts(str) {
-    const costDataRaw = /^\s*([+-])?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(str.toLowerCase());
-    if (!costDataRaw) {
-        return zeroCosts;
+export function calcEnhancementCostReduction(reductions, costData) {
+    const finalCosts = applyReduction(costData, reductions);
+    return finalCosts.render();
+}
+
+/**
+ * @param {any} costs
+ * @param reductions
+ * @return {Cost}
+ */
+function applyReduction(costs, reductions) {
+    const initialCosts = parseCostString(costs);
+    if (reductions?.length === 0) {
+        return initialCosts;
+    } else if (initialCosts.isZero()) {
+        console.error("Cost data could not be parsed", costs);
+        return initialCosts;
     }
-    const rawConsumed = parseInt(costDataRaw[4] || 0);
-    const rawNonConsumed = parseInt(costDataRaw[3] || 0);
-    if (rawConsumed > rawNonConsumed) {
-        return zeroCosts;
-    }
-    const sign = costDataRaw && costDataRaw[1] === "-" ? -1 : 1;
-    const isChanneled = costDataRaw[2] === "k";
-    return {
-        channeled: sign * (isChanneled ? rawNonConsumed - rawConsumed : 0),
-        exhausted: sign * (!isChanneled ? rawNonConsumed - rawConsumed : 0),
-        consumed: sign * rawConsumed
-    };
+    return reductions.reduce((costs, reduction) => costs.subtract(reduction), initialCosts);
+}
+
+function ensureMinimumCosts(cost) {
+    return cost.isZero() ? cost.add(new Cost(1, 0, false)) : cost;
 }
