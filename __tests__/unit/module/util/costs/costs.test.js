@@ -1,8 +1,8 @@
-import {calcEnhancementCostReduction, calcSpellCostReduction} from '../../../../module/util/costs.js';
-import {parseCostString} from "../../../../module/util/costs/costParser.js";
+import {calcEnhancementCostReduction, calcSpellCostReduction} from '../../../../../module/util/costs/costs.js';
+import {parseCostString} from "../../../../../module/util/costs/costParser.js";
 import {describe, it} from 'mocha';
 import {expect} from 'chai';
-import {Cost} from "../../../../module/util/costs/Cost.js";
+import {Cost} from "../../../../../module/util/costs/Cost.js";
 
 describe("Spell cost reduction", () => {
     const originalAndReducedCosts = [

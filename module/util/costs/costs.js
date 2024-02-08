@@ -1,5 +1,5 @@
-import {Cost} from "./costs/Cost.js";
-import {parseCostString} from "./costs/costParser.js";
+import {Cost} from "./Cost.js";
+import {parseCostString} from "./costParser.js";
 
 /**
  * @param spellData

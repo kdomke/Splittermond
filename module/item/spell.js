@@ -1,7 +1,7 @@
 import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
-import * as Costs from "../util/costs.js";
+import * as Costs from "../util/costs/costs.js";
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 import {parseCostString} from "../util/costs/costParser.js";
