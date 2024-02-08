@@ -471,17 +471,17 @@ export default class SplittermondActor extends Actor {
                         break;
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
-                            var labelParts = modifierLabel.split(".");
-                            var spellGroup = "*";
+                            let labelParts = modifierLabel.split(".");
+                            let spellGroup = "*";
 
                             if (labelParts.length >= 2) {
                                 spellGroup = labelParts[1].trim();
-                                if (labelParts.length == 3) {
+                                if (labelParts.length === 3) {
                                     spellGroup += "." + labelParts[2].trim();
                                 }
                             }
 
-                            if (spellGroup == "*" && item.system.skill) {
+                            if (spellGroup === "*" && item.system.skill) {
                                 spellGroup = item.system.skill;
                             }
 
