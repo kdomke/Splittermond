@@ -5,6 +5,9 @@ global.Application = class {
     getData(){}
 };
 
+global.Actor = class {
+}
+
 global.Item = class {
     constructor(data, context) {
     }

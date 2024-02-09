@@ -1,5 +1,4 @@
 import * as Dice from "../../util/dice.js"
-import * as Costs from "../../util/costs/costs.js"
 import * as Tooltip from "../../util/tooltip.js"
 
 export default class SplittermondActorSheet extends ActorSheet {

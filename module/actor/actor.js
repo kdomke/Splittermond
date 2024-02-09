@@ -10,6 +10,7 @@ import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
 import {parseCostString} from "../util/costs/costParser.js";
+import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.js";
 
 export default class SplittermondActor extends Actor {
 
@@ -105,8 +106,7 @@ export default class SplittermondActor extends Actor {
             levelMod: 0
         }
 
-        data.spellCostReduction = {};
-        data.spellEnhancedCostReduction = {};
+        initializeSpellCostManagement(data);
 
         if (this.type === "character") {
             data.focusRegeneration = {
@@ -471,57 +471,10 @@ export default class SplittermondActor extends Actor {
                         break;
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
-                            let labelParts = modifierLabel.split(".");
-                            let spellGroup = "*";
-
-                            if (labelParts.length >= 2) {
-                                spellGroup = labelParts[1].trim();
-                                if (labelParts.length === 3) {
-                                    spellGroup += "." + labelParts[2].trim();
-                                }
-                            }
-
-                            if (spellGroup === "*" && item.system.skill) {
-                                spellGroup = item.system.skill;
-                            }
-
-                            var group = data.spellCostReduction[spellGroup.toLowerCase()] = data.spellCostReduction[spellGroup.toLowerCase()] || {
-                                consumed: 0,
-                                exhausted: 0,
-                                channeled: 0,
-                            };
-                            var parsedFocusReduction = parseCostString(value);
-                            group.consumed += parsedFocusReduction.consumed || 0;
-                            group.exhausted += parsedFocusReduction.exhausted || 0;
-                            group.channeled += parsedFocusReduction.channeled || 0;
-
-                            return;
+                            data.spellCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
                         }
                         else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-                            var labelParts = modifierLabel.split(".");
-                            var spellGroup = "*";
-
-                            if (labelParts.length >= 2) {
-                                spellGroup = labelParts[1].trim();
-                                if (labelParts.length == 3) {
-                                    spellGroup += "." + labelParts[2].trim();
-                                }
-                            }
-
-                            if (spellGroup == "*" && item.system.skill) {
-                                spellGroup = item.system.skill;
-                            }
-
-                            const group = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
-                                consumed: 0,
-                                exhausted: 0,
-                                channeled: 0,
-                            };
-                            const parsedFocusReduction = parseCostString(value);
-                            group.consumed += parsedFocusReduction.consumed || 0;
-                            group.exhausted += parsedFocusReduction.exhausted || 0;
-                            group.channeled += parsedFocusReduction.channeled || 0;
-
+                            data.spellEnhancedCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
                             return;
                         }
 

@@ -1,4 +1,3 @@
-import * as Costs from "../util/costs/costs.js"
 
 export default class TokenActionBar extends Application {
 
