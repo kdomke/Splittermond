@@ -3,6 +3,7 @@ import CheckDialog from "../apps/dialog/check-dialog.js"
 import * as Dice from "../util/dice.js"
 import * as Chat from "../util/chat.js";
 import * as Tooltip from "../util/tooltip.js";
+import {parseRollDifficulty} from "../../__tests__/unit/module/util/rollDifficultyParser.js";
 
 
 export default class Skill extends Modifiable {
@@ -75,24 +76,25 @@ export default class Skill extends Modifiable {
     }
 
     get maneuvers() {
-        return this.actor.items.filter(i => i.type == "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
+        return this.actor.items.filter(i => i.type === "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
     }
 
     /**
-     * @param {{difficulty: RollDifficulty, preSelectedModifier:string[], subtitle:?string, title:?string, type:string}} options
+     * @param {{difficulty: unknown, preSelectedModifier:string[], subtitle:?string, title:?string, type:string}} options
      * @return {Promise<*|boolean>}
      */
-    async roll(options= {}) {
+    async roll(options = {}) {
         let checkData = await this.prepareRollDialog(options.preSelectedModifier, options.title, options.subtitle);
-        if (!checkData) return false;
-
-        const principalTarget = Array.from(game.user.targets)[0];
-        let hideDifficulty = false;
-        if (principalTarget) {
-            hideDifficulty = ["KW", "GW", "VTD"].includes(checkData.difficulty);
-            checkData.difficulty = this.#evaluateRollDifficulty(checkData.difficulty, principalTarget);
+        if (!checkData) {
+            return false;
         }
-
+        const principalTarget = Array.from(game.user.targets)[0];
+        const rollDifficulty= parseRollDifficulty(difficulty)
+        let hideDifficulty = rollDifficulty.isTargetDependentValue()
+        if (principalTarget) {
+            rollDifficulty.evaluate(principalTarget);
+        }
+        return rollDifficulty.difficulty;
         if (this.isGrandmaster) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
@@ -130,9 +132,9 @@ export default class Skill extends Modifiable {
     }
 
     /**
-     * @typedef {number|'VTD','KW','GW'} RollDifficulty
+     * @typedef {number|'VTD','KW','GW'} RollDifficultyString
      * @typedef {{name: string, label:string, value: unknown, active:boolean}} EmphasisData
-     * @typedef {{difficulty:RollDifficulty, modifier:number, emphasis: EmphasisData}} CheckDialogOptions
+     * @typedef {{difficulty:RollDifficultyString, modifier:number, emphasis: EmphasisData, rollMode: unknown}} CheckDialogOptions
      * @param {string[]}selectedModifiers
      * @param {string} title
      * @param {string} subtitle
@@ -176,24 +178,6 @@ export default class Skill extends Modifiable {
         const displayTitle = options.title || game.i18n.localize(this.label);
         const displaySubtitle = options.subtitle || "";
         return displaySubtitle ? displayTitle : `${displayTitle} - ${displaySubtitle}`;
-    }
-
-    /**
-     * @param {RollDifficulty} difficulty
-     * @param {{actor:{derivedValues:{defense: number, bodyresist:number, mindresist:number}}}} target
-     * @return {number}
-     */
-    #evaluateRollDifficulty(difficulty,target) {
-        switch (difficulty) {
-            case "VTD":
-                return target.actor.derivedValues.defense.value;
-            case "KW":
-                return target.actor.derivedValues.bodyresist.value;
-            case "GW":
-                return target.actor.derivedValues.mindresist.value;
-            default:
-                return parseInt(difficulty);
-        }
     }
 
     getFormula() {

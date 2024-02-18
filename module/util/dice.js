@@ -17,7 +17,7 @@
  * @param {number} skillModifier
  * @return {CheckReport}
  */
-export async function check(skill, difficulty = 15, rollType = "standard", skillModifier = 0) {
+export async function check(skill, difficulty , rollType = "standard", skillModifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
@@ -28,11 +28,6 @@ export async function check(skill, difficulty = 15, rollType = "standard", skill
         skillValue: skill.value,
         modifier: skillModifier
     };
-    difficulty = parseInt(difficulty);
-    if (isNaN(difficulty)) {
-        difficulty = 0;
-    }
-
     const roll = new Roll(rollFormula, rollData).evaluate({async: false}); //API usage!
 
     return await evaluateCheck(roll, skill.points, difficulty, rollType);
@@ -44,7 +39,7 @@ export async function check(skill, difficulty = 15, rollType = "standard", skill
  * @param skillPoints
  * @param difficulty
  * @param rollType
- * @returns {CheckReport}
+ * @return {CheckReport}
  */
 export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     roll = await roll;
