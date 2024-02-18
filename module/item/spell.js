@@ -3,7 +3,7 @@ import AttackableItem from "./attackable-item.js";
 
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
-import {parseCostString} from "../util/costs/costParser.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
@@ -28,9 +28,9 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     /** @return {string} */
     get enhancementCosts() {
         if (this.actor){
-            const requiredDegreesOfSuccess = /([1-9][0-9]*\s*[Ee][Gg])/.exec(this.system.enhancementCosts)[0] ?? "";
+            const requiredDegreesOfSuccess = parseSpellEnhancementDegreesOfSuccess(this.system.enhancementCosts);
             const reducedCosts = calculateReducedEnhancementCosts(this.system, this.actor.system.spellEnhancedCostReduction)
-            return `${requiredDegreesOfSuccess}/+${reducedCosts}`
+            return `${requiredDegreesOfSuccess}EG/+${reducedCosts}`;
         } else {
             return this.system.enhancementCosts;
         }

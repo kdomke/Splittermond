@@ -1,6 +1,6 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {parseCostString} from "../../../../../module/util/costs/costParser.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../../../module/util/costs/costParser.js";
 import {Cost} from "../../../../../module/util/costs/Cost.js";
 
 describe("Parses costs correctly", () => {
@@ -37,14 +37,14 @@ describe("Parses costs correctly", () => {
     });
     describe("Negative costs", () => {
         const validCosts = {
-            "-K2": new Cost( -2, 0, true),
-            "-K2V1": new Cost( -1, -1, true),
-            "-K2V2": new Cost( -0, -2, true),
-            "-20V10": new Cost( -10, -10, false),
-            "-5000V100": new Cost( -4900, -100, false),
-            "-K1000V300": new Cost( -700,  -300, true),
-            "-1V1": new Cost( -0, -1, false),
-            "-1": new Cost( -1, 0, false),
+            "-K2": new Cost(-2, 0, true),
+            "-K2V1": new Cost(-1, -1, true),
+            "-K2V2": new Cost(-0, -2, true),
+            "-20V10": new Cost(-10, -10, false),
+            "-5000V100": new Cost(-4900, -100, false),
+            "-K1000V300": new Cost(-700, -300, true),
+            "-1V1": new Cost(-0, -1, false),
+            "-1": new Cost(-1, 0, false),
         };
         Object.entries(validCosts).forEach(([costString, costObject]) => {
             it(`Parses ${costString} correctly`, () => {
@@ -64,4 +64,22 @@ describe("Parses costs correctly", () => {
             });
         });
     });
+});
+describe("Parses degrees of success correctly", () => {
+    [
+        ["20 EG", 20],
+        ["4EG", 4],
+        ["1 EG/K4V1", 1],
+        ["1EG/+K4V1", 1],
+        ["1eg/K8V2", 1],
+        [" 2eG /  +K4V1", 2],
+        ["3 Eg/+K4V1", 3],
+        ["K4V1", 0],
+        ["", 0]
+    ].forEach(([costString, expectedDegreesOfSuccess]) => {
+        it(`Parses ${costString} as ${expectedDegreesOfSuccess}`, () => {
+            expect(parseSpellEnhancementDegreesOfSuccess(costString)).to.equal(expectedDegreesOfSuccess);
+        });
+    });
+
 });

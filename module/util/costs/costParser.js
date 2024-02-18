@@ -37,3 +37,16 @@ function formatCostInput(str) {
         return strParts[0];
     }
 }
+
+/**
+ * @param {string} costString
+ * @return {number} the degrees of success
+ */
+export function parseSpellEnhancementDegreesOfSuccess(costString){
+    const enhancementCostString = /([1-9][0-9]*)*\s*[Ee][Gg]/.exec(costString);
+    if (enhancementCostString) {
+        return parseInt(enhancementCostString[1]);
+    } else {
+        return 0;
+    }
+}
