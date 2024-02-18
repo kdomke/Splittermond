@@ -79,62 +79,15 @@ export default class Skill extends Modifiable {
     }
 
     async roll(options = {}) {
-        let emphasisData = [];
-        let selectableModifier = this.selectableModifier;
-        let preSelectedModifier = options.preSelectedModifier || [];
-        preSelectedModifier = preSelectedModifier.map(s => s.trim().toLowerCase());
-        if (selectableModifier) {
-            emphasisData = Object.entries(selectableModifier).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: preSelectedModifier.includes(key.trim().toLowerCase())
-                }
-            });
-        }
-
-        let title = options.title || game.i18n.localize(this.label);
-        if (options.subtitle)
-            title = `${title} - ${options.subtitle}`;
-
-        let skillFormula = this.getFormula();
-        skillFormula.addOperator("=")
-        skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
-
-        let checkData = await CheckDialog.create({
-            difficulty: options.difficulty || 15,
-            modifier: options.modifier || 0,
-            emphasis: emphasisData,
-            title: title,
-            skill: this,
-            skillTooltip: skillFormula.render(),
-        });
-
+        let checkData = await this.prepareRollDialog(options.preSelectedModifier, title, options.subtitle);
         if (!checkData) return false;
 
-        checkData.modifierElements = [... this.actor.modifier.static(this._modifierPath).map(mod => { return { value: mod.value, description: mod.name } }), ...checkData.modifierElements];
-
-        let target = Array.from(game.user.targets)[0];
+        const principalTarget = Array.from(game.user.targets)[0];
         let hideDifficulty = false;
-        if (target) {
-            switch (checkData.difficulty) {
-                case "VTD":
-                    checkData.difficulty = target.actor.derivedValues.defense.value;
-                    hideDifficulty = true;
-                    break;
-                case "KW":
-                    checkData.difficulty = target.actor.derivedValues.bodyresist.value;
-                    hideDifficulty = true;
-                    break;
-                case "GW":
-                    checkData.difficulty = target.actor.derivedValues.mindresist.value;
-                    hideDifficulty = true;
-                    break;
-            }
+        if (principalTarget) {
+            hideDifficulty = ["KW", "GW", "VTD"].includes(checkData.difficulty);
+            checkData.difficulty = this.#evaluateRollDifficulty(checkData.difficulty, principalTarget);
         }
-
-        checkData.difficulty = parseInt(checkData.difficulty);
 
         if (this.isGrandmaster) {
             checkData.rollType = checkData.rollType + "Grandmaster";
@@ -170,6 +123,73 @@ export default class Skill extends Modifiable {
         }
 
         return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, data.roll, checkMessageData));
+    }
+
+    /**
+     * @typedef {number|'VTD','KW','GW'} RollDifficulty
+     * @typedef {{name: string, label:string, value: unknown, active:boolean}} EmphasisData
+     * @typedef {{difficulty:RollDifficulty, modifier:number, emphasis: EmphasisData}} CheckDialogOptions
+     * @param {string[]}selectedModifiers
+     * @param {string} title
+     * @param {string} subtitle
+     * @return {Promise<CheckDialogOptions>}
+     */
+    async prepareRollDialog(selectedModifiers, title, subtitle) {
+        let emphasisData = [];
+        let selectableModifier = this.selectableModifier;
+        selectedModifiers = selectedModifiers.map(s => s.trim().toLowerCase());
+        if (selectableModifier) {
+            emphasisData = Object.entries(selectableModifier).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: selectedModifiers.includes(key.trim().toLowerCase())
+                };
+            });
+        }
+
+        let skillFormula = this.getFormula();
+        skillFormula.addOperator("=");
+        skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
+
+        return CheckDialog.create({
+            difficulty: options.difficulty || 15,
+            modifier: options.modifier || 0,
+            emphasis: emphasisData,
+            title: this.#createRollDialogTitle(title, subtitle),
+            skill: this,
+            skillTooltip: skillFormula.render(),
+        });
+    }
+
+    /**
+     * @param {string} title
+     * @param {string} subtitle
+     * @return {string}
+     */
+    #createRollDialogTitle(title, subtitle) {
+        const displayTitle = options.title || game.i18n.localize(this.label);
+        const displaySubtitle = options.subtitle || "";
+        return displaySubtitle ? displayTitle : `${displayTitle} - ${displaySubtitle}`;
+    }
+
+    /**
+     * @param {RollDifficulty} difficulty
+     * @param {{actor:{derivedValues:{defense: number, bodyresist:number, mindresist:number}}}} target
+     * @return {number}
+     */
+    #evaluateRollDifficulty(difficulty,target) {
+        switch (difficulty) {
+            case "VTD":
+                return target.actor.derivedValues.defense.value;
+            case "KW":
+                return target.actor.derivedValues.bodyresist.value;
+            case "GW":
+                return target.actor.derivedValues.mindresist.value;
+            default:
+                return parseInt(difficulty);
+        }
     }
 
     getFormula() {
