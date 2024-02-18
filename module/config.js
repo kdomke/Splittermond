@@ -186,7 +186,7 @@ splittermond.skillAttributes = {
     "watermagic": ["mystic", "intuition"],
     "windmagic": ["mystic", "mind"]
 };
-
+/**@typedef {"standard", "standardGrandmaster", "risk", "riskGrandmaster", "safety", "safetyGrandmaster"} RollType*/
 splittermond.rollType = {
     standard: {
         label: "splittermond.rollType.standard",

@@ -78,8 +78,12 @@ export default class Skill extends Modifiable {
         return this.actor.items.filter(i => i.type == "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
     }
 
-    async roll(options = {}) {
-        let checkData = await this.prepareRollDialog(options.preSelectedModifier, title, options.subtitle);
+    /**
+     * @param {{difficulty: RollDifficulty, preSelectedModifier:string[], subtitle:?string, title:?string, type:string}} options
+     * @return {Promise<*|boolean>}
+     */
+    async roll(options= {}) {
+        let checkData = await this.prepareRollDialog(options.preSelectedModifier, options.title, options.subtitle);
         if (!checkData) return false;
 
         const principalTarget = Array.from(game.user.targets)[0];

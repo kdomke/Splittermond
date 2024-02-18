@@ -1,20 +1,39 @@
-export async function check(skill, difficulty = 15, rollType = "standard", modifier = 0) {
+/**
+ * @typedef {{total:number, dice: [{total:number}]}} RollResultForSplittermond
+ * @typedef {{
+    difficulty: number
+    succeeded: boolean,
+    isFumble: boolean,
+    isCrit: boolean,
+    degreeOfSuccess: number,
+    degreeOfSuccessMessage: string,
+    roll: RollResultForSplittermond,
+ }} CheckReport
+ */
+/**
+ * @param skill
+ * @param {number} difficulty
+ * @param {RollType} rollType
+ * @param {number} skillModifier
+ * @return {CheckReport}
+ */
+export async function check(skill, difficulty = 15, rollType = "standard", skillModifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
-    if (modifier) {
+    if (skillModifier) {
         rollFormula += " + @modifier";
     }
     let rollData = {
         skillValue: skill.value,
-        modifier: modifier
+        modifier: skillModifier
     };
     difficulty = parseInt(difficulty);
     if (isNaN(difficulty)) {
         difficulty = 0;
     }
 
-    const roll = new Roll(rollFormula, rollData).evaluate({ async: false });
+    const roll = new Roll(rollFormula, rollData).evaluate({async: false}); //API usage!
 
     return await evaluateCheck(roll, skill.points, difficulty, rollType);
 }
@@ -25,7 +44,7 @@ export async function check(skill, difficulty = 15, rollType = "standard", modif
  * @param skillPoints
  * @param difficulty
  * @param rollType
- * @returns {{difficulty, degreeOfSuccess: (*|number), degreeOfSuccessMessage: *, isCrit: boolean, isFumble: boolean, roll, succeeded: boolean}}
+ * @returns {CheckReport}
  */
 export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     roll = await roll;
@@ -33,18 +52,22 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
 
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
     degreeOfSuccess = ((skillPoints < 1) ? Math.min(degreeOfSuccess, 0) : degreeOfSuccess);
-    const isFumble = rollType != "safety" && roll.dice[0].total <= 3;
+    const isFumble = rollType !== "safety" && roll.dice[0].total <= 3;
     const isCrit = roll.dice[0].total >= 19;
     const succeeded = difference >= 0 && !isFumble;
     degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
     degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
 
-    let degreeOfSuccessMessage = game.i18n.localize(`splittermond.${succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(degreeOfSuccess), 5)}`);
+    const degreeOfSuccessMessageModifier = Math.min(Math.abs(degreeOfSuccess), 5)
+    let degreeOfSuccessMessage;
     if (isCrit) {
         degreeOfSuccessMessage = game.i18n.localize(`splittermond.critical`);
-    }
-    if (isFumble) {
+    } else if (isFumble) {
         degreeOfSuccessMessage = game.i18n.localize(`splittermond.fumble`);
+    } else if (succeeded) {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.successMessage.${degreeOfSuccessMessageModifier}`);
+    } else {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.failMessage.${degreeOfSuccessMessageModifier}`);
     }
     return {
         difficulty: difficulty,
@@ -74,7 +97,6 @@ export async function damage(damageFormula, featureString, damageSource = "") {
     let nDices = parseInt(damageFormulaData[1] || 1);
     let nFaces = parseInt(damageFormulaData[2]);
     let damageModifier = damageFormulaData[3];
-
 
 
     damageFormula = `${nDices}d${nFaces}`;
