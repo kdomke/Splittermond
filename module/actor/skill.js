@@ -25,7 +25,7 @@ export default class Skill extends Modifiable {
         this._cache = {
             enabled: false,
             value: null
-        }
+        };
     }
 
     toObject() {
@@ -84,17 +84,18 @@ export default class Skill extends Modifiable {
      * @return {Promise<*|boolean>}
      */
     async roll(options = {}) {
-        let checkData = await this.prepareRollDialog(options.preSelectedModifier, options.title, options.subtitle);
+        let checkData = await this.prepareRollDialog(
+            options.preSelectedModifier, options.title, options.subtitle, options.difficulty, options.modifier);
         if (!checkData) {
             return false;
         }
         const principalTarget = Array.from(game.user.targets)[0];
-        const rollDifficulty= parseRollDifficulty(difficulty)
+        const rollDifficulty= parseRollDifficulty(options.difficulty)
         let hideDifficulty = rollDifficulty.isTargetDependentValue()
         if (principalTarget) {
             rollDifficulty.evaluate(principalTarget);
         }
-        return rollDifficulty.difficulty;
+        checkData.difficulty = rollDifficulty.difficulty;
         if (this.isGrandmaster) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
@@ -126,7 +127,7 @@ export default class Skill extends Modifiable {
             hideDifficulty: hideDifficulty,
             maneuvers: checkData.maneuvers || [],
             ...(options.checkMessageData || {})
-        }
+        };
 
         return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, data.roll, checkMessageData));
     }
@@ -138,9 +139,11 @@ export default class Skill extends Modifiable {
      * @param {string[]}selectedModifiers
      * @param {string} title
      * @param {string} subtitle
+     * @param {RollDifficultyString} difficulty
+     * @param {number} modifier
      * @return {Promise<CheckDialogOptions>}
      */
-    async prepareRollDialog(selectedModifiers, title, subtitle) {
+    async prepareRollDialog(selectedModifiers, title, subtitle, difficulty, modifier) {
         let emphasisData = [];
         let selectableModifier = this.selectableModifier;
         selectedModifiers = selectedModifiers.map(s => s.trim().toLowerCase());
@@ -160,8 +163,8 @@ export default class Skill extends Modifiable {
         skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
 
         return CheckDialog.create({
-            difficulty: options.difficulty || 15,
-            modifier: options.modifier || 0,
+            difficulty: difficulty || 15,
+            modifier: modifier || 0,
             emphasis: emphasisData,
             title: this.#createRollDialogTitle(title, subtitle),
             skill: this,
@@ -175,8 +178,8 @@ export default class Skill extends Modifiable {
      * @return {string}
      */
     #createRollDialogTitle(title, subtitle) {
-        const displayTitle = options.title || game.i18n.localize(this.label);
-        const displaySubtitle = options.subtitle || "";
+        const displayTitle = title || game.i18n.localize(this.label);
+        const displaySubtitle = subtitle || "";
         return displaySubtitle ? displayTitle : `${displayTitle} - ${displaySubtitle}`;
     }
 
