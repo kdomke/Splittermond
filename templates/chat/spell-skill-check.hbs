@@ -1,0 +1,113 @@
+<div
+        class="splittermond check{{#if documentClass.succeeded}} success{{/if}}{{#if
+                documentClass.isFumble}} fumble{{/if}}{{#if
+                documentClass.isCrit}} critical{{/if}}">
+    <header class="chat-message-header">
+        {{#if header.img}}
+            <img src="{{header.img}}" title="{{header.title}}" width="36" height="36"/>
+        {{/if}}
+        <div>
+            <h2>{{header.title}}</h2>
+            <span class="roll-type">{{header.rollType}}</span>
+            {{#if header.difficulty}}
+                <span class="{{#if header.hideDifficulty}}gm-only{{/if}}">
+                &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{header.difficulty}}</span>
+            </span>
+            {{/if}}
+        </div>
+    </header>
+    <div><!--roll presentation -->
+        <div class="roll-summary dice-roll">
+            <div class="roll-total">{{roll.total}}</div>
+            {{{tooltip}}}
+        </div>
+        {{#if difficulty}}
+            <div class="degree-of-success">
+                <div class="stars">
+                    {{#times degreeOfSuccess}}
+                        <i class="fas fa-star"></i>
+                    {{/times}}
+                </div>
+                <strong>{{degreeOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+
+            </div>
+        {{/if}}
+    </div>
+    <div class="degree-of-success-description" data-used-degrees-of-success="0", data-message-id="{{this.degreeOfSuccessOption.[0].messageId}}">
+        <ul>
+        <li>
+            {{#each degreeOfSuccessOptions}}
+                <input
+                        type="checkbox"
+                        class = "{{class}}"
+                        id="{{id}}"
+                        data-key="{{key}}"
+                        data-degrees-of-success="{{degreesOfSuccess}}"
+                        data-focus-cost-reduction="{{focusCost}}"
+                        data-tick-cost-reduction="{{castDuration}}"
+                        data-damage-increase="{{damageIncrease}}"
+                        data-message-id="{{messageId}}"
+                />
+                <label for="{{id}}">{{text}}</label>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{#if actions}}
+        <div class="actions">
+            <h3>{{localize "splittermond.furtherActions"}}</h3>
+            {{#each actions}}
+                <button class="{{this.classes}}" {{#each this.data}}data-{{@key}}="{{this}}" {{/each}}><i
+                        class="fas {{this.icon}}"></i> {{this.name}}</button>
+            {{/each}}
+            {{#with actions}}
+                {{#if this.activeDefence}}
+                    <button
+                            id="spell-action-active-defense-{{this.activeDefence.messageId}}"
+                            class="active-defence" data-active-defence="{{this.activeDefence.}}"><i
+                            class="fas fa-shield-alt"></i> {{localize "splittermond.activeDefence"}}</button>
+                {{/if}}
+                {{#if this.useSplinterpoints}}
+                    <button
+                            id="spell-action-use-splinter-points-{{this.useSplinterpoints.messageId}}"
+                            data-message-id="{{this.useSplinterpoints.messageId}}"><i
+                            data-text-template="{{this.tickCost.textTemplate}}"
+                            class="use-splinterpoint fas fa-moon"></i> {{this.useSplinterpoints.text}}</button>
+                {{/if}}
+                {{#if this.rollSpellFumble}}
+                    <button
+                            id="spell-roll-fumble-{{this.rollSpellFumble.messageId}}"
+                            data-message-id="{{this.rollSpellFumble.messageId}}"
+                            data-text-template="{{this.tickCost.textTemplate}}"
+                            data-roll-type="magicFumble"
+                            data-focus-costs="{{this.rollSpellFumble.focusCosts}}"><i
+                            class="rollable fas fa-dice"></i> {{this.rollSpellFumble.text}}</button>
+                {{/if}}
+                {{#if this.tick-cost}}
+                    <button
+                            id="spell-action-tick-cost-{{this.tickCost.messageId}}"
+                            data-message-id="{{this.tickCost.messageId}}"
+                            data-text-template="{{this.tickCost.textTemplate}}"
+                            data-tick-cost="{{this.tickCost.tickCost}}"><i
+                            class="tick-cost fas fa-hourglass-half"></i> {{this.tickCost.text}}</button>
+                {{/if}}
+                {{#if this.focus-cost}}
+                    <button
+                            id="spell-action-focus-cost-{{this.tickCost.messageId}}"
+                            data-message-id="{{this.tickCost.messageId}}"
+                            data-text-template="{{this.tickCost.textTemplate}}"
+                            data-focus-cost="{{this.tickCost.tickCost}}"><i
+                            class="tick-cost fas fa-hourglass-half"></i> {{this.tickCost.text}}</button>
+                {{/if}}
+                {{#if this.damage}}
+                    <button
+                            id="spell-action-damage-{{this.damage.messageId}}"
+                            data-message-id="{{this.damage.messageId}}"
+                            data-text-template="{{this.damage.textTemplate}}"
+                            data-damage="{{this.damage.damage}}"><i
+                            class="damage fas fa-bolt"></i> {{this.damage.text}}</button>
+                {{/if}}
+            {{/with}}
+        </div>
+    {{/if}}
+</div>

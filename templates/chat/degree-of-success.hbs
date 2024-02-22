@@ -1,0 +1,33 @@
+{{#if difficulty}}
+    <div class="degree-of-success">
+        <div class="stars">
+            {{#times degreeOfSuccess}}
+                <i class="fas fa-star"></i>
+            {{/times}}
+        </div>
+        <strong>{{degreeOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+
+    </div>
+{{/if}}
+{{#if degreeOfSuccessDescription}}
+    <div class="degree-of-success-description">
+        <ul>
+            {{#each degreeOfSuccessOption}}
+                    <li>
+                        <input
+                                type="checkbox"
+                                id="spell-success-option-cast-duration"
+                                disabled="false"
+                                checked="false"
+                                data-degree-of-success="{{degreeOfSuccess}}"
+                                data-focus-cost-reduction="{{focusCost}}"
+                                data-cast-duration-reduction="{{castDuration}}"
+                                data-damage-increase="{{damageIncrease}}"
+                                data-message-id="{{messageId}}"
+                        />
+                        <label for="spell-success-option-cast-duration">{{text}}</label>
+                    </li>
+            {{/each}}
+        </ul>
+    </div>
+{{/if}}

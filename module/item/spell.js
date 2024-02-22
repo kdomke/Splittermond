@@ -6,6 +6,7 @@ import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
 
+
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
     constructor(

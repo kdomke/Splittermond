@@ -158,6 +158,7 @@ Hooks.once("init", function () {
             accum += block.fn(i);
         return accum;
     });
+    Handlebars.registerPartials(path.join(__dirname, 'templates','chat')); //TODO: put this someplace else
 
     
     
