@@ -1,0 +1,11 @@
+<div class="degree-of-success">
+    <div class="stars">
+        {{#times totalDegreesOfSuccess}}
+            <i class="fas fa-star"></i>
+        {{/times}}
+    </div>
+    <div>
+    <strong>{{this.totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+    <div style="font-size: smaller;">{{usedDegreesOfSuccess}}&nbsp;{{usedDegreeOfSuccessMessage}}</div>
+    </div>
+</div>

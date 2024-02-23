@@ -1,10 +1,12 @@
 import {compendiumBrowserTest} from "./compendium-browser.test.js";
 import {itemTest} from "./item.js";
+import {chatSystemTest} from "./chatSystem.test.js";
 
 
 function registerQuenchTests(quench) {
     quench.registerBatch("compendium-browser", compendiumBrowserTest);
     quench.registerBatch("item", itemTest);
+    quench.registerBatch("chatSystem", chatSystemTest);
 }
 
 export function init() {
