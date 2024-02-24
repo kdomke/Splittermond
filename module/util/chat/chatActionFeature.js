@@ -1,21 +1,26 @@
 import {handleChatAction} from "./SplittermondChatCard.js";
-
+import {chatFeatureApi} from "./chatActionGameApi.js";
 export function chatActionFeature(){
-    Hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
-    Hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
+    chatFeatureApi.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
+    chatFeatureApi.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
 
-    Hooks.once("init", () => {
+    chatFeatureApi.hooks.once("init", () => {
         game.socket.on("system.splittermond", (data) => {
 
             if (data.type === "chatAction") {
-                if (!game.user.isGM) return false;
-                const connectedGMs = game.users.filter((u) => u.isGM && u.active);
-                const isResponsibleGM = !connectedGMs.some((other) => other.id < game.user.id);
-                if (!isResponsibleGM) return;
+                if (!chatFeatureApi.currentUser.isGM) {
+                    return Promise.resolve();
+                }
+                const connectedGMs = chatFeatureApi.users.filter((u) => u.isGM && u.active);
+                const isResponsibleGM = !connectedGMs.some((other) => other.id < chatFeatureApi.currentUser.id);
+                if (!isResponsibleGM){
+                    return Promise.resolve();
+                }
 
                 const {action, messageId, userId} = data;
-                handleChatAction(action, messageId, rollIndex, userId);
+                return handleChatAction(action, messageId, userId);
             }
+            return Promise.resolve();
         });
     });
 }
@@ -34,12 +39,12 @@ async function onChatCardAction(event) {
     const action = button.dataset.action;
     const messageId = button.closest(".message").dataset.messageId;
 
-    if (!game.user.isGM) {
+    if (!chatFeatureApi.currentUser.isGM) {
         if (!game.users.filter((u) => u.isGM && u.active).length) {
-            return ui.notifications.warn(game.i18n.localize("FAx.ChatCard.NoGMConnected"));
+            return chatFeatureApi.warnUser("splittermond.chatCard.noGMConnected");
         }
 
-        return game.socket.emit("system.splittermond", {
+        return chatFeatureApi.socket.emit("system.splittermond", {
             type: "chatAction",
             action,
             messageId,
