@@ -1,7 +1,8 @@
 import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 import {getActor, getSpell} from "./fixtures.js"
-import {SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
+import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
+import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
@@ -9,8 +10,7 @@ export function chatActionFeatureTest(context) {
     describe("SplittermondChatCard", () => {
         it("should post a message in the chat", async () => {
             const actor = getActor(this);
-            const spell = getSpell(this);
-            const message = SplittermondSpellRollMessage.createRollMessage(spell, actor, {degreeOfSuccess:3});
+            const message = new SplittermondTestRollMessage({title: "a"});
             const chatCard = SplittermondChatCard.create(actor, message);
 
             await chatCard.sendToChat();
@@ -22,23 +22,32 @@ export function chatActionFeatureTest(context) {
 
         it("should rerender the same chat card on update", async () =>{
             const actor = getActor(this);
-            const spell = getSpell(this);
-            //TODO: using a real message here is problematic, because we have no control over the content which we assert
-            const message = SplittermondSpellRollMessage.createRollMessage(spell, actor, {degreeOfSuccess:3});
+            const message = new SplittermondTestRollMessage({title: "title"});
             const chatCard = SplittermondChatCard.create(actor, message);
 
             await chatCard.sendToChat();
             const messagesBeforeUpdate = getCollectionLength(game.messages);
             const messageId = chatCard.messageId;
-            message.updateSource({totalDegreesOfSuccess: 8});
+            message.updateSource({title: "Manchete"});
             await chatCard.updateMessage();
 
 
             expect(game.messages.get(messageId), `Did not find message with id ${messageId}`).to.not.be.undefined;
-            expect(game.messages.get(messageId).content, `Did not find message with id ${messageId}`).to.contain("8");
+            expect(game.messages.get(messageId).content, `Did not find message with id ${messageId}`).to.contain("Manchete");
             expect(getCollectionLength(game.messages), "Message count before and after update").to.equal(messagesBeforeUpdate);
 
             ChatMessage.deleteDocuments([messageId]);
+        });
+
+        it("should be able to reproduce a message from handled chat action", async () => {
+            const actor = getActor(this);
+            const message  = new SplittermondTestRollMessage({title: "title"});
+            const chatCard = SplittermondChatCard.create(actor, message);
+            await chatCard.sendToChat();
+
+            await handleChatAction("alterTitle", chatCard.messageId);
+            expect(chatFeatureApi.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
+            ChatMessage.deleteDocuments([chatCard.messageId]);
         });
 
         function getCollectionLength(collection){
@@ -113,7 +122,7 @@ export function chatActionFeatureTest(context) {
         it("should deliver a template renderer", async () => {
             const content = "Rhaaaaagaahh"
             const renderedHtml = await chatFeatureApi.renderer(
-                "systems/splittermond/__tests__/integration/testTemplate.hbs", {title: content});
+                "systems/splittermond/__tests__/integration/resources/testTemplate.hbs", {title: content});
             expect(renderedHtml, "renderedHtml is a string").to.be.a("string");
             expect(renderedHtml, "renderedHtml contains the content").to.contain(content);
         })

@@ -17,7 +17,7 @@ export const chatFeatureApi = new class SplittermondChatCardGameInterface {
     }
 
     /**
-     * @typedef {{id: string, update: ({object})=> Promise<ChatMessage> ,getFlag:(scope: string, key:string)=> object}} ChatMessage object from foundry, guaranteed to have an id.
+     * @typedef {{id: string, update(data:object):Promise<ChatMessage>, getFlag(scope: string, key:string):object}} ChatMessage object from foundry, guaranteed to have an id.
      * @param {object} chatData
      * @return {Promise<ChatMessage>} message
      */
