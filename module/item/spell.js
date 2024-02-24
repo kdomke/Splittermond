@@ -5,6 +5,8 @@ import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
+import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
+import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
@@ -135,6 +137,10 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             }
         };
 
+        await SplittermondChatCard.create(
+            this.actor,
+            SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], {degreeOfSuccess:3}))
+            .sendToChat();
         return this.skill.roll(options);
     }
 

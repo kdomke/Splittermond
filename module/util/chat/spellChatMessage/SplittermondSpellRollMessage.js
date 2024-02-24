@@ -1,4 +1,7 @@
 import {SplittermondSpellRollDataModel} from "../../../data/SplittermondSpellRollDataModel.js";
+import {addToRegistry} from "../chatMessageRegistry.js";
+
+const constructorRegistryKey = "SplittermondSpellRollMessage";
 
 export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel {
 
@@ -13,6 +16,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         return new SplittermondSpellRollMessage({
             totalDegreesOfSuccess: checkReport.degreeOfSuccess,
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
+            constructorKey: constructorRegistryKey,
         });
     }
 
@@ -32,3 +36,5 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         return this;
     }
 }
+
+addToRegistry(constructorRegistryKey, SplittermondSpellRollMessage);

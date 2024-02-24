@@ -7,7 +7,7 @@ export class SplittermondSpellRollDataModel extends foundry.abstract.DataModel {
         return {
             //spell: fields.ObjectField({required: true, blank: false}), //also has caster
             //target: fields.ObjectField({required: true, blank: false}), //actor
-
+            constructorKey: new fields.StringField({required: true, trim:true, blank: false}),
             totalDegreesOfSuccess: new fields.NumberField({required: true, blank: false}),
             openDegreesOfSuccess: new fields.NumberField({required: true, blank: false}),
             degreeOfSuccessOptions: new fields.SchemaField(createDegreesOfSuccessOptions(), {

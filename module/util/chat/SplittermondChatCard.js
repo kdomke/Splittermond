@@ -1,10 +1,17 @@
 import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.js";
+import {getFromRegistry} from "./chatMessageRegistry.js";
 
+/**
+ * @typedef SplittermondChatMessage
+ * @type {object}
+ * @property {string} template
+ * @property {()=>object} getData
+ */
 export class SplittermondChatCard extends SplittermondChatCardModel {
     /**
      *
      * @param {SplittermondActor} actor
-     * @param {SplittermondSpellRollMessage} message
+     * @param {SplittermondChatMessage & foundry.abstract.DataModel} message
      * @return {SplittermondChatCard}
      */
     static create(actor, message) {
@@ -68,8 +75,46 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
     }
 }
 
+/**
+ * @param {string} action the action invoked on the chat card
+ * @param {string} messageId the chat card message id
+ * @param userId
+ * @return {Promise<void>}
+ */
+export async function handleChatAction(action, messageId, userId) {
+    const gameInterface = new SplittermondChatCardGameInterface();
+
+    const chatCard = gameInterface.messages.get(messageId)
+    const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
+    const constructor = getFromRegistry(chatCardFlag.message.constructorKey)
+    const messageObject = new constructor(chatCardFlag.message);
+
+    const splittermondChatCard = new SplittermondChatCard({
+        ...chatCardFlag,
+        message: messageObject,
+    }, gameInterface);
+
+    if(hasAction(splittermondChatCard.message, action)){
+        splittermondChatCard.message[action]();
+        await splittermondChatCard.updateMessage();
+    }else{
+        gameInterface.ui.notifications.warn(gameInterface.localize("splittermond.chatCard.actionNotFound"));
+        throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
+    }
+
+}
+
+/**
+ *
+ * @param {object} object
+ * @param {string} action
+ */
+function hasAction(object, action){
+    return (action in object || action in Object.getPrototypeOf(object)) && typeof object[action] === "function";
+}
+
 class SplittermondChatCardGameInterface {
-    get ui()  {
+    get ui() {
         return ui;
     }
 

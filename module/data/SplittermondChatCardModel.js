@@ -1,5 +1,11 @@
 
 const fields = foundry.data.fields;
+
+/**
+ * @property {string} messageId
+ * @property {object} speaker
+ * @property {SplittermondChatMessage & foundry.abstract.DataModel} message
+ */
 export class SplittermondChatCardModel extends  foundry.abstract.DataModel {
     static defineSchema() {
         return {

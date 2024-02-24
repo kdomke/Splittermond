@@ -21,6 +21,7 @@ import TickBarHud from "./module/apps/tick-bar-hud.js";
 import TokenActionBar from "./module/apps/token-action-bar.js";
 
 import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
+import {chatActionFeature} from "./module/util/chat/chatActionFeature.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -274,6 +275,7 @@ Hooks.on('preCreateActor', async (actor) => {
 });
 
 Hooks.on('init', function(){
+
     // Patch enrichHTML function for Custom Links
 
     CONFIG.TextEditor.enrichers.push(
@@ -568,3 +570,5 @@ Hooks.on("renderCompendiumDirectory", (app, html, data) => {
     const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
     html.find(".header-actions").append(compendiumBrowserButton);
 });
+
+chatActionFeature()
