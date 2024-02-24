@@ -3,7 +3,7 @@ import {getActor, getSpell} from "./fixtures.js"
 import {SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
 
-export function chatActionFeature(context) {
+export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
 
     describe("SplittermondChatCard", () => {
