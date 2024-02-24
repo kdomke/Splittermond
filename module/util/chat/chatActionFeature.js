@@ -1,11 +1,13 @@
 import {handleChatAction} from "./SplittermondChatCard.js";
 import {chatFeatureApi} from "./chatActionGameApi.js";
+
+const socketEvent = "system.splittermond";
 export function chatActionFeature(){
     chatFeatureApi.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
     chatFeatureApi.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
 
     chatFeatureApi.hooks.once("init", () => {
-        game.socket.on("system.splittermond", (data) => {
+        game.socket.on(socketEvent, (data) => {
 
             if (data.type === "chatAction") {
                 if (!chatFeatureApi.currentUser.isGM) {
@@ -44,7 +46,7 @@ async function onChatCardAction(event) {
             return chatFeatureApi.warnUser("splittermond.chatCard.noGMConnected");
         }
 
-        return chatFeatureApi.socket.emit("system.splittermond", {
+        return chatFeatureApi.socket.emit(socketEvent, {
             type: "chatAction",
             action,
             messageId,
