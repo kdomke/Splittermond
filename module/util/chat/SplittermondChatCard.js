@@ -7,7 +7,7 @@ import {chatFeatureApi} from "./chatActionGameApi.js";
  * @type {object}
  * @property {string} template
  * @property {()=>object} getData
- * @property constructorKey
+ * @property {Readonly<string>} constructorKey
  */
 export class SplittermondChatCard extends SplittermondChatCardModel {
     /**

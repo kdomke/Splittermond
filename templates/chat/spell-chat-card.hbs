@@ -1,14 +1,34 @@
-<div class="degree-of-success">
-    <div class="stars">
-        {{#times totalDegreesOfSuccess}}
-            <i class="fas fa-star"></i>
-        {{/times}}
-    </div>
-    <div>
-    <strong>{{this.totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
-    <div style="font-size: smaller;">{{usedDegreesOfSuccess}}&nbsp;{{usedDegreeOfSuccessMessage}}</div>
-    </div>
-    <div>
-       <button class="splittermond-chat-action" data-action="useDegreesOfSuccess">Ausgeben</button>
+<div class="splittermond check {{rollResultClass}}">
+    <div class="degree-of-success">
+        <div class="stars">
+            {{#times totalDegreesOfSuccess}}
+                <i class="fas fa-star"></i>
+            {{/times}}
+        </div>
+        <div>
+            <strong>{{this.totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+            <div style="font-size: smaller;">{{usedDegreesOfSuccess}}&nbsp;{{usedDegreeOfSuccessMessage}}</div>
+            {{#if this.degreeOfSuccessOptions}}
+                <div class="degree-of-success-description">
+                    {{#each this.degreeOfSuccessOptions}}
+                        <div class="splittermond-inline-label-input">
+                            <input
+                                    id="{{id}}"
+                                    type="checkbox"
+                                    class="splittermond-chat-action inline-label-input"
+                                {{#if checked}}checked{{/if}}
+                                {{#if disabled}}disabled{{/if}}
+                                    data-action="{{action}}"
+                            />
+                            <label class="inline-label" for="{{id}}">{{text}}</label>
+                        </div>
+                    {{/each}}
+                </div>
+            {{/if}}
+        </div>
+        <div>
+            <button class="splittermond-chat-action" data-action="useDegreesOfSuccess">Ausgeben</button>
+        </div>
     </div>
 </div>
+

@@ -33,8 +33,12 @@ export const chatFeatureApi = new class SplittermondChatCardGameInterface {
         return ChatMessage.getSpeaker(data);
     }
 
-    get localize() {
-        return game.i18n.localize;
+    /**
+     * @param {string} messageKey
+     * @return {string} the localized string or the key if no localization is found
+     */
+    localize(messageKey) {
+        return game.i18n.localize(messageKey);
     }
 
     /** @return {{ROLL: string}} */

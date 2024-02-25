@@ -3338,3 +3338,10 @@ ul.checkbox-list li input:checked ~ label::before {
 .system-splittermond .splittermond.compendium-browser main > section.tab.active {
   overflow-y: hidden;
 }
+.splittermond-inline-label-input{
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  flex-wrap: wrap;
+}
