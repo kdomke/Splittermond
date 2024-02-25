@@ -1,0 +1,8 @@
+{
+  "splittermond": {
+    "chatCard": {
+      "messageNotFound": "Message to update not found in the chat log",
+      "actionNotFound": "The selected action could not be executed, because the recipient does not know it. Please file a bug report."
+    }
+  }
+}
