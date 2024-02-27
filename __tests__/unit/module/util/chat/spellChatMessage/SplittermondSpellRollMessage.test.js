@@ -63,6 +63,19 @@ Object.keys(splittermond.spellEnhancement).forEach(key => {
             expect(spellRollMessage.degreeOfSuccessOptionIsCheckable(key)).to.not.be.true;
         });
 
+        it("should allow checking with sufficient degrees of success", () => {
+            const spellRollMessage = new SplittermondSpellRollMessage({
+                totalDegreesOfSuccess: 3,
+                openDegreesOfSuccess: 3,
+                degreeOfSuccessOptions: {
+                    [key]:{checked: false, disabled: false}
+                }
+            });
+
+            expect(spellRollMessage.degreeOfSuccessOptionIsCheckable(key)).to.be.true;
+
+        })
+
         it ("should prohibit checking if the total degrees of success are not enough", () => {
             const spellRollMessage = new SplittermondSpellRollMessage({
                 totalDegreesOfSuccess: 3,
@@ -83,7 +96,7 @@ Object.keys(splittermond.spellEnhancement).forEach(key => {
                     [key]:{checked: true, disabled: false}
                 }
             });
-            expect(spellRollMessage.degreeOfSuccessOptionIsCheckable(key)).to.not.be.true;
+            expect(spellRollMessage.degreeOfSuccessOptionIsCheckable(key)).to.be.true;
         });
     });
 });

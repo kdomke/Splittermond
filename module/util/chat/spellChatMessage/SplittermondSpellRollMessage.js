@@ -37,8 +37,8 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
      * @return {boolean}
      */
     degreeOfSuccessOptionIsCheckable(key) {
-        return !this.degreeOfSuccessOptions[key].disabled && this.degreeOfSuccessOptions[key].checked &&
-            splittermond.spellEnhancement[key].degreesOfSuccess <= this.openDegreesOfSuccess;
+        return !this.degreeOfSuccessOptions[key].disabled && (this.degreeOfSuccessOptions[key].checked
+            || splittermond.spellEnhancement[key].degreesOfSuccess <= this.openDegreesOfSuccess);
     }
 
     /**
