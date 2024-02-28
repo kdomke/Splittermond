@@ -35,7 +35,7 @@
   "splittermond": {
     "chatCard": {
       "messageNotFound": "Die zu ändernde Nachricht wurde nicht im Chat Log gefunden.",
-      "actionNotFound": "Die gewählte Aktion konnte nicht ausgeführt werden, da der Empfänger sie nicht kennt. Bitte öffnen Sie einen Fehlerbericht."
+      "actionNotFound": "Die gewählte Aktion konnte nicht ausgeführt werden, da der Empfänger sie nicht kennt. Bitte erstellen Sie einen Fehlerbericht."
     },
     "start": "Start",
     "value": "Wert",
