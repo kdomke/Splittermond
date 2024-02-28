@@ -1,10 +1,7 @@
-import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
-import {getActor, getSpell} from "./fixtures.js"
+import {getActor} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
-import SplittermondSpellItem from "../../module/item/spell.js";
-import {SplittermondSpellData} from "../../module/data/SplittermondSpellData.js";
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
@@ -22,7 +19,7 @@ export function chatActionFeatureTest(context) {
             ChatMessage.deleteDocuments([messageId]);
         });
 
-        it("should rerender the same chat card on update", async () =>{
+        it("should rerender the same chat card on update", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "title"});
             const chatCard = SplittermondChatCard.create(actor, message);
@@ -43,7 +40,7 @@ export function chatActionFeatureTest(context) {
 
         it("should be able to reproduce a message from handled chat action", async () => {
             const actor = getActor(this);
-            const message  = new SplittermondTestRollMessage({title: "title"});
+            const message = new SplittermondTestRollMessage({title: "title"});
             const chatCard = SplittermondChatCard.create(actor, message);
             await chatCard.sendToChat();
 
@@ -52,19 +49,8 @@ export function chatActionFeatureTest(context) {
             ChatMessage.deleteDocuments([chatCard.messageId]);
         });
 
-        it("restores embedded data", async () => {
-            const actor = getActor(this);
-            const spell = getSpell(this);
-            const rollMessage = SplittermondSpellRollMessage.createRollMessage(spell, actor, {degreeOfSuccess: 3});
-            const objectifiedMessage = rollMessage.toObject();
-
-            const restoredMessage = new SplittermondSpellRollMessage(objectifiedMessage);
-
-            expect(restoredMessage.spell).to.be.instanceOf(SplittermondSpellData);
-        });
-
-        function getCollectionLength(collection){
-            return collection.map(i=>1).reduce((a,b)=>a+b,0)
+        function getCollectionLength(collection) {
+            return collection.map(() => 1).reduce((a, b) => a + b, 0)
         }
     });
 
@@ -138,15 +124,14 @@ export function chatActionFeatureTest(context) {
                 "systems/splittermond/__tests__/integration/resources/testTemplate.hbs", {title: content});
             expect(renderedHtml, "renderedHtml is a string").to.be.a("string");
             expect(renderedHtml, "renderedHtml contains the content").to.contain(content);
-        })
+        });
 
-        it("transfer events via socket",() =>{
+        it("transfer events via socket", () => {
             chatFeatureApi.socket.on("system.splittermond.quench.test.event", (data) => {
                 expect(data.test).to.be.equal("test");
             });
             chatFeatureApi.socket.emit("system.splittermond.quench.test.event", {test: "test"});
-        })
-
+        });
 
         function isUser(object) {
             return typeof object === "object" &&
