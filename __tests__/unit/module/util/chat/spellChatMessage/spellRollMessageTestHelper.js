@@ -1,7 +1,7 @@
 import {identity} from "../../../../foundryMocks.js";
 import {
-    SpellDegreesOfSuccessManager
-} from "../../../../../../module/util/chat/spellChatMessage/SpellDegreesOfSuccessManager.js";
+    SpellMessageDegreesOfSuccessManager
+} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
 import {
     SpellMessageDegreeOfSuccessField
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreeOfSuccessField.js";
@@ -18,7 +18,7 @@ export function createSplittermondSpellRollMessage() {
 }
 
 export function createSpellDegreeOfSuccessManager() {
-    const manager = new SpellDegreesOfSuccessManager({
+    const manager = new SpellMessageDegreesOfSuccessManager({
         initialDegreesOfSuccess: 3,
         totalDegreesOfSuccess: 3,
         usedDegreesOfSuccess: 0
@@ -29,7 +29,7 @@ export function createSpellDegreeOfSuccessManager() {
 
 
 /**
- * @param {SpellDegreesOfSuccessManager} parent
+ * @param {SpellMessageDegreesOfSuccessManager} parent
  * @return {SpellMessageDegreeOfSuccessField}
  */
 export function createSpellDegreeOfSuccessField(parent) {

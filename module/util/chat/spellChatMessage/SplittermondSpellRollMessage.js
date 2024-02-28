@@ -1,7 +1,7 @@
 import {SplittermondSpellRollDataModel} from "../../../data/SplittermondSpellRollDataModel.js";
 import {addToRegistry} from "../chatMessageRegistry.js";
 import {spellMessageRenderer} from "./spellRollMessageRenderer.js";
-import {SpellDegreesOfSuccessManager} from "./SpellDegreesOfSuccessManager.js";
+import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -19,7 +19,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     static createRollMessage(spell, target, checkReport) {
 
         return new SplittermondSpellRollMessage({
-            degreeOfSuccessManager: SpellDegreesOfSuccessManager.fromRoll(spell, checkReport),
+            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
             constructorKey: constructorRegistryKey,
         });
     }

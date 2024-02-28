@@ -1,9 +1,9 @@
-import {SpellDegreesOfSuccessManager} from "./SpellDegreesOfSuccessManager.js";
+import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
 
 const fields = foundry.data.fields;
 
 /**
- * @extends {foundry.abstract.DataModel<SpellMessageDegreeOfSuccessField, SpellDegreesOfSuccessManager>}
+ * @extends {foundry.abstract.DataModel<SpellMessageDegreeOfSuccessField, SpellMessageDegreesOfSuccessManager>}
  * @property {number} degreeOfSuccessCosts the amount of degrees of success this option costs
  * @property {boolean} checked whether the user has elected to use this option
  * @property {boolean} used whether the effect of this option has been used in an action.
@@ -21,8 +21,8 @@ export class SpellMessageDegreeOfSuccessField extends foundry.abstract.DataModel
 
     constructor(...args) {
         super(...args);
-        if (!this.parent || !this.parent instanceof SpellDegreesOfSuccessManager){
-            throw new Error("DegreeOfSuccessField is an embedded data field for SpellDegreesOfSuccessManager defined as such");
+        if (!this.parent || !this.parent instanceof SpellMessageDegreesOfSuccessManager){
+            throw new Error("DegreeOfSuccessField is an embedded data field for SpellMessageDegreesOfSuccessManager defined as such");
         }
     }
 

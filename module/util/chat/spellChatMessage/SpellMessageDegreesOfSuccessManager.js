@@ -4,10 +4,10 @@ import {splittermond} from "../../../config.js";
 const fields = foundry.data.fields
 
 /**
- * @extends {foundry.abstract.DataModel<SpellDegreesOfSuccessManager>}
+ * @extends {foundry.abstract.DataModel<SpellMessageDegreesOfSuccessManager>}
  * @extends {Record<SpellDegreesOfSuccessOptions, SpellMessageDegreeOfSuccessField>}
  */
-export class SpellDegreesOfSuccessManager extends foundry.abstract.DataModel {
+export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataModel {
     /**
      * @param {SplittermondSpellData} spell
      * @param {CheckReport} checkReport
@@ -22,7 +22,7 @@ export class SpellDegreesOfSuccessManager extends foundry.abstract.DataModel {
                 isDegreeOfSuccessOption: spell.degreeOnfSuccessOptions[key],
             }
         }
-        return new SpellDegreesOfSuccessManager({
+        return new SpellMessageDegreesOfSuccessManager({
             initialDegreesOfSuccess: checkReport.degreeOfSuccess,
             totalDegreesOfSuccess: checkReport.degreeOfSuccess,
             ...degreeOfSuccessOptions,

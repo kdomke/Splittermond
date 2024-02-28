@@ -5,12 +5,12 @@ import {
     SpellMessageDegreeOfSuccessField
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreeOfSuccessField.js";
 import {
-    SpellDegreesOfSuccessManager
-} from "../../../../../../module/util/chat/spellChatMessage/SpellDegreesOfSuccessManager.js";
+    SpellMessageDegreesOfSuccessManager
+} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
 import * as helper from "./spellRollMessageTestHelper.js";
 
 describe("SpellMessageDegreeOfSuccessField", () => {
-    it("should throw an error if it is not embedded in a SpellDegreesOfSuccessManager", () => {
+    it("should throw an error if it is not embedded in a SpellMessageDegreesOfSuccessManager", () => {
         expect(() => new SpellMessageDegreeOfSuccessField({})).to.throw(Error);
     });
 
@@ -103,7 +103,7 @@ describe("SpellMessageDegreeOfSuccessField", () => {
 });
 
 function defaultSpellDegreeOfSuccessField() {
-    const manager = new SpellDegreesOfSuccessManager({
+    const manager = new SpellMessageDegreesOfSuccessManager({
         initialDegreesOfSuccess: 3,
         totalDegreesOfSuccess: 3,
         usedDegreesOfSuccess: 0
