@@ -34,6 +34,7 @@ export const spellMessageRenderer = new class SplittermondSpellRollMessageRender
             totalDegreesOfSuccess: spellRollMessage.totalDegreesOfSuccess,
             openDegreesOfSuccess: spellRollMessage.openDegreesOfSuccess,
             degreeOfSuccessOptions: renderDegreeOfSuccessOptions(spellRollMessage),
+            actions: renderActions(spellRollMessage),
         }
     }
 }
@@ -60,11 +61,11 @@ function renderDegreeOfSuccessOptions(spellRollMessage) {
 function renderDegreeOfSuccessOption(spellRollMessage, key) {
     const actionName = `${key}Update`
     const degreeOfSuccessOptionConfig = splittermond.spellEnhancement[key];
-    if(!hasAction(spellRollMessage, actionName) ) {
+    if (!hasAction(spellRollMessage, actionName)) {
         console.warn(`SpellRollMessage has no action ${actionName}, will not render option for ${key}!`)
         return null;
     }
-    if(spellRollMessage.totalDegreesOfSuccess < degreeOfSuccessOptionConfig.degreesOfSuccess) {
+    if (spellRollMessage.totalDegreesOfSuccess < degreeOfSuccessOptionConfig.degreesOfSuccess) {
         console.debug(`SpellRollMessage has not enough degrees of success for ${key}, will not render option for ${key}!`)
         return null;
     }
@@ -86,3 +87,55 @@ function hasAction(object, action) {
     return (action in object || action in Object.getPrototypeOf(object)) && typeof object[action] === "function";
 }
 
+/** @param {SplittermondSpellRollMessage} spellRollMessage */
+function renderActions(spellRollMessage) {
+    const renderedOptions = {};
+    const actions = ["applyDamage", "advanceToken", "consumeCosts", "useSplinterpoint"]
+    const applyDamageRender = renderApplyDamage(spellRollMessage)
+    const advanceTokenRender = renderAdvanceToken(spellRollMessage)
+    const consumeCostsRender = renderConsumeCosts(spellRollMessage)
+    const useSplinterpointRender = renderUseSplinterpoint(spellRollMessage)
+    if (applyDamageRender) {
+        renderedOptions["applyDamage"] = applyDamageRender;
+    }
+    if (advanceTokenRender) {
+        renderedOptions["advanceToken"] = advanceTokenRender;
+    }
+    if (consumeCostsRender) {
+        renderedOptions["consumeCosts"] = consumeCostsRender;
+    }
+    if (useSplinterpointRender) {
+        renderedOptions["useSplinterpoint"] = useSplinterpointRender;
+    }
+    return renderedOptions;
+}
+
+function renderApplyDamage(spellRollMessage) {
+    if (!spellRollMessage.damage) {
+        return null;
+    }
+    return {
+        value: spellRollMessage.damage,
+        disabled: spellRollMessage.damageApplied,
+    };
+}
+
+function renderAdvanceToken(spellRollMessage) {
+    return {
+        value: spellRollMessage.ticks,
+        disabled: spellRollMessage.tokenAdvanced,
+    }
+}
+
+function renderConsumeCosts(spellRollMessage) {
+    return {
+        value: spellRollMessage.costs,
+        disabled: spellRollMessage.costsConsumed,
+    }
+}
+
+function renderUseSplinterpoint(spellRollMessage) {
+    return {
+        disabled: spellRollMessage.splinterpointUsed,
+    }
+}

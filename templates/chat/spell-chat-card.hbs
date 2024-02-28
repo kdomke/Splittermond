@@ -26,8 +26,47 @@
                 </div>
             {{/if}}
         </div>
-        <div>
-            <button class="splittermond-chat-action" data-action="useDegreesOfSuccess">Ausgeben</button>
+        <div class="actions">
+            <h3>{{localize "splittermond.furtherActions"}}</h3>
+            {{#with actions}}
+                {{#if applyDamage}}
+                    {{> "applyDamageButton" applyDamage}}
+                {{/if}}
+                {{#if consumeCosts}}
+                    {{> "consumeCostsButton" consumeCosts}}
+                {{/if}}
+                {{#if advanceToken}}
+                    {{> "advanceTokenButton" advanceToken}}
+                {{/if}}
+                {{#if useSplinterpoint}}
+                    {{> "useSplinterpointButton" useSplinterpoint}}
+                {{/if}}
+            {{/with}}
+
+            {{#* inline "applyDamageButton"}}
+                <button class="splittermond-chat-action" data-action="applyDamage" {{#if disabled}}disabled{{/if}}>
+                    <i class="fas fa-heart-broken"></i>
+                    {{value}} {{localize "splittermond.damage"}}
+                </button>
+            {{/inline}}
+            {{#* inline "consumeCostsButton"}}
+                <button class="splittermond-chat-action" data-action="consumeCosts" {{#if disabled}}disabled{{/if}}>
+                    <i class="fas fa-bullseye"></i>
+                    {{value}} {{localize "splittermond.focusCostsAbbrev"}}
+                </button>
+            {{/inline}}
+            {{#* inline "advanceTokenButton"}}
+                <button class="splittermond-chat-action" data-action="advanceToken" {{#if disabled}}disabled{{/if}}>
+                    <i class="fas fa-stopwatch"></i>
+                    {{value}} {{localize "splittermond.ticks"}}
+                </button>
+            {{/inline}}
+            {{#* inline "useSplinterpointButton"}}
+                <button class="splittermond-chat-action" data-action="useSplinterpoint" {{#if disabled}}disabled{{/if}}>
+                    <i class="fas fa-moon"></i>
+                    {{localize "splittermond.splinterpoint"}}
+                </button>
+            {{/inline}}
         </div>
     </div>
 </div>

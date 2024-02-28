@@ -107,10 +107,12 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         this.updateSource({degreeOfSuccessOptions: {[key]: {checked: false}}})
     }
 
+    applyDamage(){}
+    consumeCost(){}
 
-    get usedDegreesOfSuccess() {
-        return this.totalDegreesOfSuccess - this.openDegreesOfSuccess;
-    }
+    advanceToken(){}
+
+    useSplinterpoint(){}
 
     get template() {
         return "systems/splittermond/templates/chat/spell-chat-card.hbs";

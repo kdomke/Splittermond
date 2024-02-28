@@ -14,6 +14,13 @@ export class SplittermondSpellRollDataModel extends foundry.abstract.DataModel {
                 required: true,
                 blank: false
             }),
+            actions: new fields.SchemaField({
+                    applyDamage: new fields.BooleanField({required: true, blank: false, nullable: false}),
+                    consumeCosts: new fields.BooleanField({required: true, blank: false, nullable: false}),
+                    useSplinterpoints: new fields.BooleanField({required: true, blank: false, nullable: false}),
+                    advanceToken: new fields.BooleanField({required: true, blank: false, nullable: false}),
+                }, {required: true, blank: false, nullable: false}
+            )
         }
     }
 
