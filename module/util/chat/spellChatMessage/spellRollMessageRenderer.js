@@ -31,8 +31,8 @@ export const spellMessageRenderer = new class SplittermondSpellRollMessageRender
         return {
             title: "Spell Roll",
             rollResultClass: "success",
-            totalDegreesOfSuccess: spellRollMessage.totalDegreesOfSuccess,
-            openDegreesOfSuccess: spellRollMessage.openDegreesOfSuccess,
+            totalDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess,
+            openDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.openDegreesOfSuccess,
             degreeOfSuccessOptions: renderDegreeOfSuccessOptions(spellRollMessage),
             actions: renderActions(spellRollMessage),
         }
@@ -65,7 +65,7 @@ function renderDegreeOfSuccessOption(spellRollMessage, key) {
         console.warn(`SpellRollMessage has no action ${actionName}, will not render option for ${key}!`)
         return null;
     }
-    if (spellRollMessage.totalDegreesOfSuccess < degreeOfSuccessOptionConfig.degreesOfSuccess) {
+    if (spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess < degreeOfSuccessOptionConfig.degreesOfSuccess) {
         console.debug(`SpellRollMessage has not enough degrees of success for ${key}, will not render option for ${key}!`)
         return null;
     }
