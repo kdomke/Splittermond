@@ -3,6 +3,8 @@ import {getActor, getSpell} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
+import SplittermondSpellItem from "../../module/item/spell.js";
+import {SplittermondSpellData} from "../../module/data/SplittermondSpellData.js";
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
@@ -48,6 +50,17 @@ export function chatActionFeatureTest(context) {
             await handleChatAction("alterTitle", chatCard.messageId);
             expect(chatFeatureApi.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
             ChatMessage.deleteDocuments([chatCard.messageId]);
+        });
+
+        it("restores embedded data", async () => {
+            const actor = getActor(this);
+            const spell = getSpell(this);
+            const rollMessage = SplittermondSpellRollMessage.createRollMessage(spell, actor, {degreeOfSuccess: 3});
+            const objectifiedMessage = rollMessage.toObject();
+
+            const restoredMessage = new SplittermondSpellRollMessage(objectifiedMessage);
+
+            expect(restoredMessage.spell).to.be.instanceOf(SplittermondSpellData);
         });
 
         function getCollectionLength(collection){
