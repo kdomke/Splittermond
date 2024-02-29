@@ -33,7 +33,7 @@ export function createSpellActionManager() {
             focus,
             damage,
             ticks,
-            splinterPoints: {used: false, available: true}
+            splinterPoint: {used: false, available: true}
         }
     )
 }
@@ -41,6 +41,7 @@ export function createSpellActionManager() {
 export function createSplittermondSpellRollMessage() {
     return new SplittermondSpellRollMessage({
         degreeOfSuccessManager: createSpellDegreeOfSuccessManager(),
+        actionManager: createSpellActionManager(),
         constructorRegistryKey: "SplittermondSpellRollMessage"
     });
 }
