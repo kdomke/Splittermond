@@ -29,9 +29,10 @@ export const spellMessageRenderer = new class SplittermondSpellRollMessageRender
      */
     renderData(spellRollMessage) {
         return {
-            title: "Spell Roll",
+            title: spellRollMessage.messageTitle,
             rollResultClass: "success",
             totalDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess,
+            usedDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.usedDegreesOfSuccess,
             openDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.openDegreesOfSuccess,
             degreeOfSuccessOptions: renderDegreeOfSuccessOptions(spellRollMessage),
             actions: renderActions(spellRollMessage),
