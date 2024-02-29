@@ -28,17 +28,17 @@ global.foundry = {
                 constructor(options){this.options = options}
             },
             SchemaField: class {
-                schema = null;
-                options = null;
-                constructor(schema, options){this.schema= schema, this.options = options}
+                /**@type object */ schema = null;
+                /**@type unknown */ options = null;
+                constructor(schema, options){this.schema= schema; this.options = options}
             },
             BooleanField: class {
-                options = null;
+                /**@type unknown */ options = null;
                 constructor(options){this.options = options}
             },
             EmbeddedDataField: class {
-                type = null;
-                options = null;
+                /**@type function*/ type = null;
+                /**@type unknown */ options = null;
                 constructor(type, options){
                     this.type = type;
                     this.options = options;
