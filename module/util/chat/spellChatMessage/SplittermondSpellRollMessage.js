@@ -22,6 +22,8 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
         return new SplittermondSpellRollMessage({
             messageTitle: spell.name,
+            spellEnhancementDescription: spell.enhancementDescription,
+            spellEnhancementCosts: spell.enhancementCosts,
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
             actionManager: SpellMessageActionsManager.initialize(spell.system),
             constructorKey: constructorRegistryKey,
@@ -85,10 +87,20 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         this.#alterCheckState("effectDuration");
     }
 
-    /** @param {SpellDegreesOfSuccessOptions} key */
+    spellEnhancementUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("spellEnhancement")){
+            this.actionManager.focus.subtractCost(this.spellEnhancementCosts);
+        }else {
+            this.actionManager.focus.addCost(this.spellEnhancementCosts);
+        }
+        this.#alterCheckState("spellEnhancement");
+    }
+
+    /** @param {ManagedSpellOptions} key */
     #alterCheckState(key) {
         this.degreeOfSuccessManager.alterCheckState(key);
     }
+
 
     applyDamage() {
         this.actionManager.damage.used = true;
@@ -100,6 +112,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         this.degreeOfSuccessManager.use("exhaustedFocus")
         this.degreeOfSuccessManager.use("consumedFocus")
         this.degreeOfSuccessManager.use("channelizedFocus")
+        this.degreeOfSuccessManager.use("spellEnhancement")
     }
 
     advanceToken() {

@@ -21,7 +21,7 @@ export const spellMessageRenderer = new class SplittermondSpellRollMessageRender
      * @property {string} rollResultClass
      * @property {number} totalDegreesOfSuccess
      * @property {number} openDegreesOfSuccess
-     * @property {Partial<Record<SpellDegreesOfSuccessOptions,SpellDegreessOfSuccessRenderedData>>} degreeOfSuccessOptions
+     * @property {Partial<Record<ManagedSpellOptions,SpellDegreessOfSuccessRenderedData>>} degreeOfSuccessOptions
      */
     /**
      * @param {SplittermondSpellRollMessage} spellRollMessage
@@ -52,16 +52,53 @@ function renderDegreeOfSuccessOptions(spellRollMessage) {
             renderedOptions[key] = renderedOption;
         }
     }
+    {
+        const key = "spellEnhancement"
+        const spellEnhancement = renderSpellEnhancementOption(spellRollMessage, key);
+        if (spellEnhancement) {
+            renderedOptions[key] = spellEnhancement;
+        }
+    }
     return renderedOptions;
 }
 
 /**
  * @param {SplittermondSpellRollMessage} spellRollMessage
- * @param {SpellDegreesOfSuccessOptions} key
+ * @param {Exclude<ManagedSpellOptions, SpellDegreesOfSuccessOptions>} key
+ */
+function renderSpellEnhancementOption(spellRollMessage,key) {
+    const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage, key);
+    if (!commonConfig) {
+        return null;
+    }
+    return {
+        ...commonConfig,
+        text: `${spellRollMessage.spellEnhancementCosts}: ${spellRollMessage.spellEnhancementDescription}`
+    };
+}
+
+/**
+ * @param {SplittermondSpellRollMessage} spellRollMessage
+ * @param {ManagedSpellOptions} key
  */
 function renderDegreeOfSuccessOption(spellRollMessage, key) {
-    const actionName = `${key}Update`
+    const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage, key)
+    if (!commonConfig) {
+        return null;
+    }
     const degreeOfSuccessOptionConfig = splittermond.spellEnhancement[key];
+    return {
+        ...commonConfig,
+        text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${chatFeatureApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
+    };
+}
+
+/**
+ * @param {SplittermondSpellRollMessage} spellRollMessage
+ * @param {ManagedSpellOptions} key
+ */
+function commonRenderDegreeOfSuccessOptions(spellRollMessage, key) {
+    const actionName = `${key}Update`
     if (!hasAction(spellRollMessage, actionName)) {
         console.warn(`SpellRollMessage has no action ${actionName}, will not render option for ${key}!`)
         return null;
@@ -71,12 +108,12 @@ function renderDegreeOfSuccessOption(spellRollMessage, key) {
     }
     return {
         id: `${key}-${new Date().getTime()}`,
-        text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${chatFeatureApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
         action: actionName,
         checked: spellRollMessage.degreeOfSuccessManager.isChecked(key),
         disabled: !spellRollMessage.degreeOfSuccessManager.isCheckable(key)
-    }
+    };
 }
+
 
 /**
  * @param {object} object

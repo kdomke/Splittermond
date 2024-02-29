@@ -9,7 +9,7 @@ import {
 import {createSpellDegreeOfSuccessField, createSplittermondSpellRollMessage} from "./spellRollMessageTestHelper.js";
 import sinon from "sinon";
 
-Object.keys(splittermond.spellEnhancement).forEach(key => {
+[...Object.keys(splittermond.spellEnhancement), "spellEnhancement"].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
         const method = `${key}Update`;
         it(`should have an update method for '${key}'`, () => {
@@ -46,6 +46,7 @@ describe("SplittermondSpellRollMessage actions", () =>{
         expect(underTest.degreeOfSuccessManager.isUsed("exhaustedFocus")).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("channelizedFocus")).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("consumedFocus")).to.be.true;
+        expect(underTest.degreeOfSuccessManager.isUsed("spellEnhancement")).to.be.true;
     });
 
     it("should disable damage degree of success options", () => {
@@ -65,10 +66,11 @@ describe("SplittermondSpellRollMessage actions", () =>{
         expect(underTest.actionManager.ticks.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("castDuration")).to.be.true;
     });
+
 });
 function createTestRollMessage() {
     const spellRollMessage = createSplittermondSpellRollMessage();
-    for (const key in splittermond.spellEnhancement) {
+    for (const key in {...splittermond.spellEnhancement, spellEnhancement:{}}) {
         spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
     }
     return spellRollMessage;

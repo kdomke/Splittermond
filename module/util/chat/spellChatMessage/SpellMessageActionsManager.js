@@ -142,7 +142,7 @@ class CostAction extends foundry.abstract.DataModel {
     }
 
     get cost(){
-        return parseCostString(this.adjusted).render();
+        throw new Error("Override me!")
     }
 
 }
