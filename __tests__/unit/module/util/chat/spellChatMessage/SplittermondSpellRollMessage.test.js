@@ -56,6 +56,15 @@ describe("SplittermondSpellRollMessage actions", () =>{
         expect(underTest.actionManager.damage.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
     });
+
+    it("should disable token advancement degree of success options", () => {
+        const underTest = createTestRollMessage();
+
+        underTest.advanceToken();
+
+        expect(underTest.actionManager.ticks.used).to.be.true;
+        expect(underTest.degreeOfSuccessManager.isUsed("castDuration")).to.be.true;
+    });
 });
 function createTestRollMessage() {
     const spellRollMessage = createSplittermondSpellRollMessage();
