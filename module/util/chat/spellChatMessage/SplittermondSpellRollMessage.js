@@ -132,7 +132,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     getData() {
-        return this.renderer.renderData(this);
+        return this.renderer.renderData();
     }
 }
 

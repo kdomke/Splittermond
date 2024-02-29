@@ -50,18 +50,17 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
      * @property {object} actions
      */
     /**
-     * @param {SplittermondSpellRollMessage} spellRollMessage
      * @return {SpellDegreessOfSuccessRenderedData}
      */
-    renderData(spellRollMessage) {
+    renderData() {
         return {
-            title: spellRollMessage.messageTitle,
+            title: this.parent.messageTitle,
             rollResultClass: "success",
-            totalDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess,
-            usedDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.usedDegreesOfSuccess,
-            openDegreesOfSuccess: spellRollMessage.degreeOfSuccessManager.openDegreesOfSuccess,
-            degreeOfSuccessOptions: renderDegreeOfSuccessOptions(spellRollMessage),
-            actions: renderActions(spellRollMessage),
+            totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
+            usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
+            openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
+            degreeOfSuccessOptions: renderDegreeOfSuccessOptions(this.parent),
+            actions: renderActions(this.parent),
         }
     }
 }
