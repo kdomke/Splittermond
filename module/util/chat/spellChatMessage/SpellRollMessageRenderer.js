@@ -6,24 +6,29 @@ const fields = foundry.data.fields;
 
 /**
  * @extends {foundry.abstract.DataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
- * @
+ * @property {CheckReport} checkReport
+ * @property {string} messageTitle
+ * @property {string} spellEnhancementDescription
  */
-export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel{
+export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel {
 
     static defineSchema() {
         return {
-           checkReport: new fields.ObjectField({required:true, blank:false, nullable:false})
+            checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
+            messageTitle: new fields.StringField({required: true, blank: false, nullable: false}),
+            spellEnhancementDescription: new fields.StringField({required:true, blank:false, nullable:false})
         }
     }
 
     constructor(...props) {
         super(...props);
 
-        if (! this.parent instanceof SplittermondSpellRollMessage){
+        if (!this.parent || !this.parent instanceof SplittermondSpellRollMessage) {
             throw new Error(`This class is intended exclusively as child of SplittermondSpellRollMessage`)
         }
     }
-    get template(){
+
+    get template() {
         return "systems/splittermond/templates/chat/spell-chat-card.hbs";
     }
 
@@ -54,14 +59,35 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
      */
     renderData() {
         return {
-            title: this.parent.messageTitle,
-            rollResultClass: "success",
+            header: {
+                title: this.messageTitle,
+                rollTypeMessage: chatFeatureApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
+                difficulty: this.checkReport.difficulty,
+                hideDifficulty: this.checkReport.hideDifficulty
+            },
+            rollResultClass: getRollResultClass(this.checkReport),
             totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
             usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
             openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
             degreeOfSuccessOptions: renderDegreeOfSuccessOptions(this.parent),
             actions: renderActions(this.parent),
         }
+    }
+}
+
+/**
+ * @param {CheckReport} checkReport
+ * @returns {"success"|""|"critical"|"fumble"}
+ */
+function getRollResultClass(checkReport) {
+    if (checkReport.isCrit) {
+        return "critical";
+    } else if (checkReport.isFumble) {
+        return "fumble";
+    } else if (checkReport.succeeded) {
+        return "success";
+    } else {
+        return "";
     }
 }
 
@@ -84,7 +110,8 @@ function renderDegreeOfSuccessOptions(spellRollMessage) {
             renderedOptions[key] = spellEnhancement;
         }
     }
-    return renderedOptions;
+    const renderedOptionsAreEmpty =  Object.keys(renderedOptions).length === 0;
+    return renderedOptionsAreEmpty ? null : renderedOptions;
 }
 
 /**
@@ -98,7 +125,7 @@ function renderSpellEnhancementOption(spellRollMessage,key) {
     }
     return {
         ...commonConfig,
-        text: `${spellRollMessage.spellEnhancementCosts}: ${spellRollMessage.spellEnhancementDescription}`
+        text: `${spellRollMessage.spellEnhancementCosts}: ${spellRollMessage.renderer.spellEnhancementDescription}`
     };
 }
 

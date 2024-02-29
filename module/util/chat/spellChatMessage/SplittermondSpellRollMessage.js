@@ -20,11 +20,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     static createRollMessage(spell, target, checkReport) {
 
         return new SplittermondSpellRollMessage({
-            messageTitle: spell.name,
-            spellEnhancementDescription: spell.enhancementDescription,
             spellEnhancementCosts: spell.enhancementCosts,
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
             renderer: {
+                messageTitle: spell.name,
+                spellEnhancementDescription: spell.enhancementDescription,
                 checkReport: checkReport
             },
             actionManager: SpellMessageActionsManager.initialize(spell.system),

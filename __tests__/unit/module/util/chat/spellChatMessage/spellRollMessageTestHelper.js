@@ -50,7 +50,11 @@ export function createSplittermondSpellRollMessage() {
 
 /** @param {SplittermondSpellRollMessage} parent*/
 export function createRenderer(parent) {
-    return new SplittermondSpellRollMessage({degreesOfSuccess: 3, parent});
+    return new SplittermondSpellRollMessage({
+        messageTitle: "spelly spell",
+        spellEnhancementDescription: "spell enhancement description",
+        degreesOfSuccess: 3,
+        parent});
 }
 
 export function createSpellDegreeOfSuccessManager() {

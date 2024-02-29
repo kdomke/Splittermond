@@ -1,8 +1,16 @@
 <div class="splittermond check {{rollResultClass}}">
     <header class="chat-message-header">
-        <div>
+        {{#with header}}
+            <div>
             <h2>{{title}}</h2>
-        </div>
+                <span class="roll-type">{{rollTypeMessage}}</span>
+                {{#if difficulty}}
+                    <span class="{{#if hideDifficulty}}gm-only{{/if}}">
+                &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
+            </span>
+                {{/if}}
+            </div>
+        {{/with}}
     </header>
     <div class="degree-of-success">
         <div>
@@ -13,21 +21,23 @@
                 <i class="stars fas fa-star"></i>
             {{/times}}
         </div>
-        <strong>{{totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+        <strong>{{totalDegreesOfSuccess}}&nbsp;{{localize
+                "splittermond.degreeOfSuccessAbbrev"}}</strong> {{degreeOfSuccessMessage}}
     </div>
     {{#if this.degreeOfSuccessOptions}}
+        <strong>{{localize "splittermond.degreeOfSuccessOptionsHeader"}}</strong>
         <div class="degree-of-success-description">
             {{#each this.degreeOfSuccessOptions}}
                 <div class="splittermond-inline-label-input">
-                        <input
-                                id="{{id}}"
-                                type="checkbox"
-                                class="splittermond-chat-action inline-label-input"
-                            {{#if checked}}checked{{/if}}
-                            {{#if disabled}}disabled{{/if}}
-                                data-action="{{action}}"
-                        />
-                        <label class="inline-label" for="{{id}}">{{text}}</label>
+                    <input
+                            id="{{id}}"
+                            type="checkbox"
+                            class="splittermond-chat-action inline-label-input"
+                        {{#if checked}}checked{{/if}}
+                        {{#if disabled}}disabled{{/if}}
+                            data-action="{{action}}"
+                    />
+                    <label class="inline-label" for="{{id}}">{{text}}</label>
                 </div>
             {{/each}}
         </div>

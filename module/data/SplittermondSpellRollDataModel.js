@@ -11,8 +11,6 @@ const fields = foundry.data.fields;
  * @property {SplittermondSpellRollMessageRenderer} renderer
  * @property {SpellMessageDegreesOfSuccessManager} degreeOfSuccessManager
  * @property {SpellMessageActionsManager} actionManager
- * @property {string} messageTitle
- * @property {string} spellEnhancementDescription
  * @property {string} spellEnhancementCosts
  */
 export class SplittermondSpellRollDataModel extends foundry.abstract.DataModel {
@@ -20,8 +18,6 @@ export class SplittermondSpellRollDataModel extends foundry.abstract.DataModel {
         return {
             //spell: fields.ObjectField({required: true, blank: false}), //also has caster
             //target: fields.ObjectField({required: true, blank: false}), //actor
-            messageTitle: new fields.StringField({required: true, blank: false, nullable: false}),
-            spellEnhancementDescription: new fields.StringField({required: true, blank: false, nullable: false}),
             spellEnhancementCosts: new fields.StringField({required: true, blank: false, nullable: false}),
             constructorKey: new fields.StringField({required: true, trim:true, blank: false, nullable:false}),
             renderer: new fields.EmbeddedDataField(SplittermondSpellRollMessageRenderer, {required: true, blank: false, nullable:false}),
