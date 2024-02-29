@@ -1,4 +1,5 @@
-import a from "../../../foundryMocks.js"; //set some global variables pertaining to foundry;
+import "../../../foundryMocks.js";
+
 import {expect} from 'chai';
 import {produceJQuery} from "../../../../jQueryHarness.js";
 import {createHtml} from "../../../../handlebarHarness.js";

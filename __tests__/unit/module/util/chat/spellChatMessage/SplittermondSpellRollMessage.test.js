@@ -1,3 +1,5 @@
+import "../../../../foundryMocks.js"
+
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import {splittermond} from "../../../../../../module/config.js";

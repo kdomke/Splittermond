@@ -1,4 +1,4 @@
-import {identity} from "../../../../foundryMocks.js"; //required for global state
+import "../../../../foundryMocks.js"; //required for global state
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import {

@@ -1,4 +1,4 @@
-import {identity} from "../../../../foundryMocks.js";
+import "../../../../foundryMocks.js";
 import {
     SpellMessageDegreesOfSuccessManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";

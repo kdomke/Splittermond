@@ -1,4 +1,5 @@
-import a from "../../foundryMocks.js" //set some global variables pertaining to foundry;
+import "../../foundryMocks.js"
+
 import {expect} from 'chai';
 import {describe} from "mocha";
 import SplittermondActor from "../../../../module/actor/actor.js";
