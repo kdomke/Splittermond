@@ -2,26 +2,27 @@ import { Cost } from "./Cost.js";
 
 /**
  * @param {string} cost
+ * @param {boolean} asStrict
  * @return {Cost}
  */
-export function parseCostString(cost) {
+export function parseCostString(cost,asStrict=false) {
     const costString = formatCostInput(cost);
     if (!costString || typeof costString !== "string") {
-        return new Cost(0, 0, false);
+        return new Cost(0, 0, false, asStrict);
     }
 
     const costDataRaw = /^\s*([+-])?(k)?(0*[1-9][0-9]*)(?:v(0*[1-9][0-9]*))?\s*$/.exec(costString.toLowerCase());
     if (!costDataRaw) {
-        return new Cost(0,0, false);
+        return new Cost(0,0, false, asStrict);
     }
     const rawConsumed = parseInt(costDataRaw[4] || 0);
     const rawNonConsumed = parseInt(costDataRaw[3] || 0);
     if (rawConsumed > rawNonConsumed) {
-        return new Cost(0,0, false);
+        return new Cost(0,0, false, asStrict);
     }
     const isNegative = costDataRaw && costDataRaw[1] === "-";
     const isChanneled = costDataRaw[2] === "k";
-    const costs = new Cost(rawNonConsumed - rawConsumed, rawConsumed, isChanneled);
+    const costs = new Cost(rawNonConsumed - rawConsumed, rawConsumed, isChanneled, asStrict);
     return isNegative ? costs.negate() : costs;
 }
 

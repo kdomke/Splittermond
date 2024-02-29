@@ -13,43 +13,42 @@
                 <i class="stars fas fa-star"></i>
             {{/times}}
         </div>
-        <div>
-            <strong>{{totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
-            <div style="font-size: smaller;">{{usedDegreesOfSuccess}}&nbsp;{{usedDegreeOfSuccessMessage}}</div>
-            {{#if this.degreeOfSuccessOptions}}
-                <div class="degree-of-success-description">
-                    {{#each this.degreeOfSuccessOptions}}
-                        <div class="splittermond-inline-label-input">
-                            <input
-                                    id="{{id}}"
-                                    type="checkbox"
-                                    class="splittermond-chat-action inline-label-input"
-                                {{#if checked}}checked{{/if}}
-                                {{#if disabled}}disabled{{/if}}
-                                    data-action="{{action}}"
-                            />
-                            <label class="inline-label" for="{{id}}">{{text}}</label>
-                        </div>
-                    {{/each}}
+        <strong>{{totalDegreesOfSuccess}}&nbsp;EG</strong> {{degreeOfSuccessMessage}}
+    </div>
+    {{#if this.degreeOfSuccessOptions}}
+        <input id="nasiges" type="number", min="0"/><label for="nasiges">Test</label>
+        <div class="degree-of-success-description">
+            {{#each this.degreeOfSuccessOptions}}
+                <div class="splittermond-inline-label-input">
+                    <input
+                            id="{{id}}"
+                            type="checkbox"
+                            class="splittermond-chat-action inline-label-input"
+                        {{#if checked}}checked{{/if}}
+                        {{#if disabled}}disabled{{/if}}
+                            data-action="{{action}}"
+                    />
+                    <label class="inline-label" for="{{id}}">{{text}}</label>
                 </div>
-            {{/if}}
+            {{/each}}
         </div>
-        <div class="actions">
-            <h3>{{localize "splittermond.furtherActions"}}</h3>
-            {{#with actions}}
-                {{#if applyDamage}}
-                    {{> "applyDamageButton" applyDamage}}
-                {{/if}}
-                {{#if consumeCosts}}
-                    {{> "consumeCostsButton" consumeCosts}}
-                {{/if}}
-                {{#if advanceToken}}
-                    {{> "advanceTokenButton" advanceToken}}
-                {{/if}}
-                {{#if useSplinterpoint}}
-                    {{> "useSplinterpointButton" useSplinterpoint}}
-                {{/if}}
-            {{/with}}
+    {{/if}}
+<div class="actions">
+    <h3>{{localize "splittermond.furtherActions"}}</h3>
+    {{#with actions}}
+        {{#if applyDamage}}
+            {{> "applyDamageButton" applyDamage}}
+        {{/if}}
+        {{#if consumeCosts}}
+            {{> "consumeCostsButton" consumeCosts}}
+        {{/if}}
+        {{#if advanceToken}}
+            {{> "advanceTokenButton" advanceToken}}
+        {{/if}}
+        {{#if useSplinterpoint}}
+            {{> "useSplinterpointButton" useSplinterpoint}}
+        {{/if}}
+    {{/with}}
 
     {{#* inline "applyDamageButton"}}
         <button class="splittermond-chat-action" data-action="applyDamage" {{#if disabled}}disabled{{/if}}>

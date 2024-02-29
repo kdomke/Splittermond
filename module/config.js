@@ -1269,7 +1269,7 @@ splittermond.Item = {
 };
 
 /**
- * @typedef {{degreesOfSuccess:number, textTemplate:string, focusCostReduction:string, castDurationReduction:string, damageIncrease:string}} SplittermondSpellEnhancement
+ * @typedef {{degreesOfSuccess:number, textTemplate:string, focusCostReduction:string, castDurationReduction:number, damageIncrease:string}} SplittermondSpellEnhancement
  * @typedef {Record<SpellDegreesOfSuccessOptions, SplittermondSpellEnhancement>} SplittermondSpellEnhancements
  */
 /** @type SplittermondSpellEnhancements */

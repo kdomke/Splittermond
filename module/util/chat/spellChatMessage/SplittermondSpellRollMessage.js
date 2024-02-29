@@ -2,6 +2,8 @@ import {SplittermondSpellRollDataModel} from "../../../data/SplittermondSpellRol
 import {addToRegistry} from "../chatMessageRegistry.js";
 import {spellMessageRenderer} from "./spellRollMessageRenderer.js";
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
+import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
+import {splittermond} from "../../../config.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -19,40 +21,46 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     static createRollMessage(spell, target, checkReport) {
 
         return new SplittermondSpellRollMessage({
-            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
+            messageTitle: spell.name,
+            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
+            actionManager: SpellMessageActionsManager.initialize(spell.system),
             constructorKey: constructorRegistryKey,
         });
     }
 
-    /**
-     * @param {SpellDegreesOfSuccessOptions} key
-     * @return {boolean}
-     */
-    degreeOfSuccessOptionIsCheckable(key) {
-        return this.degreeOfSuccessManager.isCheckable(key)
-    }
-
-    /**
-     * @param {SpellDegreesOfSuccessOptions} key
-     * @return {boolean}
-     */
-    degreeOfSuccessOptionIsChecked(key) {
-        return this.degreeOfSuccessManager.isChecked(key);
-    }
-
     castDurationUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("castDuration")){
+            this.actionManager.ticks.add(splittermond.spellEnhancement.castDuration.castDurationReduction)
+        }else {
+            this.actionManager.ticks.subtract(splittermond.spellEnhancement.castDuration.castDurationReduction)
+        }
         this.#alterCheckState("castDuration");
     }
 
     exhaustedFocusUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("exhaustedFocus")){
+            this.actionManager.focus.addCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
+        }else {
+            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
+        }
         this.#alterCheckState("exhaustedFocus");
     }
 
     channelizedFocusUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("channelizedFocus")){
+            this.actionManager.focus.addCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
+        }else {
+            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
+        }
         this.#alterCheckState("channelizedFocus")
     }
 
     consumedFocusUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("consumedFocus")){
+            this.actionManager.focus.addCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
+        }else{
+            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
+        }
         this.#alterCheckState("consumedFocus")
     }
 
@@ -61,6 +69,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     damageUpdate() {
+        if(this.degreeOfSuccessManager.isChecked("damage")){
+            this.actionManager.damage.subtractCost(splittermond.spellEnhancement.damage.damageIncrease)
+        }else {
+            this.actionManager.damage.addCost(splittermond.spellEnhancement.damage.damageIncrease)
+        }
         this.#alterCheckState("damage");
     }
 
@@ -78,15 +91,25 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     applyDamage() {
+        this.actionManager.damage.used = true;
+        this.degreeOfSuccessManager.use("damage")
     }
 
-    consumeCost() {
+    consumeCosts() {
+        this.actionManager.focus.used = true;
+        this.degreeOfSuccessManager.use("exhaustedFocus")
+        this.degreeOfSuccessManager.use("consumedFocus")
+        this.degreeOfSuccessManager.use("channelizedFocus")
     }
 
     advanceToken() {
+        this.actionManager.ticks.used = true;
+        this.degreeOfSuccessManager.use("castDuration")
     }
 
     useSplinterpoint() {
+        this.actionManager.splinterPoint.used = true;
+        this.degreeOfSuccessManager.totalDegreesOfSuccess += 1;
     }
 
     get template() {

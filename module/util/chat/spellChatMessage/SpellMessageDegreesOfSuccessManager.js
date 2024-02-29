@@ -19,7 +19,7 @@ export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataMo
                 degreeOfSuccessCosts: splittermond.spellEnhancement[key].degreesOfSuccess,
                 checked: false,
                 used: false,
-                isDegreeOfSuccessOption: spell.degreeOnfSuccessOptions[key],
+                isDegreeOfSuccessOption: spell.degreeOfSuccessOptions[key],
             }
         }
         return new SpellMessageDegreesOfSuccessManager({
@@ -53,7 +53,7 @@ export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataMo
     /** @param {SpellDegreesOfSuccessOptions} key
      * @return {boolean}
      */
-    isChecked(key){
+    isChecked(key) {
         return this[key].checked;
     }
 
@@ -69,6 +69,11 @@ export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataMo
      */
     isUsed(key) {
         return this[key].used;
+    }
+
+    /** @param {SpellDegreesOfSuccessOptions} key*/
+    use(key) {
+        this[key].used = true;
     }
 
     /** @param {SpellDegreesOfSuccessOptions} key*/

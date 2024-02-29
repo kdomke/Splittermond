@@ -66,16 +66,15 @@ function renderDegreeOfSuccessOption(spellRollMessage, key) {
         console.warn(`SpellRollMessage has no action ${actionName}, will not render option for ${key}!`)
         return null;
     }
-    if (spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess < degreeOfSuccessOptionConfig.degreesOfSuccess) {
-        console.debug(`SpellRollMessage has not enough degrees of success for ${key}, will not render option for ${key}!`)
+    if (!spellRollMessage.degreeOfSuccessManager.isAvailable(key)) {
         return null;
     }
     return {
         id: `${key}-${new Date().getTime()}`,
         text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${chatFeatureApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
         action: actionName,
-        checked: spellRollMessage.degreeOfSuccessOptionIsChecked(key),
-        disabled: !spellRollMessage.degreeOfSuccessOptionIsCheckable(key)
+        checked: spellRollMessage.degreeOfSuccessManager.isChecked(key),
+        disabled: !spellRollMessage.degreeOfSuccessManager.isCheckable(key)
     }
 }
 
@@ -111,32 +110,36 @@ function renderActions(spellRollMessage) {
     return renderedOptions;
 }
 
+/** @param {SplittermondSpellRollMessage} spellRollMessage */
 function renderApplyDamage(spellRollMessage) {
-    if (!spellRollMessage.damage) {
+    if (!spellRollMessage.actionManager.damage.available) {
         return null;
     }
     return {
-        value: spellRollMessage.damage,
-        disabled: spellRollMessage.damageApplied,
+        value: spellRollMessage.actionManager.damage.cost,
+        disabled: spellRollMessage.actionManager.damage.used,
     };
 }
 
 function renderAdvanceToken(spellRollMessage) {
     return {
-        value: spellRollMessage.ticks,
-        disabled: spellRollMessage.tokenAdvanced,
+        value: spellRollMessage.actionManager.ticks.cost,
+        disabled: spellRollMessage.actionManager.ticks.used,
     }
 }
 
 function renderConsumeCosts(spellRollMessage) {
     return {
-        value: spellRollMessage.costs,
-        disabled: spellRollMessage.costsConsumed,
+        value: spellRollMessage.actionManager.focus.cost,
+        disabled: spellRollMessage.actionManager.focus.used,
     }
 }
 
 function renderUseSplinterpoint(spellRollMessage) {
+    if (!spellRollMessage.actionManager.splinterPoint.available) {
+        return null;
+    }
     return {
-        disabled: spellRollMessage.splinterpointUsed,
+        disabled: spellRollMessage.actionManager.splinterPoint.used,
     }
 }
