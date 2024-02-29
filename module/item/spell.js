@@ -137,11 +137,13 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             }
         };
 
-        await SplittermondChatCard.create(
-            this.actor,
-            SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], {degreeOfSuccess:3}))
-            .sendToChat();
-        return this.skill.roll(options);
+        return this.skill.roll(options)
+            .then(report =>
+                SplittermondChatCard.create(
+                    this.actor,
+                    SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], report))
+                    .sendToChat()
+            );
     }
 
 }

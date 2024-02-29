@@ -3,7 +3,7 @@ import CheckDialog from "../apps/dialog/check-dialog.js"
 import * as Dice from "../util/dice.js"
 import * as Chat from "../util/chat.js";
 import * as Tooltip from "../util/tooltip.js";
-import {parseRollDifficulty} from "../../__tests__/unit/module/util/rollDifficultyParser.js";
+import {parseRollDifficulty} from "../util/rollDifficultyParser.js";
 
 
 export default class Skill extends Modifiable {
@@ -108,6 +108,24 @@ export default class Skill extends Modifiable {
 
         if (this.attribute2?.id && this.attribute2?.value) {
             skillAttributes[this.attribute2.id] = this.attribute2.value;
+        }
+
+
+        //
+        if (options.type === "spell") {
+            return/**@type CheckReport*/ {
+               skillValue: this.value,
+               skillPoints: this.points,
+               skillAttributes: skillAttributes,
+               difficulty: data.difficulty,
+               rollType: checkData.rollType,
+               modifierElements: checkData.modifierElements,
+               succeeded: data.succeeded,
+               isFumble: data.isFumble,
+               isCrit: data.isCrit,
+               degreeOfSuccess: data.degreeOfSuccess,
+               hideDifficulty: hideDifficulty,
+           };
         }
 
         let checkMessageData = {
