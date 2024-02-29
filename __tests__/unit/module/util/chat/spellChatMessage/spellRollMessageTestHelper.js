@@ -8,13 +8,41 @@ import {
 import {
     SplittermondSpellRollMessage
 } from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+import {
+    SpellMessageActionsManager
+} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
+
+export function createSpellActionManager() {
+    const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
+        used: false,
+        available: true,
+        adjustedValue: "0"
+    });
+    const focus = new (SpellMessageActionsManager.defineSchema().focus).type({
+        used: false,
+        available: true,
+        adjustedValue: "K3V3"
+    });
+    const ticks = new (SpellMessageActionsManager.defineSchema().ticks).type({
+        used: false,
+        available: true,
+        adjustedValue: 3
+    });
+    return new SpellMessageActionsManager(
+        {
+            focus,
+            damage,
+            ticks,
+            splinterPoints: {used: false, available: true}
+        }
+    )
+}
 
 export function createSplittermondSpellRollMessage() {
     return new SplittermondSpellRollMessage({
         degreeOfSuccessManager: createSpellDegreeOfSuccessManager(),
         constructorRegistryKey: "SplittermondSpellRollMessage"
     });
-
 }
 
 export function createSpellDegreeOfSuccessManager() {

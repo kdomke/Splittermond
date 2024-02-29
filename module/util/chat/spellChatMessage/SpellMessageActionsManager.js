@@ -1,4 +1,5 @@
 import {parseCostString} from "../../costs/costParser.js";
+import {Cost} from "../../costs/Cost.js";
 
 const fields = foundry.data.fields;
 
@@ -7,7 +8,7 @@ const fields = foundry.data.fields;
  * @property {CostAction} focus
  * @property {TickAction} ticks
  * @property {CostAction} damage
- * @property {{used:boolean}} splinterPoint
+ * @property {{used:boolean, available:boolean}} splinterPoint
  */
 export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
@@ -35,9 +36,9 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
         return {
             //caster
             //target
-            focus: new fields.EmbeddedDataField(CostAction, {required: true, blank: false, nullable: false}),
+            focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
-            damage: new fields.EmbeddedDataField(CostAction, {required: true, blank: false, nullable: false}),
+            damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
             splinterPoint: new fields.SchemaField(
                 {
                     used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
@@ -81,16 +82,24 @@ class TickAction extends foundry.abstract.DataModel {
 
     /** @param {number} amount */
     add(amount) {
+        if (this.used){
+            console.warn("Attempt alter a used action");
+            return;
+        }
         this.adjusted += amount;
     }
 
     /** @param {number} amount */
     subtract(amount) {
+        if (this.used){
+            console.warn("Attempt alter a used action");
+            return;
+        }
         this.adjusted -= amount;
     }
 
     get cost(){
-        return `${this.adjusted}`;
+        return `${this.adjusted > 0 ? this.adjusted : 1}`;
     }
 
 }
@@ -114,15 +123,44 @@ class CostAction extends foundry.abstract.DataModel {
 
     /** @param {string} cost */
     addCost(cost) {
+        if (this.used){
+            console.warn("Attempt alter a used cost action");
+            return;
+        }
         const costAdjustment = parseCostString(cost, true);
         this.adjusted = parseCostString(this.adjusted).add(costAdjustment).toString();
     }
 
     /** @param {string} cost */
     subtractCost(cost) {
+        if (this.used){
+            console.warn("Attempt to alter a used cost action");
+            return;
+        }
         const costAdjustment = parseCostString(cost);
         this.adjusted = parseCostString(this.adjusted).subtract(costAdjustment).toString();
     }
+
+    get cost(){
+        return parseCostString(this.adjusted).render();
+    }
+
+}
+
+
+class FocusAction extends CostAction {
+
+    get cost(){
+        let cost = parseCostString(this.adjusted);
+        if (cost.isZero()){
+            cost = cost.add(new Cost(1,0,false));
+        }
+        return cost.render();
+    }
+
+}
+
+class DamageAction extends CostAction {
 
     get cost(){
         return parseCostString(this.adjusted).render();

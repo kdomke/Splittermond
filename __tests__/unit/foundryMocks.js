@@ -20,20 +20,42 @@ global.foundry = {
     data: {
         fields: {
             NumberField: class {
+                options = null;
+                constructor(options){this.options = options}
             },
             ObjectField: class {
+                options = null;
+                constructor(options){this.options = options}
             },
             SchemaField: class {
+                schema = null;
+                options = null;
+                constructor(schema, options){this.schema= schema, this.options = options}
             },
             BooleanField: class {
+                options = null;
+                constructor(options){this.options = options}
             },
+            EmbeddedDataField: class {
+                type = null;
+                options = null;
+                constructor(type, options){
+                    this.type = type;
+                    this.options = options;
+                }
+            }
         }
     },
     abstract: {
         DataModel: class {
             constructor(data, context) {
                 for (const key in data) {
-                    Object.defineProperty(this, key, {value: data[key], writable: true, enumerable: true, configurable: true});
+                    Object.defineProperty(this, key, {
+                        value: data[key],
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    });
                 }
             }
 
@@ -42,8 +64,9 @@ global.foundry = {
                     this[key] = data[key];
                 }
             }
-            toObject(input){
-               JSON.parse(JSON.stringify(input));
+
+            toObject(input) {
+                JSON.parse(JSON.stringify(input));
             }
         }
     }
