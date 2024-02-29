@@ -1,6 +1,5 @@
 import {SplittermondSpellRollDataModel} from "../../../data/SplittermondSpellRollDataModel.js";
 import {addToRegistry} from "../chatMessageRegistry.js";
-import {spellMessageRenderer} from "./spellRollMessageRenderer.js";
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
@@ -25,6 +24,9 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             spellEnhancementDescription: spell.enhancementDescription,
             spellEnhancementCosts: spell.enhancementCosts,
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
+            renderer: {
+                checkReport: checkReport
+            },
             actionManager: SpellMessageActionsManager.initialize(spell.system),
             constructorKey: constructorRegistryKey,
         });
@@ -126,11 +128,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     get template() {
-        return "systems/splittermond/templates/chat/spell-chat-card.hbs";
+        return this.renderer.template;
     }
 
     getData() {
-        return spellMessageRenderer.renderData(this);
+        return this.renderer.renderData(this);
     }
 }
 

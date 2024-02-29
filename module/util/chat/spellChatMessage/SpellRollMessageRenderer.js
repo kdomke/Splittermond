@@ -2,7 +2,31 @@ import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
 import {chatFeatureApi} from "../chatActionGameApi.js";
 import {splittermond} from "../../../config.js";
 
-export const spellMessageRenderer = new class SplittermondSpellRollMessageRenderer {
+const fields = foundry.data.fields;
+
+/**
+ * @extends {foundry.abstract.DataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
+ * @
+ */
+export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel{
+
+    static defineSchema() {
+        return {
+           checkReport: new fields.ObjectField({required:true, blank:false, nullable:false})
+        }
+    }
+
+    constructor(...props) {
+        super(...props);
+
+        if (! this.parent instanceof SplittermondSpellRollMessage){
+            throw new Error(`This class is intended exclusively as child of SplittermondSpellRollMessage`)
+        }
+    }
+    get template(){
+        return "systems/splittermond/templates/chat/spell-chat-card.hbs";
+    }
+
 
     /**
      * @typedef SpellDegreessOfSuccessRenderedData
@@ -20,8 +44,10 @@ export const spellMessageRenderer = new class SplittermondSpellRollMessageRender
      * @property {string} title
      * @property {string} rollResultClass
      * @property {number} totalDegreesOfSuccess
+     * @property {number} usedDegreesOfSuccess
      * @property {number} openDegreesOfSuccess
      * @property {Partial<Record<ManagedSpellOptions,SpellDegreessOfSuccessRenderedData>>} degreeOfSuccessOptions
+     * @property {object} actions
      */
     /**
      * @param {SplittermondSpellRollMessage} spellRollMessage

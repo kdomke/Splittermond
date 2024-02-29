@@ -39,11 +39,18 @@ export function createSpellActionManager() {
 }
 
 export function createSplittermondSpellRollMessage() {
-    return new SplittermondSpellRollMessage({
+    const spellRollMessage = new SplittermondSpellRollMessage({
         degreeOfSuccessManager: createSpellDegreeOfSuccessManager(),
         actionManager: createSpellActionManager(),
         constructorRegistryKey: "SplittermondSpellRollMessage"
     });
+    spellRollMessage.renderer = createRenderer(spellRollMessage);
+    return spellRollMessage;
+}
+
+/** @param {SplittermondSpellRollMessage} parent*/
+export function createRenderer(parent) {
+    return new SplittermondSpellRollMessage({degreesOfSuccess: 3, parent});
 }
 
 export function createSpellDegreeOfSuccessManager() {
