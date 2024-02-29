@@ -3343,5 +3343,5 @@ ul.checkbox-list li input:checked ~ label::before {
   display: flex;
   justify-content: flex-start;
   text-align: left;
-  flex-wrap: wrap;
+  /*flex-wrap: wrap;*/
 }
