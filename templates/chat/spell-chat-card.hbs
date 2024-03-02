@@ -2,7 +2,7 @@
     <header class="chat-message-header">
         {{#with header}}
             <div>
-            <h2>{{title}}</h2>
+                <h2>{{title}}</h2>
                 <span class="roll-type">{{rollTypeMessage}}</span>
                 {{#if difficulty}}
                     <span class="{{#if hideDifficulty}}gm-only{{/if}}">
@@ -13,16 +13,18 @@
         {{/with}}
     </header>
     <div class="degree-of-success">
-        <div>
-            {{#times usedDegreesOfSuccess}}
-                <i class="fas fa-star"></i>
-            {{/times}}
-            {{#times openDegreesOfSuccess}}
-                <i class="stars fas fa-star"></i>
-            {{/times}}
-        </div>
-        <strong>{{totalDegreesOfSuccess}}&nbsp;{{localize
-                "splittermond.degreeOfSuccessAbbrev"}}</strong> {{degreeOfSuccessMessage}}
+        {{#with degreeOfSuccessDisplay}}
+            <div>
+                {{#times usedDegreesOfSuccess}}
+                    <i class="fas fa-star"></i>
+                {{/times}}
+                {{#times openDegreesOfSuccess}}
+                    <i class="stars fas fa-star"></i>
+                {{/times}}
+            </div>
+            <strong>{{totalDegreesOfSuccess}}&nbsp;{{localize
+                    "splittermond.degreeOfSuccessAbbrev"}}</strong> {{degreeOfSuccessMessage}}
+        {{/with}}
     </div>
     {{#if this.degreeOfSuccessOptions}}
         <strong>{{localize "splittermond.degreeOfSuccessOptionsHeader"}}</strong>

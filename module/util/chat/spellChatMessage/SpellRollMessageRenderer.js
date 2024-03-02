@@ -59,20 +59,34 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
      */
     renderData() {
         return {
+            rollResultClass: getRollResultClass(this.checkReport),
             header: {
                 title: this.messageTitle,
                 rollTypeMessage: chatFeatureApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
                 difficulty: this.checkReport.difficulty,
                 hideDifficulty: this.checkReport.hideDifficulty
             },
-            rollResultClass: getRollResultClass(this.checkReport),
-            totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
-            usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
-            openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
+            degreeOfSuccessDisplay: {
+                degreeOfSuccessMessage: getDegreeOfSuccessMessage(this.checkReport.degreeOfSuccess, this.checkReport.succeeded),
+                totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
+                usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
+                openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
+            },
             degreeOfSuccessOptions: renderDegreeOfSuccessOptions(this.parent),
             actions: renderActions(this.parent),
         }
     }
+}
+
+/**
+ * @param {number} degreeOfSuccess
+ * @param {boolean} succeeded
+ * @return {string}
+ */
+function getDegreeOfSuccessMessage(degreeOfSuccess,succeeded) {
+    const messageType= `${succeeded ? "success" : "fail"}Message`;
+    const messageExtremity = Math.min(Math.abs(degreeOfSuccess), 5);
+    return chatFeatureApi.localize(`splittermond.${messageType}.${messageExtremity}`);
 }
 
 /**
@@ -179,11 +193,10 @@ function hasAction(object, action) {
 /** @param {SplittermondSpellRollMessage} spellRollMessage */
 function renderActions(spellRollMessage) {
     const renderedOptions = {};
-    const actions = ["applyDamage", "advanceToken", "consumeCosts", "useSplinterpoint"]
-    const applyDamageRender = renderApplyDamage(spellRollMessage)
-    const advanceTokenRender = renderAdvanceToken(spellRollMessage)
-    const consumeCostsRender = renderConsumeCosts(spellRollMessage)
-    const useSplinterpointRender = renderUseSplinterpoint(spellRollMessage)
+    const applyDamageRender = renderApplyDamage(spellRollMessage);
+    const advanceTokenRender = renderAdvanceToken(spellRollMessage);
+    const consumeCostsRender = renderConsumeCosts(spellRollMessage);
+    const useSplinterpointRender = renderUseSplinterpoint(spellRollMessage);
     if (applyDamageRender) {
         renderedOptions["applyDamage"] = applyDamageRender;
     }
