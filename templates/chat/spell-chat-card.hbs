@@ -12,20 +12,7 @@
             </div>
         {{/with}}
     </header>
-    <div class="degree-of-success">
-        {{#with degreeOfSuccessDisplay}}
-            <div>
-                {{#times usedDegreesOfSuccess}}
-                    <i class="fas fa-star"></i>
-                {{/times}}
-                {{#times openDegreesOfSuccess}}
-                    <i class="stars fas fa-star"></i>
-                {{/times}}
-            </div>
-            <strong>{{totalDegreesOfSuccess}}&nbsp;{{localize
-                    "splittermond.degreeOfSuccessAbbrev"}}</strong> {{degreeOfSuccessMessage}}
-        {{/with}}
-    </div>
+    {{> degree-of-success-display degreeOfSuccessDisplay}}
     {{#if this.degreeOfSuccessOptions}}
         <strong>{{localize "splittermond.degreeOfSuccessOptionsHeader"}}</strong>
         <div class="degree-of-success-description">

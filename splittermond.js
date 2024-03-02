@@ -159,9 +159,9 @@ Hooks.once("init", function () {
             accum += block.fn(i);
         return accum;
     });
+    getTemplate(`${templateBasePath}/chat/partials/degree-of-success-display.hbs`)
+        .then(template => {Handlebars.registerPartial("degree-of-success-display", template)});
 
-    
-    
     //if (game.data.version.startsWith("0.")) {
         document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
         /*

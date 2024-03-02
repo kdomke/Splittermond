@@ -1,0 +1,12 @@
+<div class="degree-of-success">
+    <div>
+        {{#times usedDegreesOfSuccess}}
+            <i class="fas fa-star"></i>
+        {{/times}}
+        {{#times openDegreesOfSuccess}}
+            <i class="stars fas fa-star"></i>
+        {{/times}}
+    </div>
+    <strong>{{totalDegreesOfSuccess}}&nbsp;{{localize
+            "splittermond.degreeOfSuccessAbbrev"}}</strong> {{degreeOfSuccessMessage}}
+</div>
