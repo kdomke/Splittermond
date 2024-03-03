@@ -203,6 +203,7 @@ function renderActions(spellRollMessage) {
     const advanceTokenRender = renderAdvanceToken(spellRollMessage);
     const consumeCostsRender = renderConsumeCosts(spellRollMessage);
     const useSplinterpointRender = renderUseSplinterpoint(spellRollMessage);
+    const rollFumbleRender = renderRollFumble(spellRollMessage);
     if (applyDamageRender) {
         renderedOptions["applyDamage"] = applyDamageRender;
     }
@@ -214,6 +215,9 @@ function renderActions(spellRollMessage) {
     }
     if (useSplinterpointRender) {
         renderedOptions["useSplinterpoint"] = useSplinterpointRender;
+    }
+    if (rollFumbleRender){
+        renderedOptions["rollFumble"] = rollFumbleRender;
     }
     return renderedOptions;
 }
@@ -250,4 +254,13 @@ function renderUseSplinterpoint(spellRollMessage) {
     return {
         disabled: spellRollMessage.actionManager.splinterPoint.used,
     }
+}
+
+function renderRollFumble(spellRollMessage) {
+    if(!spellRollMessage.actionManager.magicFumble.available){
+        return null;
+    }
+    return {
+        disabled: spellRollMessage.actionManager.magicFumble.used
+    };
 }

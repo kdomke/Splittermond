@@ -18,7 +18,6 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
      * @return {SplittermondSpellRollMessage}
      */
     static createRollMessage(spell, target, checkReport) {
-
         return new SplittermondSpellRollMessage({
             spellEnhancementCosts: spell.enhancementCosts,
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
@@ -28,7 +27,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
                 spellEnhancementDescription: spell.enhancementDescription,
                 checkReport: checkReport
             },
-            actionManager: SpellMessageActionsManager.initialize(spell.system),
+            actionManager: SpellMessageActionsManager.initialize(spell, checkReport),
             constructorKey: constructorRegistryKey,
         });
     }
@@ -132,6 +131,10 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         */
         this.actionManager.useSplinterPoint();
         this.degreeOfSuccessManager.totalDegreesOfSuccess += 1;
+    }
+
+    rollFumble() {
+       this.actionManager.rollFumble();
     }
 
     get template() {

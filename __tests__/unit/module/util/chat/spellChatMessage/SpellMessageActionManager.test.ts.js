@@ -169,5 +169,13 @@ describe("SpellActionManager", () => {
 
             expect(manager.focus.adjusted).to.equal("3")
         });
+
     });
+
+    it("should react to fumbles", () => {
+        const manager = SpellMessageActionsManager.initialize({system: {}}, {isFumble: true});
+
+        expect(manager.magicFumble.available).to.be.true;
+        expect(manager.splinterPoint.available).to.be.false;
+    })
 })

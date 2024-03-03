@@ -11,6 +11,7 @@ import {
 import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
+import {c} from "sinon/lib/sinon/spy-formatters.js";
 
 export function createSpellActionManager() {
     const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
@@ -28,14 +29,17 @@ export function createSpellActionManager() {
         available: true,
         adjustedValue: 3
     });
-    return new SpellMessageActionsManager(
-        {
-            focus,
-            damage,
-            ticks,
-            splinterPoint: {used: false, available: true}
-        }
-    )
+
+    const splinterPoint = new (SpellMessageActionsManager.defineSchema().splinterPoint).type({
+        used: false,
+        available: true
+    });
+
+    const magicFumble = new (SpellMessageActionsManager.defineSchema().magicFumble).type({
+        used: false,
+        available: true
+    });
+    return new SpellMessageActionsManager({focus, damage, ticks, splinterPoint, magicFumble});
 }
 
 export function createSplittermondSpellRollMessage() {
@@ -54,7 +58,8 @@ export function createRenderer(parent) {
         messageTitle: "spelly spell",
         spellEnhancementDescription: "spell enhancement description",
         degreesOfSuccess: 3,
-        parent});
+        parent
+    });
 }
 
 export function createSpellDegreeOfSuccessManager() {

@@ -8,15 +8,17 @@ const fields = foundry.data.fields;
  * @property {CostAction} focus
  * @property {TickAction} ticks
  * @property {CostAction} damage
- * @property {{used:boolean, available:boolean}} splinterPoint
+ * @property {MessageAction} splinterPoint
+ * @property {MessageAction} magicFumble
  */
 export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     /**
-     * @param {SplittermondSpellData} spell
+     * @param {{system: SplittermondSpellData}} spell
+     * @param {CheckReport} checkReport
      * @return {SpellMessageActionsManager}
      */
-    static initialize(spell) {
+    static initialize(spell,checkReport) {
         const spellActionManagerData = {
             focus: {
                 original: spell.costs,
@@ -24,10 +26,12 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
             },
             ticks: {original: 3, adjusted: 3},
             damage: {
-                original:  spell.damage ? spell.damage : "0",
+                original: spell.damage ? spell.damage : "0",
                 adjusted: spell.damage ? spell.damage : "0",
                 available: !!spell.damage && spell.damage !== "0",
-            }
+            },
+            splinterPoint: UseSplinterpointsAction.initialize(checkReport),
+            magicFumble: MagicFumbleAction.initialize(checkReport)
         };
         return new SpellMessageActionsManager(spellActionManagerData);
     }
@@ -39,50 +43,90 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
             focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
             damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
-            splinterPoint: new fields.SchemaField(
-                {
-                    used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
-                    available: new fields.BooleanField({required: true, blank: false, nullable: false, initial: true}),
-                }, {required: true, blank: false, nullable: false})
+            splinterPoint: new fields.EmbeddedDataField(UseSplinterpointsAction, {required: true, blank: false, nullable: false}),
+            magicFumble: new fields.EmbeddedDataField(MagicFumbleAction, {required: true, blank: false, nullable: false}),
         }
     }
 
     applyDamage() {
-        this.damage.used = true;
+        this.damage.updateSource({used:true});
     }
 
     advanceToken() {
-        this.ticks.used = true;
+        this.ticks.updateSource({used:true});
     }
 
     consumeFocus() {
-        this.focus.used = true;
+        this.focus.updateSource({used:true});
     }
 
     useSplinterPoint() {
-        this.splinterPointUsed = true;
+        this.splinterPoint.updateSource({used:true});
+    }
+
+    rollFumble() {
+        this.magicFumble.updateSource({used:true});
+        //const eg = this.parent.degreeOfSuccessManager.totalDegreesOfSuccess;
+        //const costs = this.focus.original;
+        //const skill = $(event.currentTarget).closestData("skill");
+        //actor.rollMagicFumble(eg, costs, skill);
     }
 }
 
+/**
+ * @template T
+ * @template U
+ * @extends {foundry.abstract.DataModel<T,U>}
+ * @property {boolean} used
+ * @property {boolean} available
+ */
+class MessageAction extends foundry.abstract.DataModel {
+    static defineSchema() {
+        return {
+            used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
+            available: new fields.BooleanField({required: true, blank: false, nullable: false, initial: true}),
+        }
+    }
+}
+
+class UseSplinterpointsAction extends MessageAction {
+    /**
+     * @param {CheckReport} checkReport
+     * @return {UseSplinterpointsAction}
+     */
+    static initialize(checkReport) {
+        //TODO: check if character has enough splinterpoints
+       return new UseSplinterpointsAction({used: false, available: !checkReport.isFumble});
+    }
+}
+
+class MagicFumbleAction extends MessageAction {
+    /**
+     * @param {CheckReport} checkReport
+     * @return {MagicFumbleAction}
+     */
+    static initialize(checkReport) {
+        return new MagicFumbleAction({used: false, available: checkReport.isFumble});
+    }
+}
 
 /**
- * @extends {foundry.abstract.DataModel<TickAction,never>}
+ * @extends {MessageAction<TickAction,never>}
  * @property {number} original
  * @property {number} adjusted
  * @property {boolean} used
  */
-class TickAction extends foundry.abstract.DataModel {
+class TickAction extends MessageAction {
     static defineSchema() {
         return {
             original: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
             adjusted: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
-            used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
         }
     }
 
     /** @param {number} amount */
     add(amount) {
-        if (this.used){
+        if (this.used) {
             console.warn("Attempt alter a used action");
             return;
         }
@@ -91,27 +135,25 @@ class TickAction extends foundry.abstract.DataModel {
 
     /** @param {number} amount */
     subtract(amount) {
-        if (this.used){
+        if (this.used) {
             console.warn("Attempt alter a used action");
             return;
         }
         this.adjusted -= amount;
     }
 
-    get cost(){
+    get cost() {
         return `${this.adjusted > 0 ? this.adjusted : 1}`;
     }
 
 }
 
 /**
- * @extends {foundry.abstract.DataModel<CostAction,never>}
+ * @extends {MessageAction<CostAction,never>}
  * @property {string} original
  * @property {string} adjusted
- * @property {boolean} used
- * @property {boolean} available
  */
-class CostAction extends foundry.abstract.DataModel {
+class CostAction extends MessageAction {
     static defineSchema() {
         return {
             original: new fields.StringField({required: true, blank: false, nullable: false}),
@@ -123,7 +165,7 @@ class CostAction extends foundry.abstract.DataModel {
 
     /** @param {string} cost */
     addCost(cost) {
-        if (this.used){
+        if (this.used) {
             console.warn("Attempt alter a used cost action");
             return;
         }
@@ -133,7 +175,7 @@ class CostAction extends foundry.abstract.DataModel {
 
     /** @param {string} cost */
     subtractCost(cost) {
-        if (this.used){
+        if (this.used) {
             console.warn("Attempt to alter a used cost action");
             return;
         }
@@ -141,7 +183,7 @@ class CostAction extends foundry.abstract.DataModel {
         this.adjusted = parseCostString(this.adjusted).subtract(costAdjustment).toString();
     }
 
-    get cost(){
+    get cost() {
         throw new Error("Override me!")
     }
 
@@ -150,10 +192,10 @@ class CostAction extends foundry.abstract.DataModel {
 
 class FocusAction extends CostAction {
 
-    get cost(){
+    get cost() {
         let cost = parseCostString(this.adjusted);
-        if (cost.isZero()){
-            cost = cost.add(new Cost(1,0,false));
+        if (cost.isZero()) {
+            cost = cost.add(new Cost(1, 0, false));
         }
         return cost.render();
     }
@@ -162,7 +204,7 @@ class FocusAction extends CostAction {
 
 class DamageAction extends CostAction {
 
-    get cost(){
+    get cost() {
         return parseCostString(this.adjusted).render();
     }
 }

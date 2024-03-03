@@ -47,6 +47,9 @@
             {{#if useSplinterpoint}}
                 {{> "useSplinterpointButton" useSplinterpoint}}
             {{/if}}
+            {{#if rollFumble}}
+                {{> "rollFumbleButton" rollFumble}}
+            {{/if}}
         {{/with}}
 
         {{#* inline "applyDamageButton"}}
@@ -71,6 +74,12 @@
             <button class="splittermond-chat-action" data-action="useSplinterpoint" {{#if disabled}}disabled{{/if}}>
                 <i class="fas fa-moon"></i>
                 {{localize "splittermond.splinterpoint"}}
+            </button>
+        {{/inline}}
+        {{#* inline "rollFumbleButton"}}
+            <button class="splittermond-chat-action" data-action="rollFumble" {{#if disabled}}disabled{{/if}}>
+                <i class="fas fa-dice"></i>
+                {{localize "splittermond.fumbleTableLabel"}}
             </button>
         {{/inline}}
     </div>
