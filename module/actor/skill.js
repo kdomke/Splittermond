@@ -114,8 +114,9 @@ export default class Skill extends Modifiable {
         let rollResult = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
         let skillAttributes = this.attributeValues;
         /**
-         * @typedef {GenericRollEvaluation} CheckReport
+         * @typedef {Omit<GenericRollEvaluation, "roll">} CheckReport
          * @property {{name:string, attributes:Record<string,number>, points:number}} skill
+         * @property {{total:number, dice: [{total:number}], tooltip: string}} roll
          */
         if (options.type === "spell") {
             return/**@type CheckReport*/ {
@@ -126,7 +127,11 @@ export default class Skill extends Modifiable {
                 },
                 difficulty: rollResult.difficulty,
                 rollType: checkData.rollType,
-                roll: rollResult.roll,
+                roll: {
+                    total: rollResult.roll.total,
+                    dice: rollResult.roll.dice,
+                    tooltip: await rollResult.roll.getTooltip(),
+                },
                 modifierElements: checkData.modifierElements,
                 succeeded: rollResult.succeeded,
                 isFumble: rollResult.isFumble,

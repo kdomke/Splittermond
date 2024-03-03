@@ -1,5 +1,5 @@
 /**
- * @typedef {{total:number, dice: [{total:number}]}} RollResultForSplittermond
+ * @typedef {{total:number, getTooltip():Promise<string>, dice: [{total:number}]}} RollResultForSplittermond
  * @typedef {{
     difficulty: number
     succeeded: boolean,

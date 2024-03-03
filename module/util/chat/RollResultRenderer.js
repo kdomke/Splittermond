@@ -19,8 +19,8 @@ export class RollResultRenderer {
         return {
             rollTotal: this.checkReport.roll.total,
             skillAndModifierTooltip: renderSkillAndModifiers(this.checkReport),
+            rollTooltip: this.checkReport.roll.tooltip,
             actionDescription:this.actionDescription
-
         }
     }
 }
