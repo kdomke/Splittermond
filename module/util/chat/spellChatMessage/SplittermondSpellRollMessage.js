@@ -3,6 +3,7 @@ import {addToRegistry} from "../chatMessageRegistry.js";
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
+import {evaluateCheck} from "../../dice.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -20,7 +21,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     static createRollMessage(spell, target, checkReport) {
         return new SplittermondSpellRollMessage({
             spellEnhancementCosts: spell.enhancementCosts,
-            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
+            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
             renderer: {
                 messageTitle: spell.name,
                 spellDescription: spell.description,
@@ -123,14 +124,13 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     useSplinterpoint() {
-        /*TODO: Splitterpoint effect evaluation must be defferred to the actor b/c masteries can alter the bonus
-        *that a splinterpoint provides, although, for spells, no such mastery exists. This is a future proofing
-        * const newCheckReport = this.actionManager.useSplinterPoint();
-        * const this.degreeOfSuccessManager = SpellMessageDegreesOfSuccessManager.fromRoll(this.system, newCheckReport);
-        * const this.renderer.checkReport = newCheckReport;
-        */
-        this.actionManager.useSplinterPoint();
-        this.degreeOfSuccessManager.totalDegreesOfSuccess += 1;
+        const splinterPointBonus = this.actionManager.useSplinterPoint();
+        const checkReport = this.renderer.checkReport;
+        checkReport.roll.total += splinterPointBonus;
+        const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
+        const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
+        this.degreeOfSuccessManager.updateSource({totalDegreesOfSuccess: checkReport.degreeOfSuccess});
+        this.renderer.updateSource({checkReport: newCheckReport});
     }
 
     rollFumble() {

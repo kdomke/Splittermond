@@ -1,5 +1,6 @@
 import {parseCostString} from "../../costs/costParser.js";
 import {Cost} from "../../costs/Cost.js";
+import {AgentReference} from "../AgentReference.js";
 
 const fields = foundry.data.fields;
 
@@ -10,27 +11,30 @@ const fields = foundry.data.fields;
  * @property {CostAction} damage
  * @property {MessageAction} splinterPoint
  * @property {MessageAction} magicFumble
+ * @property {AgentReference} caster
  */
 export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     /**
-     * @param {{system: SplittermondSpellData}} spell
+     * @param {SplittermondSpellItem} spell
      * @param {CheckReport} checkReport
      * @return {SpellMessageActionsManager}
      */
     static initialize(spell,checkReport) {
+
         const spellActionManagerData = {
+            casterReference: AgentReference.initialize(spell.actor),
             focus: {
-                original: spell.costs,
-                adjusted: spell.costs
+                original: spell.system.costs,
+                adjusted: spell.system.costs
             },
             ticks: {original: 3, adjusted: 3},
             damage: {
-                original: spell.damage ? spell.damage : "0",
-                adjusted: spell.damage ? spell.damage : "0",
-                available: !!spell.damage && spell.damage !== "0",
+                original: spell.system.damage ? spell.system.damage : "0",
+                adjusted: spell.system.damage ? spell.system.damage : "0",
+                available: !!spell.system.damage && spell.system.damage !== "0",
             },
-            splinterPoint: UseSplinterpointsAction.initialize(checkReport),
+            splinterPoint: UseSplinterpointsAction.initialize(spell.actor, checkReport),
             magicFumble: MagicFumbleAction.initialize(checkReport)
         };
         return new SpellMessageActionsManager(spellActionManagerData);
@@ -38,7 +42,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     static defineSchema() {
         return {
-            //caster
+            casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, blank: false, nullable: false}),
             //target
             focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
@@ -60,8 +64,14 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
         this.focus.updateSource({used:true});
     }
 
+    /**
+     * @return {number} the updated roll result granted by the splinterpoint
+     */
     useSplinterPoint() {
+        const caster = this.casterReference.getAgent();
         this.splinterPoint.updateSource({used:true});
+        caster.spendSplinterpoint()
+        return caster.getSplinterpointBonus(this.splinterPoint.skill);
     }
 
     rollFumble() {
@@ -89,14 +99,26 @@ class MessageAction extends foundry.abstract.DataModel {
     }
 }
 
+/**
+ * @extends {MessageAction<UseSplinterpointsAction,never>}
+ * @property {string} skillId
+ */
 class UseSplinterpointsAction extends MessageAction {
     /**
+     * @param {SplittermondActor} caster
      * @param {CheckReport} checkReport
      * @return {UseSplinterpointsAction}
      */
-    static initialize(checkReport) {
-        //TODO: check if character has enough splinterpoints
-       return new UseSplinterpointsAction({used: false, available: !checkReport.isFumble});
+    static initialize(caster, checkReport) {
+       const available = !checkReport.isFumble && caster.splinterpoints?.value > 0;
+       return new UseSplinterpointsAction({used: false, available, skillName: checkReport.skill.id});
+    }
+
+    static defineSchema(){
+        return {
+            ...MessageAction.defineSchema(),
+            skillName: new fields.StringField({required: true, blank: false, nullable: false})
+        }
     }
 }
 

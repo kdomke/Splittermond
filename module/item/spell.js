@@ -9,6 +9,10 @@ import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
 import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 
 
+/**
+ * @property {SplittermondSpellData} system
+ * @property {SplittermondActor} actor
+ */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
     constructor(

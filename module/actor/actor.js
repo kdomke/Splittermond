@@ -148,6 +148,7 @@ export default class SplittermondActor extends Actor {
         return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
 
+    /**@return {{value:number, max:number}|undefined}*/
     get splinterpoints() {
         return this.system.splinterpoints;
     }
@@ -890,6 +891,21 @@ export default class SplittermondActor extends Actor {
 
 
         return super.importFromJSON(json);
+    }
+
+    spendSplinterpoint(){
+        this.update({
+            "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
+        });
+    }
+
+    /**
+     * This is a stub
+     * @param {string} skillName
+     * @return {number}
+     */
+    getSplinterpointBonus(skillName){
+        return 3
     }
 
     async useSplinterpointBonus(message) {

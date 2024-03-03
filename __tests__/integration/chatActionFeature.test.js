@@ -49,6 +49,14 @@ export function chatActionFeatureTest(context) {
             ChatMessage.deleteDocuments([chatCard.messageId]);
         });
 
+        it("agent refrence should return an actor from a reference", () => {
+            fail();
+        });
+
+        it("agent reference should return a token from a reference", () => {
+            fail();
+        });
+
         function getCollectionLength(collection) {
             return collection.map(() => 1).reduce((a, b) => a + b, 0)
         }
@@ -116,6 +124,14 @@ export function chatActionFeatureTest(context) {
             expect(retrievedMessage.getFlag("splittermond", "chatCard"))
                 .to.deep.equal(sampleMessageContent.flags.splittermond.chatCard);
             ChatMessage.deleteDocuments([message.id]);
+        });
+
+        it("should get an actor by name", async () => {
+           fail();
+        });
+
+        it("should get a token by name and scene", async () => {
+          fail();
         });
 
         it("should deliver a template renderer", async () => {

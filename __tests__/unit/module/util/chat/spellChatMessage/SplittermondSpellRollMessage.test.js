@@ -35,6 +35,7 @@ describe("SplittermondSpellRollMessage actions", () =>{
         underTest.useSplinterpoint();
 
         expect(underTest.actionManager.splinterPoint.used).to.be.true;
+        fail();
     });
 
     it("should disable focus degree of success options", () =>{

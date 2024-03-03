@@ -178,4 +178,8 @@ describe("SpellActionManager", () => {
         expect(manager.magicFumble.available).to.be.true;
         expect(manager.splinterPoint.available).to.be.false;
     })
+
+    it("should splinterpoint", () =>{
+        fail();
+    })
 })

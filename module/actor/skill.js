@@ -115,13 +115,13 @@ export default class Skill extends Modifiable {
         let skillAttributes = this.attributeValues;
         /**
          * @typedef {Omit<GenericRollEvaluation, "roll">} CheckReport
-         * @property {{name:string, attributes:Record<string,number>, points:number}} skill
+         * @property {{id:string, attributes:Record<string,number>, points:number}} skill
          * @property {{total:number, dice: [{total:number}], tooltip: string}} roll
          */
         if (options.type === "spell") {
             return/**@type CheckReport*/ {
                 skill: {
-                    name:  this.name,
+                    id: this.id,
                     attributes: skillAttributes,
                     points: this.points
                 },
