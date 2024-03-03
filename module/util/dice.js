@@ -8,14 +8,14 @@
     degreeOfSuccess: number,
     degreeOfSuccessMessage: string,
     roll: RollResultForSplittermond,
- }} CheckReport
+ }} GenericRollEvaluation
  */
 /**
  * @param skill
  * @param {number} difficulty
  * @param {RollType} rollType
  * @param {number} skillModifier
- * @return {CheckReport}
+ * @return {GenericRollEvaluation}
  */
 export async function check(skill, difficulty , rollType = "standard", skillModifier = 0) {
 
@@ -39,7 +39,7 @@ export async function check(skill, difficulty , rollType = "standard", skillModi
  * @param skillPoints
  * @param difficulty
  * @param rollType
- * @return {CheckReport}
+ * @return {GenericRollEvaluation}
  */
 export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     roll = await roll;
@@ -171,7 +171,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
 }
 
 export function riskModifier() {
-    if (this.results.length == 4) {
+    if (this.results.length === 4) {
         const sortedResult = this.results.map(i => {
             return {
                 result: i.result,

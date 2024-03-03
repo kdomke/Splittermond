@@ -161,6 +161,8 @@ Hooks.once("init", function () {
     });
     getTemplate(`${templateBasePath}/chat/partials/degree-of-success-display.hbs`)
         .then(template => {Handlebars.registerPartial("degree-of-success-display", template)});
+    getTemplate(`${templateBasePath}/chat/partials/roll-result.hbs`)
+        .then(template => {Handlebars.registerPartial("roll-result", template)});
 
     //if (game.data.version.startsWith("0.")) {
         document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);

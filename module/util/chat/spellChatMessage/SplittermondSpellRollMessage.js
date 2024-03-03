@@ -24,6 +24,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell.system, checkReport),
             renderer: {
                 messageTitle: spell.name,
+                spellDescription: spell.description,
                 spellEnhancementDescription: spell.enhancementDescription,
                 checkReport: checkReport
             },
@@ -123,6 +124,12 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     useSplinterpoint() {
+        /*TODO: Splitterpoint effect evaluation must be defferred to the actor b/c masteries can alter the bonus
+        *that a splinterpoint provides.
+        * const newCheckReport = this.actionManager.useSplinterPoint();
+        * const this.degreeOfSuccessManager = SpellMessageDegreesOfSuccessManager.fromRoll(this.system, newCheckReport);
+        * const this.renderer.checkReport = newCheckReport;
+        */
         this.actionManager.splinterPoint.used = true;
         this.degreeOfSuccessManager.totalDegreesOfSuccess += 1;
     }

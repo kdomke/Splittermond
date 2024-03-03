@@ -1,6 +1,7 @@
 import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
 import {chatFeatureApi} from "../chatActionGameApi.js";
 import {splittermond} from "../../../config.js";
+import {RollResultRenderer} from "../RollResultRenderer.js";
 
 const fields = foundry.data.fields;
 
@@ -9,6 +10,7 @@ const fields = foundry.data.fields;
  * @property {CheckReport} checkReport
  * @property {string} messageTitle
  * @property {string} spellEnhancementDescription
+ * @property {string} spellDescription
  */
 export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel {
 
@@ -16,6 +18,7 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
         return {
             checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
             messageTitle: new fields.StringField({required: true, blank: false, nullable: false}),
+            spellDescription: new fields.StringField({required: true, blank: true, nullable: true}),
             spellEnhancementDescription: new fields.StringField({required:true, blank:false, nullable:false})
         }
     }
@@ -66,6 +69,7 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
                 difficulty: this.checkReport.difficulty,
                 hideDifficulty: this.checkReport.hideDifficulty
             },
+            rollResult: new RollResultRenderer(this.spellDescription, this.checkReport).render(),
             degreeOfSuccessDisplay: {
                 degreeOfSuccessMessage: getDegreeOfSuccessMessage(this.checkReport.degreeOfSuccess, this.checkReport.succeeded),
                 totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
@@ -94,15 +98,17 @@ function getDegreeOfSuccessMessage(degreeOfSuccess,succeeded) {
  * @returns {"success"|""|"critical"|"fumble"}
  */
 function getRollResultClass(checkReport) {
+    const resultClasses = [];
     if (checkReport.isCrit) {
-        return "critical";
-    } else if (checkReport.isFumble) {
-        return "fumble";
-    } else if (checkReport.succeeded) {
-        return "success";
-    } else {
-        return "";
+        resultClasses.push("critical");
     }
+    if (checkReport.isFumble) {
+        resultClasses.push("fumble");
+    }
+    if (checkReport.succeeded) {
+        resultClasses.push("success");
+    }
+    return resultClasses.join(" ")
 }
 
 /**

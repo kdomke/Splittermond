@@ -79,6 +79,17 @@ export default class Skill extends Modifiable {
         return this.actor.items.filter(i => i.type === "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
     }
 
+    /** @return {Record<string,number>} */
+    get attributeValues() {
+        const skillAttributes={};
+        [this.attribute1, this.attribute2].forEach(attribute => {
+            if (attribute?.id && attribute?.value) {
+                skillAttributes[attribute.id] = attribute.value;
+            }
+        });
+        return skillAttributes;
+    }
+
     /**
      * @param {{difficulty: unknown, preSelectedModifier:string[], subtitle:?string, title:?string, type:string}} options
      * @return {Promise<*|boolean>}
@@ -90,7 +101,7 @@ export default class Skill extends Modifiable {
             return false;
         }
         const principalTarget = Array.from(game.user.targets)[0];
-        const rollDifficulty= parseRollDifficulty(options.difficulty)
+        const rollDifficulty = parseRollDifficulty(options.difficulty)
         let hideDifficulty = rollDifficulty.isTargetDependentValue()
         if (principalTarget) {
             rollDifficulty.evaluate(principalTarget);
@@ -100,32 +111,29 @@ export default class Skill extends Modifiable {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
-        let data = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
-        let skillAttributes = {};
-        if (this.attribute1?.id && this.attribute1?.value) {
-            skillAttributes[this.attribute1.id] = this.attribute1.value;
-        }
-
-        if (this.attribute2?.id && this.attribute2?.value) {
-            skillAttributes[this.attribute2.id] = this.attribute2.value;
-        }
-
-
-        //
+        let rollResult = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
+        let skillAttributes = this.attributeValues;
+        /**
+         * @typedef {GenericRollEvaluation} CheckReport
+         * @property {{name:string, attributes:Record<string,number>, points:number}} skill
+         */
         if (options.type === "spell") {
             return/**@type CheckReport*/ {
-               skillValue: this.value,
-               skillPoints: this.points,
-               skillAttributes: skillAttributes,
-               difficulty: data.difficulty,
-               rollType: checkData.rollType,
-               modifierElements: checkData.modifierElements,
-               succeeded: data.succeeded,
-               isFumble: data.isFumble,
-               isCrit: data.isCrit,
-               degreeOfSuccess: data.degreeOfSuccess,
-               hideDifficulty: hideDifficulty,
-           };
+                skill: {
+                    name:  this.name,
+                    attributes: skillAttributes,
+                    points: this.points
+                },
+                difficulty: rollResult.difficulty,
+                rollType: checkData.rollType,
+                roll: rollResult.roll,
+                modifierElements: checkData.modifierElements,
+                succeeded: rollResult.succeeded,
+                isFumble: rollResult.isFumble,
+                isCrit: rollResult.isCrit,
+                degreeOfSuccess: rollResult.degreeOfSuccess,
+                hideDifficulty: hideDifficulty,
+            };
         }
 
         let checkMessageData = {
@@ -134,20 +142,20 @@ export default class Skill extends Modifiable {
             skillValue: this.value,
             skillPoints: this.points,
             skillAttributes: skillAttributes,
-            difficulty: data.difficulty,
+            difficulty: rollResult.difficulty,
             rollType: checkData.rollType,
             modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
+            succeeded: rollResult.succeeded,
+            isFumble: rollResult.isFumble,
+            isCrit: rollResult.isCrit,
+            degreeOfSuccess: rollResult.degreeOfSuccess,
             availableSplinterpoints: this.actor.type === "character" ? this.actor.system.splinterpoints.value : 0,
             hideDifficulty: hideDifficulty,
             maneuvers: checkData.maneuvers || [],
             ...(options.checkMessageData || {})
         };
 
-        return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, data.roll, checkMessageData));
+        return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, rollResult.roll, checkMessageData));
     }
 
     /**
