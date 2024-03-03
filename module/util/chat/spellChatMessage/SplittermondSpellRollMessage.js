@@ -106,12 +106,12 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
 
     applyDamage() {
-        this.actionManager.damage.used = true;
+        this.actionManager.applyDamage();
         this.degreeOfSuccessManager.use("damage")
     }
 
     consumeCosts() {
-        this.actionManager.focus.used = true;
+        this.actionManager.consumeFocus()
         this.degreeOfSuccessManager.use("exhaustedFocus")
         this.degreeOfSuccessManager.use("consumedFocus")
         this.degreeOfSuccessManager.use("channelizedFocus")
@@ -119,18 +119,18 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     advanceToken() {
-        this.actionManager.ticks.used = true;
+        this.actionManager.advanceToken();
         this.degreeOfSuccessManager.use("castDuration")
     }
 
     useSplinterpoint() {
         /*TODO: Splitterpoint effect evaluation must be defferred to the actor b/c masteries can alter the bonus
-        *that a splinterpoint provides.
+        *that a splinterpoint provides, although, for spells, no such mastery exists. This is a future proofing
         * const newCheckReport = this.actionManager.useSplinterPoint();
         * const this.degreeOfSuccessManager = SpellMessageDegreesOfSuccessManager.fromRoll(this.system, newCheckReport);
         * const this.renderer.checkReport = newCheckReport;
         */
-        this.actionManager.splinterPoint.used = true;
+        this.actionManager.useSplinterPoint();
         this.degreeOfSuccessManager.totalDegreesOfSuccess += 1;
     }
 

@@ -51,6 +51,7 @@ export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataMo
         }
     }
 
+    /** @return {number} */
     get openDegreesOfSuccess() {
         return this.totalDegreesOfSuccess - this.usedDegreesOfSuccess;
     }
@@ -86,7 +87,7 @@ export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataMo
 
     /** @param {ManagedSpellOptions} key*/
     use(key) {
-        this[key].used = true;
+        this.updateSource({[key]: {used: true}})
     }
 
     /** @param {ManagedSpellOptions} key*/
