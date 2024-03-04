@@ -35,7 +35,7 @@ export async function check(skill, difficulty , rollType = "standard", skillModi
 
 /**
  *
- * @param {{Promise<unknown>}}roll
+ * @param {Promise<{dice:{total:number}[], total:number}>} roll
  * @param skillPoints
  * @param difficulty
  * @param rollType
@@ -202,7 +202,7 @@ export function riskModifier() {
         }
     }
 
-    if (this.results.length == 5) { // Grandmaster
+    if (this.results.length === 5) { // Grandmaster
         let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,
@@ -245,7 +245,7 @@ export function riskModifier() {
         }
     }
 
-    if (this.results.length == 3) { // Grandmaster (Standard)
+    if (this.results.length === 3) { // Grandmaster (Standard)
         let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,

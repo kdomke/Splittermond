@@ -129,7 +129,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         checkReport.roll.total += splinterPointBonus;
         const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
         const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
-        this.degreeOfSuccessManager.updateSource({totalDegreesOfSuccess: checkReport.degreeOfSuccess});
+        this.degreeOfSuccessManager.updateSource({totalDegreesOfSuccess: newCheckReport.degreeOfSuccess});
         this.renderer.updateSource({checkReport: newCheckReport});
     }
 

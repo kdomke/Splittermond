@@ -8,6 +8,9 @@ import {
 } from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 import {createSpellDegreeOfSuccessField, createSplittermondSpellRollMessage} from "./spellRollMessageTestHelper.js";
 import sinon from "sinon";
+import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
+import {AgentReference} from "../../../../../../module/util/chat/AgentReference.js";
+import {identity} from "../../../../foundryMocks.js";
 
 [...Object.keys(splittermond.spellEnhancement), "spellEnhancement"].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
@@ -28,17 +31,26 @@ import sinon from "sinon";
     });
 });
 
-describe("SplittermondSpellRollMessage actions", () =>{
-    it("should defer splinterpoint usage to the action manager",() => {
+describe("SplittermondSpellRollMessage actions", () => {
+    it("should upgrade roll total by splinterpoint usage", () => {
+        game.i18n = {localize: identity};
         const underTest = createTestRollMessage();
+        underTest.renderer.checkReport = {
+            roll: {total: 16, dice: [{total: 12}]},
+            skill: {points: 1},
+            difficulty: 15,
+            rollType: "standard"
+        };
+        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        sinon.stub(chatFeatureApi, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
 
         underTest.useSplinterpoint();
 
         expect(underTest.actionManager.splinterPoint.used).to.be.true;
-        fail();
+        expect(underTest.degreeOfSuccessManager.totalDegreesOfSuccess).to.equal(2);
     });
 
-    it("should disable focus degree of success options", () =>{
+    it("should disable focus degree of success options", () => {
         const underTest = createTestRollMessage();
 
         underTest.consumeCosts();
@@ -69,9 +81,10 @@ describe("SplittermondSpellRollMessage actions", () =>{
     });
 
 });
+
 function createTestRollMessage() {
     const spellRollMessage = createSplittermondSpellRollMessage();
-    for (const key in {...splittermond.spellEnhancement, spellEnhancement:{}}) {
+    for (const key in {...splittermond.spellEnhancement, spellEnhancement: {}}) {
         spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
     }
     return spellRollMessage;
