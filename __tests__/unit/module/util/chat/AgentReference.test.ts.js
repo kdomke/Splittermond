@@ -1,33 +1,54 @@
 import "../../../foundryMocks.js";
 import {describe, it} from "mocha";
+import {expect} from "chai";
+import {AgentReference} from "../../../../../module/util/chat/AgentReference.js";
+import sinon from "sinon";
+import {chatFeatureApi} from "../../../../../module/util/chat/chatActionGameApi.js";
 
 
 describe("AgentReference", () => {
-    it("should return an actor from a reference", () => {
-        fail();
+    it("should initialize a token as token", () => {
+        const probe = AgentReference.initialize({documentName: "Token", id: "1", parent: {documentName: "Scene", id: "2"}});
+
+        expect(probe.id).to.equal("1");
+        expect(probe.sceneId).to.equal("2");
+        expect(probe.type).to.equal("token");
+
     });
 
-    it("should return a token from a reference", () => {
-        fail();
+    it("should initialize an actor as actor", () => {
+        const probe = AgentReference.initialize({documentName: "Actor", id: "1"});
+
+        expect(probe.id).to.equal("1");
+        expect(probe.sceneId).to.be.null;
+        expect(probe.type).to.equal("actor");
     });
 
-    it("should handle multiple tokens with the same name", () => {
-        fail();
-    });
+    it("should initialize an dependent actor as token", () => {
+        const probe = AgentReference.initialize({
+            documentName: "Actor",
+            parent: {documentName: "Token", id: "2", parent: {documentName: "Scene", id: "1"}},
+            id: "3"
+        });
 
-    it("should handle multiple actors with the same name", () => {
-        fail();
-    });
-
-    it("should handle multiple tokens of the same name on the scene", () => {
-        fail();
+        expect(probe.id).to.equal("2");
+        expect(probe.sceneId).to.equal("1");
+        expect(probe.type).to.equal("token");
     });
 
     it("should handle no tokens to reference", () => {
-        fail();
+        sinon.stub(chatFeatureApi, "getToken").returns(undefined);
+
+        const underTest = new AgentReference({id: "1234", scene: "3456", type: "token"});
+
+        expect(() => underTest.getAgent()).to.throw(Error);
     });
 
     it("should handle no actors to reference", () => {
-        fail();
+        sinon.stub(chatFeatureApi, "getActor").returns(undefined);
+
+        const underTest = new AgentReference({id: "1234", scene: null, type: "actor"});
+
+        expect(() => underTest.getAgent()).to.throw(Error);
     });
 })

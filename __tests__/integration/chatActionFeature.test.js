@@ -1,7 +1,8 @@
-import {getActor} from "./fixtures.js"
+import {getActor, getUnlinkedToken} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
+import {AgentReference} from "../../module/util/chat/AgentReference.js";
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
@@ -49,18 +50,38 @@ export function chatActionFeatureTest(context) {
             ChatMessage.deleteDocuments([chatCard.messageId]);
         });
 
-        it("agent refrence should return an actor from a reference", () => {
-            fail();
-        });
-
-        it("agent reference should return a token from a reference", () => {
-            fail();
-        });
-
         function getCollectionLength(collection) {
             return collection.map(() => 1).reduce((a, b) => a + b, 0)
         }
     });
+
+    describe("AgentReference", () =>{
+        it("should return an actor from a reference", () => {
+            const sampleActor = getActor(this);
+            const reference = AgentReference.initialize(sampleActor);
+
+            expect(reference.getAgent()).to.equal(sampleActor);
+        });
+
+        it("should return a token from an actor reference", () => {
+            const sampleToken = getUnlinkedToken(this);
+            const reference = AgentReference.initialize(sampleToken.actor);
+
+            expect(reference.getAgent()).to.equal(sampleToken.actor);
+        });
+
+        it("should return a actor from a token input", () => {
+            const sampleToken = getUnlinkedToken(this);
+            const reference = AgentReference.initialize(sampleToken);
+
+            expect(reference.getAgent()).to.equal(sampleToken.actor);
+        })
+
+        it("should be able to read the document type from the document name field", () =>{
+           expect(getActor().documentName).to.equal("Actor");
+           expect(getUnlinkedToken().documentName).to.equal("Token");
+        })
+    })
 
     describe("chat feature API tests", () => {
         it("should deliver the current user", () => {
@@ -126,12 +147,32 @@ export function chatActionFeatureTest(context) {
             ChatMessage.deleteDocuments([message.id]);
         });
 
-        it("should get an actor by name", async () => {
-           fail();
+        it("should get an actor by id", async () => {
+            const sampleActor = getActor()
+            const fromApi = chatFeatureApi.getActor(sampleActor.id)
+
+            expect(fromApi).to.equal(sampleActor);
         });
 
-        it("should get a token by name and scene", async () => {
-          fail();
+        it("should return undefined for nonsense id", () => {
+            const fromAPI = chatFeatureApi.getActor("nonsense");
+
+            expect(fromAPI).to.be.undefined;
+        })
+
+        it("should get a token by id and scene", async () => {
+            const sampleToken = getUnlinkedToken(this);
+
+            const sceneId = sampleToken.parent.id;
+            const fromAPI = chatFeatureApi.getToken(sceneId, sampleToken.id);
+
+            expect(sampleToken).to.equal(fromAPI);
+        });
+
+        it("should return undefined for nonsense id", () => {
+            const fromAPI = chatFeatureApi.getToken("nonsense", "bogus");
+
+            expect(fromAPI).to.be.undefined;
         });
 
         it("should deliver a template renderer", async () => {
@@ -153,5 +194,5 @@ export function chatActionFeatureTest(context) {
             return typeof object === "object" &&
                 object && "isGM" in object && "id" in object && "active" in object;
         }
-    })
+    });
 }

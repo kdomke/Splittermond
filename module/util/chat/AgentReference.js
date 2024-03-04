@@ -1,36 +1,56 @@
+import {chatFeatureApi} from "./chatActionGameApi.js";
 
 const fields = foundry.data.fields
+
 /**
  * A reference to a Token object, which is used to represent a specific Token within a ChatMessage.
  * @extends {foundry.abstract.DataModel<AgentReference,never>}
- * @property {string} name
- * @property {string|null} sceneName
+ * @property {string} id
+ * @property {string|null} sceneId
  * @property {"actor"|"token"} type
  */
 export class AgentReference extends foundry.abstract.DataModel {
     static defineSchema() {
         return {
-            name: new fields.StringField({required: true, blank: false, nullable: false}),
-            sceneName: new fields.StringField({required: false, blank: true, nullable: true}),
+            id: new fields.StringField({required: true, blank: false, nullable: false}),
+            sceneId: new fields.StringField({required: false, blank: true, nullable: true}),
             type: new fields.StringField({required: true, blank: false, nullable: false})
         }
     }
 
-    static initialize(agent){
-        if(!agent.parent) { //agent is a primary document and therefore must be an actor
-           return new AgentReference({name: agent.name, sceneName: null, type: "actor"});
-        }else {
-            return new AgentReference({name: agent.parent.name, sceneName: agent.parent.parent.name, type: "token"});
+    /**
+     *
+     * @param {SplittermondActor|TokenDocument} agent
+     * @return {AgentReference}
+     */
+    static initialize(agent) {
+        if (agent.documentName === "Actor") {
+            return !agent.parent ?
+                new AgentReference({id: agent.id, sceneId: null, type: "actor"}) :
+                new AgentReference({id: agent.parent.id, sceneId: agent.parent.parent.id, type: "token"});
+        } else if (agent.documentName === "Token") {
+            return new AgentReference({id: agent.id, sceneId: agent.parent.id, type: "token"});
+        } else {
+            throw new Error("AgentReference can only be initialized with an actor or a token");
         }
+
 
     }
 
-    getAgent(){
-        //TODO use chatFeatureAPI
-        if(this.type === "actor"){
-           return game.actors.getName(this.name);
+    /**@return SplittermondActor */
+    getAgent() {
+        const agent = this.#getActor()
+        if(!agent){
+            throw new Error("AgentReference could not resolve the agent")
+        }
+        return agent;
+    }
+
+    #getActor(){
+        if (this.type === "actor") {
+            return chatFeatureApi.getActor(this.id);
         } else {
-            return game.scenes.find(s => s.name === this.sceneName).tokens.find(t => t.name === this.name);
+            return chatFeatureApi.getToken(this.sceneId, this.id)?.actor;
         }
     }
 }

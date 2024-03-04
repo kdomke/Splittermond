@@ -12,5 +12,13 @@ export function getSpell(test){
         test.skip();
     }
     return anySpell;
+}
 
+export function getUnlinkedToken(test){
+   const anyToken = game.scenes.map(scene => scene.tokens)
+       .flatMap(c => [...c.values()]).find(token => !token.actorLink)
+    if(!anyToken){
+        test.skip();
+    }
+    return anyToken;
 }
