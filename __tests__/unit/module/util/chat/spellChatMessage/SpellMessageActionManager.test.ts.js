@@ -6,6 +6,9 @@ import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {createSpellActionManager} from "./spellRollMessageTestHelper.js";
+import {AgentReference} from "../../../../../../module/util/chat/AgentReference.js";
+import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
+import sinon from "sinon";
 
 describe("SpellActionManager", () => {
 
@@ -179,7 +182,15 @@ describe("SpellActionManager", () => {
         expect(manager.splinterPoint.available).to.be.false;
     })
 
-    it("should splinterpoint", () =>{
-        fail();
-    })
+    it("should spend splinterpoint on actor", () =>{
+        const getBonusFunction = sinon.mock().returns(3);
+        sinon.stub(chatFeatureApi, "getActor").returns({id: "1", documentName: "Actor", spendSplinterpoint: () => ({getBonus: getBonusFunction}) })
+        const manager = createSpellActionManager();
+        manager.casterReference = new AgentReference({id: "1", sceneId: null, type: "actor"})
+
+        manager.useSplinterPoint();
+
+        expect(getBonusFunction.callCount).to.equal(1);
+        expect(manager.splinterPoint.used).to.be.true;
+    });
 })

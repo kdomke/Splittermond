@@ -893,10 +893,15 @@ export default class SplittermondActor extends Actor {
         return super.importFromJSON(json);
     }
 
+    /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
     spendSplinterpoint(){
-        this.update({
-            "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
-        });
+        if(this.splinterpoints > 0) {
+            this.update({
+                "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
+            });
+            return {pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName)}
+        };
+        return {pointSpent: false, getBonus:()=> 0};
     }
 
     /**
@@ -904,8 +909,8 @@ export default class SplittermondActor extends Actor {
      * @param {string} skillName
      * @return {number}
      */
-    getSplinterpointBonus(skillName){
-        return 3
+    #getSplinterpointBonus(skillName){
+        return 3;
     }
 
     async useSplinterpointBonus(message) {

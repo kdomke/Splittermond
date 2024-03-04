@@ -11,7 +11,7 @@ const fields = foundry.data.fields;
  * @property {CostAction} damage
  * @property {MessageAction} splinterPoint
  * @property {MessageAction} magicFumble
- * @property {AgentReference} caster
+ * @property {AgentReference} casterReference
  */
 export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
@@ -70,8 +70,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
     useSplinterPoint() {
         const caster = this.casterReference.getAgent();
         this.splinterPoint.updateSource({used:true});
-        caster.spendSplinterpoint()
-        return caster.getSplinterpointBonus(this.splinterPoint.skill);
+        return caster.spendSplinterpoint().getBonus(this.splinterPoint.skill)
     }
 
     rollFumble() {
