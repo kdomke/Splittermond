@@ -1013,6 +1013,12 @@ export default class SplittermondActor extends Actor {
         ChatMessage.create(chatData);
     }
 
+    /**
+     * @param {number} eg
+     * @param {string} costs A cost string as used for Splittermond spells
+     * @param {SplittermondSkill} skill
+     * @return {Promise<void>}
+     */
     async rollMagicFumble(eg = 0, costs = 0, skill = "") {
 
         let defaultTable = "sorcerer";
@@ -1268,6 +1274,12 @@ export default class SplittermondActor extends Actor {
         return this.update({ "system.focus": focusData, "system.health": healthData });
     }
 
+    /**
+     *
+     * @param {CostTypes} type
+     * @param {string} valueStr  a string of same form as given for Splittermond Spells
+     * @param description
+     */
     consumeCost(type, valueStr, description) {
         const data = this.system;
         let costData = parseCostString(valueStr.toString());

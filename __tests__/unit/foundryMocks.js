@@ -19,6 +19,10 @@ global.Item = class {
 global.foundry = {
     data: {
         fields: {
+            StringField: class {
+                options = null;
+                constructor(options){this.options = options}
+            },
             NumberField: class {
                 options = null;
                 constructor(options){this.options = options}

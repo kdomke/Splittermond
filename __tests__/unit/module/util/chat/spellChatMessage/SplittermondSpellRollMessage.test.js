@@ -1,6 +1,6 @@
 import "../../../../foundryMocks.js"
 
-import {describe, it} from "mocha";
+import {describe, it, afterEach} from "mocha";
 import {expect} from "chai";
 import {splittermond} from "../../../../../../module/config.js";
 import {
@@ -32,6 +32,7 @@ import {identity} from "../../../../foundryMocks.js";
 });
 
 describe("SplittermondSpellRollMessage actions", () => {
+    afterEach(() => sinon.restore());
     it("should upgrade roll total by splinterpoint usage", () => {
         game.i18n = {localize: identity};
         const underTest = createTestRollMessage();
@@ -50,8 +51,20 @@ describe("SplittermondSpellRollMessage actions", () => {
         expect(underTest.degreeOfSuccessManager.totalDegreesOfSuccess).to.equal(2);
     });
 
+    it("should call actor consume focus", () => {
+        const underTest = createTestRollMessage();
+        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        sinon.stub(chatFeatureApi, "getActor").returns({consumeCost: sinon.spy()});
+
+        underTest.consumeCosts();
+
+        expect(chatFeatureApi.getActor.called).to.be.true;
+    });
+
     it("should disable focus degree of success options", () => {
         const underTest = createTestRollMessage();
+        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        sinon.stub(chatFeatureApi, "getActor").returns({consumeCost: sinon.spy()});
 
         underTest.consumeCosts();
 
@@ -71,8 +84,23 @@ describe("SplittermondSpellRollMessage actions", () => {
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
     });
 
+    it("should call ticks with value on the actor",() => {
+        const underTest = createTestRollMessage();
+        const addTicksMock = sinon.stub().withArgs(4);
+        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        underTest.actionManager.ticks.adjusted = 4;
+        sinon.stub(chatFeatureApi, "getActor").returns({addTicks: addTicksMock});
+
+        underTest.advanceToken();
+
+        expect(chatFeatureApi.getActor.called).to.be.true;
+        expect(addTicksMock.called).to.be.true;
+    });
+
     it("should disable token advancement degree of success options", () => {
         const underTest = createTestRollMessage();
+        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        sinon.stub(chatFeatureApi, "getActor").returns({addTicks: sinon.spy()});
 
         underTest.advanceToken();
 

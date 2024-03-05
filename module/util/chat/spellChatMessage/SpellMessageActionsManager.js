@@ -6,6 +6,7 @@ const fields = foundry.data.fields;
 
 /**
  * @extends {foundry.abstract.DataModel<SpellMessageActionsManager,never>}
+ * @property {string} spellName
  * @property {CostAction} focus
  * @property {TickAction} ticks
  * @property {CostAction} damage
@@ -24,6 +25,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
         const spellActionManagerData = {
             casterReference: AgentReference.initialize(spell.actor),
+            spellName: spell.system.name,
             focus: {
                 original: spell.system.costs,
                 adjusted: spell.system.costs
@@ -44,6 +46,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
         return {
             casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, blank: false, nullable: false}),
             //target
+            spellName: new fields.StringField({required: true, blank: false, nullable: false}),
             focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
             damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
@@ -58,10 +61,12 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     advanceToken() {
         this.ticks.updateSource({used:true});
+        this.casterReference.getAgent().addTicks(this.ticks.adjusted);
     }
 
     consumeFocus() {
         this.focus.updateSource({used:true});
+        this.casterReference.getAgent().consumeCost("focus", this.focus.cost, this.spellName);
     }
 
     /**
@@ -75,10 +80,10 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     rollFumble() {
         this.magicFumble.updateSource({used:true});
-        //const eg = this.parent.degreeOfSuccessManager.totalDegreesOfSuccess;
-        //const costs = this.focus.original;
-        //const skill = $(event.currentTarget).closestData("skill");
-        //actor.rollMagicFumble(eg, costs, skill);
+        const eg = this.parent.degreeOfSuccessManager.totalDegreesOfSuccess; //TODO: we need to get a reference to the check report from parent
+        const costs = this.focus.original;
+        const skill = this.splinterPoint.skillName;
+        this.casterReference.getAgent().rollMagicFumble(eg, costs, skill);
     }
 }
 
@@ -140,6 +145,7 @@ class MagicFumbleAction extends MessageAction {
 class TickAction extends MessageAction {
     static defineSchema() {
         return {
+            ...MessageAction.defineSchema(),
             original: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
             adjusted: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
         }
