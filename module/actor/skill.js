@@ -165,7 +165,11 @@ export default class Skill extends Modifiable {
 
     /**
      * @typedef {number|'VTD','KW','GW'} RollDifficultyString
+     */
+    /**
      * @typedef {{name: string, label:string, value: unknown, active:boolean}} EmphasisData
+     */
+    /**
      * @typedef {{difficulty:RollDifficultyString, modifier:number, emphasis: EmphasisData, rollMode: unknown}} CheckDialogOptions
      * @param {string[]}selectedModifiers
      * @param {string} title

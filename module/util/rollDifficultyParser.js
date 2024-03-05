@@ -1,10 +1,12 @@
+const defaultDifficulty = 15;
+
 /**
  * @param {unknown} input
  */
-export function parseRollDifficulty(input){
-    if (!input){
-        return new RollDifficulty(15)
-    } else if (input instanceof RollDifficulty){
+export function parseRollDifficulty(input) {
+    if (!input) {
+        return new RollDifficulty(defaultDifficulty)
+    } else if (input instanceof RollDifficulty) {
         return input;
     } else {
         return new RollDifficulty(coerceToRollDifficulty(input));
@@ -14,34 +16,37 @@ export function parseRollDifficulty(input){
 
 /**
  * @param {unknown} difficulty
- * @return {RollType}
+ * @return {RollDifficultyString}
  */
 function coerceToRollDifficulty(difficulty) {
     if (isRollDifficulty(difficulty)) {
-        return parseInt(difficulty);
+        return difficulty;
     }
-    return 0;
+    return defaultDifficulty;
 }
 
 /**
  * @param {unknown} difficulty
  * @return {boolean}
  */
-function isRollDifficulty(difficulty){
+function isRollDifficulty(difficulty) {
     return isTargetDependentDifficulty(difficulty) || !isNaN(parseInt(difficulty));
 }
 
-function isTargetDependentDifficulty(value){
+function isTargetDependentDifficulty(value) {
     return ["VTD", "KW", "GW"].includes(value);
 }
 
+
 class RollDifficulty {
-    constructor(difficulty){
-       this._difficulty = difficulty;
-       this.evaluatedDifficulty = null;
+    /**@param {RollDifficultyString} difficulty */
+    constructor(difficulty) {
+        this.defaultDifficulty = 15;
+        this._difficulty = difficulty;
+        this.evaluatedDifficulty = 0;
     }
 
-    isTargetDependentValue(){
+    isTargetDependentValue() {
         return isTargetDependentDifficulty(this._difficulty)
     }
 
@@ -54,7 +59,7 @@ class RollDifficulty {
                 this.evaluatedDifficulty = target.actor.derivedValues.defense.value;
                 break;
             case "KW":
-                this.evaluatedDifficulty =  target.actor.derivedValues.bodyresist.value;
+                this.evaluatedDifficulty = target.actor.derivedValues.bodyresist.value;
                 break;
             case "GW":
                 this.evaluatedDifficulty = target.actor.derivedValues.mindresist.value;
@@ -63,7 +68,14 @@ class RollDifficulty {
                 this.evaluatedDifficulty = this.difficulty
         }
     }
-    get difficulty(){
-        return this.evaluatedDifficulty ?? this._difficulty;
+
+    get difficulty() {
+        if (this.evaluatedDifficulty) {
+            return this.evaluatedDifficulty;
+        } else if (Number.isInteger(this._difficulty)) {
+            return /** @type {number} */this._difficulty;
+        } else {
+            return defaultDifficulty;
+        }
     }
 }

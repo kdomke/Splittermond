@@ -12,7 +12,7 @@
  */
 /**
  * @param skill
- * @param {number} difficulty
+ * @param {RollDifficultyString} difficulty
  * @param {RollType} rollType
  * @param {number} skillModifier
  * @return {GenericRollEvaluation}
@@ -37,7 +37,7 @@ export async function check(skill, difficulty , rollType = "standard", skillModi
  *
  * @param {Promise<{dice:{total:number}[], total:number}>} roll
  * @param skillPoints
- * @param difficulty
+ * @param {RollDifficultyString} difficulty
  * @param rollType
  * @return {GenericRollEvaluation}
  */
