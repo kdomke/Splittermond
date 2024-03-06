@@ -1,15 +1,17 @@
 import {parseCostString} from "../../costs/costParser.js";
 import {Cost} from "../../costs/Cost.js";
 import {AgentReference} from "../AgentReference.js";
+import {DamageRoll} from "../../damage/DamageRoll.js";
+import * as Dice from "../../dice.js";
 
 const fields = foundry.data.fields;
 
 /**
  * @extends {foundry.abstract.DataModel<SpellMessageActionsManager,never>}
  * @property {string} spellName
- * @property {CostAction} focus
+ * @property {FocusAction} focus
  * @property {TickAction} ticks
- * @property {CostAction} damage
+ * @property {DamageAction} damage
  * @property {MessageAction} splinterPoint
  * @property {MessageAction} magicFumble
  * @property {AgentReference} casterReference
@@ -21,11 +23,11 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
      * @param {CheckReport} checkReport
      * @return {SpellMessageActionsManager}
      */
-    static initialize(spell,checkReport) {
+    static initialize(spell, checkReport) {
 
         const spellActionManagerData = {
             casterReference: AgentReference.initialize(spell.actor),
-            spellName: spell.system.name,
+            spellName: spell.name,
             focus: {
                 original: spell.system.costs,
                 adjusted: spell.system.costs
@@ -34,7 +36,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
             damage: {
                 original: spell.system.damage ? spell.system.damage : "0",
                 adjusted: spell.system.damage ? spell.system.damage : "0",
-                available: !!spell.system.damage && spell.system.damage !== "0",
+                available: !!spell.system.damage && spell.system.damage !== "0" && checkReport.succeeded,
             },
             splinterPoint: UseSplinterpointsAction.initialize(spell.actor, checkReport),
             magicFumble: MagicFumbleAction.initialize(checkReport)
@@ -44,28 +46,42 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     static defineSchema() {
         return {
-            casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, blank: false, nullable: false}),
+            casterReference: new fields.EmbeddedDataField(AgentReference, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
             //target
             spellName: new fields.StringField({required: true, blank: false, nullable: false}),
             focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
             damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
-            splinterPoint: new fields.EmbeddedDataField(UseSplinterpointsAction, {required: true, blank: false, nullable: false}),
-            magicFumble: new fields.EmbeddedDataField(MagicFumbleAction, {required: true, blank: false, nullable: false}),
+            splinterPoint: new fields.EmbeddedDataField(UseSplinterpointsAction, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
+            magicFumble: new fields.EmbeddedDataField(MagicFumbleAction, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
         }
     }
 
     applyDamage() {
-        this.damage.updateSource({used:true});
+        this.damage.updateSource({used: true});
+        const damage = this.damage.adjusted;
+        Dice.damage(this.damage.adjusted, "", this.spellName); //we don't wait for the promise, because we're done.
     }
 
     advanceToken() {
-        this.ticks.updateSource({used:true});
+        this.ticks.updateSource({used: true});
         this.casterReference.getAgent().addTicks(this.ticks.adjusted);
     }
 
     consumeFocus() {
-        this.focus.updateSource({used:true});
+        this.focus.updateSource({used: true});
         this.casterReference.getAgent().consumeCost("focus", this.focus.cost, this.spellName);
     }
 
@@ -74,12 +90,12 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
      */
     useSplinterPoint() {
         const caster = this.casterReference.getAgent();
-        this.splinterPoint.updateSource({used:true});
+        this.splinterPoint.updateSource({used: true});
         return caster.spendSplinterpoint().getBonus(this.splinterPoint.skill)
     }
 
     rollFumble() {
-        this.magicFumble.updateSource({used:true});
+        this.magicFumble.updateSource({used: true});
         const eg = this.parent.degreeOfSuccessManager.totalDegreesOfSuccess; //TODO: we need to get a reference to the check report from parent
         const costs = this.focus.original;
         const skill = this.splinterPoint.skillName;
@@ -114,11 +130,11 @@ class UseSplinterpointsAction extends MessageAction {
      * @return {UseSplinterpointsAction}
      */
     static initialize(caster, checkReport) {
-       const available = !checkReport.isFumble && caster.splinterpoints?.value > 0;
-       return new UseSplinterpointsAction({used: false, available, skillName: checkReport.skill.id});
+        const available = !checkReport.isFumble && caster.splinterpoints?.value > 0;
+        return new UseSplinterpointsAction({used: false, available, skillName: checkReport.skill.id});
     }
 
-    static defineSchema(){
+    static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
             skillName: new fields.StringField({required: true, blank: false, nullable: false})
@@ -175,18 +191,12 @@ class TickAction extends MessageAction {
 
 }
 
-/**
- * @extends {MessageAction<CostAction,never>}
- * @property {string} original
- * @property {string} adjusted
- */
-class CostAction extends MessageAction {
+class FocusAction extends MessageAction {
     static defineSchema() {
         return {
+            ...MessageAction.defineSchema(),
             original: new fields.StringField({required: true, blank: false, nullable: false}),
             adjusted: new fields.StringField({required: true, blank: false, nullable: false}),
-            used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
-            available: new fields.BooleanField({required: true, blank: false, nullable: false, initial: true}),
         }
     }
 
@@ -197,7 +207,7 @@ class CostAction extends MessageAction {
             return;
         }
         const costAdjustment = parseCostString(cost, true);
-        this.adjusted = parseCostString(this.adjusted).add(costAdjustment).toString();
+        this.updateSource({adjusted: parseCostString(this.adjusted).add(costAdjustment).toString()});
     }
 
     /** @param {string} cost */
@@ -207,17 +217,8 @@ class CostAction extends MessageAction {
             return;
         }
         const costAdjustment = parseCostString(cost);
-        this.adjusted = parseCostString(this.adjusted).subtract(costAdjustment).toString();
+        this.updateSource({adjusted: parseCostString(this.adjusted).subtract(costAdjustment).toString()});
     }
-
-    get cost() {
-        throw new Error("Override me!")
-    }
-
-}
-
-
-class FocusAction extends CostAction {
 
     get cost() {
         let cost = parseCostString(this.adjusted);
@@ -229,9 +230,30 @@ class FocusAction extends CostAction {
 
 }
 
-class DamageAction extends CostAction {
+class DamageAction extends MessageAction {
+
+    static defineSchema() {
+        return {
+            ...MessageAction.defineSchema(),
+            original: new fields.StringField({required: true, blank: false, nullable: false}),
+            adjusted: new fields.StringField({required: true, blank: false, nullable: false}),
+        }
+    }
+
+    /**@param {number} amount*/
+    addCost(amount) {
+        const damage = DamageRoll.parse(this.adjusted, "");
+        damage.increaseDamage(amount);
+        this.updateSource({adjusted: damage.getDamageFormula()});
+    }
+    /**@param {number} amount*/
+    subtractCost(amount) {
+        const damage = DamageRoll.parse(this.adjusted,"");
+        damage.decreaseDamage(amount);
+        this.updateSource({adjusted: damage.getDamageFormula()});
+    }
 
     get cost() {
-        return parseCostString(this.adjusted).render();
+        return this.adjusted;
     }
 }

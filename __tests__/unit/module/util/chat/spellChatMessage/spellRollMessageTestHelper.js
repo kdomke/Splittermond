@@ -17,17 +17,17 @@ export function createSpellActionManager() {
     const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
         used: false,
         available: true,
-        adjustedValue: "0"
+        adjusted: "1d6"
     });
     const focus = new (SpellMessageActionsManager.defineSchema().focus).type({
         used: false,
         available: true,
-        adjustedValue: "K3V3"
+        adjusted: "K3V3"
     });
     const ticks = new (SpellMessageActionsManager.defineSchema().ticks).type({
         used: false,
         available: true,
-        adjustedValue: 3
+        adjusted: 3
     });
 
     const splinterPoint = new (SpellMessageActionsManager.defineSchema().splinterPoint).type({

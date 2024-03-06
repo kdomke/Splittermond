@@ -11,6 +11,7 @@ import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/Splitt
 
 /**
  * @property {SplittermondSpellData} system
+ * @property {string} name
  * @property {SplittermondActor} actor
  */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
