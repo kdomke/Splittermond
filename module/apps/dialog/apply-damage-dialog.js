@@ -1,10 +1,11 @@
 export default class ApplyDamageDialog extends Dialog {
     constructor(dialogData = {}, options = {}) {
         super(dialogData, options);
-        this.options.classes = ["splittermond", "dialog","dialog-apply-damage"];
+        this.options.classes = ["splittermond", "dialog", "dialog-apply-damage"];
     }
 
-    static async create(damage=0, type="V", description="") {
+
+    static async create(damage = 0, type = "V", description = "") {
         damage = parseInt(damage);
         let data = {
             damage: damage,
@@ -14,16 +15,17 @@ export default class ApplyDamageDialog extends Dialog {
 
         if (game.user.isGM) {
             data.message = game.i18n.localize("splittermond.applyDamageOnSelectedToken");
-        } else if(game.user.targets.size) {
+        } else if (game.user.targets.size) {
             data.message = game.i18n.localize("splittermond.applyDamageOnSelectedTargets");
         } else {
             const speaker = ChatMessage.getSpeaker();
-            
+
             if (speaker.token) actor = game.actors.tokens[speaker.token];
             if (!actor) actor = game.actors.get(speaker.actor);
             if (!actor) {
-                return
-            };
+                return Promise.resolve("No actor found")
+            }
+            ;
             data.message = game.i18n.format("splittermond.applyDamageOnToken", actor);
         }
 
@@ -31,14 +33,14 @@ export default class ApplyDamageDialog extends Dialog {
 
         return new Promise((resolve) => {
             const dlg = new this({
-                title: game.i18n.localize("splittermond.applyDamage") + " - "+ description,
+                title: game.i18n.localize("splittermond.applyDamage") + " - " + description,
                 content: html,
                 buttons: {
                     cancel: {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/><img src='../../icons/dice/d10black.svg'  style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.cancel"),
                         callback: (html) => {
-                            
+
                             return;
                         }
                     },
@@ -47,12 +49,12 @@ export default class ApplyDamageDialog extends Dialog {
                         label: game.i18n.localize("splittermond.apply"),
                         callback: (html) => {
                             let fd = (new FormDataExtended(html[0].querySelector("form"))).object;
-                            let damageString = fd.damage+"";
-                            if (fd.type=== "K") {
-                                damageString = "K"+fd.damage;
+                            let damageString = fd.damage + "";
+                            if (fd.type === "K") {
+                                damageString = "K" + fd.damage;
                             }
-                            if (fd.type=== "V") {
-                                damageString = fd.damage+"V"+fd.damage;
+                            if (fd.type === "V") {
+                                damageString = fd.damage + "V" + fd.damage;
                             }
 
                             if (game.user.isGM) {
@@ -63,7 +65,7 @@ export default class ApplyDamageDialog extends Dialog {
                                 } else {
                                     game.i18n.localize("splittermond.selectAToken");
                                 }
-                            } else if(game.user.targets.size) {
+                            } else if (game.user.targets.size) {
                                 Array.from(game.user.targets).forEach(token => {
                                     token.actor.consumeCost("health", damageString, description);
                                 })
@@ -86,19 +88,19 @@ export default class ApplyDamageDialog extends Dialog {
         html.find('[data-action="inc-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value+1).change();
+            $(html).find(query).val(value + 1).change();
         });
 
         html.find('[data-action="dec-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(value-1).change();
+            $(html).find(query).val(value - 1).change();
         });
 
         html.find('[data-action="half-value"]').click((event) => {
             const query = $(event.currentTarget).closestData('input-query');
             let value = parseInt($(html).find(query).val()) || 0;
-            $(html).find(query).val(Math.round(value/2)).change();
+            $(html).find(query).val(Math.round(value / 2)).change();
         });
 
         super.activateListeners(html);
