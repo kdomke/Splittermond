@@ -10,6 +10,8 @@
     roll: RollResultForSplittermond,
  }} GenericRollEvaluation
  */
+import {DamageRoll} from "./damage/DamageRoll.js";
+
 /**
  * @param skill
  * @param {RollDifficultyString} difficulty
@@ -76,61 +78,10 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
 }
 
 export async function damage(damageFormula, featureString, damageSource = "") {
-    let feature = {};
-    featureString.split(',').forEach(feat => {
-        let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
-        if (temp[1]) {
-            feature[temp[1].toLowerCase()] = {
-                name: temp[0],
-                value: parseInt(temp[2]) || 1
-            };
-        }
-    });
-    // sanatize String
-    damageFormula = damageFormula.toLowerCase().replace("w", "d").replace(" ", "");
-    let damageFormulaData = /([0-9]{0,1})d(6|10)([+\-0-9]*)/.exec(damageFormula);
-    let nDices = parseInt(damageFormulaData[1] || 1);
-    let nFaces = parseInt(damageFormulaData[2]);
-    let damageModifier = damageFormulaData[3];
 
+    const damage = DamageRoll.parse(damageFormula, featureString);
 
-    damageFormula = `${nDices}d${nFaces}`;
-    if (feature["exakt"]) {
-        feature["exakt"].active = true;
-        let temp = nDices + feature["exakt"].value
-        damageFormula = `${temp}d${nFaces}kh${nDices}`;
-    }
-
-    if (damageModifier) {
-        damageFormula += damageModifier;
-    }
-
-    const roll = await new Roll(damageFormula, {}).evaluate();
-    if (feature["scharf"]) {
-        let scharfBonus = 0;
-        roll.terms[0].results.forEach(r => {
-            if (r.active) {
-                if (r.result < feature["scharf"].value) {
-                    feature["scharf"].active = true;
-                    scharfBonus += feature["scharf"].value - r.result;
-                }
-            }
-        });
-        roll._total += scharfBonus;
-    }
-
-    if (feature["kritisch"]) {
-        let kritischBonus = 0;
-        roll.terms[0].results.forEach(r => {
-            if (r.active) {
-                if (r.result === roll.terms[0].faces) {
-                    feature["kritisch"].active = true;
-                    kritischBonus += feature["kritisch"].value;
-                }
-            }
-        });
-        roll._total += kritischBonus;
-    }
+    const roll = damage.evaluate();
 
     let actions = [];
 
@@ -149,7 +100,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
     let templateContext = {
         roll: roll,
         source: damageSource,
-        features: feature,
+        features: damage.toObject().features,
         formula: damageFormula,
         tooltip: await roll.getTooltip(),
         actions: actions
