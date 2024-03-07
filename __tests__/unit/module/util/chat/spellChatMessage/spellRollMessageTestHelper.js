@@ -12,8 +12,12 @@ import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {c} from "sinon/lib/sinon/spy-formatters.js";
+import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 
 export function createSpellActionManager() {
+    const casterReference= new AgentReference({id:"1", sceneId:null, type:"actor"})
+    const spellReference = new ItemReference({id:"1", agentReference:null})
     const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
         used: false,
         available: true,
@@ -39,7 +43,7 @@ export function createSpellActionManager() {
         used: false,
         available: true
     });
-    return new SpellMessageActionsManager({focus, damage, ticks, splinterPoint, magicFumble});
+    return new SpellMessageActionsManager({casterReference, spellReference, focus, damage, ticks, splinterPoint, magicFumble});
 }
 
 export function createSplittermondSpellRollMessage() {

@@ -3,18 +3,19 @@ import {Cost} from "../../costs/Cost.js";
 import {AgentReference} from "../../../data/references/AgentReference.js";
 import {DamageRoll} from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
+import {ItemReference} from "../../../data/references/ItemReference.js";
 
 const fields = foundry.data.fields;
 
 /**
  * @extends {foundry.abstract.DataModel<SpellMessageActionsManager,never>}
- * @property {string} spellName
  * @property {FocusAction} focus
  * @property {TickAction} ticks
  * @property {DamageAction} damage
  * @property {MessageAction} splinterPoint
  * @property {MessageAction} magicFumble
  * @property {AgentReference} casterReference
+ * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
 export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
@@ -27,9 +28,8 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
         const spellActionManagerData = {
             casterReference: AgentReference.initialize(spell.actor),
-            spellName: spell.name,
+            spellReference: ItemReference.initialize(spell),
             focus: {
-                original: spell.system.costs,
                 adjusted: spell.system.costs
             },
             ticks: {original: 3, adjusted: 3},
@@ -52,7 +52,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
                 nullable: false
             }),
             //target
-            spellName: new fields.StringField({required: true, blank: false, nullable: false}),
+            spellReference: new fields.EmbeddedDataField(ItemReference, {required:true, blank:false, nullable:false}),
             focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
             ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
             damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
@@ -72,7 +72,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
     applyDamage() {
         this.damage.updateSource({used: true});
         const damage = this.damage.adjusted;
-        Dice.damage(this.damage.adjusted, "", this.spellName); //we don't wait for the promise, because we're done.
+        Dice.damage(this.damage.adjusted, "", this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
     }
 
     advanceToken() {
@@ -195,7 +195,6 @@ class FocusAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            original: new fields.StringField({required: true, blank: false, nullable: false}),
             adjusted: new fields.StringField({required: true, blank: false, nullable: false}),
         }
     }

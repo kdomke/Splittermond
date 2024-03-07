@@ -77,15 +77,15 @@ export function dataModelTest(context) {
             expect(underTest.getItem()).to.equal(sampleItem);
       });
 
-      it ("should find an item in an actor's collection", () => {
+      it ("should find an item in an actor's collection", async () => {
             const /**@type SplittermondSpellItem */ sampleItem = getSpell(this);
             const sampleActor = getActor(this);
-            sampleActor.createEmbeddedDocuments("Item" [sampleItem]);
+            const itemOnActor = await sampleActor.createEmbeddedDocuments("Item", [sampleItem]).then(a => a[0]);
 
-            const underTest = ItemReference.initialize(sampleItem);
+            const underTest = ItemReference.initialize(itemOnActor);
 
-            expect(underTest.getItem()).to.equal(sampleItem);
-            sampleActor.deleteEmbeddedDocuments("Item",[sampleItem.id])
+            expect(underTest.getItem()).to.equal(itemOnActor);
+            await sampleActor.deleteEmbeddedDocuments("Item",[itemOnActor.id])
       });
 
     });

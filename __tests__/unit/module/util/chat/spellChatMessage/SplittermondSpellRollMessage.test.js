@@ -77,6 +77,7 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should disable damage degree of success options", () => {
         const underTest = createTestRollMessage();
+        sinon.stub(referencesApi, "getItem").returns({name: "spell"});
 
         underTest.applyDamage();
 
