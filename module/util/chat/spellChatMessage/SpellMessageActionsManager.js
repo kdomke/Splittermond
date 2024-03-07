@@ -1,6 +1,6 @@
 import {parseCostString} from "../../costs/costParser.js";
 import {Cost} from "../../costs/Cost.js";
-import {AgentReference} from "../AgentReference.js";
+import {AgentReference} from "../../../data/references/AgentReference.js";
 import {DamageRoll} from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
 

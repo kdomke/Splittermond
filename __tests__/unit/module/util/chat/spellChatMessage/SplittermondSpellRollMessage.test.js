@@ -8,9 +8,9 @@ import {
 } from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 import {createSpellDegreeOfSuccessField, createSplittermondSpellRollMessage} from "./spellRollMessageTestHelper.js";
 import sinon from "sinon";
-import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
-import {AgentReference} from "../../../../../../module/util/chat/AgentReference.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {identity} from "../../../../foundryMocks.js";
+import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
 
 [...Object.keys(splittermond.spellEnhancement), "spellEnhancement"].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
@@ -43,7 +43,7 @@ describe("SplittermondSpellRollMessage actions", () => {
             rollType: "standard"
         };
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(chatFeatureApi, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
+        sinon.stub(referencesApi, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
 
         underTest.useSplinterpoint();
 
@@ -54,17 +54,17 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should call actor consume focus", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(chatFeatureApi, "getActor").returns({consumeCost: sinon.spy()});
+        sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
 
         underTest.consumeCosts();
 
-        expect(chatFeatureApi.getActor.called).to.be.true;
+        expect(referencesApi.getActor.called).to.be.true;
     });
 
     it("should disable focus degree of success options", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(chatFeatureApi, "getActor").returns({consumeCost: sinon.spy()});
+        sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
 
         underTest.consumeCosts();
 
@@ -89,18 +89,18 @@ describe("SplittermondSpellRollMessage actions", () => {
         const addTicksMock = sinon.stub().withArgs(4);
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         underTest.actionManager.ticks.adjusted = 4;
-        sinon.stub(chatFeatureApi, "getActor").returns({addTicks: addTicksMock});
+        sinon.stub(referencesApi, "getActor").returns({addTicks: addTicksMock});
 
         underTest.advanceToken();
 
-        expect(chatFeatureApi.getActor.called).to.be.true;
+        expect(referencesApi.getActor.called).to.be.true;
         expect(addTicksMock.called).to.be.true;
     });
 
     it("should disable token advancement degree of success options", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(chatFeatureApi, "getActor").returns({addTicks: sinon.spy()});
+        sinon.stub(referencesApi, "getActor").returns({addTicks: sinon.spy()});
 
         underTest.advanceToken();
 

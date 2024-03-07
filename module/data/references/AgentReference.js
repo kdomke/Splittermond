@@ -1,4 +1,4 @@
-import {chatFeatureApi} from "./chatActionGameApi.js";
+import {referencesApi} from "./referencesApi.js";
 
 const fields = foundry.data.fields
 
@@ -48,9 +48,9 @@ export class AgentReference extends foundry.abstract.DataModel {
 
     #getActor(){
         if (this.type === "actor") {
-            return chatFeatureApi.getActor(this.id);
+            return referencesApi.getActor(this.id);
         } else {
-            return chatFeatureApi.getToken(this.sceneId, this.id)?.actor;
+            return referencesApi.getToken(this.sceneId, this.id)?.actor;
         }
     }
 }

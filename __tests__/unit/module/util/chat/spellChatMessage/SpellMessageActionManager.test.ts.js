@@ -6,9 +6,9 @@ import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {createSpellActionManager} from "./spellRollMessageTestHelper.js";
-import {AgentReference} from "../../../../../../module/util/chat/AgentReference.js";
-import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
+import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
 
 describe("SpellActionManager", () => {
 
@@ -184,7 +184,7 @@ describe("SpellActionManager", () => {
 
     it("should spend splinterpoint on actor", () =>{
         const getBonusFunction = sinon.mock().returns(3);
-        sinon.stub(chatFeatureApi, "getActor").returns({id: "1", documentName: "Actor", spendSplinterpoint: () => ({getBonus: getBonusFunction}) })
+        sinon.stub(referencesApi, "getActor").returns({id: "1", documentName: "Actor", spendSplinterpoint: () => ({getBonus: getBonusFunction}) })
         const manager = createSpellActionManager();
         manager.casterReference = new AgentReference({id: "1", sceneId: null, type: "actor"})
 
