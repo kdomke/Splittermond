@@ -1,6 +1,7 @@
-import {getActor, getUnlinkedToken} from "./fixtures.js";
+import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
 import {AgentReference} from "../../module/data/references/AgentReference.js";
 import {referencesApi} from "../../module/data/references/referencesApi.js";
+import {ItemReference} from "../../module/data/references/ItemReference.js";
 
 export function dataModelTest(context) {
     const {describe, it, expect} = context;
@@ -65,6 +66,28 @@ export function dataModelTest(context) {
 
             expect(fromAPI).to.be.undefined;
         });
+    });
+
+    describe("ItemReference", () => {
+      it ("should find an item in a top level collection", () => {
+            const /**@type SplittermondSpellItem */ sampleItem = getSpell(this);
+
+            const underTest = ItemReference.initialize(sampleItem);
+
+            expect(underTest.getItem()).to.equal(sampleItem);
+      });
+
+      it ("should find an item in an actor's collection", () => {
+            const /**@type SplittermondSpellItem */ sampleItem = getSpell(this);
+            const sampleActor = getActor(this);
+            sampleActor.createEmbeddedDocuments("Item" [sampleItem]);
+
+            const underTest = ItemReference.initialize(sampleItem);
+
+            expect(underTest.getItem()).to.equal(sampleItem);
+            sampleActor.deleteEmbeddedDocuments("Item",[sampleItem.id])
+      });
+
     });
 
     describe("AgentReference", () => {

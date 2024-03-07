@@ -1,3 +1,10 @@
+
+/*
+* @property {string} name
+* @property {string} type
+* @property {string} img
+* @property {string} id
+*/
 export default class SplittermondItem extends Item {
 
     constructor(data, context = {}) {

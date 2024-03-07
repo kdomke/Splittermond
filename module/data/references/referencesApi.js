@@ -2,6 +2,14 @@
 export const referencesApi = new class ReferencesApi {
 
     /**
+     * @param {string} itemId
+     * @return {SplittermondItem}
+     */
+    getItem(itemId){
+        return game.items.get(itemId);
+    }
+
+    /**
      * @param {string} actorId
      * @return {SplittermondActor|undefined}
      */

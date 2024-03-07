@@ -10,8 +10,8 @@ import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/Splitt
 
 
 /**
+ * @extends SplittermondItem
  * @property {SplittermondSpellData} system
- * @property {string} name
  * @property {SplittermondActor} actor
  */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {

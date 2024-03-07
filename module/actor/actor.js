@@ -12,6 +12,11 @@ import ActiveDefense from "./active-defense.js";
 import {parseCostString} from "../util/costs/costParser.js";
 import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.js";
 
+/**
+ * @property {object} system
+ * @property {Map<string, SplittermondItem> & Array<SplittermondItem> } items
+ * @property {Readonly<string>} id
+ */
 export default class SplittermondActor extends Actor {
 
     actorData() {
