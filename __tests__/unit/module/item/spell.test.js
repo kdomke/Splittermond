@@ -1,4 +1,4 @@
-import a from "../../foundryMocks.js";
+import "../../foundryMocks.js";
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
