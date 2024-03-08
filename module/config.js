@@ -1255,18 +1255,6 @@ splittermond.weaponFeatures = [ "Ablenkend",
                                 "Zweihändig"
                             ];
 
-splittermond.Item = {
-    documentClasses: {
-        default: SplittermondItem,
-        weapon: SplittermondWeaponItem,
-        shield: SplittermondShieldItem,
-        armor: SplittermondArmorItem,
-        spell: SplittermondSpellItem,
-        equipment: SplittermondEquipmentItem,
-        npcattack: SplittermondNPCAttackItem,
-        mastery: SplittermondMastery
-    }
-};
 
 /**
  * @typedef {{degreesOfSuccess:number, textTemplate:string, focusCostReduction:string, castDurationReduction:number, damageIncrease:string}} SplittermondSpellEnhancement

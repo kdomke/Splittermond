@@ -22,6 +22,13 @@ import TokenActionBar from "./module/apps/token-action-bar.js";
 
 import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
 import {chatActionFeature} from "./module/util/chat/chatActionFeature.js";
+import SplittermondWeaponItem from "./module/item/weapon.js";
+import SplittermondShieldItem from "./module/item/shield.js";
+import SplittermondArmorItem from "./module/item/armor.js";
+import SplittermondSpellItem from "./module/item/spell.js";
+import SplittermondEquipmentItem from "./module/item/equipment.js";
+import SplittermondNPCAttackItem from "./module/item/npcattack.js";
+import SplittermondMastery from "./module/item/mastery.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -78,7 +85,19 @@ Hooks.once("init", function () {
     CONFIG.Item.documentClass = SplittermondItem;
     CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
-    CONFIG.splittermond = splittermond;
+    CONFIG.splittermond = {...splittermond};
+    CONFIG.splittermond.Item = {
+        documentClasses: {
+            default: SplittermondItem,
+            weapon: SplittermondWeaponItem,
+            shield: SplittermondShieldItem,
+            armor: SplittermondArmorItem,
+            spell: SplittermondSpellItem,
+            equipment: SplittermondEquipmentItem,
+            npcattack: SplittermondNPCAttackItem,
+            mastery: SplittermondMastery
+        }
+    };
 
     registerSystemSettings();
 
