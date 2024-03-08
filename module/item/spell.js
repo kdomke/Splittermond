@@ -35,7 +35,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
     /** @return {string} */
     get enhancementCosts() {
-        if (this.actor){
+        if (this.actor) {
             const requiredDegreesOfSuccess = parseSpellEnhancementDegreesOfSuccess(this.system.enhancementCosts);
             const reducedCosts = calculateReducedEnhancementCosts(this.system, this.actor.system.spellEnhancedCostReduction)
             return `${requiredDegreesOfSuccess}EG/+${reducedCosts}`;
@@ -110,7 +110,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.damage;
     }
 
-    get availableInList(){
+    get availableInList() {
         return produceSpellAvailabilityTags(this.system, this.availabilityParser);
     }
 
@@ -144,10 +144,12 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
         return this.skill.roll(options)
             .then(report =>
-                SplittermondChatCard.create(
-                    this.actor,
-                    SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], report))
-                    .sendToChat()
+                !report ?
+                    false :
+                    SplittermondChatCard.create(
+                        this.actor,
+                        SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], report))
+                        .sendToChat()
             );
     }
 
