@@ -148,7 +148,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                     false :
                     SplittermondChatCard.create(
                         this.actor,
-                        SplittermondSpellRollMessage.createRollMessage(this, game.user.target?.[0], report))
+                        SplittermondSpellRollMessage.createRollMessage(this, report))
                         .sendToChat()
             );
     }

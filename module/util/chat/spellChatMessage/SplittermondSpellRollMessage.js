@@ -14,11 +14,10 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
     /**
      * @param {SplittermondSpellItem} spell
-     * @param {Actor} target
      * @param {CheckReport} checkReport
      * @return {SplittermondSpellRollMessage}
      */
-    static createRollMessage(spell, target, checkReport) {
+    static createRollMessage(spell, checkReport) {
         return new SplittermondSpellRollMessage({
             spellEnhancementCosts: spell.enhancementCosts,
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
