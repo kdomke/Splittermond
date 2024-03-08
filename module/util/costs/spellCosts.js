@@ -1,24 +1,21 @@
 import {parseCostString} from "./costParser.js";
 import {Cost} from "./Cost.js";
+import {BaseCost} from "./BaseCost.js";
 
 /**
- * @typedef {{skill:string, type:string, costs:string, enhancementCosts:string}} SpellDataForCostCalculation
- */
-
-/**
- * @param {SpellDataForCostCalculation} spellData
+ * @param {SplittermondSpellData} spellData
  * @param {SpellCostReductionManager} spellCostReductionManager
  * @return {string}
  */
 export function calculateReducedSpellCosts(spellData, spellCostReductionManager) {
     const reductions = getApplicableReductions(spellData, spellCostReductionManager);
-    const parsedCosts = parseCostString(spellData.costs);
+    const parsedCosts = BaseCost.fromCost(parseCostString(spellData.costs));
     const reducedCosts = applyReductions(parsedCosts, reductions);
     return ensureMinimumCosts(reducedCosts).render();
 }
 
 /**
- * @param {SpellDataForCostCalculation} spellData
+ * @param {SplittermondSpellData} spellData
  * @param {SpellCostReductionManager} spellCostReductionManager
  * @return {string}
  */
@@ -29,7 +26,7 @@ export function calculateReducedEnhancementCosts(spellData, spellCostReductionMa
 }
 
 /**
- * @param {SpellDataForCostCalculation} spellData
+ * @param {SplittermondSpellData} spellData
  * @param {SpellCostReductionManager}spellCostReductionManager
  * @return {Cost[]}
  */
@@ -42,7 +39,7 @@ function getApplicableReductions(spellData, spellCostReductionManager) {
 }
 
 /**
- * @param {any} costs
+ * @param {BaseCost} costs
  * @param {Cost[]} reductions
  * @return {Cost}
  */
@@ -51,8 +48,8 @@ function applyReductions(costs, reductions) {
 }
 
 /**
- * @param {Cost} cost
- * @return {Cost}
+ * @param {BaseCost} cost
+ * @return {BaseCost}
  */
 function ensureMinimumCosts(cost) {
     return cost.isZero() ? cost.add(new Cost(1, 0, false)) : cost;

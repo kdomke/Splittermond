@@ -10,7 +10,7 @@ const fields = foundry.data.fields;
  * @property {string} availableIn
  * @property {string} skill
  * @property {number} skillLevel
- * @property {string} spellTypeo
+ * @property {string} spellType
  * @property {string} costs
  * @property {string} difficulty
  * @property {string} damage

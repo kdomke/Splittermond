@@ -20,6 +20,7 @@ export function dataModelTest(context) {
                 }
             }
         }
+
         it("injects a parent into embedded data", () => {
             const underTest = new TestParent({child: {name: "test"}});
 
@@ -35,6 +36,26 @@ export function dataModelTest(context) {
             expect(restoredMessage.child).to.be.instanceOf(TestChild);
             expect(restoredMessage.child.name).to.equal("test");
             expect(restoredMessage.child.parent).to.equal(restoredMessage);
+        });
+
+        it("validates numbers if validation is demanded", () => {
+            const Test = class extends foundry.abstract.DataModel {
+                static defineSchema() {
+                    return {
+                        number: new foundry.data.fields.NumberField({required: true, blank: false, validate: (value) => {if(value <= 0) throw new DataModelValidationError()}})
+                    }
+                }
+            }
+
+            expect(() => new Test({number: 0})).to.throw();
+        });
+
+        it("honors required option", () => {
+            expect(() => new TestParent({})).to.throw();
+        });
+
+        it("honors blank option", () => {
+            expect(() => new TestChild({name: " "})).to.throw();
         });
     });
 
