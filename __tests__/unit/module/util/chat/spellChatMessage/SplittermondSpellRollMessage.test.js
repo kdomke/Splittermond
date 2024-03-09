@@ -1,6 +1,6 @@
 import "../../../../foundryMocks.js"
 
-import {describe, it, afterEach} from "mocha";
+import {afterEach, describe, it} from "mocha";
 import {expect} from "chai";
 import {splittermond} from "../../../../../../module/config.js";
 import {
@@ -11,8 +11,10 @@ import sinon from "sinon";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {identity} from "../../../../foundryMocks.js";
 import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
+import {Cost} from "../../../../../../module/util/costs/Cost.js";
+import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 
-[...Object.keys(splittermond.spellEnhancement), "spellEnhancement"].forEach(key => {
+[...Object.keys(splittermond.spellEnhancement)].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
         const method = `${key}Update`;
         it(`should have an update method for '${key}'`, () => {
@@ -28,6 +30,136 @@ import {referencesApi} from "../../../../../../module/data/references/references
 
             expect(spellRollMessage.degreeOfSuccessManager.alterCheckState.called).to.be.true;
         })
+    });
+});
+
+describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
+    const spellRollMessage = createTestRollMessage();
+    const mock = sinon.createStubInstance(SplittermondSpellItem);
+    before(() => sinon.stub(referencesApi, "getItem").returns(mock));
+    after(() => sinon.restore());
+
+    it("should reduce exhausted focus on check", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+
+        spellRollMessage.exhaustedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("11V3");
+    });
+
+    it("should increase exhausted focus on uncheck", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, false, true).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+
+        spellRollMessage.exhaustedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("12V3");
+    });
+
+    it("should reduce consumed focus on check", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+
+        spellRollMessage.consumedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("11V2");
+    });
+
+    it("should increase consumed focus on uncheck", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, -1, false, true).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+
+        spellRollMessage.consumedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("12V3");
+    });
+
+    it("should reduce channeled focus on check", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
+
+        spellRollMessage.channelizedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("K11V3");
+    });
+
+    it("should increase channeled focus on uncheck", () => {
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, true, true).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
+
+        spellRollMessage.channelizedFocusUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("K12V3");
+    });
+
+    it("should increase focus costs on spell enhancement selection", () => {
+        spellRollMessage.degreeOfSuccessManager.spellEnhancement.checked = false;
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, true, true).asModifier();
+        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        sinon.stub(mock,"enhancementCosts").get(() => "2EG/+3V1")
+
+        spellRollMessage.spellEnhancementUpdate();
+
+        expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("15V4");
+    })
+});
+
+describe("SplittermondSpellRollMessage enacts damage increases correctly", () => {
+    const spellRollMessage = createTestRollMessage();
+    const mock = sinon.createStubInstance(SplittermondSpellItem);
+    before(() => sinon.stub(referencesApi, "getItem").returns(mock));
+    after(() => sinon.restore());
+
+    it("should increase damage on check", () => {
+        spellRollMessage.degreeOfSuccessManager.damage.checked = false;
+        spellRollMessage.actionManager.damage.adjusted = 0;
+        sinon.stub(mock,"damage").get(() =>"1W6");
+
+        spellRollMessage.damageUpdate();
+
+        expect(spellRollMessage.actionManager.damage.cost).to.deep.equal("1W6+1");
+    });
+
+    it("should increase damage on check", () => {
+        spellRollMessage.degreeOfSuccessManager.damage.checked = true;
+        spellRollMessage.actionManager.damage.adjusted = 1;
+        sinon.stub(mock,"damage").get(() =>"1W6");
+
+        spellRollMessage.damageUpdate();
+
+        expect(spellRollMessage.actionManager.damage.cost).to.deep.equal("1W6");
+    });
+});
+
+describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
+    const spellRollMessage = createTestRollMessage();
+    const mock = sinon.createStubInstance(SplittermondSpellItem);
+    before(() => sinon.stub(referencesApi, "getItem").returns(mock));
+    after(() => sinon.restore());
+
+    it("should reduce ticks on check", () => {
+        spellRollMessage.degreeOfSuccessManager.castDuration.checked = false;
+        spellRollMessage.actionManager.ticks.adjusted = 3;
+
+        spellRollMessage.castDurationUpdate();
+
+        expect(spellRollMessage.actionManager.ticks.adjusted).to.equal(2);
+    });
+
+    it("should increase ticks on uncheck", () => {
+        spellRollMessage.degreeOfSuccessManager.castDuration.checked = true;
+        spellRollMessage.actionManager.ticks.adjusted = 1;
+
+        spellRollMessage.castDurationUpdate();
+
+        expect(spellRollMessage.actionManager.ticks.adjusted).to.equal(2);
     });
 });
 
@@ -55,6 +187,10 @@ describe("SplittermondSpellRollMessage actions", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
+        sinon.stub(referencesApi, "getItem").returns({
+            name: "spell",
+            getCostsForFinishedRoll: () => new Cost(1, 0, 0).asPrimaryCost(),
+        });
 
         underTest.consumeCosts();
 
@@ -65,6 +201,10 @@ describe("SplittermondSpellRollMessage actions", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
+        sinon.stub(referencesApi, "getItem").returns({
+            name: "spell",
+            getCostsForFinishedRoll: () => (new Cost(1, 0, 0).asPrimaryCost())
+        });
 
         underTest.consumeCosts();
 
@@ -85,7 +225,7 @@ describe("SplittermondSpellRollMessage actions", () => {
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
     });
 
-    it("should call ticks with value on the actor",() => {
+    it("should call ticks with value on the actor", () => {
         const underTest = createTestRollMessage();
         const addTicksMock = sinon.stub().withArgs(4);
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});

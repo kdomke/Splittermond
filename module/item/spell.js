@@ -7,6 +7,9 @@ import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/co
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
 import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
 import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+import {splittermond} from "../config.js";
+import {PrimaryCost} from "../util/costs/PrimaryCost.js";
+import {Cost} from "../util/costs/Cost.js";
 
 
 /**
@@ -153,4 +156,19 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             );
     }
 
+    /**
+     * @param {number} degreeOfSuccess
+     * @param {boolean} successful
+     * @return {PrimaryCost}
+     */
+    getCostsForFinishedRoll(degreeOfSuccess, successful) {
+        const critReduction = degreeOfSuccess >= splittermond.degreeOfSuccessThresholds.critical ?
+            new Cost(0, 1, false, true) :
+            new Cost(0, 0, false, true);
+        if (successful) {
+            return parseCostString(this.costs).asPrimaryCost().subtract(critReduction.asModifier());
+        } else {
+            return parseCostString(`${Math.abs(degreeOfSuccess)}`).asPrimaryCost();
+        }
+    }
 }

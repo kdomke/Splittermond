@@ -57,7 +57,7 @@ class SpellCostReductionManager {
      * convenience method for adding retrieving a modifier without having to get the map first
      * @param skill {string}
      * @param type {string}
-     * @return {ModificationCost[]}
+     * @return {CostModifier[]}
      */
     getCostModifiers(skill, type) {
         return this.modifiersMap.get(skill, type);
@@ -68,7 +68,7 @@ class SpellCostReductionManager {
 class SpellCostModifiers {
     constructor() {
         /**@typedef {{spellType:string|null, skill:string|null}} Key*/
-        /** @type {Map<Key, Cost[]>} */
+        /** @type {Map<Key, CostModifier[]>} */
         this.backingMap = new Map();
         /** @type {Map<string, Record<string|null,Key>>} */
         this.keyMap = new Map();
@@ -94,13 +94,13 @@ class SpellCostModifiers {
         ];
     }
 
-    /** @returns ModificationCost[] */
+    /** @returns CostModifier[] */
     #internalGet(group, type) {
         return this.backingMap.get(this.#getMapKey(group, type)) ?? [];
     }
 
     /**
-     * @param {ModificationCost} cost
+     * @param {CostModifier} cost
      * @param {string|null} type the type of spell this cost modifier is for
      * @param {string|null} group the skill selector for this cost modifier
      */

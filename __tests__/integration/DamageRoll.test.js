@@ -10,7 +10,7 @@ export function DamageRollTest(context) {
     const {describe, it, expect} = context;
 
     describe("test API", () => {
-        it("should fail if more than 1000 dice are requested", async () => {
+        it("should fail if 1000 dice or more are requested", async () => {
           expect(async () => await utilGameApi.roll("1000d6").evaluate()).to.throw(Error)
         });
         it("should return a roll object", async () => {

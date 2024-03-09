@@ -1319,5 +1319,7 @@ splittermond.spellEnhancement = {
         damageIncrease: 0,
     }
 };
-
+splittermond.degreeOfSuccessThresholds = {
+    critical : 5
+}
 

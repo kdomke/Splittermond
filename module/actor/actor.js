@@ -13,7 +13,7 @@ import {parseCostString} from "../util/costs/costParser.js";
 import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.js";
 
 /**
- * @property {object} system
+ * @property {SplittermondSpellData} system
  * @property {Map<string, SplittermondItem> & Array<SplittermondItem> } items
  * @property {Readonly<string>} id
  */
@@ -54,7 +54,7 @@ export default class SplittermondActor extends Actor {
 
         [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.disableCaching());
         [...Object.values(this.attributes)].forEach(e => e.enableCaching());
-        const data = this.system;
+        let data = this.system;
 
 
         this.attacks = [];
@@ -111,7 +111,7 @@ export default class SplittermondActor extends Actor {
             levelMod: 0
         }
 
-        initializeSpellCostManagement(data);
+        data = initializeSpellCostManagement(data);
 
         if (this.type === "character") {
             data.focusRegeneration = {
@@ -1287,7 +1287,7 @@ export default class SplittermondActor extends Actor {
      */
     consumeCost(type, valueStr, description) {
         const data = this.system;
-        let costData = parseCostString(valueStr.toString());
+        let costData = parseCostString(valueStr.toString()).asPrimaryCost();
 
         let subData = duplicate(data[type]);
 

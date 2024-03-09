@@ -89,12 +89,13 @@ describe("Spell item cost calculation", () => {
 
     it("should reduce the cost of a spell if an actor is associated to this spell", () => {
        sampleSpell.actor = { system:initializeSpellCostManagement({}) }
-       sampleSpell.actor.system.spellCostReduction.modifiers.put(new Cost(1, 1, true),null, null);
+       sampleSpell.actor.system.spellCostReduction.modifiers.put(new Cost(1, 1, true).asModifier(),null, null);
        expect(sampleSpell.costs).to.equal("K1V1");
     });
     it("should reduce the enhancement cost of a spell if an actor is associated to this spell", () => {
         sampleSpell.actor = { system:initializeSpellCostManagement({}) }
-        sampleSpell.actor.system.spellEnhancedCostReduction.modifiers.put(new Cost(1, 1, true),null, null);
+        sampleSpell.actor.system.spellEnhancedCostReduction.modifiers
+            .put(new Cost(1, 1, true).asModifier(),null, null);
         expect(sampleSpell.enhancementCosts).to.equal("1EG/+K1V1");
     });
 });

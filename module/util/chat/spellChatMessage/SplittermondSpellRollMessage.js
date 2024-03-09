@@ -4,6 +4,7 @@ import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSucces
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
+import {ItemReference} from "../../../data/references/ItemReference.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -19,7 +20,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
      */
     static createRollMessage(spell, checkReport) {
         return new SplittermondSpellRollMessage({
-            spellEnhancementCosts: spell.enhancementCosts,
+            spellReference: ItemReference.initialize(spell),
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
             renderer: {
                 messageTitle: spell.name,
@@ -74,9 +75,9 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
     damageUpdate() {
         if(this.degreeOfSuccessManager.isChecked("damage")){
-            this.actionManager.damage.subtractCost(splittermond.spellEnhancement.damage.damageIncrease)
+            this.actionManager.damage.subtractDamage(splittermond.spellEnhancement.damage.damageIncrease)
         }else {
-            this.actionManager.damage.addCost(splittermond.spellEnhancement.damage.damageIncrease)
+            this.actionManager.damage.addDamage(splittermond.spellEnhancement.damage.damageIncrease)
         }
         this.#alterCheckState("damage");
     }
@@ -91,9 +92,9 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
     spellEnhancementUpdate() {
         if(this.degreeOfSuccessManager.isChecked("spellEnhancement")){
-            this.actionManager.focus.subtractCost(this.spellEnhancementCosts);
+            this.actionManager.focus.subtractCost(this.spellReference.getItem().enhancementCosts);
         }else {
-            this.actionManager.focus.addCost(this.spellEnhancementCosts);
+            this.actionManager.focus.addCost(this.spellReference.getItem().enhancementCosts);
         }
         this.#alterCheckState("spellEnhancement");
     }
