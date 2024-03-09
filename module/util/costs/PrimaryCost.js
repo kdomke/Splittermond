@@ -6,12 +6,12 @@ const fields = foundry.data.fields;
  * Represents the initial tax on an actor's health or focus pool.
  * Must not be negative
  *
- * @extends {foundry.abstract.DataModel<BaseCost>}
+ * @extends {foundry.abstract.DataModel<PrimaryCost>}
  * @property {number} _nonConsumed  the non-consumed portion (that is exhausted or channeled minus consumed) of the costs
  * @property {number} _consumed the exclusive consumed portion of the costs
  * @property {boolean} _isChanneled whether these costs represent channeled costs
  */
-export class BaseCost extends foundry.abstract.DataModel {
+export class PrimaryCost extends foundry.abstract.DataModel {
     static defineSchema() {
         return {
             _nonConsumed: new fields.NumberField({
@@ -28,21 +28,10 @@ export class BaseCost extends foundry.abstract.DataModel {
 
     static parse(costString) {
         const parsedCost = parseCostString(costString);
-        return new BaseCost.fromCost(parsedCost);
+        return new PrimaryCost.fromCost(parsedCost);
     }
 
-    /**
-     * @param {Cost} cost
-     * @return {BaseCost}
-     */
-    static fromCost(cost) {
-        return new BaseCost({
-            _nonConsumed: cost.nonConsumed,
-            _consumed: cost._consumed,
-            _isChanneled: cost.isChanneled,
-            _strict: cost.strict
-        });
-    }
+
 
     get isChanneled() {
         return this._isChanneled;
@@ -69,23 +58,24 @@ export class BaseCost extends foundry.abstract.DataModel {
     }
 
     /**
-     * @param {Cost} costs
+     * @param {CostModifier} costs
+     * @return {PrimaryCost}
      */
     add(costs) {
-        if ((costs.strict) && this._isChanneled !== costs.isChanneled) {
-            return new this.constructor({_nonConsumed: this._nonConsumed, _consumed: this._consumed, _isChanneled: this._isChanneled});
-        }
-        const rawConsumed = this._consumed += costs._consumed;
+        const modifiyNonConsumed = costs.getNonConsumed(this);
+        const modifiyConsumed = costs.getConsumed(this);
+        const rawConsumed = this._consumed + modifiyConsumed;
         const remainder = rawConsumed < 0 ? rawConsumed : 0; //overflow of consumed costs for non consumed costs
         const consumed = Math.max(rawConsumed, 0);
 
-        const rawNonConsumed = this._nonConsumed += costs.nonConsumed + remainder;
+        const rawNonConsumed = this._nonConsumed + modifiyNonConsumed + remainder;
         const nonConsumed = Math.max(rawNonConsumed, 0); //we don't store negative cost values.
         return new this.constructor({_nonConsumed: nonConsumed, _consumed: consumed, _isChanneled: this._isChanneled});
     }
 
     /**
-     * @param {Cost} costs
+     * @param {CostModifier} costs
+     * @return {PrimaryCost}
      */
     subtract(costs) {
         return this.add(costs.negate());
@@ -99,6 +89,7 @@ export class BaseCost extends foundry.abstract.DataModel {
     }
 
     /**
+     * alias for render
      * @override
      * @return {string}
      */

@@ -1,8 +1,12 @@
 import {parseCostString} from "./costParser.js";
 
 /**
- * @typedef {{spellCostReduction: SpellCostReductionManager, spellEnhancedCostReduction: SpellCostReductionManager}} SpellCostReductionManagement
- * @Template T extends object;
+ * @typedef {object} SpellCostReductionManagement
+ * @property {SpellCostReductionManager} spellCostReduction
+ * @property {SpellCostReductionManager} spellEnhancedCostReduction
+ */
+/**
+ * @template {object} T
  * @param {T} data
  * @return {T & SpellCostReductionManagement}
  */
@@ -19,7 +23,7 @@ class SpellCostReductionManager {
     }
 
     /** @return {SpellCostModifiers} */
-    get modifiers(){
+    get modifiers() {
         return this.modifiersMap;
     }
 
@@ -46,14 +50,14 @@ class SpellCostReductionManager {
             group = skill;
         }
 
-        this.modifiersMap.put(parseCostString(modifierValue), group, type);
+        this.modifiersMap.put(parseCostString(modifierValue).asModifier(), group, type);
     }
 
     /**
      * convenience method for adding retrieving a modifier without having to get the map first
      * @param skill {string}
      * @param type {string}
-     * @return {Cost[]}
+     * @return {ModificationCost[]}
      */
     getCostModifiers(skill, type) {
         return this.modifiersMap.get(skill, type);
@@ -79,9 +83,9 @@ class SpellCostModifiers {
         const formattedType = type ? type.toLowerCase().trim() : null;
 
         const groupAndTypeSpecificReductions = this.#internalGet(formattedGroup, formattedType)
-        const groupSpecificReductions = formattedGroup ? this.#internalGet(null,formattedType) : [];
+        const groupSpecificReductions = formattedGroup ? this.#internalGet(null, formattedType) : [];
         const typeSpecificReductions = formattedType ? this.#internalGet(formattedGroup, null) : [];
-        const globalReductions = formattedType && formattedGroup ? this.#internalGet(null,null): [];
+        const globalReductions = formattedType && formattedGroup ? this.#internalGet(null, null) : [];
         return [
             ...groupAndTypeSpecificReductions,
             ...groupSpecificReductions,
@@ -90,17 +94,17 @@ class SpellCostModifiers {
         ];
     }
 
-    /** @returns Cost[] */
-    #internalGet(group, type){
+    /** @returns ModificationCost[] */
+    #internalGet(group, type) {
         return this.backingMap.get(this.#getMapKey(group, type)) ?? [];
     }
 
     /**
-     * @param {Cost} cost
+     * @param {ModificationCost} cost
      * @param {string|null} type the type of spell this cost modifier is for
      * @param {string|null} group the skill selector for this cost modifier
      */
-    put(cost, group= null, type= null) {
+    put(cost, group = null, type = null) {
         const mapKey = this.#getMapKey(group, type);
         if (this.backingMap.get(mapKey) === undefined) {
             this.backingMap.set(mapKey, []);

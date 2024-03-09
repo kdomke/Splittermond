@@ -79,28 +79,28 @@ describe("Spell cost calculation with reductions", () => {
     };
 
     it("should reduce the cost of a spell", () => {
-        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true));
+        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
         const spellData = {...baseSpellData,costs : "K2V2"};
         const reducedCosts = calculateReducedSpellCosts(spellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     })
 
     it ("should apply reductions if spell type is not set", () => {
-        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true));
+        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
         const spellData = {...baseSpellData, spellType: ""};
         const reducedCosts = calculateReducedSpellCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     });
 
     it ("should apply reductions if skill is not set", () => {
-        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true));
+        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
         const spellData = {...baseSpellData, skill: ""};
         const reducedCosts = calculateReducedSpellCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     });
 
     it("should reduce the enhanced cost of a spell", () => {
-        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true));
+        const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
         baseSpellData.enhancementCosts = "1EG/+K2V2";
         const reducedCosts = calculateReducedEnhancementCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
@@ -108,7 +108,7 @@ describe("Spell cost calculation with reductions", () => {
     [["cost reduction", calculateReducedEnhancementCosts], ["enhancement reduction", calculateReducedSpellCosts]].forEach(
         ([title, calculationFunction]) => {
             it(`${title} should allow increasing costs`, () => {
-                const reductionSpellCostManager = mockReductionManager(new Cost(-1, -1, false));
+                const reductionSpellCostManager = mockReductionManager(new Cost(-1, -1, false).asModifier());
                 baseSpellData.costs = "K2V2";
                 const reducedCosts = calculationFunction(baseSpellData, reductionSpellCostManager);
                 expect(reducedCosts).to.equal("K4V3");
@@ -116,8 +116,8 @@ describe("Spell cost calculation with reductions", () => {
 
             it(`${title} should apply multiple reductions`, () => {
                 const reductionSpellCostManager = mockReductionManager(
-                    new Cost(-1, -1, false),
-                    new Cost(2, 2, true)
+                    new Cost(-1, -1, false).asModifier(),
+                    new Cost(2, 2, true).asModifier()
                 );
                 baseSpellData.costs = "K2V2";
                 const reducedCosts = calculationFunction(baseSpellData, reductionSpellCostManager);
@@ -136,9 +136,9 @@ describe('Spell cost calculation reduction selection', () => {
     };
     [reductionManagement.spellCostReduction, reductionManagement.spellEnhancedCostReduction].forEach(
         reductionManager => {
-            reductionManager.modifiers.put(new Cost(1, 1, true), "deathmagic", "conjuration");
-            reductionManager.modifiers.put(new Cost(2, 2, false), "lightmagic", "corporal");
-            reductionManager.modifiers.put(new Cost(3, 3, false), "lightmagic", "conjuration");
+            reductionManager.modifiers.put(new Cost(1, 1, true).asModifier(), "deathmagic", "conjuration");
+            reductionManager.modifiers.put(new Cost(2, 2, false).asModifier(), "lightmagic", "corporal");
+            reductionManager.modifiers.put(new Cost(3, 3, false).asModifier(), "lightmagic", "conjuration");
         });
 
     it("cost Reduction should apply the reduction for the skill and type", () => {

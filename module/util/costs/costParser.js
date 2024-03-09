@@ -22,8 +22,12 @@ export function parseCostString(cost,asStrict=false) {
     }
     const isNegative = costDataRaw && costDataRaw[1] === "-";
     const isChanneled = costDataRaw[2] === "k";
-    const costs = new Cost(rawNonConsumed - rawConsumed, rawConsumed, isChanneled, asStrict);
-    return isNegative ? costs.negate() : costs;
+    const sign = isNegative ? -1 : 1;
+    return new Cost(
+        sign*(rawNonConsumed - rawConsumed),
+        sign*rawConsumed,
+        isChanneled,
+        asStrict);
 }
 
 /** @return {string} */

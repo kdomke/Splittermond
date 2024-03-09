@@ -1,6 +1,6 @@
 import {parseCostString} from "./costParser.js";
 import {Cost} from "./Cost.js";
-import {BaseCost} from "./BaseCost.js";
+import {PrimaryCost} from "./PrimaryCost.js";
 
 /**
  * @param {SplittermondSpellData} spellData
@@ -9,7 +9,7 @@ import {BaseCost} from "./BaseCost.js";
  */
 export function calculateReducedSpellCosts(spellData, spellCostReductionManager) {
     const reductions = getApplicableReductions(spellData, spellCostReductionManager);
-    const parsedCosts = BaseCost.fromCost(parseCostString(spellData.costs));
+    const parsedCosts = (parseCostString(spellData.costs)).asPrimaryCost();
     const reducedCosts = applyReductions(parsedCosts, reductions);
     return ensureMinimumCosts(reducedCosts).render();
 }
@@ -21,14 +21,14 @@ export function calculateReducedSpellCosts(spellData, spellCostReductionManager)
  */
 export function calculateReducedEnhancementCosts(spellData, spellCostReductionManager) {
     const reductions = getApplicableReductions(spellData, spellCostReductionManager);
-    const parsedCosts = parseCostString(spellData.enhancementCosts);
+    const parsedCosts = parseCostString(spellData.enhancementCosts).asPrimaryCost();
     return applyReductions(parsedCosts, reductions).render()
 }
 
 /**
  * @param {SplittermondSpellData} spellData
  * @param {SpellCostReductionManager}spellCostReductionManager
- * @return {Cost[]}
+ * @return {CostModifier[]}
  */
 function getApplicableReductions(spellData, spellCostReductionManager) {
     let skillId = spellData.skill?.trim().toLowerCase() ?? null;
@@ -39,18 +39,21 @@ function getApplicableReductions(spellData, spellCostReductionManager) {
 }
 
 /**
- * @param {BaseCost} costs
- * @param {Cost[]} reductions
- * @return {Cost}
+ * @param {PrimaryCost} costs
+ * @param {CostModifier[]} reductions
+ * @return {PrimaryCost}
  */
 function applyReductions(costs, reductions) {
-    return reductions.reduce((costs, reduction) => costs.subtract(reduction), costs);
+    const initial = new Cost(0,0,false).asModifier();
+    const consolidatedReductions = reductions.reduce(
+        (costs,reduction) => costs.add(reduction), initial);
+    return costs.subtract(consolidatedReductions)
 }
 
 /**
- * @param {BaseCost} cost
- * @return {BaseCost}
+ * @param {PrimaryCost} cost
+ * @return {PrimaryCost}
  */
 function ensureMinimumCosts(cost) {
-    return cost.isZero() ? cost.add(new Cost(1, 0, false)) : cost;
+    return cost.isZero() ? cost.add(new Cost(1, 0, false).asModifier()) : cost;
 }

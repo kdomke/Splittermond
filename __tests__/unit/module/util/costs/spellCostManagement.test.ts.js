@@ -21,38 +21,38 @@ describe("Spell cost Management addition of reductions", () => {
         it(`should be able to add a global cost modifier for ${title}`, () => {
             reductionManager.addCostModifier("foreduction", "K2V1", null);
             const reductions = reductionManager.getCostModifiers("deathmagic", "conjuration");
-            expect(reductions).to.deep.contain(new Cost(1, 1, true));
+            expect(reductions).to.deep.contain(new Cost(1, 1, true).asModifier());
         });
 
         it(`should be able to add a skill specific cost modifier for ${title}`, () => {
             reductionManager.addCostModifier("foreduction.deathmagic", "4V2", "deathmagic");
             const reductions = reductionManager.getCostModifiers("deathmagic", "conjuration");
-            expect(reductions).to.deep.contain(new Cost(2, 2, false));
+            expect(reductions).to.deep.contain(new Cost(2, 2, false).asModifier());
         });
 
         it(`should be able to add a skill & type specific cost modifier for ${title}`, () => {
             reductionManager.addCostModifier("foreduction.deathmagic.conjuration", "6V3", "deathmagic");
             const reductions = reductionManager.getCostModifiers("deathmagic", "conjuration");
-            expect(reductions).to.deep.contain(new Cost(3, 3, false));
+            expect(reductions).to.deep.contain(new Cost(3, 3, false).asModifier());
         });
 
         it(`should be use the skill as group if no group is given for ${title}`, () => {
             reductionManager.addCostModifier("foreduction", "8V4", "deathmagic");
             const reductions = reductionManager.getCostModifiers("deathmagic", "conjuration");
-            expect(reductions).to.deep.contain(new Cost(4, 4, false));
+            expect(reductions).to.deep.contain(new Cost(4, 4, false).asModifier());
         });
     });
 });
 
 describe("Spell cost Management selection of reductions", () => {
-    const deathmagicConjurationReduction = new Cost(1, 1, true);
-    const deathmagicSicknessReduction = new Cost(2, 2, false);
-    const lightmagicConjurationReduction = new Cost(3, 3, true);
-    const deathmagicReduction = new Cost(4, 4, false);
-    const lightmagicReduction = new Cost(5, 5, true);
-    const conjurationReduction = new Cost(6, 6, false);
-    const sicknessReduction = new Cost(7, 7, true);
-    const globalReduction = new Cost(8, 8, false);
+    const deathmagicConjurationReduction = new Cost(1, 1, true).asModifier();
+    const deathmagicSicknessReduction = new Cost(2, 2, false).asModifier();
+    const lightmagicConjurationReduction = new Cost(3, 3, true).asModifier();
+    const deathmagicReduction = new Cost(4, 4, false).asModifier();
+    const lightmagicReduction = new Cost(5, 5, true).asModifier();
+    const conjurationReduction = new Cost(6, 6, false).asModifier();
+    const sicknessReduction = new Cost(7, 7, true).asModifier();
+    const globalReduction = new Cost(8, 8, false).asModifier();
     const management = initializeSpellCostManagement({});
     [management.spellCostReduction, management.spellEnhancedCostReduction].forEach(
         reductionManager => {
