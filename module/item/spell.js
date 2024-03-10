@@ -68,7 +68,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get enoughFocus() {
-        let costData = parseCostString(this.costs);
+        let costData = parseCostString(this.costs).asPrimaryCost();
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
         return costTotal <= this.actor?.system.focus.available.value;
     }
