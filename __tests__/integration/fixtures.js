@@ -14,6 +14,14 @@ export function getSpell(test){
     return anySpell;
 }
 
+export function getActorWithItemOfType(test, itemType){
+    const actorWithItem = game.actors.find(actor => actor.items.find(item => item.type === itemType));
+    if(!actorWithItem){
+        test.skip();
+    }
+    return actorWithItem;
+}
+
 export function getUnlinkedToken(test){
    const anyToken = game.scenes.map(scene => scene.tokens)
        .flatMap(c => [...c.values()]).find(token => !token.actorLink)

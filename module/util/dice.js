@@ -2,6 +2,7 @@
  * @typedef {{total:number, getTooltip():Promise<string>, dice: [{total:number}]}} RollResultForSplittermond
  * @typedef {{
     difficulty: number
+    rollType: RollType
     succeeded: boolean,
     isFumble: boolean,
     isCrit: boolean,

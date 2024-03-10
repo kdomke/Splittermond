@@ -1,8 +1,8 @@
-import {getActor, getUnlinkedToken} from "./fixtures.js"
+import {getActor, getActorWithItemOfType} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
 import {chatFeatureApi} from "../../module/util/chat/chatActionGameApi.js";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
-import {AgentReference} from "../../module/data/references/AgentReference.js";
+import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
@@ -55,6 +55,61 @@ export function chatActionFeatureTest(context) {
         }
     });
 
+    describe("SpellRollMessage", () => {
+        it("actor should consume enhanced spell", async () => {
+            const actor = getActorWithItemOfType(this, "spell");
+            await actor.update({system:{focus:{channeled:{entries:[]}, exhausted:{value:0}, consumed: {value:0}}}});
+            const spell = actor.items.find(item => item.type === "spell");
+            const chatMessage = createSampleChatMessage(actor, spell);
+
+            await chatMessage.sendToChat()
+            const messageId = chatMessage.messageId;
+            await handleChatAction("spellEnhancementUpdate", messageId);
+            await handleChatAction("consumeCosts", messageId);
+
+            expect(actor.system.focus.exhausted.value +
+                actor.system.focus.consumed.value +
+                actor.system.focus.channeled.value).to.be.greaterThan(0);
+
+
+            await actor.update({system:{focus:{channeled:{entries:[]}, exhausted:{value:0}, consumed: {value:0}}}});
+            ChatMessage.deleteDocuments([messageId]);
+        })
+
+        /**
+         * @param {SplittermondActor} actor
+         * @param {SplittermondSpellItem} spell
+         * @return {SplittermondChatCard}
+         */
+        function createSampleChatMessage(actor, spell) {
+            /**@type {CheckReport}*/const checkReport = {
+                roll: {
+                    total: 35,
+                    dice: [{total: 18}],
+                    tooltip: "",
+                },
+                skill: {
+                    id: spell.skill.id,
+                    points: 6,
+                    attributes: {
+                        [spell.skill.attribute1.id]: spell.skill.attribute1.value,
+                        [spell.skill.attribute2.id]: spell.skill.attribute2.value,
+                    },
+                },
+                modifierElements: ["3"],
+                rollType: "standard",
+                succeeded: true,
+                degreeOfSuccess: 5,
+                difficulty: 20,
+                isFumble: false,
+                isCrit: true,
+                degreeOfSuccessMessage: "mega success",
+            };
+            return SplittermondChatCard.create(
+                actor, SplittermondSpellRollMessage.createRollMessage(spell, checkReport)
+            );
+        }
+    });
 
 
     describe("chat feature API tests", () => {
@@ -120,7 +175,6 @@ export function chatActionFeatureTest(context) {
                 .to.deep.equal(sampleMessageContent.flags.splittermond.chatCard);
             ChatMessage.deleteDocuments([message.id]);
         });
-
 
 
         it("should deliver a template renderer", async () => {

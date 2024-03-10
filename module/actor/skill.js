@@ -117,6 +117,7 @@ export default class Skill extends Modifiable {
          * @typedef {Omit<GenericRollEvaluation, "roll">} CheckReport
          * @property {{id:string, attributes:Record<string,number>, points:number}} skill
          * @property {{total:number, dice: [{total:number}], tooltip: string}} roll
+         * @property {string[]} modifierElements
          */
         if (options.type === "spell") {
             return/**@type CheckReport*/ {
