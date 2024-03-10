@@ -1,4 +1,5 @@
 import {splittermond} from "../config.js";
+import {SplittermondDataModel} from "./SplittermondDataModel.js";
 
 const fields = foundry.data.fields;
 
@@ -23,7 +24,7 @@ const fields = foundry.data.fields;
  * @property {string} features
  * @property {Record<SpellDegreesOfSuccessOptions,boolean>} degreeOfSuccessOptions
  */
-export class SplittermondSpellData extends foundry.abstract.DataModel {
+export class SplittermondSpellData extends SplittermondDataModel{
     static defineSchema() {
         return {
             availableIn: new fields.StringField({required: true, nullable: false, initial: ""}),

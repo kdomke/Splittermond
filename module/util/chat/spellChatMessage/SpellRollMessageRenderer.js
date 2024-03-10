@@ -2,16 +2,15 @@ import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
 import {chatFeatureApi} from "../chatActionGameApi.js";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";
-
-const fields = foundry.data.fields;
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 
 /**
- * @extends {foundry.abstract.DataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
+ * @extends {SplittermondDataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
  * @property {CheckReport} checkReport
  * @property {string} messageTitle
  * @property {string} spellDescription
  */
-export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel {
+export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
 
     static defineSchema() {
         return {

@@ -1,15 +1,14 @@
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
-
-const fields = foundry.data.fields;
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 
 /**
- * @extends {foundry.abstract.DataModel<SpellMessageDegreeOfSuccessField, SpellMessageDegreesOfSuccessManager>}
+ * @extends {SplittermondDataModel<SpellMessageDegreeOfSuccessField, SpellMessageDegreesOfSuccessManager>}
  * @property {number} degreeOfSuccessCosts the amount of degrees of success this option costs
  * @property {boolean} checked whether the user has elected to use this option
  * @property {boolean} used whether the effect of this option has been used in an action.
  * @property {boolean} isDegreeOfSuccessOption whether the spell defines this as a degree of success option
  */
-export class SpellMessageDegreeOfSuccessField extends foundry.abstract.DataModel {
+export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
     static defineSchema() {
         return {
             degreeOfSuccessCosts: new fields.NumberField({required: true, blank: false, nullable: false}),

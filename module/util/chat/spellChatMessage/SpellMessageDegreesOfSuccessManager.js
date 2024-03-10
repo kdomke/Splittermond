@@ -1,8 +1,7 @@
 import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessField.js";
 import {splittermond} from "../../../config.js";
 import {parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser.js";
-
-const fields = foundry.data.fields
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 
 /**
  * @typedef ManagedSpellOptions
@@ -10,10 +9,10 @@ const fields = foundry.data.fields
  */
 
 /**
- * @extends {foundry.abstract.DataModel<SpellMessageDegreesOfSuccessManager>}
+ * @extends {SplittermondDataModel<SpellMessageDegreesOfSuccessManager>}
  * @extends {Record<ManagedSpellOptions, SpellMessageDegreeOfSuccessField>}
  */
-export class SpellMessageDegreesOfSuccessManager extends foundry.abstract.DataModel {
+export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
     /**
      * @param {SplittermondSpellData} spell
      * @param {CheckReport} checkReport

@@ -1,4 +1,5 @@
 import {PrimaryCost} from "./PrimaryCost.js";
+import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.js";
 
 /**
  * Represents a tax on an actor's health or focus pool.
@@ -58,7 +59,7 @@ export class Cost {
     }
 }
 
-export class CostModifier extends foundry.abstract.DataModel {
+export class CostModifier extends SplittermondDataModel{
     static defineSchema() {
         return {
             _channeled: new foundry.data.fields.NumberField({required: true, nullable: false}),

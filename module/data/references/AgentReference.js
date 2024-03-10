@@ -1,6 +1,6 @@
 import {referencesApi} from "./referencesApi.js";
+import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
 
-const fields = foundry.data.fields
 
 /**
  * A reference to a Token object, which is used to represent a specific Token within a ChatMessage.
@@ -9,7 +9,7 @@ const fields = foundry.data.fields
  * @property {string|null} sceneId
  * @property {"actor"|"token"} type
  */
-export class AgentReference extends foundry.abstract.DataModel {
+export class AgentReference extends SplittermondDataModel{
     static defineSchema() {
         return {
             id: new fields.StringField({required: true, blank: false, nullable: false}),

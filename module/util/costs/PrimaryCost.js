@@ -1,6 +1,6 @@
 import {parseCostString} from "./costParser.js";
+import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.js";
 
-const fields = foundry.data.fields;
 
 /**
  * Represents the initial tax on an actor's health or focus pool.
@@ -11,7 +11,7 @@ const fields = foundry.data.fields;
  * @property {number} _consumed the exclusive consumed portion of the costs
  * @property {boolean} _isChanneled whether these costs represent channeled costs
  */
-export class PrimaryCost extends foundry.abstract.DataModel {
+export class PrimaryCost extends SplittermondDataModel{
     static defineSchema() {
         return {
             _nonConsumed: new fields.NumberField({

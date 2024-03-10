@@ -3,18 +3,17 @@ import {SpellMessageDegreesOfSuccessManager} from "../util/chat/spellChatMessage
 import {SpellMessageActionsManager} from "../util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {SplittermondSpellRollMessageRenderer} from "../util/chat/spellChatMessage/SpellRollMessageRenderer.js";
 import {ItemReference} from "./references/ItemReference.js";
+import {fields, SplittermondDataModel} from "./SplittermondDataModel.js";
 
-const fields = foundry.data.fields;
 
 /**
- * @extends {foundry.abstract.DataModel<SplittermondSpellRollDataModel>}
  * @property {Readonly<string>} constructorKey
  * @property {SplittermondSpellRollMessageRenderer} renderer
  * @property {SpellMessageDegreesOfSuccessManager} degreeOfSuccessManager
  * @property {SpellMessageActionsManager} actionManager
  * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
-export class SplittermondSpellRollDataModel extends foundry.abstract.DataModel {
+export class SplittermondSpellRollDataModel extends SplittermondDataModel{
     static defineSchema() {
         return {
             spellReference: new fields.EmbeddedDataField(ItemReference, {required: true, blank: false, nullable: false}),

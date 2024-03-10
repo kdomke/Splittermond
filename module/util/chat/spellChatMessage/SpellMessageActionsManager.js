@@ -4,11 +4,10 @@ import {AgentReference} from "../../../data/references/AgentReference.js";
 import {DamageRoll} from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
-
-const fields = foundry.data.fields;
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 
 /**
- * @extends {foundry.abstract.DataModel<SpellMessageActionsManager,never>}
+ * @extends {SplittermondDataModel<SpellMessageActionsManager,never>}
  * @property {FocusAction} focus
  * @property {TickAction} ticks
  * @property {DamageAction} damage
@@ -17,7 +16,7 @@ const fields = foundry.data.fields;
  * @property {AgentReference} casterReference
  * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
-export class SpellMessageActionsManager extends foundry.abstract.DataModel {
+export class SpellMessageActionsManager extends SplittermondDataModel {
 
     /**
      * @param {SplittermondSpellItem} spell
@@ -108,7 +107,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
  * @property {boolean} used
  * @property {boolean} available
  */
-class MessageAction extends foundry.abstract.DataModel {
+class MessageAction extends SplittermondDataModel{
     static defineSchema() {
         return {
             used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),

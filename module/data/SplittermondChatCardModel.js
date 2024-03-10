@@ -1,12 +1,11 @@
-
-const fields = foundry.data.fields;
+import {fields, SplittermondDataModel} from "./SplittermondDataModel.js";
 
 /**
  * @property {string} messageId
  * @property {object} speaker
- * @property {SplittermondChatMessage & foundry.abstract.DataModel} message
+ * @property {SplittermondChatMessage & SplittermondDataModel} message
  */
-export class SplittermondChatCardModel extends  foundry.abstract.DataModel {
+export class SplittermondChatCardModel extends SplittermondDataModel{
     static defineSchema() {
         return {
             messageId: new fields.StringField({required: false, blank: false}),
