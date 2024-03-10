@@ -25,7 +25,6 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             renderer: {
                 messageTitle: spell.name,
                 spellDescription: spell.description,
-                spellEnhancementDescription: spell.enhancementDescription,
                 checkReport: checkReport
             },
             actionManager: SpellMessageActionsManager.initialize(spell, checkReport),

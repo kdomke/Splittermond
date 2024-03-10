@@ -9,7 +9,6 @@ const fields = foundry.data.fields;
  * @extends {foundry.abstract.DataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
  * @property {CheckReport} checkReport
  * @property {string} messageTitle
- * @property {string} spellEnhancementDescription
  * @property {string} spellDescription
  */
 export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataModel {
@@ -19,7 +18,6 @@ export class SplittermondSpellRollMessageRenderer extends foundry.abstract.DataM
             checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
             messageTitle: new fields.StringField({required: true, blank: false, nullable: false}),
             spellDescription: new fields.StringField({required: true, blank: true, nullable: true}),
-            spellEnhancementDescription: new fields.StringField({required:true, blank:false, nullable:false})
         }
     }
 
@@ -145,7 +143,7 @@ function renderSpellEnhancementOption(spellRollMessage,key) {
     }
     return {
         ...commonConfig,
-        text: `${spellRollMessage.spellEnhancementCosts}: ${spellRollMessage.renderer.spellEnhancementDescription}`
+        text: `${spellRollMessage.spellReference.getItem().enhancementCosts}: ${spellRollMessage.spellReference.getItem().enhancementDescription}`
     };
 }
 

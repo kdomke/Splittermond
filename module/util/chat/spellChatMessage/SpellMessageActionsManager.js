@@ -35,8 +35,6 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
             },
             ticks: {original: 3, adjusted: 3},
             damage: {
-                original: spell.system.damage ? spell.system.damage : "0",
-                adjusted: spell.system.damage ? spell.system.damage : "0",
                 available: !!spell.system.damage && spell.system.damage !== "0" && checkReport.succeeded,
             },
             splinterPoint: UseSplinterpointsAction.initialize(spell.actor, checkReport),
@@ -72,8 +70,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     applyDamage() {
         this.damage.updateSource({used: true});
-        const damage = this.damage.adjusted;
-        Dice.damage(this.damage.adjusted, "", this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
+        return Dice.damage(this.damage.cost, "", this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
     }
 
     advanceToken() {
@@ -244,7 +241,7 @@ class DamageAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            adjusted: new fields.NumberField({required: true, blank: false, nullable: false}),
+            adjusted: new fields.NumberField({required: true, blank: false, nullable: false, initial:0}),
         }
     }
 

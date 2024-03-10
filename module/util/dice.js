@@ -115,11 +115,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
         type: CONST.CHAT_MESSAGE_TYPES.ROLL
     };
 
-    ChatMessage.create(chatData);
-
-
-    //roll.toMessage(chatData)
-
+    return ChatMessage.create(chatData);
 }
 
 export function riskModifier() {

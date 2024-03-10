@@ -13,6 +13,9 @@ import {identity} from "../../../../foundryMocks.js";
 import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
+import SplittermondActor from "../../../../../../module/actor/actor.js";
+import {damage} from "../../../../../../module/util/dice.js";
+import {utilGameApi} from "../../../../../../module/util/utilGameApi.js";
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
@@ -186,15 +189,19 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should call actor consume focus", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
+        underTest.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
+        const stubbedActor = sinon.createStubInstance(SplittermondActor);
+        stubbedActor.consumeCost = sinon.spy();
+        sinon.stub(referencesApi, "getActor").returns(stubbedActor);
         sinon.stub(referencesApi, "getItem").returns({
             name: "spell",
-            getCostsForFinishedRoll: () => new Cost(1, 0, 0).asPrimaryCost(),
+            getCostsForFinishedRoll: () => new Cost(1, 1, true).asPrimaryCost(),
         });
 
         underTest.consumeCosts();
 
-        expect(referencesApi.getActor.called).to.be.true;
+        expect(stubbedActor.consumeCost.called).to.be.true;
+        expect(stubbedActor.consumeCost.firstCall.args).to.contain("K2V1")
     });
 
     it("should disable focus degree of success options", () => {
@@ -215,14 +222,18 @@ describe("SplittermondSpellRollMessage actions", () => {
         expect(underTest.degreeOfSuccessManager.isUsed("spellEnhancement")).to.be.true;
     });
 
-    it("should disable damage degree of success options", () => {
+    it("should disable damage degree of success options", async () => {
         const underTest = createTestRollMessage();
-        sinon.stub(referencesApi, "getItem").returns({name: "spell"});
+        const mock = sinon.createStubInstance(SplittermondSpellItem)
+        sinon.stub(mock,"damage").get(() => "1W6");
+        sinon.stub(utilGameApi, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
+        sinon.stub(referencesApi, "getItem").returns(mock);
 
-        underTest.applyDamage();
+        await underTest.applyDamage();
 
         expect(underTest.actionManager.damage.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
+        expect(utilGameApi.roll.firstCall.args[0]).to.equal("1d6+0");
     });
 
     it("should call ticks with value on the actor", () => {
@@ -235,7 +246,7 @@ describe("SplittermondSpellRollMessage actions", () => {
         underTest.advanceToken();
 
         expect(referencesApi.getActor.called).to.be.true;
-        expect(addTicksMock.called).to.be.true;
+        expect(addTicksMock.firstCall.args).to.contain(4);
     });
 
     it("should disable token advancement degree of success options", () => {
