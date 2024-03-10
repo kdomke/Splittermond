@@ -1180,7 +1180,7 @@ export default class SplittermondActor extends Actor {
         return;
     }
 
-    async addTicks(value = 3, message = "") {
+    async addTicks(value = 3, message = "", askPlayer=true) {
         const combat = game.combat;
         value = parseInt(value);
         if (!value) return;
@@ -1190,7 +1190,8 @@ export default class SplittermondActor extends Actor {
         let combatant = combat.combatants.find((c) => c.actor === this);
 
         if (!combatant) return;
-
+        let nTicks = value;
+        if(askPlayer){
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: this.name + " - Ticks",
@@ -1207,7 +1208,8 @@ export default class SplittermondActor extends Actor {
             dialog.render(true);
         });
 
-        let nTicks = await p;
+        nTicks = await p;
+        }
 
         let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
 

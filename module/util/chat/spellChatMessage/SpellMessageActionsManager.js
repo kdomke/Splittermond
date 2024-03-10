@@ -75,7 +75,7 @@ export class SpellMessageActionsManager extends foundry.abstract.DataModel {
 
     advanceToken() {
         this.ticks.updateSource({used: true});
-        this.casterReference.getAgent().addTicks(this.ticks.adjusted);//we don't wait for the promise, because we're done.
+        this.casterReference.getAgent().addTicks(this.ticks.adjusted,"", false);//we don't wait for the promise, because we're done.
     }
 
     consumeFocus() {
