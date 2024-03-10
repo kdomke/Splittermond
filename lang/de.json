@@ -34,6 +34,7 @@
   },
   "splittermond": {
     "chatCard": {
+      "noGMConnected": "Aktion kann nicht ausgeführt werden, da kein berechtigter Nutzer (Spielleiter) verbunden ist.",
       "messageNotFound": "Die zu ändernde Nachricht wurde nicht im Chat Log gefunden.",
       "actionNotFound": "Die gewählte Aktion konnte nicht ausgeführt werden, da der Empfänger sie nicht kennt. Bitte erstellen Sie einen Fehlerbericht."
     },
