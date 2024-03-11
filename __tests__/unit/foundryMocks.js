@@ -52,7 +52,7 @@ global.foundry = {
     },
     abstract: {
         DataModel: class {
-            constructor(data, context) {
+            constructor(data, context={}) {
                 for (const key in data) {
                     Object.defineProperty(this, key, {
                         value: data[key],
@@ -69,8 +69,8 @@ global.foundry = {
                 }
             }
 
-            toObject(input) {
-                JSON.parse(JSON.stringify(input));
+            toObject() {
+                JSON.parse(JSON.stringify(this));
             }
         }
     }

@@ -4,6 +4,7 @@
  * @property {U}
  * @property {function(new:T,data: T,...args)} constructor
  * @property {updateSource: (data: Partial<T>) => void}
+ * @property {toObject: () => object}
  * @class
  */
 const SplittermondDataModel = class extends foundry.abstract.DataModel {}

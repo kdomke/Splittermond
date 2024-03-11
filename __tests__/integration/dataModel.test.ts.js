@@ -2,6 +2,7 @@ import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
 import {AgentReference} from "../../module/data/references/AgentReference.js";
 import {referencesApi} from "../../module/data/references/referencesApi.js";
 import {ItemReference} from "../../module/data/references/ItemReference.js";
+import {OnAncestorReference} from "../../module/data/references/OnAncestorReference.js";
 
 export function dataModelTest(context) {
     const {describe, it, expect} = context;
@@ -42,7 +43,13 @@ export function dataModelTest(context) {
             const Test = class extends foundry.abstract.DataModel {
                 static defineSchema() {
                     return {
-                        number: new foundry.data.fields.NumberField({required: true, blank: false, validate: (value) => {if(value <= 0) throw new DataModelValidationError()}})
+                        number: new foundry.data.fields.NumberField({
+                            required: true,
+                            blank: false,
+                            validate: (value) => {
+                                if (value <= 0) throw new DataModelValidationError()
+                            }
+                        })
                     }
                 }
             }
@@ -56,6 +63,14 @@ export function dataModelTest(context) {
 
         it("honors blank option", () => {
             expect(() => new TestChild({name: " "})).to.throw();
+        });
+
+        it("converts serializable members to objects", () => {
+            const child = new TestChild({name: "test"});
+            const testParent = new TestParent({child});
+            const objectified = testParent.toObject();
+
+            expect(objectified).to.deep.equal({child});//don't ask me why an embedded data type is not serializable
         });
     });
 
@@ -90,15 +105,15 @@ export function dataModelTest(context) {
     });
 
     describe("ItemReference", () => {
-      it ("should find an item in a top level collection", () => {
+        it("should find an item in a top level collection", () => {
             const /**@type SplittermondSpellItem */ sampleItem = getSpell(this);
 
             const underTest = ItemReference.initialize(sampleItem);
 
             expect(underTest.getItem()).to.equal(sampleItem);
-      });
+        });
 
-      it ("should find an item in an actor's collection", async () => {
+        it("should find an item in an actor's collection", async () => {
             const /**@type SplittermondSpellItem */ sampleItem = getSpell(this);
             const sampleActor = getActor(this);
             const itemOnActor = await sampleActor.createEmbeddedDocuments("Item", [sampleItem]).then(a => a[0]);
@@ -106,8 +121,8 @@ export function dataModelTest(context) {
             const underTest = ItemReference.initialize(itemOnActor);
 
             expect(underTest.getItem()).to.equal(itemOnActor);
-            await sampleActor.deleteEmbeddedDocuments("Item",[itemOnActor.id])
-      });
+            await sampleActor.deleteEmbeddedDocuments("Item", [itemOnActor.id])
+        });
 
     });
 
@@ -137,5 +152,45 @@ export function dataModelTest(context) {
             expect(getActor().documentName).to.equal("Actor");
             expect(getUnlinkedToken().documentName).to.equal("Token");
         })
+    });
+
+    describe("OnAncestorReference", () => {
+        const TestChild = class extends foundry.abstract.DataModel {
+            static defineSchema() {
+                return {
+                    name: new foundry.data.fields.StringField({required: true, blank: false}),
+                    ref: new foundry.data.fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
+                }
+            }
+        };
+        const TestParent = class extends foundry.abstract.DataModel {
+            static defineSchema() {
+                return {
+                    child: new foundry.data.fields.EmbeddedDataField(TestChild, {required: true, blank: false}),
+                    value: new foundry.data.fields.StringField({required: true, blank: false}),
+                    id: new foundry.data.fields.StringField({required: true, blank: false}),
+                }
+            }
+        }
+
+        it("should return the value on the parent", () => {
+            const reference = OnAncestorReference.for(TestParent)
+                .identifiedBy("id", "1").references("value").toObject();
+
+            const child = new TestChild({name: "test", ref: reference}).toObject();
+            const parent = new TestParent({child, value: "I want to read this", id: "1"});
+
+            expect(parent.child.ref.get()).to.equal(parent.value);
+        });
+
+        it("should track changes on the references", () => {
+            const reference = OnAncestorReference.for(TestParent)
+                .identifiedBy("id", "1").references("value");
+            const parent = new TestParent({child: {name: "test", ref: reference}, value: "I want to read this", id: "1"});
+
+            parent.value = "I want to read this too";
+
+            expect(parent.child.ref.get()).to.equal(parent.value);
+        });
     });
 }
