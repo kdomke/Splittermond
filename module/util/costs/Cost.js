@@ -32,7 +32,6 @@ export class Cost {
             _nonConsumed: this.nonConsumed,
             _consumed: this._consumed,
             _isChanneled: this.isChanneled,
-            _strict: this.strict
         });
     }
 

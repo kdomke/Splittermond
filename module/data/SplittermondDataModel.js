@@ -3,8 +3,8 @@
  * @template {SplittermondDataModel} U
  * @property {U}
  * @property {function(new:T,data: T,...args)} constructor
- * @property {updateSource: (data: Partial<T>) => void}
- * @property {toObject: () => object}
+ * @property {(data: Partial<T>) => void} updateSource
+ * @property {() => object} toObject
  * @class
  */
 const SplittermondDataModel = class extends foundry.abstract.DataModel {}

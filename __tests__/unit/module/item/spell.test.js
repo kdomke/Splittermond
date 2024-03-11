@@ -118,6 +118,6 @@ describe("Spell item roll costs", () =>{
 
     it("should return degrees of success as costs if a roll is not successful", () => {
         const actual = stub.getCostsForFinishedRoll(-2, false);
-        expect(actual).to.deep.equal(new Cost(0, 2, false).asPrimaryCost());
+        expect(actual).to.deep.equal(new Cost(2, 0, false).asPrimaryCost());
     });
 })

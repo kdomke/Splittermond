@@ -5,6 +5,7 @@ import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -19,50 +20,55 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
      * @return {SplittermondSpellRollMessage}
      */
     static createRollMessage(spell, checkReport) {
+        const reportReference = OnAncestorReference
+            .for(SplittermondSpellRollMessage).identifiedBy("constructorKey", constructorRegistryKey)
+            .references("checkReport");
+        const spellReference = ItemReference.initialize(spell);
         return new SplittermondSpellRollMessage({
-            spellReference: ItemReference.initialize(spell),
-            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport),
+            checkReport: checkReport,
+            spellReference: spellReference.toObject(),
+            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport).toObject(),
             renderer: {
                 messageTitle: spell.name,
                 spellDescription: spell.description,
                 checkReport: checkReport
             },
-            actionManager: SpellMessageActionsManager.initialize(spell, checkReport),
+            actionManager: SpellMessageActionsManager.initialize(spellReference, reportReference).toObject(),
             constructorKey: constructorRegistryKey,
         });
     }
 
     castDurationUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("castDuration")){
+        if (this.degreeOfSuccessManager.isChecked("castDuration")) {
             this.actionManager.ticks.add(splittermond.spellEnhancement.castDuration.castDurationReduction)
-        }else {
+        } else {
             this.actionManager.ticks.subtract(splittermond.spellEnhancement.castDuration.castDurationReduction)
         }
         this.#alterCheckState("castDuration");
     }
 
     exhaustedFocusUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("exhaustedFocus")){
+        if (this.degreeOfSuccessManager.isChecked("exhaustedFocus")) {
             this.actionManager.focus.addCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
-        }else {
+        } else {
             this.actionManager.focus.subtractCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
         }
         this.#alterCheckState("exhaustedFocus");
     }
 
     channelizedFocusUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("channelizedFocus")){
+        if (this.degreeOfSuccessManager.isChecked("channelizedFocus")) {
             this.actionManager.focus.addCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
-        }else {
+        } else {
             this.actionManager.focus.subtractCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
         }
         this.#alterCheckState("channelizedFocus")
     }
 
     consumedFocusUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("consumedFocus")){
+        if (this.degreeOfSuccessManager.isChecked("consumedFocus")) {
             this.actionManager.focus.addCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
-        }else{
+        } else {
             this.actionManager.focus.subtractCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
         }
         this.#alterCheckState("consumedFocus")
@@ -73,9 +79,9 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     damageUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("damage")){
+        if (this.degreeOfSuccessManager.isChecked("damage")) {
             this.actionManager.damage.subtractDamage(splittermond.spellEnhancement.damage.damageIncrease)
-        }else {
+        } else {
             this.actionManager.damage.addDamage(splittermond.spellEnhancement.damage.damageIncrease)
         }
         this.#alterCheckState("damage");
@@ -90,9 +96,9 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
     }
 
     spellEnhancementUpdate() {
-        if(this.degreeOfSuccessManager.isChecked("spellEnhancement")){
+        if (this.degreeOfSuccessManager.isChecked("spellEnhancement")) {
             this.actionManager.focus.subtractCost(this.spellReference.getItem().enhancementCosts);
-        }else {
+        } else {
             this.actionManager.focus.addCost(this.spellReference.getItem().enhancementCosts);
         }
         this.#alterCheckState("spellEnhancement");
@@ -129,11 +135,12 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
         const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
         this.degreeOfSuccessManager.updateSource({totalDegreesOfSuccess: newCheckReport.degreeOfSuccess});
+        this.updateSource({checkReport: newCheckReport});
         this.renderer.updateSource({checkReport: newCheckReport});
     }
 
     rollFumble() {
-       this.actionManager.rollFumble();
+        this.actionManager.rollFumble();
     }
 
     get template() {

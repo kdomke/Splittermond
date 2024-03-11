@@ -8,10 +8,10 @@ import sinon from "sinon";
 describe("OnParentReference", () => {
     it("should return the value on the parent", () => {
         const model = createModel();
-        model.id = "1";
+        model.identifier = "1";
         model.target= "I want to read this";
         const reference = OnAncestorReference.for(model.constructor)
-            .identifiedBy("id", "1")
+            .identifiedBy("identifier", "1")
             .references("target");
         reference.parent = model;
         expect(reference.get()).to.equal("I want to read this");
@@ -19,10 +19,10 @@ describe("OnParentReference", () => {
 
     it("should return the value on the parent", () => {
         const model = createModel();
-        model.id = "1";
+        model.identifier = "1";
         model.target= "I want to read this";
         const reference = OnAncestorReference.for(model.constructor)
-            .identifiedBy("id","1")
+            .identifiedBy("identifier","1")
             .references("target");
         model.firstChild.child.reference = reference;
         reference.parent = model.firstChild.child;
@@ -35,10 +35,10 @@ describe("OnParentReference", () => {
 
     it("should throw an error if the parent does not exist", () => {
         const model = createModel();
-        model.id = "1";
+        model.identifier = "1";
         model.target= "I want to read this";
         const reference = OnAncestorReference.for(model.constructor)
-            .identifiedBy("id", model.id)
+            .identifiedBy("identifier", model.identifier)
             .references("target");
         model.firstChild.child.reference = reference
         model.firstChild.child.parent = null;
@@ -55,11 +55,23 @@ describe("OnParentReference", () => {
 
     it("should throw an error if reference is not defined during setup", () => {
         const model = createModel();
-        model.id= "target";
-        expect(() => OnAncestorReference.for(model).identifiedBy("id")
+        model.identifier= "target";
+        expect(() => OnAncestorReference.for(model).identifiedBy("identifier")
             .references("target")).to.throw(Error);
     });
 
+    it("should handle Ids other than 'identifier'", () => {
+        const model = new SplittermondDataModel({})
+        model.constructor.defineSchema = sinon.stub().returns({value: "", target:""});
+        model.target = "Look at me, I'm the ID now";
+        model.value = "Val"
+
+        const ref  =OnAncestorReference.for(model.constructor).identifiedBy("target", model.target)
+            .references("value")
+        ref.parent = model;
+
+        expect(ref.get()).to.equal(model.value);
+    });
 });
 
 function createModel() {
@@ -68,8 +80,8 @@ function createModel() {
     const firstChild = new SplittermondDataModel({value:"firstChild", child: grandchild })
     firstChild.constructor.defineSchema = sinon.stub().returns({value: "", child:""});
     const parent = new SplittermondDataModel({firstChild})
-    parent.constructor.defineSchema = sinon.stub().returns({value: "", child:"", id:"", target:""});
+    parent.constructor.defineSchema = sinon.stub().returns({value: "", child:"", identifier:"", target:""});
     grandchild.updateSource({parent: firstChild});
     firstChild.updateSource({parent: parent});
     return parent;
-};
+}

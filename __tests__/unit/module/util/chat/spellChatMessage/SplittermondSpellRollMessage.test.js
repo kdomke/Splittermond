@@ -14,7 +14,6 @@ import {referencesApi} from "../../../../../../module/data/references/references
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
-import {damage} from "../../../../../../module/util/dice.js";
 import {utilGameApi} from "../../../../../../module/util/utilGameApi.js";
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
@@ -188,7 +187,7 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should call actor consume focus", () => {
         const underTest = createTestRollMessage();
-        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        underTest.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         underTest.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
         const stubbedActor = sinon.createStubInstance(SplittermondActor);
         stubbedActor.consumeCost = sinon.spy();
@@ -206,11 +205,11 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should disable focus degree of success options", () => {
         const underTest = createTestRollMessage();
-        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        underTest.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         sinon.stub(referencesApi, "getActor").returns({consumeCost: sinon.spy()});
         sinon.stub(referencesApi, "getItem").returns({
             name: "spell",
-            getCostsForFinishedRoll: () => (new Cost(1, 0, 0).asPrimaryCost())
+            getCostsForFinishedRoll: () => (new Cost(1, 0, false).asPrimaryCost())
         });
 
         underTest.consumeCosts();
@@ -239,7 +238,7 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should call ticks with value on the actor", () => {
         const underTest = createTestRollMessage();
         const addTicksMock = sinon.stub().withArgs(4);
-        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         underTest.actionManager.ticks.adjusted = 4;
         sinon.stub(referencesApi, "getActor").returns({addTicks: addTicksMock});
 
@@ -251,7 +250,7 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should disable token advancement degree of success options", () => {
         const underTest = createTestRollMessage();
-        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         sinon.stub(referencesApi, "getActor").returns({addTicks: sinon.spy()});
 
         underTest.advanceToken();

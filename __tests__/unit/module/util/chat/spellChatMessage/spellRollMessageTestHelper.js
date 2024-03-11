@@ -15,22 +15,29 @@ import {c} from "sinon/lib/sinon/spy-formatters.js";
 import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
+import SplittermondActor from "../../../../../../module/actor/actor.js";
+import sinon from "sinon";
+import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 
 export function createSpellActionManager() {
-    const casterReference= new AgentReference({id:"1", sceneId:null, type:"actor"})
-    const spellReference = new ItemReference({id:"1", agentReference:null})
+    const casterReference= new AgentReference({type:"actor"});
+    const spellReference = new ItemReference({});
+    const checkReportReference= {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill:{name:"skillName"}};
+    Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
+
     const actionManager = new SpellMessageActionsManager();
-    const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
-        used: false,
-        available: true,
-        adjusted: "1d6",
-        parent:actionManager,
-    });
     const focus = new (SpellMessageActionsManager.defineSchema().focus).type({
+        spellReference,
+        checkReportReference,
         used: false,
         available: true,
         adjusted: new Cost(1,0,false).asModifier(),
-        parent:actionManager,
+    });
+    const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
+        used: false,
+        available: true,
+        itemReference: spellReference,
+        checkReportReference,
     });
     const ticks = new (SpellMessageActionsManager.defineSchema().ticks).type({
         used: false,
@@ -40,15 +47,15 @@ export function createSpellActionManager() {
     });
 
     const splinterPoint = new (SpellMessageActionsManager.defineSchema().splinterPoint).type({
+        checkReportReference:checkReportReference,
+        actorReference:casterReference,
         used: false,
-        available: true,
         parent:actionManager,
     });
 
     const magicFumble = new (SpellMessageActionsManager.defineSchema().magicFumble).type({
+        checkReportReference:checkReportReference,
         used: false,
-        available: true,
-        parent:actionManager,
     });
     actionManager.updateSource({casterReference, spellReference, focus, damage, ticks, splinterPoint, magicFumble})
     return actionManager;

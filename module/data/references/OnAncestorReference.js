@@ -4,15 +4,15 @@ import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
 /**
  * @extends {SplittermondDataModel<OnAncestorReference, SplittermondDataModel>}
  * @template {string|number|boolean|object} T
- * @property {string}parentId
- * @property {string}parentIdKey
+ * @property {string}ancestorId
+ * @property {string}ancestorIdKey
  * @property {string}referenceKey
  */
 export class OnAncestorReference extends SplittermondDataModel {
     static defineSchema() {
         return {
-            parentId: new fields.StringField({required: true, blank: false, nullable: false}),
-            parentIdKey: new fields.StringField({required: true, blank: false, nullable: false}),
+            ancestorId: new fields.StringField({required: true, blank: false, nullable: false}),
+            ancestorIdKey: new fields.StringField({required: true, blank: false, nullable: false}),
             referenceKey: new fields.StringField({required: true, blank: false, nullable: false}),
         }
     }
@@ -32,30 +32,32 @@ export class OnAncestorReference extends SplittermondDataModel {
     get() {
         let ancestor = this.parent
         while (ancestor) {
-            if (ancestor.id === this.parentId) {
+            if (ancestor[this.ancestorIdKey] === this.ancestorId) {
                 return ancestor[this.referenceKey]
             }
             ancestor = ancestor.parent
         }
-        throw new Error(`No ancestor with id ${this.parentId} found`);
+        throw new Error(`No ancestor with id ${this.ancestorId} found`);
     }
 
 }
 
-/** @param {SplittermondDataModel} type*/
+/**
+ * @template {SplittermondDataModel<T>} T
+ * @param {typeof T} type*/
 function createReferenceFor(type) {
-    /**@type {string} */ let parentId= null;
-    /**@type {string} */ let parentIdKey = null;
+    /**@type {string} */ let ancestorId= null;
+    /**@type {string} */ let ancestorIdKey = null;
     /**@type {string} */ let referenceKey = null;
     return {identifiedBy};
 
     /**
-     * @param {string} key
+     * @param {keyof T} key
      * @param {string} value
      */
     function identifiedBy(key, value) {
-        parentIdKey = key;
-        parentId = value;
+        ancestorIdKey = key;
+        ancestorId = value;
 
         return {references: reference}
     }
@@ -70,15 +72,15 @@ function createReferenceFor(type) {
      * @return {OnAncestorReference<Readonly<T[referenceKey]>>}
      */
     function createReference() {
-        if (!(parentIdKey in type.defineSchema())) {
+        if (!(ancestorIdKey in type.defineSchema())) {
             throw new Error("No parent id key defined");
         }
         if (!referenceKey in type.defineSchema()) {
             throw new Error("No reference key defined");
         }
-        if(!parentId){
+        if(!ancestorId){
             throw new Error("No parent id defined")
         }
-        return new OnAncestorReference({parentId, parentIdKey, referenceKey})
+        return new OnAncestorReference({ancestorId, ancestorIdKey, referenceKey})
     }
 }
