@@ -153,7 +153,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                         this.actor,
                         SplittermondSpellRollMessage.createRollMessage(this, report))
                         .sendToChat()
-            );
+            ).then((result)=>result ?? true);
     }
 
     /**
