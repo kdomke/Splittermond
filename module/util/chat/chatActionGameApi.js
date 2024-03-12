@@ -43,7 +43,18 @@ export const chatFeatureApi = new class SplittermondChatCardGameInterface {
         return game.i18n.localize(messageKey);
     }
 
-    /** @return {{ROLL: string}} */
+    /**
+     * @typedef ChatMessageTypes
+     * @type {object}
+     * @property EMOTE: 3
+     * @property IC: 2
+     * @property OOC: 1
+     * @property OTHER: 0
+     * @property ROLL: 5
+     * @property WHISPER: 4
+     */
+
+    /** @return {ChatMessageTypes} */
     get chatMessageTypes() {
         return CONST.CHAT_MESSAGE_TYPES;
     }

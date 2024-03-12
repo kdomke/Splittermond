@@ -11,7 +11,7 @@ export function chatActionFeatureTest(context) {
         it("should post a message in the chat", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "a"});
-            const chatCard = SplittermondChatCard.create(actor, message);
+            const chatCard = SplittermondChatCard.create(actor, message, {type:5, mode:'CHAT.RollPublic'});
 
             await chatCard.sendToChat();
             const messageId = chatCard.messageId;
@@ -23,7 +23,7 @@ export function chatActionFeatureTest(context) {
         it("should rerender the same chat card on update", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message);
+            const chatCard = SplittermondChatCard.create(actor, message,{type:5, mode:'CHAT.RollPublic'});
 
             await chatCard.sendToChat();
             const messagesBeforeUpdate = getCollectionLength(game.messages);
@@ -42,7 +42,7 @@ export function chatActionFeatureTest(context) {
         it("should be able to reproduce a message from handled chat action", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message);
+            const chatCard = SplittermondChatCard.create(actor, message,{type:5, mode:'CHAT.RollPublic'});
             await chatCard.sendToChat();
 
             await handleChatAction("alterTitle", chatCard.messageId);
@@ -106,7 +106,8 @@ export function chatActionFeatureTest(context) {
                 degreeOfSuccessMessage: "mega success",
             };
             return SplittermondChatCard.create(
-                actor, SplittermondSpellRollMessage.createRollMessage(spell, checkReport)
+                actor, SplittermondSpellRollMessage.createRollMessage(spell, checkReport),
+                {type: 5, mode: 'CHAT.RollPublic'}
             );
         }
     });
@@ -190,6 +191,18 @@ export function chatActionFeatureTest(context) {
                 expect(data.test).to.be.equal("test");
             });
             chatFeatureApi.socket.emit("system.splittermond.quench.test.event", {test: "test"});
+        });
+
+        it("delivers the the correct chat message types", ()=> {
+            const types = chatFeatureApi.chatMessageTypes;
+            expect(types, "chatMessageTypes is an object").to.be.an("object");
+            expect(Object.keys(types).length).to.equal(6);
+            expect(types.EMOTE, "chatMessageTypes has an emote").to.be.a("number");
+            expect(types.IC, "chatMessageTypes has an in character").to.be.a("number");
+            expect(types.OOC, "chatMessageTypes has an out of character").to.be.a("number");
+            expect(types.OTHER, "chatMessageTypes has an other").to.be.a("number");
+            expect(types.ROLL, "chatMessageTypes has a roll").to.be.a("number");
+            expect(types.WHISPER, "chatMessageTypes has a whisper").to.be.a("number");
         });
 
         function isUser(object) {

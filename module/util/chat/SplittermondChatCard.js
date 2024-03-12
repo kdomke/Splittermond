@@ -14,14 +14,16 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
      *
      * @param {SplittermondActor} actor
      * @param {SplittermondChatMessage & foundry.abstract.DataModel} message
+     * @param {{type: ChatMessageTypes, mode?: string}} chatOptions
      * @return {SplittermondChatCard}
      */
-    static create(actor, message) {
+    static create(actor, message,chatOptions) {
         const foundryApi = chatFeatureApi;
         const speaker = foundryApi.getSpeaker({actor});
 
         return new SplittermondChatCard({
             speaker,
+            chatOptions,
             message,
         }, foundryApi);
     }
@@ -41,7 +43,8 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
         const chatData = {
             user: this.foundryApi.currentUser.id,
             speaker: this.speaker,
-            type: this.foundryApi.chatMessageTypes.ROLL,
+            type: this.chatOptions.type,
+            rollMode: this.chatOptions.mode,
             content: content,
             flags: {
                 splittermond: {

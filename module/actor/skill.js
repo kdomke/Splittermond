@@ -81,7 +81,7 @@ export default class Skill extends Modifiable {
 
     /** @return {Record<string,number>} */
     get attributeValues() {
-        const skillAttributes={};
+        const skillAttributes = {};
         [this.attribute1, this.attribute2].forEach(attribute => {
             if (attribute?.id && attribute?.value) {
                 skillAttributes[attribute.id] = attribute.value;
@@ -120,27 +120,35 @@ export default class Skill extends Modifiable {
          * @property {string[]} modifierElements
          */
         if (options.type === "spell") {
-            return/**@type CheckReport*/ {
-                skill: {
-                    id: this.id,
-                    attributes: skillAttributes,
-                    points: this.points
+            return {
+                rollOptions: {
+                    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+                    mode: checkData.rollMode,
                 },
-                difficulty: rollResult.difficulty,
-                rollType: checkData.rollType,
-                roll: {
-                    total: rollResult.roll.total,
-                    dice: rollResult.roll.dice,
-                    tooltip: await rollResult.roll.getTooltip(),
-                },
-                modifierElements: checkData.modifierElements,
-                succeeded: rollResult.succeeded,
-                isFumble: rollResult.isFumble,
-                isCrit: rollResult.isCrit,
-                degreeOfSuccess: rollResult.degreeOfSuccess,
-                hideDifficulty: hideDifficulty,
-            };
+                /**@type CheckReport*/
+                report: {
+                    skill: {
+                        id: this.id,
+                        attributes: skillAttributes,
+                        points: this.points
+                    },
+                    difficulty: rollResult.difficulty,
+                    rollType: checkData.rollType,
+                    roll: {
+                        total: rollResult.roll.total,
+                        dice: rollResult.roll.dice,
+                        tooltip: await rollResult.roll.getTooltip(),
+                    },
+                    modifierElements: checkData.modifierElements,
+                    succeeded: rollResult.succeeded,
+                    isFumble: rollResult.isFumble,
+                    isCrit: rollResult.isCrit,
+                    degreeOfSuccess: rollResult.degreeOfSuccess,
+                    hideDifficulty: hideDifficulty,
+                }
+            }
         }
+        ;
 
         let checkMessageData = {
             type: options.type || "skill",
@@ -167,6 +175,7 @@ export default class Skill extends Modifiable {
     /**
      * @typedef {number|'VTD','KW','GW'} RollDifficultyString
      */
+
     /**
      * @typedef {{name: string, label:string, value: unknown, active:boolean}} EmphasisData
      */
