@@ -18,8 +18,6 @@ export function initializeMasteryItemPreparation(masteryAvailabiltyParser) {
         if (!isDisplayableMastery(itemIndexEntity)) {
             throw new Error(`Item '${itemIndexEntity.name}' is not a mastery`);
         }
-        delete itemIndexEntity.system.features;
-        delete itemIndexEntity.system.skillLevel;
         initializeTagGenerator(itemIndexEntity);
         return initializeMetadata(compendiumMetadata, itemIndexEntity);
     }

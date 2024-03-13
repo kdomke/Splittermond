@@ -3,7 +3,7 @@ import AttackableItem from "./attackable-item.js";
 
 import * as Costs from "../util/costs.js";
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
-import {produceSpellTags} from "./tags/spellTags.js";
+import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
@@ -99,7 +99,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get availableInList(){
-        return produceSpellTags(this.system, this.availabilityParser);
+        return produceSpellAvailabilityTags(this.system, this.availabilityParser);
     }
 
     async roll(options) {

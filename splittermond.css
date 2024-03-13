@@ -2165,6 +2165,13 @@ li.taglist-item:hover .taglist-item-actions {
   font-size: 10px;
   white-space: normal;
 }
+
+.compendium-browser .list .available-in{
+  font-family: "Signika";
+  font-size: 10px;
+  white-space: normal;
+}
+
 .compendium-browser .list .compendium {
   display: flex;
   flex-direction: column;

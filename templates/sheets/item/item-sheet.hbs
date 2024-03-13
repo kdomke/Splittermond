@@ -20,7 +20,7 @@
                 {{#if (eq item.type "weapon")}}
                 <div class="skill">
                     <ul class="taglist-small">
-                        <li class="active">{{localize (lookup (concat "splittermond.skillLabel." item.system.skill) 'string')}}</li>
+                        <li class="active">{{localize (concat "splittermond.skillLabel." item.system.skill) 'string'}}</li>
                     </ul>
                 </div>
                 {{/if}}
@@ -28,7 +28,7 @@
                 <div class="skill">
                     <ul class="taglist-small">
                         {{#each item.availableInList}}
-                        <li {{#if (eq this ../item.system.skill)}} class="active"{{/if}}>{{localize (lookup (concat "splittermond.skillLabel." this) 'string')}}</li>
+                        <li {{#if (eq this ../item.system.skill)}} class="active"{{/if}}>{{lookup (concat "splittermond.skillLabel." this) 'string'}}</li>
                         {{/each}}
                         <li class="active">{{localize "splittermond.masteryItem.level" }} {{item.system.level}}</li>
                     </ul>
