@@ -25,7 +25,7 @@ import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
 
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);
-    return (value) ? value : defaultValue;
+    return  value ?? defaultValue;
 };
 
 function handlePdf(links) {
