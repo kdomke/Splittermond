@@ -1,30 +1,32 @@
 {
-    "ITEM": {
-        "TypeWeapon": "Waffe",
-        "TypeProjectile": "Geschoss",
-        "TypeEquipment": "Ausrüstung",
-        "TypeShield": "Schild",
-        "TypeArmor": "Rüstung",
-        "TypeSpell": "Zauber",
-        "TypeStrength": "Stärke",
-        "TypeWeakness": "Schwäche",
-        "TypeMastery": "Meisterschaft",
-        "TypeSpecies": "Spezies",
-        "TypeCulture": "Kultur",
-        "TypeAncestry": "Abstammung",
-        "TypeEducation": "Ausbildung",
-        "TypeResource": "Resource",
-        "TypeNpcfeature": "Gegnermerkmal",
-        "TypeMoonsign": "Mondzeichen",
-        "TypeLanguage": "Sprache",
-        "TypeCulturelore": "Kulturkunde",
-        "TypeStatuseffect": "Zustand",
-        "TypeSpelleffect": "Zaubereffekt",
-        "TypeNpcattack": "Angriff"
-    },
-    "ACTOR": {
-        "TypeCharacter": "Spielercharakter",
-        "TypeNpc": "NSC"
+    "TYPES": {
+        "Item":{
+            "weapon": "Waffe",
+            "projectile": "Geschoss",
+            "equipment": "Ausrüstung",
+            "shield": "Schild",
+            "armor": "Rüstung",
+            "spell": "Zauber",
+            "strength" : "Stärke",
+            "weakness" : "Schwäche",
+            "mastery": "Meisterschaft",
+            "species": "Spezies",
+            "culture": "Kultur",
+            "ancestry": "Abstammung",
+            "education": "Ausbildung",
+            "resource": "Resource",
+            "npcfeature": "Gegnermerkmal",
+            "moonsign": "Mondzeichen",
+            "language": "Sprache",
+            "culturelore": "Kulturkunde",
+            "statuseffect": "Zustand",
+            "spelleffect": "Zaubereffekt",
+            "npcattack": "Angriff"
+        },
+        "Actor": {
+            "character": "Spielercharakter",
+            "npc": "NSC"
+        }
     },
     "SETTINGS": {
         "HGMultiplierN": "Heldengrad-Multiplikator",
