@@ -15,16 +15,18 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
-import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
+import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 import TokenActionBar from "./module/apps/token-action-bar.js";
+
+import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);
     return (value) ? value : defaultValue;
-}
+};
 
 function handlePdf(links) {
     if(!ui.PDFoundry){
@@ -60,6 +62,11 @@ Hooks.once("ready", function () {
 });
 
 Hooks.once("init", function () {
+    console.log(
+        " __\n"+
+        "(_  ._  | o _|_ _|_  _  ._ ._ _   _  ._   _|\n" +
+        "__) |_) | |  |_  |_ (/_ |  | | | (_) | | (_|\n" +
+        "    |");
     console.log("Splittermond | Initialising Splittermond System ...");
     if (CONFIG.compatibility) {
         CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
@@ -171,9 +178,7 @@ Hooks.once("init", function () {
         });
     }
     */  
-
-
-
+    quenchTestsInit(); //starts quench tests when ready
     console.log("Splittermond | DONE!");
 });
 
@@ -183,7 +188,7 @@ Hooks.on("redraw-combat-tick", async () => {
     //yes i know this is not ideal, but ether this or an websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
     const currentScene = game.scenes.current?.id || null;    
     let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
-    if(combats.length == 0)
+    if(combats.length === 0)
     {
        return;
     }
@@ -568,4 +573,4 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 Hooks.on("renderCompendiumDirectory", (app, html, data) => {
     const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
     html.find(".header-actions").append(compendiumBrowserButton);
-})
+});

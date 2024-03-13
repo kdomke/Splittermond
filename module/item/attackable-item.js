@@ -1,9 +1,10 @@
 import Attack from "../actor/attack.js";
+import {produceAttackableItemTags} from "./tags/attackableItemTags.js";
 
 const AttackableItem = (superclass) => class extends superclass {
 
     prepareBaseData() {
-        super.prepareBaseData()
+        super.prepareBaseData();
         this.attacks = [];
     }
 
@@ -24,9 +25,7 @@ const AttackableItem = (superclass) => class extends superclass {
     }
 
     get featuresList() {
-        if (Array.isArray(this.system.features)) return [];
-        if (this.system.features.trim() == "" || this.system.features.trim() == "-") return [];
-        return this.system.features?.split(",").map(str => str.trim());
+        return produceAttackableItemTags(this.system);
     }
 
     get hasSecondaryAttack() {
@@ -35,4 +34,4 @@ const AttackableItem = (superclass) => class extends superclass {
 
 };
 
-export default AttackableItem
+export default AttackableItem;

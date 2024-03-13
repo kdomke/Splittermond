@@ -2,8 +2,19 @@ import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
 import * as Costs from "../util/costs.js";
+import {getSpellAvailabilityParser} from "./availabilityParser.js";
+import {produceSpellTags} from "./tags/spellTags.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
+
+    constructor(
+        data,
+        context = {},
+        availabilityParser = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic)
+    ) {
+        super(data, context);
+        this.availabilityParser = availabilityParser;
+    }
 
     get costs() {
         if (this.actor) {
@@ -12,6 +23,21 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             return this.system.costs;
         }
 
+    }
+
+    get availableIn() {
+        return this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
+    }
+
+    /**
+     * @override
+     */
+    update(data, context) {
+        if ("availableIn" in data) {
+            data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
+            delete data.availableIn;
+        }
+        return super.update(data, context);
     }
 
     get enhancementCosts() {
@@ -72,41 +98,8 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.damage;
     }
 
-    /**
-     * Transforms the comma-separated list of spell schools in which this spell is available into a presentable,
-     * localized list
-     * @returns {SpellAvailabilityDisplay[]}
-     */
-    get availableInList() {
-        const availablityFromField = this.#sourceAvailablityFromField();
-        const availabilityFromSpellData = [[this.system.skill, `${this.system.skillLevel}`]];
-        const protoAvailability = availablityFromField.length > 0 ? availablityFromField
-            : availabilityFromSpellData;
-
-        return protoAvailability.map(item => (
-            {
-                label: game.i18n.localize(`splittermond.skillLabel.${item[0].trim()}`) + " " + item[1],
-                skillId: item[0].trim(),
-                spellLevel: item[1].trim()
-            })
-        );
-    }
-
-    /**
-     * @private
-     * @returns {[string[string]]|[]}
-     */
-    #sourceAvailablityFromField() {
-        const availability = this.system.availableIn;
-        const availabilityExists = availability && typeof availability == "string" && availability.trim() !== '';
-        let protoAvailability = [];
-        if (availabilityExists) {
-            protoAvailability = availability.split(",")
-                .map(item => item.trim().toLowerCase().split(/[ :]/))
-                .filter(item => item.length === 2)
-                .map(item => [item[0].trim(), item[1].trim()]);
-        }
-        return protoAvailability.length > 0 ? protoAvailability : [];
+    get availableInList(){
+        return produceSpellTags(this.system, this.availabilityParser);
     }
 
     async roll(options) {
@@ -135,7 +128,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                 spellTypeList: this.spellTypeList,
                 damage: this.damage
             }
-        }
+        };
 
         return this.skill.roll(options);
     }
