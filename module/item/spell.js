@@ -1,9 +1,10 @@
 import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
-import * as Costs from "../util/costs.js";
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
+import {parseCostString} from "../util/costs/costParser.js";
+import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
 
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
@@ -16,13 +17,23 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         this.availabilityParser = availabilityParser;
     }
 
-    get costs() {
-        if (this.actor) {
-            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
-        } else {
-            return this.system.costs;
-        }
 
+    /** @return {string} */
+    get costs() {
+        return this.actor ?
+            calculateReducedSpellCosts(this.system, this.actor.system.spellCostReduction) :
+            this.system.costs;
+    }
+
+    /** @return {string} */
+    get enhancementCosts() {
+        if (this.actor){
+            const requiredDegreesOfSuccess = /([1-9][0-9]*\s*[Ee][Gg])/.exec(this.system.enhancementCosts)[0] ?? "";
+            const reducedCosts = calculateReducedEnhancementCosts(this.system, this.actor.system.spellEnhancedCostReduction)
+            return `${requiredDegreesOfSuccess}/+${reducedCosts}`
+        } else {
+            return this.system.enhancementCosts;
+        }
     }
 
     get availableIn() {
@@ -40,20 +51,13 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return super.update(data, context);
     }
 
-    get enhancementCosts() {
-        if (this.actor) {
-            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
-        } else {
-            return this.system.enhancementCosts;
-        }
-    }
 
     get skill() {
         return this.actor?.skills[this.system.skill];
     }
 
     get enoughFocus() {
-        let costData = Costs.parseCostsString(this.costs);
+        let costData = parseCostString(this.costs);
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
         return costTotal <= this.actor?.system.focus.available.value;
     }

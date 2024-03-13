@@ -2,8 +2,11 @@ import a from "../../foundryMocks.js";
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
+import {describe} from "mocha";
+import {initializeSpellCostManagement} from "../../../../module/util/costs/spellCostManagement.js";
+import {Cost} from "../../../../module/util/costs/Cost.js";
 
-describe("Availability display", () => {
+describe("Spell item availability display", () => {
     const sampleSpell = new SplittermondSpellItem({}, {splittermond: {ready: true}}, getSpellAvailabilityParser({localize: (str) => str.split(".").pop()}, ["illusionmagic", "deathmagic"]));
     sampleSpell.system = {skill: "illusionmagic", skillLevel: 1, availableIn: ""};
 
@@ -68,5 +71,30 @@ describe("Availability display", () => {
         expect(typeof actual[0]).to.equal("object");
 
     }
-})
-;
+});
+
+describe("Spell item cost calculation", () => {
+    const sampleSpell = new SplittermondSpellItem({}, {splittermond: {ready: true}}, getSpellAvailabilityParser({localize: (str) => str.split(".").pop()}, ["illusionmagic", "deathmagic"]));
+    sampleSpell.system = {skill: "illusionmagic", skillLevel: 1, availableIn: "", costs: "K2V2", enhancementCosts: "1EG/+K2V2"};
+
+    it("should return the base cost if no actor is associated to this spell", () => {
+        const actual = sampleSpell.costs;
+        expect(actual).to.equal("K2V2");
+    });
+
+    it("should return the base enhancement cost if no actor is associated to this spell", () => {
+       const actual = sampleSpell.enhancementCosts;
+       expect(actual).to.equal("1EG/+K2V2");
+    });
+
+    it("should reduce the cost of a spell if an actor is associated to this spell", () => {
+       sampleSpell.actor = { system:initializeSpellCostManagement({}) }
+       sampleSpell.actor.system.spellCostReduction.modifiers.put(new Cost(1, 1, true),null, null);
+       expect(sampleSpell.costs).to.equal("K1V1");
+    });
+    it("should reduce the enhancement cost of a spell if an actor is associated to this spell", () => {
+        sampleSpell.actor = { system:initializeSpellCostManagement({}) }
+        sampleSpell.actor.system.spellEnhancedCostReduction.modifiers.put(new Cost(1, 1, true),null, null);
+        expect(sampleSpell.enhancementCosts).to.equal("1EG/+K1V1");
+    });
+});
