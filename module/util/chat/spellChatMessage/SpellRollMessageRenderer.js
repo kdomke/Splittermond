@@ -201,6 +201,7 @@ function renderActions(spellRollMessage) {
     const consumeCostsRender = renderConsumeCosts(spellRollMessage);
     const useSplinterpointRender = renderUseSplinterpoint(spellRollMessage);
     const rollFumbleRender = renderRollFumble(spellRollMessage);
+    const activeDefenseRender = renderActiveDefense(spellRollMessage);
     if (applyDamageRender) {
         renderedOptions["applyDamage"] = applyDamageRender;
     }
@@ -215,6 +216,9 @@ function renderActions(spellRollMessage) {
     }
     if (rollFumbleRender){
         renderedOptions["rollFumble"] = rollFumbleRender;
+    }
+    if(activeDefenseRender){
+        renderedOptions["activeDefense"] = activeDefenseRender;
     }
     return renderedOptions;
 }
@@ -260,4 +264,15 @@ function renderRollFumble(spellRollMessage) {
     return {
         disabled: spellRollMessage.actionManager.magicFumble.used
     };
+}
+
+function renderActiveDefense(spellRollMessage){
+    if(!spellRollMessage.actionManager.activeDefense.available){
+        return null;
+    }
+    return {
+        disabled: spellRollMessage.actionManager.activeDefense.used,
+        difficulty: spellRollMessage.actionManager.activeDefense.itemReference.getItem().difficulty
+    };
+
 }

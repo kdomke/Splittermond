@@ -86,24 +86,42 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
  * @return {Promise<void>}
  */
 export async function handleChatAction(action, messageId) {
+    const chatCard = getChatCard(messageId);
 
+    if(hasAction(chatCard.message, action)){
+        chatCard.message[action]();
+        await chatCard.updateMessage();
+    }else{
+        chatFeatureApi.warnUser("splittermond.chatCard.actionNotFound");
+        throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
+    }
+
+}
+export function handleLocalChatAction(action, messageId) {
+    const chatCard = getChatCard(messageId);
+
+    if(hasAction(chatCard.message, action)){
+        chatCard.message[action]();
+    }else{
+        chatFeatureApi.warnUser("splittermond.chatCard.actionNotFound");
+        throw new Error(`Action ${action} not found on chat card for message ${chatCard.constructorKey} with ${messageId}`);
+    }
+}
+
+/**
+ * @param {string} messageId
+ * @return {SplittermondChatCard}
+ */
+function getChatCard(messageId){
     const chatCard = chatFeatureApi.messages.get(messageId)
     const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
     const constructor = getFromRegistry(chatCardFlag.message.constructorKey)
     const messageObject = new constructor(chatCardFlag.message);
 
-    const splittermondChatCard = new SplittermondChatCard({
+    return new SplittermondChatCard({
         ...chatCardFlag,
         message: messageObject,
     }, chatFeatureApi);
-
-    if(hasAction(splittermondChatCard.message, action)){
-        splittermondChatCard.message[action]();
-        await splittermondChatCard.updateMessage();
-    }else{
-        chatFeatureApi.warnUser("splittermond.chatCard.actionNotFound");
-        throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
-    }
 
 }
 

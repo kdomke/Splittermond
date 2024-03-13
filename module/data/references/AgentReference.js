@@ -19,7 +19,6 @@ export class AgentReference extends SplittermondDataModel{
     }
 
     /**
-     *
      * @param {SplittermondActor|TokenDocument} agent
      * @return {AgentReference}
      */

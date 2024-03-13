@@ -1,4 +1,4 @@
-import {handleChatAction} from "./SplittermondChatCard.js";
+import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard.js";
 import {chatFeatureApi} from "./chatActionGameApi.js";
 
 const socketEvent = "system.splittermond";
@@ -32,6 +32,7 @@ export function chatActionFeature(){
  */
 function chatListeners(html) {
     html.on("click", ".splittermond-chat-action[data-action]", onChatCardAction);
+    html.on("click", ".local-splittermond-chat-action[data-action]", onLocalChatCardAction)
 }
 
 async function onChatCardAction(event) {
@@ -55,4 +56,11 @@ async function onChatCardAction(event) {
     }
 
     return await handleChatAction(action, messageId);
+}
+
+function onLocalChatCardAction(event){
+    const button = event.currentTarget;
+    const action = button.dataset.action;
+    const messageId = button.closest(".message").dataset.messageId;
+    return handleLocalChatAction(action, messageId);
 }

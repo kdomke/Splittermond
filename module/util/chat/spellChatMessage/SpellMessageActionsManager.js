@@ -6,12 +6,14 @@ import * as Dice from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
+import {referencesUtils} from "../../../data/references/referencesUtils.js";
 
 /**
  * @extends {SplittermondDataModel<SpellMessageActionsManager,never>}
  * @property {FocusAction} focus
  * @property {TickAction} ticks
  * @property {DamageAction} damage
+ * @property {ActiveDefenseAction} activeDefense
  * @property {MessageAction} splinterPoint
  * @property {MessageAction} magicFumble
  */
@@ -27,27 +29,27 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
         const casterReference = AgentReference.initialize(spellReference.getItem().actor);
         const spellActionManagerData = {
             focus: FocusAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
-            ticks: {actorReference:casterReference.toObject(),  adjusted: 3},
+            ticks: {actorReference: casterReference.toObject(), adjusted: 3},
             damage: DamageAction.initialize(spellReference, checkReportReference).toObject(),
+            activeDefense: {itemReference:spellReference, checkReportReference: checkReportReference.toObject(), },
             splinterPoint: UseSplinterpointsAction.initialize(casterReference, checkReportReference).toObject(),
-            magicFumble: MagicFumbleAction.initialize(checkReportReference).toObject(),
+            magicFumble: MagicFumbleAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
         };
         return new SpellMessageActionsManager(spellActionManagerData);
     }
 
     static defineSchema() {
         return {
-            focus: new fields.EmbeddedDataField(FocusAction, {required: true, blank: false, nullable: false}),
-            ticks: new fields.EmbeddedDataField(TickAction, {required: true, blank: false, nullable: false}),
-            damage: new fields.EmbeddedDataField(DamageAction, {required: true, blank: false, nullable: false}),
+            focus: new fields.EmbeddedDataField(FocusAction, {required: true, nullable: false}),
+            ticks: new fields.EmbeddedDataField(TickAction, {required: true, nullable: false}),
+            damage: new fields.EmbeddedDataField(DamageAction, {required: true, nullable: false}),
+            activeDefense: new fields.EmbeddedDataField(ActiveDefenseAction, {required: true, nullable: false}),
             splinterPoint: new fields.EmbeddedDataField(UseSplinterpointsAction, {
                 required: true,
-                blank: false,
                 nullable: false
             }),
             magicFumble: new fields.EmbeddedDataField(MagicFumbleAction, {
                 required: true,
-                blank: false,
                 nullable: false
             }),
         }
@@ -72,12 +74,12 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
         return this.splinterPoint.useSplinterpoint();
     }
 
-    rollFumble() {
-        this.magicFumble.updateSource({used: true});
-        const eg = this.parent.degreeOfSuccess
-        const costs = this.focus.original;
-        const skill = this.splinterPoint.skillName;
-        this.casterReference.getAgent().rollMagicFumble(eg, costs, skill);
+    rollMagicFumble() {
+        this.magicFumble.rollFumble();
+    }
+
+    defend() {
+        this.activeDefense.activeDefense();
     }
 }
 
@@ -94,6 +96,30 @@ class MessageAction extends SplittermondDataModel {
             used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
             available: new fields.BooleanField({required: true, blank: false, nullable: false, initial: true}),
         }
+    }
+}
+
+/**
+ * @extends {MessageAction<ActiveDefenseAction,never>}
+ * @property {OnAncestorReference<CheckReport>} checkReportReference
+ * @property {ItemReference<SplittermondSpellItem>} itemReference
+ */
+class ActiveDefenseAction extends MessageAction {
+    static defineSchema() {
+        return {
+            ...MessageAction.defineSchema(),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
+            itemReference: new  fields.EmbeddedDataField(ItemReference, {required:true, nullable:false}),
+        }
+    }
+
+    get available() {
+        return /Ber|[0-9]+m/.exec(this.itemReference.getItem().range) && this.checkReportReference.get().succeeded;
+    }
+    set available(__) {}
+    activeDefense(){
+        const actorReference  = referencesUtils.findBestUserActor();
+        actorReference.getAgent().activeDefenseDialog(this.itemReference.getItem().difficulty)
     }
 }
 
@@ -127,39 +153,60 @@ class UseSplinterpointsAction extends MessageAction {
     }
 
     get available() {
-        return this.checkReportReference.get().isFumble && this.actorReference.getActor().splinterpoints?.value > 0;
+        return !this.checkReportReference.get().isFumble && this.actorReference.getAgent().splinterpoints?.value > 0;
     }
-    set available(__){}
+
+    set available(__) {
+    }
 
     get skillName() {
         return this.checkReportReference.get().skill.name;
     }
 
-    useSplinterpoint(){
+    useSplinterpoint() {
         this.updateSource({used: true});
         return this.actorReference.getAgent().spendSplinterpoint().getBonus(this.checkReportReference.get().skill.name);
     }
 }
 
 class MagicFumbleAction extends MessageAction {
-    static defineSchema(){
+    static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
+            casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
+            spellReference: new fields.EmbeddedDataField(ItemReference, {required: true, nullable: false}),
             checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
         }
     }
+
     /**
+     * @param {AgentReference} casterReference
+     * @param {ItemReference<SplittermondSpellItem>} spellReference
      * @param {OnAncestorReference<CheckReport>} checkReportReference
      * @return {MagicFumbleAction}
      */
-    static initialize(checkReportReference) {
-        return new MagicFumbleAction({used: false, checkReportReference});
+    static initialize(casterReference, spellReference, checkReportReference) {
+        return new MagicFumbleAction({
+            used: false,
+            casterReference: casterReference.toObject(),
+            spellReference: spellReference.toObject(),
+            checkReportReference: checkReportReference.toObject()});
     }
 
-    get available(){
+    get available() {
         return this.checkReportReference.get().isFumble;
     }
-    set available(__){}
+
+    set available(__) {
+    }
+
+    rollFumble(){
+        this.updateSource({used: true});
+        const eg = this.checkReportReference.degreeOfSuccess
+        const costs = this.spellReference.getItem().cost
+        const skill = this.checkReportReference.get().skill.name;
+        this.casterReference.getAgent().rollMagicFumble(eg, costs, skill);
+    }
 }
 
 /**
@@ -199,7 +246,7 @@ class TickAction extends MessageAction {
         return `${this.adjusted > 0 ? this.adjusted : 1}`;
     }
 
-    advanceToken(){
+    advanceToken() {
         this.updateSource({used: true});
         this.actorReference.getAgent().addTicks(this.adjusted, "", false);//we don't wait for the promise, because we're done.
     }
@@ -271,7 +318,7 @@ class FocusAction extends MessageAction {
         return cost.render();
     }
 
-    consumeFocus(){
+    consumeFocus() {
         this.updateSource({used: true});
         this.casterReference.getAgent().consumeCost("focus", this.cost, this.spellReference.getItem().name);
     }
@@ -306,7 +353,9 @@ class DamageAction extends MessageAction {
             this.itemReference.getItem().damage !== "0" &&
             this.checkReportReference.get().succeeded;
     }
-    set available(__){}
+
+    set available(__) {
+    }
 
     /**@param {number} amount*/
     addDamage(amount) {
@@ -332,7 +381,7 @@ class DamageAction extends MessageAction {
         return damage.getDamageFormula()
     }
 
-    applyDamage(){
+    applyDamage() {
         this.updateSource({used: true});
         return Dice.damage(this.cost, "", this.itemReference.getItem().name); //we don't wait for the promise, because we're done.
     }

@@ -54,10 +54,17 @@ export function createSpellActionManager() {
     });
 
     const magicFumble = new (SpellMessageActionsManager.defineSchema().magicFumble).type({
-        checkReportReference:checkReportReference,
+        casterReference,
+        spellReference,
+        checkReportReference,
         used: false,
     });
-    actionManager.updateSource({casterReference, spellReference, focus, damage, ticks, splinterPoint, magicFumble})
+    const activeDefense = new (SpellMessageActionsManager.defineSchema().activeDefense).type({
+        itemReference: spellReference,
+        checkReportReference,
+        used: false,
+    });
+    actionManager.updateSource({focus, damage, ticks, splinterPoint, magicFumble, activeDefense})
     return actionManager;
 }
 

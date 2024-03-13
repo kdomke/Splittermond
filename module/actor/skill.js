@@ -96,7 +96,7 @@ export default class Skill extends Modifiable {
      */
     async roll(options = {}) {
         let checkData = await this.prepareRollDialog(
-            options.preSelectedModifier, options.title, options.subtitle, options.difficulty, options.modifier);
+            options.preSelectedModifier ?? [], options.title, options.subtitle, options.difficulty, options.modifier);
         if (!checkData) {
             return false;
         }

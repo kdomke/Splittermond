@@ -15,6 +15,8 @@ import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {utilGameApi} from "../../../../../../module/util/utilGameApi.js";
+import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
+import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
@@ -258,6 +260,32 @@ describe("SplittermondSpellRollMessage actions", () => {
         expect(underTest.actionManager.ticks.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("castDuration")).to.be.true;
     });
+
+    it("should pass fumbles to the fumble action", () => {
+        const manager = createTestRollMessage();
+        manager.actionManager.magicFumble.rollFumble = sinon.stub(manager.actionManager.magicFumble, "rollFumble");
+
+        manager.rollMagicFumble();
+
+        expect(manager.actionManager.magicFumble.rollFumble.called).to.be.true;
+    });
+
+    it("should not alter anything for active defense", () => {
+        const manager = createTestRollMessage();
+        const mockDefender = sinon.createStubInstance(SplittermondActor);
+        const mockReference = sinon.createStubInstance(AgentReference);
+        mockReference.getAgent.returns(mockDefender);
+        const mockSpell = sinon.createStubInstance(SplittermondSpellItem);
+        sinon.stub(mockSpell,"difficulty").get(() => "VTD");
+        sinon.stub(referencesUtils, "findBestUserActor").returns(mockReference);
+        sinon.stub(referencesApi, "getItem").returns(mockSpell);
+        sinon.spy(SplittermondDataModel.prototype,"updateSource");
+
+        manager.activeDefense();
+
+        expect(mockDefender.activeDefenseDialog.called).to.be.true;
+        expect(SplittermondDataModel.prototype.updateSource.called).to.be.false;
+    })
 
 });
 

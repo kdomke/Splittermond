@@ -35,6 +35,9 @@
     <div class="actions">
         <h3>{{localize "splittermond.furtherActions"}}</h3>
         {{#with actions}}
+            {{#if activeDefense }}
+                {{> "activeDefenseButton" activeDefense}}
+            {{/if}}
             {{#if applyDamage}}
                 {{> "applyDamageButton" applyDamage}}
             {{/if}}
@@ -77,9 +80,15 @@
             </button>
         {{/inline}}
         {{#* inline "rollFumbleButton"}}
-            <button class="splittermond-chat-action" data-action="rollFumble" {{#if disabled}}disabled{{/if}}>
+            <button class="splittermond-chat-action" data-action="rollMagicFumble" {{#if disabled}}disabled{{/if}}>
                 <i class="fas fa-dice"></i>
                 {{localize "splittermond.fumbleTableLabel"}}
+            </button>
+        {{/inline}}
+        {{#* inline "activeDefenseButton"}}
+            <button class="local-splittermond-chat-action" data-action="activeDefense">
+                <i class="fas fa-shield-alt"></i>
+                {{localize "splittermond.activeDefense"}} ({{difficulty}})
             </button>
         {{/inline}}
     </div>

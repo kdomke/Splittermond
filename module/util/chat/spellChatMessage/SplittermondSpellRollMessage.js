@@ -139,9 +139,14 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         this.renderer.updateSource({checkReport: newCheckReport});
     }
 
-    rollFumble() {
-        this.actionManager.rollFumble();
+    rollMagicFumble() {
+        this.actionManager.rollMagicFumble();
     }
+
+    activeDefense() {
+        this.actionManager.defend();
+    }
+
 
     get template() {
         return this.renderer.template;

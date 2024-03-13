@@ -10,6 +10,11 @@ import {AgentReference} from "../../../../../../module/data/references/AgentRefe
 import sinon from "sinon";
 import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
+import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
+import SplittermondActor from "../../../../../../module/actor/actor.js";
+import SplittermondSpellItem from "../../../../../../module/item/spell.js";
+import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
+import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 
 describe("SpellActionManager", () => {
 
@@ -182,11 +187,30 @@ describe("SpellActionManager", () => {
     });
 
     it("should react to fumbles", () => {
-        const manager = SpellMessageActionsManager.initialize({system: {}}, {isFumble: true});
+        const manager = createSpellActionManager();
+        const actorMock = sinon.createStubInstance(SplittermondActor);
+        const spellMock = sinon.createStubInstance(SplittermondSpellItem);
+        sinon.stub(referencesApi, "getActor").returns(actorMock);
+        sinon.stub(referencesApi, "getItem").returns(spellMock);
+        manager.magicFumble.checkReportReference.get().isFumble = true;
 
         expect(manager.magicFumble.available).to.be.true;
         expect(manager.splinterPoint.available).to.be.false;
+    });
+
+    it("should pass fumbles to the actor", () => {
+        const manager = createSpellActionManager();
+        const actorMock = sinon.createStubInstance(SplittermondActor);
+        const spellMock = sinon.createStubInstance(SplittermondSpellItem);
+        sinon.stub(referencesApi, "getActor").returns(actorMock);
+        sinon.stub(referencesApi, "getItem").returns(spellMock);
+
+        manager.rollMagicFumble();
+
+        expect(actorMock.rollMagicFumble.callCount).to.equal(1);
     })
+
+
 
     it("should spend splinterpoint on actor", () => {
         const getBonusFunction = sinon.mock().returns(3);
