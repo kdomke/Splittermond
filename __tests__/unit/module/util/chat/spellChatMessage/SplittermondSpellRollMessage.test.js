@@ -74,7 +74,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase consumed focus on uncheck", () => {
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.degreeOfSuccessManager.consumedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, -1, false, true).asModifier();
         mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
@@ -94,7 +94,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase channeled focus on uncheck", () => {
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.degreeOfSuccessManager.channelizedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, true, true).asModifier();
         mock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
