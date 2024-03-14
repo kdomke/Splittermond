@@ -63,7 +63,7 @@ export default class Skill extends Modifiable {
     }
 
     get isGrandmaster() {
-        return this.actor.items.find(i => i.type == "mastery" && (i.system.isGrandmaster || 0) && i.system.skill == this.id);
+        return this.actor.items.find(i => i.type === "mastery" && (i.system.isGrandmaster || 0) && i.system.skill === this.id);
     }
 
     enableCaching() {
@@ -76,7 +76,7 @@ export default class Skill extends Modifiable {
     }
 
     get maneuvers() {
-        return this.actor.items.filter(i => i.type === "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
+        return this.actor.items.filter(i => i.type === "mastery" && (i.system.isManeuver || false) && i.system.skill === this.id);
     }
 
     /** @return {Record<string,number>} */
@@ -148,7 +148,7 @@ export default class Skill extends Modifiable {
                 }
             }
         }
-        ;
+
 
         let checkMessageData = {
             type: options.type || "skill",

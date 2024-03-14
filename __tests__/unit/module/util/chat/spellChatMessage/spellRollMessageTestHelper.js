@@ -11,13 +11,9 @@ import {
 import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
-import {c} from "sinon/lib/sinon/spy-formatters.js";
 import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import SplittermondActor from "../../../../../../module/actor/actor.js";
-import sinon from "sinon";
-import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 
 export function createSpellActionManager() {
     const casterReference= new AgentReference({type:"actor"});

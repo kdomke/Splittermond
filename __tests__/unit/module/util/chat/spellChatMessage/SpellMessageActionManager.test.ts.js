@@ -2,19 +2,13 @@ import "../../../../foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {
-    SpellMessageActionsManager
-} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {createSpellActionManager} from "./spellRollMessageTestHelper.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
 import {referencesApi} from "../../../../../../module/data/references/referencesApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import {chatFeatureApi} from "../../../../../../module/util/chat/chatActionGameApi.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
-import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
-import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 
 describe("SpellActionManager", () => {
 
