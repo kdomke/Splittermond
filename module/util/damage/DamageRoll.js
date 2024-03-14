@@ -1,4 +1,4 @@
-import {utilGameApi} from "../utilGameApi.js";
+import {api} from "../../api/api.js";
 
 export class DamageRoll {
 
@@ -6,7 +6,7 @@ export class DamageRoll {
      * @param {string} damageString a splittermond damage string like "1W6+2"
      * @param {string|undefined} featureString like "Exact 1" or "Scharf 2"
      */
-    static parse(damageString, featureString="") {
+    static parse(damageString, featureString = "") {
         const features = parseFeatureString(featureString);
         const damage = parseDamageString(damageString);
         return new DamageRoll({...damage, features});
@@ -41,10 +41,9 @@ export class DamageRoll {
     async evaluate() {
         const rollFormula = `${this._nDice}d${this._nFaces}`;
         const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
-        const sign = this.#getSign();
         const damageFormula = `${rollFormulaWithPrecision}${this.#getSign()}${Math.abs(this._damageModifier)}`;
 
-        let rollResult = await utilGameApi.roll(damageFormula, {}).evaluate();
+        let rollResult = await api.roll(damageFormula, {}).evaluate();
 
         rollResult = this.#modifyResultForScharfFeature(rollResult);
         rollResult = this.#modifyResultForKritischFeature(rollResult);

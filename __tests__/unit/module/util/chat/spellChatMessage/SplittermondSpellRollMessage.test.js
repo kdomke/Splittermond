@@ -13,7 +13,6 @@ import {api} from "../../../../../../module/api/api.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
-import {utilGameApi} from "../../../../../../module/util/utilGameApi.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
 import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
 
@@ -229,14 +228,14 @@ describe("SplittermondSpellRollMessage actions", () => {
         const underTest = createTestRollMessage();
         const mock = sinon.createStubInstance(SplittermondSpellItem)
         sinon.stub(mock,"damage").get(() => "1W6");
-        sinon.stub(utilGameApi, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
+        sinon.stub(api, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
         sinon.stub(api, "getItem").returns(mock);
 
         await underTest.applyDamage();
 
         expect(underTest.actionManager.damage.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
-        expect(utilGameApi.roll.firstCall.args[0]).to.equal("1d6+0");
+        expect(api.roll.firstCall.args[0]).to.equal("1d6+0");
     });
 
     it("should call ticks with value on the actor", () => {

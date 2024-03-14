@@ -1,15 +1,15 @@
-import {utilGameApi} from "../../module/util/utilGameApi.js";
+import {api} from "../../module/api/api.js";
 import {DamageRoll} from "../../module/util/damage/DamageRoll.js";
 
 export function DamageRollTest(context) {
     const {describe, it, expect} = context;
 
     describe("test API", () => {
-        it("should fail if 1000 dice or more are requested", async () => {
-          expect(async () => await utilGameApi.roll("1000d6").evaluate()).to.throw(Error)
+        it("should fail if 1000 dice or more are requested", () => {
+          expect(async () => await api.roll("1000d6").evaluate({async: false})).to.throw(Error)
         });
         it("should return a roll object", async () => {
-            const rollResult = await utilGameApi.roll("2d6+1").evaluate();
+            const rollResult = await api.roll("2d6+1").evaluate({async: false})
 
             expect(rollResult).to.have.property("terms");
             expect(rollResult).to.have.property("_total");
@@ -37,19 +37,19 @@ export function DamageRollTest(context) {
         });
 
         it("should evaluate a roll synchronously", async () => {
-            const rollResult = await utilGameApi.roll("2d6+1").evaluate()
+            const rollResult = await api.roll("2d6+1").evaluate({async: false})
 
             expect(rollResult).to.be.instanceOf(Roll);
         });
 
         it("should evaluate a roll asynchronously", async () => {
-            const rollResult = await utilGameApi.roll("2d6+1").evaluate()
+            const rollResult = await api.roll("2d6+1").evaluate({async: true})
 
             expect(rollResult).to.be.instanceOf(Promise);
         });
 
         it("should not fail for a zero dice formula", async () => {
-            const rollResult = await utilGameApi.roll("0d0").evaluate();
+            const rollResult = await api.roll("0d0").evaluate({async: false})
 
             expect(rollResult.total).to.equal(0);
         });
