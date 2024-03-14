@@ -18,14 +18,13 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
      * @return {SplittermondChatCard}
      */
     static create(actor, message,chatOptions) {
-        const foundryApi = api;
-        const speaker = foundryApi.getSpeaker({actor});
+        const speaker = api.getSpeaker({actor});
 
         return new SplittermondChatCard({
             speaker,
             chatOptions,
             message,
-        }, foundryApi);
+        }, api);
     }
 
     /**
