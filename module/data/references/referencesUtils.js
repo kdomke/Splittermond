@@ -19,13 +19,20 @@ function findBestUserActor(){
     const speaker = chatFeatureApi.getSpeaker();//TODO we should not use the chatFeature API here.
     /**@type {AgentReference|null} */ let actor = null;
     if (speaker.token) {
-        actor = AgentReference.initialize(referencesApi.getToken(speaker.scene, speaker.token));
+        actor = withTry(()=>AgentReference.initialize(referencesApi.getToken(speaker.scene, speaker.token)));
     }
     if (!actor && speaker.actor) {
-        actor = AgentReference.initialize(speaker.actor);
+        actor = withTry(() => AgentReference.initialize(referencesApi.getActor(speaker.actor)));
     }
     if (!actor) {
         throw new Error("No actor found for the current user.")
     }
     return actor
+}
+function withTry(callback){
+    try{
+        return callback();
+    }catch(Error){
+        return null;
+    }
 }
