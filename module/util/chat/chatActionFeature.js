@@ -1,20 +1,20 @@
 import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard.js";
-import {chatFeatureApi} from "./chatActionGameApi.js";
+import {api} from "../../api/api.js";
 
 const socketEvent = "system.splittermond";
 export function chatActionFeature(){
-    chatFeatureApi.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
-    chatFeatureApi.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
+    api.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
+    api.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
 
-    chatFeatureApi.hooks.once("init", () => {
+    api.hooks.once("init", () => {
         game.socket.on(socketEvent, (data) => {
 
             if (data.type === "chatAction") {
-                if (!chatFeatureApi.currentUser.isGM) {
+                if (!api.currentUser.isGM) {
                     return Promise.resolve();
                 }
-                const connectedGMs = chatFeatureApi.users.filter((u) => u.isGM && u.active);
-                const isResponsibleGM = !connectedGMs.some((other) => other.id < chatFeatureApi.currentUser.id);
+                const connectedGMs = api.users.filter((u) => u.isGM && u.active);
+                const isResponsibleGM = !connectedGMs.some((other) => other.id < api.currentUser.id);
                 if (!isResponsibleGM){
                     return Promise.resolve();
                 }
@@ -42,12 +42,12 @@ async function onChatCardAction(event) {
     const action = button.dataset.action;
     const messageId = button.closest(".message").dataset.messageId;
 
-    if (!chatFeatureApi.currentUser.isGM) {
+    if (!api.currentUser.isGM) {
         if (!game.users.filter((u) => u.isGM && u.active).length) {
-            return chatFeatureApi.warnUser("splittermond.chatCard.noGMConnected");
+            return api.warnUser("splittermond.chatCard.noGMConnected");
         }
 
-        return chatFeatureApi.socket.emit(socketEvent, {
+        return api.socket.emit(socketEvent, {
             type: "chatAction",
             action,
             messageId,

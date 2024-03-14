@@ -1,5 +1,5 @@
 import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
-import {chatFeatureApi} from "../chatActionGameApi.js";
+import {api} from "../../../api/api.js";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
@@ -62,7 +62,7 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
             rollResultClass: getRollResultClass(this.checkReport),
             header: {
                 title: this.messageTitle,
-                rollTypeMessage: chatFeatureApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
+                rollTypeMessage: api.localize(`splittermond.rollType.${this.checkReport.rollType}`),
                 difficulty: this.checkReport.difficulty,
                 hideDifficulty: this.checkReport.hideDifficulty
             },
@@ -87,7 +87,7 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
 function getDegreeOfSuccessMessage(degreeOfSuccess,succeeded) {
     const messageType= `${succeeded ? "success" : "fail"}Message`;
     const messageExtremity = Math.min(Math.abs(degreeOfSuccess), 5);
-    return chatFeatureApi.localize(`splittermond.${messageType}.${messageExtremity}`);
+    return api.localize(`splittermond.${messageType}.${messageExtremity}`);
 }
 
 /**
@@ -158,7 +158,7 @@ function renderDegreeOfSuccessOption(spellRollMessage, key) {
     const degreeOfSuccessOptionConfig = splittermond.spellEnhancement[key];
     return {
         ...commonConfig,
-        text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${chatFeatureApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
+        text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${api.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
     };
 }
 

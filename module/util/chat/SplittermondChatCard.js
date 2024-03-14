@@ -1,6 +1,6 @@
 import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.js";
 import {getFromRegistry} from "./chatMessageRegistry.js";
-import {chatFeatureApi} from "./chatActionGameApi.js";
+import {api} from "../../api/api.js";
 
 /**
  * @typedef SplittermondChatMessage
@@ -18,7 +18,7 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
      * @return {SplittermondChatCard}
      */
     static create(actor, message,chatOptions) {
-        const foundryApi = chatFeatureApi;
+        const foundryApi = api;
         const speaker = foundryApi.getSpeaker({actor});
 
         return new SplittermondChatCard({
@@ -34,14 +34,14 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
      */
     constructor(model, gameInterface ){
         super(model);
-        this.foundryApi = gameInterface;
+        this.foundryApiWrapper = gameInterface;
     }
 
     async sendToChat() {
         const content = await this.render();
 
         const chatData = {
-            user: this.foundryApi.currentUser.id,
+            user: this.foundryApiWrapper.currentUser.id,
             speaker: this.speaker,
             type: this.chatOptions.type,
             rollMode: this.chatOptions.mode,
@@ -53,7 +53,7 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
             },
         };
 
-        const message = await this.foundryApi.createChatMessage(chatData);
+        const message = await this.foundryApiWrapper.createChatMessage(chatData);
 
         this.updateSource({messageId: message.id});
         await this.updateMessage();
@@ -63,7 +63,7 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
         const message = this.getMessage();
 
         if (!message) {
-            this.foundryApi.warnUser("splittermond.chatCard.messageNotFound");
+            this.foundryApiWrapper.warnUser("splittermond.chatCard.messageNotFound");
             return Promise.resolve();
         }
 
@@ -72,11 +72,11 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
     }
 
     getMessage() {
-        return this.foundryApi.messages?.get(this.messageId);
+        return this.foundryApiWrapper.messages?.get(this.messageId);
     }
 
     async render() {
-        return await this.foundryApi.renderer(this.message.template, this.message.getData());
+        return await this.foundryApiWrapper.renderer(this.message.template, this.message.getData());
     }
 }
 
@@ -92,7 +92,7 @@ export async function handleChatAction(action, messageId) {
         chatCard.message[action]();
         await chatCard.updateMessage();
     }else{
-        chatFeatureApi.warnUser("splittermond.chatCard.actionNotFound");
+        api.warnUser("splittermond.chatCard.actionNotFound");
         throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
     }
 
@@ -103,7 +103,7 @@ export function handleLocalChatAction(action, messageId) {
     if(hasAction(chatCard.message, action)){
         chatCard.message[action]();
     }else{
-        chatFeatureApi.warnUser("splittermond.chatCard.actionNotFound");
+        api.warnUser("splittermond.chatCard.actionNotFound");
         throw new Error(`Action ${action} not found on chat card for message ${chatCard.constructorKey} with ${messageId}`);
     }
 }
@@ -113,7 +113,7 @@ export function handleLocalChatAction(action, messageId) {
  * @return {SplittermondChatCard}
  */
 function getChatCard(messageId){
-    const chatCard = chatFeatureApi.messages.get(messageId)
+    const chatCard = api.messages.get(messageId)
     const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
     const constructor = getFromRegistry(chatCardFlag.message.constructorKey)
     const messageObject = new constructor(chatCardFlag.message);
@@ -121,7 +121,7 @@ function getChatCard(messageId){
     return new SplittermondChatCard({
         ...chatCardFlag,
         message: messageObject,
-    }, chatFeatureApi);
+    }, api);
 
 }
 

@@ -1,5 +1,5 @@
 import {TooltipFormula} from "../tooltip.js";
-import {chatFeatureApi} from "./chatActionGameApi.js";
+import {api} from "../../api/api.js";
 
 
 export class RollResultRenderer {
@@ -33,7 +33,7 @@ function renderSkillAndModifiers(checkReport){
     const attributeKeys = Object.keys(checkReport.skill.attributes);
     tooltip.addParts(Object.entries(checkReport.skill.attributes).map(entry=> ({
         value: `${entry[1]}`,
-        description: chatFeatureApi.localize(`splittermond.attribute.${entry[0]}.short`)
+        description: api.localize(`splittermond.attribute.${entry[0]}.short`)
     })), "+");
 
     tooltip.addOperator("+")
