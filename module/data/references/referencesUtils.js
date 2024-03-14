@@ -1,5 +1,5 @@
 import {chatFeatureApi} from "../../util/chat/chatActionGameApi.js";
-import {referencesApi} from "./referencesApi.js";
+import {foundryApi} from "../../api/foundryApi.js";
 import {AgentReference} from "./AgentReference.js";
 
 export const referencesUtils ={
@@ -19,10 +19,10 @@ function findBestUserActor(){
     const speaker = chatFeatureApi.getSpeaker();//TODO we should not use the chatFeature API here.
     /**@type {AgentReference|null} */ let actor = null;
     if (speaker.token) {
-        actor = withTry(()=>AgentReference.initialize(referencesApi.getToken(speaker.scene, speaker.token)));
+        actor = withTry(()=>AgentReference.initialize(foundryApi.getToken(speaker.scene, speaker.token)));
     }
     if (!actor && speaker.actor) {
-        actor = withTry(() => AgentReference.initialize(referencesApi.getActor(speaker.actor)));
+        actor = withTry(() => AgentReference.initialize(foundryApi.getActor(speaker.actor)));
     }
     if (!actor) {
         throw new Error("No actor found for the current user.")

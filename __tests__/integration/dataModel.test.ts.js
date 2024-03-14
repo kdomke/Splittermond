@@ -1,6 +1,6 @@
 import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
 import {AgentReference} from "../../module/data/references/AgentReference.js";
-import {referencesApi} from "../../module/data/references/referencesApi.js";
+import {foundryApi} from "../../module/api/foundryApi.js";
 import {ItemReference} from "../../module/data/references/ItemReference.js";
 import {OnAncestorReference} from "../../module/data/references/OnAncestorReference.js";
 
@@ -77,13 +77,13 @@ export function dataModelTest(context) {
     describe("references API", () => {
         it("should get an actor by id", async () => {
             const sampleActor = getActor()
-            const fromApi = referencesApi.getActor(sampleActor.id)
+            const fromApi = foundryApi.getActor(sampleActor.id)
 
             expect(fromApi).to.equal(sampleActor);
         });
 
         it("should return undefined for nonsense id", () => {
-            const fromAPI = referencesApi.getActor("nonsense");
+            const fromAPI = foundryApi.getActor("nonsense");
 
             expect(fromAPI).to.be.undefined;
         })
@@ -92,13 +92,13 @@ export function dataModelTest(context) {
             const sampleToken = getUnlinkedToken(this);
 
             const sceneId = sampleToken.parent.id;
-            const fromAPI = referencesApi.getToken(sceneId, sampleToken.id);
+            const fromAPI = foundryApi.getToken(sceneId, sampleToken.id);
 
             expect(sampleToken).to.equal(fromAPI);
         });
 
         it("should return undefined for nonsense id", () => {
-            const fromAPI = referencesApi.getToken("nonsense", "bogus");
+            const fromAPI = foundryApi.getToken("nonsense", "bogus");
 
             expect(fromAPI).to.be.undefined;
         });

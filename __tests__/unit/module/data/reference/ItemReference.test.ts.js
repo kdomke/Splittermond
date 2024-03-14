@@ -2,7 +2,7 @@ import "../../../foundryMocks.js";
 import {describe, it, afterEach} from "mocha";
 import {expect} from "chai";
 import {AgentReference} from "../../../../../module/data/references/AgentReference.js";
-import {referencesApi} from "../../../../../module/data/references/referencesApi.js";
+import {foundryApi} from "../../../../../module/api/foundryApi.js";
 import sinon from "sinon";
 import {ItemReference} from "../../../../../module/data/references/ItemReference.js";
 
@@ -26,7 +26,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no spells to reference", () => {
-        sinon.stub(referencesApi, "getItem").returns(undefined);
+        sinon.stub(foundryApi, "getItem").returns(undefined);
 
         const underTest = new ItemReference({id: "1234", actorReference:null});
 
@@ -34,7 +34,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no actors to reference", () => {
-        sinon.stub(referencesApi, "getActor").returns(undefined);
+        sinon.stub(foundryApi, "getActor").returns(undefined);
 
         const underTest = new ItemReference({
             id: "1234",
@@ -45,7 +45,7 @@ describe("AgentReference", () => {
     });
 
     it ("should handle no items on Actor", () => {
-        sinon.stub(referencesApi, "getActor").returns({id:"1", items: new Map()});
+        sinon.stub(foundryApi, "getActor").returns({id:"1", items: new Map()});
 
         const underTest = new ItemReference({
             id: "1234",

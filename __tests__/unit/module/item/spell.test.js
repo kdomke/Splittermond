@@ -102,21 +102,27 @@ describe("Spell item cost calculation", () => {
 });
 
 describe("Spell item roll costs", () =>{
-    const stub = sinon.createStubInstance(SplittermondSpellItem);
-    stub.getCostsForFinishedRoll.callThrough();
-    sinon.stub(stub,"costs").get(()=>"2V2");
+    function createStub(){
+        const stub = sinon.createStubInstance(SplittermondSpellItem);
+        stub.getCostsForFinishedRoll.callThrough();
+        sinon.stub(stub,"costs").get(()=>"2V2");
+        return stub;
+    }
 
     it("should return the costs if a roll is successful", () => {
+        const stub = createStub();
         const actual = stub.getCostsForFinishedRoll(0, true);
         expect(actual).to.deep.equal(new Cost(0, 2, false).asPrimaryCost());
     })
 
     it("should return reduced costs for critical successes", () => {
+        const stub = createStub();
         const actual = stub.getCostsForFinishedRoll(5, true);
         expect(actual).to.deep.equal(new Cost(0, 1, false).asPrimaryCost());
     });
 
     it("should return degrees of success as costs if a roll is not successful", () => {
+        const stub = createStub();
         const actual = stub.getCostsForFinishedRoll(-2, false);
         expect(actual).to.deep.equal(new Cost(2, 0, false).asPrimaryCost());
     });
