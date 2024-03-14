@@ -32,7 +32,7 @@ export function chatActionFeature(){
  */
 function chatListeners(html) {
     html.on("click", ".splittermond-chat-action[data-action]", onChatCardAction);
-    html.on("click", ".local-splittermond-chat-action[data-action]", onLocalChatCardAction)
+    html.on("click", ".splittermond-chat-action[data-localAction]", onLocalChatCardAction)
 }
 
 async function onChatCardAction(event) {
@@ -60,7 +60,7 @@ async function onChatCardAction(event) {
 
 function onLocalChatCardAction(event){
     const button = event.currentTarget;
-    const action = button.dataset.action;
+    const action = button.dataset.localaction;
     const messageId = button.closest(".message").dataset.messageId;
     return handleLocalChatAction(action, messageId);
 }
