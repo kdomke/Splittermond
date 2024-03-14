@@ -1,4 +1,4 @@
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 
 export class DamageRoll {
 
@@ -43,7 +43,7 @@ export class DamageRoll {
         const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
         const damageFormula = `${rollFormulaWithPrecision}${this.#getSign()}${Math.abs(this._damageModifier)}`;
 
-        let rollResult = await api.roll(damageFormula, {}).evaluate();
+        let rollResult = await foundryApi.roll(damageFormula, {}).evaluate({async: false});
 
         rollResult = this.#modifyResultForScharfFeature(rollResult);
         rollResult = this.#modifyResultForKritischFeature(rollResult);

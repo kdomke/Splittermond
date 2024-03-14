@@ -9,7 +9,7 @@ import {createSpellDegreeOfSuccessField, createSplittermondSpellRollMessage} fro
 import sinon from "sinon";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {identity} from "../../../../foundryMocks.js";
-import {api} from "../../../../../../module/api/api.js";
+import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
@@ -41,7 +41,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     beforeEach(() => {
         spellRollMessage = createTestRollMessage();
         mock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(api, "getItem").returns(mock)});
+        sinon.stub(foundryApi, "getItem").returns(mock)});
     afterEach(() => sinon.restore());
 
     it("should reduce exhausted focus on check", () => {
@@ -119,7 +119,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
 describe("SplittermondSpellRollMessage enacts damage increases correctly", () => {
     const spellRollMessage = createTestRollMessage();
     const mock = sinon.createStubInstance(SplittermondSpellItem);
-    before(() => sinon.stub(api, "getItem").returns(mock));
+    before(() => sinon.stub(foundryApi, "getItem").returns(mock));
     after(() => sinon.restore());
 
     it("should increase damage on check", () => {
@@ -146,7 +146,7 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
 describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     const spellRollMessage = createTestRollMessage();
     const mock = sinon.createStubInstance(SplittermondSpellItem);
-    before(() => sinon.stub(api, "getItem").returns(mock));
+    before(() => sinon.stub(foundryApi, "getItem").returns(mock));
     after(() => sinon.restore());
 
     it("should reduce ticks on check", () => {
@@ -180,7 +180,7 @@ describe("SplittermondSpellRollMessage actions", () => {
             rollType: "standard"
         };
         underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(api, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
+        sinon.stub(foundryApi, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
 
         underTest.useSplinterpoint();
 
@@ -194,8 +194,8 @@ describe("SplittermondSpellRollMessage actions", () => {
         underTest.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
         const stubbedActor = sinon.createStubInstance(SplittermondActor);
         stubbedActor.consumeCost = sinon.spy();
-        sinon.stub(api, "getActor").returns(stubbedActor);
-        sinon.stub(api, "getItem").returns({
+        sinon.stub(foundryApi, "getActor").returns(stubbedActor);
+        sinon.stub(foundryApi, "getItem").returns({
             name: "spell",
             getCostsForFinishedRoll: () => new Cost(1, 1, true).asPrimaryCost(),
         });
@@ -209,8 +209,8 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should disable focus degree of success options", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(api, "getActor").returns({consumeCost: sinon.spy()});
-        sinon.stub(api, "getItem").returns({
+        sinon.stub(foundryApi, "getActor").returns({consumeCost: sinon.spy()});
+        sinon.stub(foundryApi, "getItem").returns({
             name: "spell",
             getCostsForFinishedRoll: () => (new Cost(1, 0, false).asPrimaryCost())
         });
@@ -228,14 +228,14 @@ describe("SplittermondSpellRollMessage actions", () => {
         const underTest = createTestRollMessage();
         const mock = sinon.createStubInstance(SplittermondSpellItem)
         sinon.stub(mock,"damage").get(() => "1W6");
-        sinon.stub(api, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
-        sinon.stub(api, "getItem").returns(mock);
+        sinon.stub(foundryApi, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
+        sinon.stub(foundryApi, "getItem").returns(mock);
 
         await underTest.applyDamage();
 
         expect(underTest.actionManager.damage.used).to.be.true;
         expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
-        expect(api.roll.firstCall.args[0]).to.equal("1d6+0");
+        expect(foundryApi.roll.firstCall.args[0]).to.equal("1d6+0");
     });
 
     it("should call ticks with value on the actor", () => {
@@ -243,18 +243,18 @@ describe("SplittermondSpellRollMessage actions", () => {
         const addTicksMock = sinon.stub().withArgs(4);
         underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
         underTest.actionManager.ticks.adjusted = 4;
-        sinon.stub(api, "getActor").returns({addTicks: addTicksMock});
+        sinon.stub(foundryApi, "getActor").returns({addTicks: addTicksMock});
 
         underTest.advanceToken();
 
-        expect(api.getActor.called).to.be.true;
+        expect(foundryApi.getActor.called).to.be.true;
         expect(addTicksMock.firstCall.args).to.contain(4);
     });
 
     it("should disable token advancement degree of success options", () => {
         const underTest = createTestRollMessage();
         underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(api, "getActor").returns({addTicks: sinon.spy()});
+        sinon.stub(foundryApi, "getActor").returns({addTicks: sinon.spy()});
 
         underTest.advanceToken();
 
@@ -279,7 +279,7 @@ describe("SplittermondSpellRollMessage actions", () => {
         const mockSpell = sinon.createStubInstance(SplittermondSpellItem);
         sinon.stub(mockSpell,"difficulty").get(() => "VTD");
         sinon.stub(referencesUtils, "findBestUserActor").returns(mockReference);
-        sinon.stub(api, "getItem").returns(mockSpell);
+        sinon.stub(foundryApi, "getItem").returns(mockSpell);
         sinon.spy(SplittermondDataModel.prototype,"updateSource");
 
         manager.activeDefense();

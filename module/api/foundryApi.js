@@ -1,4 +1,4 @@
-export const api= new class FoundryApi {
+export const foundryApi= new class FoundryApi {
 
     /**
      * @param {string} messageKey the key to an entry in the localization file

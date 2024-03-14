@@ -2,7 +2,7 @@ import "../../../foundryMocks.js";
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import {AgentReference} from "../../../../../module/data/references/AgentReference.js";
-import {api} from "../../../../../module/api/api.js";
+import {foundryApi} from "../../../../../module/api/foundryApi.js";
 import sinon from "sinon";
 
 
@@ -37,7 +37,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no tokens to reference", () => {
-        sinon.stub(api, "getToken").returns(undefined);
+        sinon.stub(foundryApi, "getToken").returns(undefined);
 
         const underTest = new AgentReference({id: "1234", scene: "3456", type: "token"});
 
@@ -45,7 +45,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no actors to reference", () => {
-        sinon.stub(api, "getActor").returns(undefined);
+        sinon.stub(foundryApi, "getActor").returns(undefined);
 
         const underTest = new AgentReference({id: "1234", scene: null, type: "actor"});
 

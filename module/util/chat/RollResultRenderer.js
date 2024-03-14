@@ -1,5 +1,5 @@
 import {TooltipFormula} from "../tooltip.js";
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 
 
 export class RollResultRenderer {
@@ -33,7 +33,7 @@ function renderSkillAndModifiers(checkReport){
     const attributeKeys = Object.keys(checkReport.skill.attributes);
     tooltip.addParts(Object.entries(checkReport.skill.attributes).map(entry=> ({
         value: `${entry[1]}`,
-        description: api.localize(`splittermond.attribute.${entry[0]}.short`)
+        description: foundryApi.localize(`splittermond.attribute.${entry[0]}.short`)
     })), "+");
 
     tooltip.addOperator("+")

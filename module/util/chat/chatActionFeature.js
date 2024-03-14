@@ -1,20 +1,20 @@
 import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard.js";
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 
 const socketEvent = "system.splittermond";
 export function chatActionFeature(){
-    api.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
-    api.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
+    foundryApi.hooks.on("renderChatLog", (_app, html, _data) => chatListeners(html));
+    foundryApi.hooks.on("renderChatPopout", (_app, html, _data) => chatListeners(html));
 
-    api.hooks.once("init", () => {
+    foundryApi.hooks.once("init", () => {
         game.socket.on(socketEvent, (data) => {
 
             if (data.type === "chatAction") {
-                if (!api.currentUser.isGM) {
+                if (!foundryApi.currentUser.isGM) {
                     return Promise.resolve();
                 }
-                const connectedGMs = api.users.filter((u) => u.isGM && u.active);
-                const isResponsibleGM = !connectedGMs.some((other) => other.id < api.currentUser.id);
+                const connectedGMs = foundryApi.users.filter((u) => u.isGM && u.active);
+                const isResponsibleGM = !connectedGMs.some((other) => other.id < foundryApi.currentUser.id);
                 if (!isResponsibleGM){
                     return Promise.resolve();
                 }
@@ -42,12 +42,12 @@ async function onChatCardAction(event) {
     const action = button.dataset.action;
     const messageId = button.closest(".message").dataset.messageId;
 
-    if (!api.currentUser.isGM) {
+    if (!foundryApi.currentUser.isGM) {
         if (!game.users.filter((u) => u.isGM && u.active).length) {
-            return api.warnUser("splittermond.chatCard.noGMConnected");
+            return foundryApi.warnUser("splittermond.chatCard.noGMConnected");
         }
 
-        return api.socket.emit(socketEvent, {
+        return foundryApi.socket.emit(socketEvent, {
             type: "chatAction",
             action,
             messageId,

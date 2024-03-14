@@ -1,5 +1,5 @@
 import {AgentReference} from "./AgentReference.js";
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
 
 /**
@@ -51,6 +51,6 @@ export class ItemReference extends SplittermondDataModel {
 
     /**@return {T} */
     #getFromCollection() {
-        return api.getItem(this.id);
+        return foundryApi.getItem(this.id);
     }
 }

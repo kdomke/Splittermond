@@ -2,7 +2,7 @@ import {it, describe} from "mocha";
 import {expect} from "chai";
 import sinon from "sinon";
 import {DamageRoll} from "../../../../module/util/damage/DamageRoll.js";
-import {api} from "../../../../module/api/api.js";
+import {foundryApi} from "../../../../module/api/foundryApi.js";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -97,7 +97,7 @@ describe("DamageRoll evaluation", () => {
 
     it("Should add an optional die for exact feature", () => {
         const damageString = "1d6"
-        const mock = sinon.stub(api, "roll").returns({evaluate: () => 1});
+        const mock = sinon.stub(foundryApi, "roll").returns({evaluate: () => 1});
         const roll = DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
         expect(mock.callCount).to.equal(1);
@@ -106,7 +106,7 @@ describe("DamageRoll evaluation", () => {
 
     it("Should increase the lowest dice for scharf feature", async () => {
         const damageString = "2d6"
-        const mock = sinon.stub(api, "roll").returns({
+        const mock = sinon.stub(foundryApi, "roll").returns({
                 evaluate: () => (Promise.resolve({
                     _total: 2,
                     terms: [
@@ -130,7 +130,7 @@ describe("DamageRoll evaluation", () => {
 
     it("Should increase the highest dice for kritisch feature", async () => {
         const damageString = "2d6"
-        const mock = sinon.stub(api, "roll").returns({
+        const mock = sinon.stub(foundryApi, "roll").returns({
                 evaluate: () => (Promise.resolve({
                     _total: 12,
                     terms: [

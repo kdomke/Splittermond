@@ -5,7 +5,7 @@ import {expect} from "chai";
 import {createSpellActionManager} from "./spellRollMessageTestHelper.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
-import {api} from "../../../../../../module/api/api.js";
+import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
@@ -113,8 +113,8 @@ describe("SpellActionManager", () => {
         it("should pass adjusted focus to the actor", () => {
             const manager = createSpellActionManager();
             manager.focus.adjusted = new Cost(0,0,false).asModifier();
-            sinon.stub(api, "getActor").returns({consumeCost: sinon.spy()});
-            sinon.stub(api, "getItem").returns({
+            sinon.stub(foundryApi, "getActor").returns({consumeCost: sinon.spy()});
+            sinon.stub(foundryApi, "getItem").returns({
                 name: "spell",
                 getCostsForFinishedRoll: () => new Cost(9, 3, 0).asPrimaryCost()
             });
@@ -122,7 +122,7 @@ describe("SpellActionManager", () => {
             manager.focus.subtractCost("1V1");
             manager.consumeFocus();
 
-            expect(api.getActor("").consumeCost.lastCall.args[1]).to.contain("11V2")
+            expect(foundryApi.getActor("").consumeCost.lastCall.args[1]).to.contain("11V2")
         });
         it("should add Costs to the adjusted value", () => {
             const manager = createSpellActionManager();
@@ -184,8 +184,8 @@ describe("SpellActionManager", () => {
         const manager = createSpellActionManager();
         const actorMock = sinon.createStubInstance(SplittermondActor);
         const spellMock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(api, "getActor").returns(actorMock);
-        sinon.stub(api, "getItem").returns(spellMock);
+        sinon.stub(foundryApi, "getActor").returns(actorMock);
+        sinon.stub(foundryApi, "getItem").returns(spellMock);
         manager.magicFumble.checkReportReference.get().isFumble = true;
 
         expect(manager.magicFumble.available).to.be.true;
@@ -196,8 +196,8 @@ describe("SpellActionManager", () => {
         const manager = createSpellActionManager();
         const actorMock = sinon.createStubInstance(SplittermondActor);
         const spellMock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(api, "getActor").returns(actorMock);
-        sinon.stub(api, "getItem").returns(spellMock);
+        sinon.stub(foundryApi, "getActor").returns(actorMock);
+        sinon.stub(foundryApi, "getItem").returns(spellMock);
 
         manager.rollMagicFumble();
 
@@ -208,7 +208,7 @@ describe("SpellActionManager", () => {
 
     it("should spend splinterpoint on actor", () => {
         const getBonusFunction = sinon.mock().returns(3);
-        sinon.stub(api, "getActor").returns({
+        sinon.stub(foundryApi, "getActor").returns({
             id: "1",
             documentName: "Actor",
             spendSplinterpoint: () => ({getBonus: getBonusFunction})

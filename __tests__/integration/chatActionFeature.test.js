@@ -1,6 +1,6 @@
 import {getActor, getActorWithItemOfType} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
-import {api} from "../../module/api/api.js";
+import {foundryApi} from "../../module/api/foundryApi.js";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
 import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 
@@ -46,7 +46,7 @@ export function chatActionFeatureTest(context) {
             await chatCard.sendToChat();
 
             await handleChatAction("alterTitle", chatCard.messageId);
-            expect(api.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
+            expect(foundryApi.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
             ChatMessage.deleteDocuments([chatCard.messageId]);
         });
 
@@ -115,18 +115,18 @@ export function chatActionFeatureTest(context) {
 
     describe("chat feature API tests", () => {
         it("should deliver the current user", () => {
-            const currentUser = api.currentUser;
+            const currentUser = foundryApi.currentUser;
             expect(isUser(currentUser), "current User adheres to our interface").to.be.true;
         });
 
         it("should deliver all users", () => {
-            const users = api.users;
+            const users = foundryApi.users;
             expect(isUser(users.find(() => true)), "users adhere to our interface").to.be.true;
         });
 
         it("should produce a speaker from actor", () => {
             const actor = getActor(this);
-            const speaker = api.getSpeaker({actor});
+            const speaker = foundryApi.getSpeaker({actor});
 
             expect(speaker, "speaker is an object").to.be.an("object");
             expect(speaker.scene, "speaker has a scene").to.be.a("string");
@@ -136,11 +136,11 @@ export function chatActionFeatureTest(context) {
 
         it("should return a message id when creating a chat message", async () => {
             const actor = getActor(this);
-            const speaker = api.getSpeaker({actor});
+            const speaker = foundryApi.getSpeaker({actor});
             const sampleMessageContent = {
-                user: api.currentUser.id,
+                user: foundryApi.currentUser.id,
                 speaker,
-                type: api.chatMessageTypes.ROLL,
+                type: foundryApi.chatMessageTypes.ROLL,
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -148,7 +148,7 @@ export function chatActionFeatureTest(context) {
                     },
                 }
             };
-            const message = await api.createChatMessage(sampleMessageContent);
+            const message = await foundryApi.createChatMessage(sampleMessageContent);
 
             expect(message.id, "messageId is a string").to.be.a("string");
             ChatMessage.deleteDocuments([message.id]);
@@ -156,11 +156,11 @@ export function chatActionFeatureTest(context) {
 
         it("should post a message in the chat", async () => {
             const actor = getActor(this);
-            const speaker = api.getSpeaker({actor});
+            const speaker = foundryApi.getSpeaker({actor});
             const sampleMessageContent = {
-                user: api.currentUser.id,
+                user: foundryApi.currentUser.id,
                 speaker,
-                type: api.chatMessageTypes.ROLL,
+                type: foundryApi.chatMessageTypes.ROLL,
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -168,9 +168,9 @@ export function chatActionFeatureTest(context) {
                     },
                 }
             };
-            const message = await api.createChatMessage(sampleMessageContent);
+            const message = await foundryApi.createChatMessage(sampleMessageContent);
 
-            const retrievedMessage = api.messages.get(message.id);
+            const retrievedMessage = foundryApi.messages.get(message.id);
             expect(retrievedMessage, "message was found").to.not.be.undefined;
             expect(retrievedMessage.getFlag("splittermond", "chatCard"))
                 .to.deep.equal(sampleMessageContent.flags.splittermond.chatCard);
@@ -180,21 +180,21 @@ export function chatActionFeatureTest(context) {
 
         it("should deliver a template renderer", async () => {
             const content = "Rhaaaaagaahh"
-            const renderedHtml = await api.renderer(
+            const renderedHtml = await foundryApi.renderer(
                 "systems/splittermond/__tests__/integration/resources/testTemplate.hbs", {title: content});
             expect(renderedHtml, "renderedHtml is a string").to.be.a("string");
             expect(renderedHtml, "renderedHtml contains the content").to.contain(content);
         });
 
         it("transfer events via socket", () => {
-            api.socket.on("system.splittermond.quench.test.event", (data) => {
+            foundryApi.socket.on("system.splittermond.quench.test.event", (data) => {
                 expect(data.test).to.be.equal("test");
             });
-            api.socket.emit("system.splittermond.quench.test.event", {test: "test"});
+            foundryApi.socket.emit("system.splittermond.quench.test.event", {test: "test"});
         });
 
         it("delivers the the correct chat message types", ()=> {
-            const types = api.chatMessageTypes;
+            const types = foundryApi.chatMessageTypes;
             expect(types, "chatMessageTypes is an object").to.be.an("object");
             expect(Object.keys(types).length).to.equal(6);
             expect(types.EMOTE, "chatMessageTypes has an emote").to.be.a("number");

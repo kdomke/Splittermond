@@ -1,6 +1,6 @@
 import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.js";
 import {getFromRegistry} from "./chatMessageRegistry.js";
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 
 /**
  * @typedef SplittermondChatMessage
@@ -18,13 +18,13 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
      * @return {SplittermondChatCard}
      */
     static create(actor, message,chatOptions) {
-        const speaker = api.getSpeaker({actor});
+        const speaker = foundryApi.getSpeaker({actor});
 
         return new SplittermondChatCard({
             speaker,
             chatOptions,
             message,
-        }, api);
+        }, foundryApi);
     }
 
     /**
@@ -91,7 +91,7 @@ export async function handleChatAction(action, messageId) {
         chatCard.message[action]();
         await chatCard.updateMessage();
     }else{
-        api.warnUser("splittermond.chatCard.actionNotFound");
+        foundryApi.warnUser("splittermond.chatCard.actionNotFound");
         throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
     }
 
@@ -102,7 +102,7 @@ export function handleLocalChatAction(action, messageId) {
     if(hasAction(chatCard.message, action)){
         chatCard.message[action]();
     }else{
-        api.warnUser("splittermond.chatCard.actionNotFound");
+        foundryApi.warnUser("splittermond.chatCard.actionNotFound");
         throw new Error(`Action ${action} not found on chat card for message ${chatCard.constructorKey} with ${messageId}`);
     }
 }
@@ -112,7 +112,7 @@ export function handleLocalChatAction(action, messageId) {
  * @return {SplittermondChatCard}
  */
 function getChatCard(messageId){
-    const chatCard = api.messages.get(messageId)
+    const chatCard = foundryApi.messages.get(messageId)
     const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
     const constructor = getFromRegistry(chatCardFlag.message.constructorKey)
     const messageObject = new constructor(chatCardFlag.message);
@@ -120,7 +120,7 @@ function getChatCard(messageId){
     return new SplittermondChatCard({
         ...chatCardFlag,
         message: messageObject,
-    }, api);
+    }, foundryApi);
 
 }
 

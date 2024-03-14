@@ -1,4 +1,4 @@
-import {api} from "../../api/api.js";
+import {foundryApi} from "../../api/foundryApi.js";
 import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
 
 
@@ -47,9 +47,9 @@ export class AgentReference extends SplittermondDataModel{
 
     #getActor(){
         if (this.type === "actor") {
-            return api.getActor(this.id);
+            return foundryApi.getActor(this.id);
         } else {
-            return api.getToken(this.sceneId, this.id)?.actor;
+            return foundryApi.getToken(this.sceneId, this.id)?.actor;
         }
     }
 }

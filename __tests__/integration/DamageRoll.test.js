@@ -1,4 +1,4 @@
-import {api} from "../../module/api/api.js";
+import {foundryApi} from "../../module/api/foundryApi.js";
 import {DamageRoll} from "../../module/util/damage/DamageRoll.js";
 
 export function DamageRollTest(context) {
@@ -6,10 +6,10 @@ export function DamageRollTest(context) {
 
     describe("test API", () => {
         it("should fail if 1000 dice or more are requested", () => {
-          expect(async () => await api.roll("1000d6").evaluate({async: false})).to.throw(Error)
+          expect(async () => await foundryApi.roll("1000d6").evaluate({async: false})).to.throw(Error)
         });
         it("should return a roll object", async () => {
-            const rollResult = await api.roll("2d6+1").evaluate({async: false})
+            const rollResult = await foundryApi.roll("2d6+1").evaluate()
 
             expect(rollResult).to.have.property("terms");
             expect(rollResult).to.have.property("_total");
@@ -36,20 +36,20 @@ export function DamageRollTest(context) {
 
         });
 
-        it("should evaluate a roll synchronously", async () => {
-            const rollResult = await api.roll("2d6+1").evaluate({async: false})
+        it("should evaluate a roll synchronously",async () => {
+            const rollResult = await foundryApi.roll("2d6+1").evaluate({async: false})
 
             expect(rollResult).to.be.instanceOf(Roll);
         });
 
         it("should evaluate a roll asynchronously", async () => {
-            const rollResult = await api.roll("2d6+1").evaluate({async: true})
+            const rollResult = await foundryApi.roll("2d6+1").evaluate({async: true})
 
             expect(rollResult).to.be.instanceOf(Promise);
         });
 
-        it("should not fail for a zero dice formula", async () => {
-            const rollResult = await api.roll("0d0").evaluate({async: false})
+        it("should not fail for a zero dice formula",async () => {
+            const rollResult = await foundryApi.roll("0d0").evaluate({async: false})
 
             expect(rollResult.total).to.equal(0);
         });
