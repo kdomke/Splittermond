@@ -28,7 +28,6 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
             }
         }
         return new SpellMessageDegreesOfSuccessManager({
-            initialDegreesOfSuccess: checkReport.degreeOfSuccess,
             totalDegreesOfSuccess: checkReport.degreeOfSuccess,
             spellEnhancement: {
                 degreeOfSuccessCosts: parseSpellEnhancementDegreesOfSuccess(spell.enhancementCosts),
@@ -44,7 +43,6 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
         return {
             ...createDegreesOfSuccessOptionSchema(),
             spellEnhancement: new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {required: true, blank: false, nullable: false}),
-            initialDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false}),
             totalDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false}),
             usedDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
         }

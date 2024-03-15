@@ -87,7 +87,6 @@ export function createRenderer(parent) {
 
 export function createSpellDegreeOfSuccessManager() {
     const manager = new SpellMessageDegreesOfSuccessManager({
-        initialDegreesOfSuccess: 3,
         totalDegreesOfSuccess: 3,
         usedDegreesOfSuccess: 0
     });

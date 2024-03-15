@@ -104,7 +104,6 @@ describe("SpellMessageDegreeOfSuccessField", () => {
 
 function defaultSpellDegreeOfSuccessField() {
     const manager = new SpellMessageDegreesOfSuccessManager({
-        initialDegreesOfSuccess: 3,
         totalDegreesOfSuccess: 3,
         usedDegreesOfSuccess: 0
     });
