@@ -14,6 +14,7 @@ import {
 import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
+import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 
 export function createSpellActionManager() {
     const casterReference= new AgentReference({type:"actor"});
@@ -65,12 +66,17 @@ export function createSpellActionManager() {
 }
 
 export function createSplittermondSpellRollMessage() {
+    const checkReport= {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
+    const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
+        .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
     const spellRollMessage = new SplittermondSpellRollMessage({
         spellReference: new ItemReference({id:"1", agentReference:null}),
-        degreeOfSuccessManager: createSpellDegreeOfSuccessManager(),
+        degreeOfSuccessManager: createSpellDegreeOfSuccessManager(checkReportReference),
         actionManager: createSpellActionManager(),
-        constructorRegistryKey: "SplittermondSpellRollMessage"
+        constructorKey: "SplittermondSpellRollMessage"
     });
+    checkReportReference.parent = spellRollMessage;
+    spellRollMessage.degreeOfSuccessManager.parent = spellRollMessage;
     spellRollMessage.renderer = createRenderer(spellRollMessage);
     return spellRollMessage;
 }
@@ -85,9 +91,13 @@ export function createRenderer(parent) {
     });
 }
 
-export function createSpellDegreeOfSuccessManager() {
+export function createSpellDegreeOfSuccessManager(checkReportReference =null) {
+    if (!checkReportReference) {
+        checkReportReference = {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
+        Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
+    }
     const manager = new SpellMessageDegreesOfSuccessManager({
-        totalDegreesOfSuccess: 3,
+        checkReportReference,
         usedDegreesOfSuccess: 0
     });
     manager.testField = createSpellDegreeOfSuccessField(manager)

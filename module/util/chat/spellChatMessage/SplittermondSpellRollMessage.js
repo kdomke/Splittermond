@@ -27,7 +27,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         return new SplittermondSpellRollMessage({
             checkReport: checkReport,
             spellReference: spellReference.toObject(),
-            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spell, checkReport).toObject(),
+            degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spellReference, reportReference).toObject(),
             renderer: {
                 messageTitle: spell.name,
                 spellDescription: spell.description,
@@ -134,7 +134,6 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         checkReport.roll.total += splinterPointBonus;
         const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
         const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
-        this.degreeOfSuccessManager.updateSource({totalDegreesOfSuccess: newCheckReport.degreeOfSuccess});
         this.updateSource({checkReport: newCheckReport});
         this.renderer.updateSource({checkReport: newCheckReport});
     }

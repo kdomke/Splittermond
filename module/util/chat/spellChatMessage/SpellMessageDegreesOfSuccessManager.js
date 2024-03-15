@@ -2,6 +2,7 @@ import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessFie
 import {splittermond} from "../../../config.js";
 import {parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 
 /**
  * @typedef ManagedSpellOptions
@@ -14,10 +15,11 @@ import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel
  */
 export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
     /**
-     * @param {SplittermondSpellData} spell
-     * @param {CheckReport} checkReport
+     * @param {ItemReference<SplittermondSpellItem>} spellReference
+     * @param {OnAncestorReference<CheckReport>} checkReportReference
      */
-    static fromRoll(spell, checkReport) {
+    static fromRoll(spellReference, checkReportReference) {
+        const spell = spellReference.getItem();
         const degreeOfSuccessOptions = {};
         for (const key in splittermond.spellEnhancement) {
             degreeOfSuccessOptions[key] = {
@@ -28,7 +30,7 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
             }
         }
         return new SpellMessageDegreesOfSuccessManager({
-            totalDegreesOfSuccess: checkReport.degreeOfSuccess,
+            checkReportReference: checkReportReference.toObject(),
             spellEnhancement: {
                 degreeOfSuccessCosts: parseSpellEnhancementDegreesOfSuccess(spell.enhancementCosts),
                 checked: false,
@@ -43,9 +45,13 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
         return {
             ...createDegreesOfSuccessOptionSchema(),
             spellEnhancement: new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {required: true, blank: false, nullable: false}),
-            totalDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false}),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, blank: false, nullable: false}),
             usedDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
         }
+    }
+
+    get totalDegreesOfSuccess(){
+        return this.checkReportReference.get().degreeOfSuccess;
     }
 
     /** @return {number} */
