@@ -78,34 +78,41 @@ function prepareForDegreeOfSuccessManager(spellMock, checkReport) {
 
     checkReport.degreeOfSuccess = checkReport.degreeOfSuccess ?? 3;
 }
+
 function prepareForRenderer(spellMock, checkReport) {
-   sinon.stub(spellMock,"description").get(() => "description");
-   spellMock.name = spellMock.name ?? "name";
+    sinon.stub(spellMock, "description").get(() => "description");
+    spellMock.name = spellMock.name ?? "name";
 }
 
-function withTeardown(messageClass, {spellMock=sinon.stub(), actorMock=sinon.stub(),apiGetItemMock=sinon.stub(), apiGetActorMock=sinon.stub()}) {
-    return (afterOrAfterEach)=>{
-        afterOrAfterEach(()=>{
+function withTeardown(messageClass, {
+    spellMock = sinon.stub(),
+    actorMock = sinon.stub(),
+    apiGetItemMock = sinon.stub(),
+    apiGetActorMock = sinon.stub()
+}) {
+    return (afterOrAfterEach) => {
+        afterOrAfterEach(() => {
             apiGetItemMock.restore();
             apiGetActorMock.restore();
         });
-        return {messageClass, spellMock, actorMock, apiGetItemMock, apiGetActorMock, afterOrAfterEach}
+        return {messageClass, spellMock, actorMock, apiGetItemMock, apiGetActorMock}
     }
 }
+
 export function createSplittermondSpellRollMessage() {
-    const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function(){
-        this.parent = "any";
-        return this;});
+    const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function () {
+        return this;
+    });
     const spellMock = sinon.createStubInstance(SplittermondSpellItem);
     const actorMock = sinon.createStubInstance(SplittermondActor);
     actorMock.documentName = "Actor";
     actorMock.id = "1";
-    actorMock.items = {get:() => spellMock};
+    actorMock.items = {get: () => spellMock};
     spellMock.actor = actorMock;
 
     const apiGetItemMock = sinon.stub(foundryApi, "getItem").returns(spellMock);
     const apiGetActorMock = sinon.stub(foundryApi, "getActor").returns(actorMock);
-    const checkReport = {};//degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
+    const checkReport = {};
     const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
         .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
     prepareForDegreeOfSuccessManager(spellMock, checkReport);
@@ -118,13 +125,15 @@ export function createSplittermondSpellRollMessage() {
     postfixActionManager(spellRollMessage.actionManager);
     injectParent(spellRollMessage);
     toObjectMock.restore();
-    return withTeardown(spellRollMessage, {spellMock, actorMock,apiGetItemMock, apiGetActorMock});
+    return withTeardown(spellRollMessage, {spellMock, actorMock, apiGetItemMock, apiGetActorMock});
 }
 
+/** @param {SpellMessageActionsManager} actionManager */
 function postfixActionManager(actionManager) {
-   actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
+    actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
 }
 
+/** @param {object} object */
 function injectParent(object) {
     for (const key in object) {
         if (object[key] && typeof object[key] === "object" && key !== "parent") {
@@ -134,26 +143,18 @@ function injectParent(object) {
     }
 }
 
-/** @param {SplittermondSpellRollMessage} parent*/
-export function createRenderer(parent) {
-    return new SplittermondSpellRollMessage({
-        messageTitle: "spelly spell",
-        spellEnhancementDescription: "spell enhancement description",
-        degreesOfSuccess: 3,
-        parent
-    });
-}
-
-export function createSpellDegreeOfSuccessManager(checkReportReference = null) {
-    if (!checkReportReference) {
-        checkReportReference = {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
-        Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
-    }
-    const manager = new SpellMessageDegreesOfSuccessManager({
-        checkReportReference,
-        usedDegreesOfSuccess: 0
-    });
-    manager.testField = createSpellDegreeOfSuccessField(manager)
+export function createSpellDegreeOfSuccessManager() {
+    const spellReference = sinon.createStubInstance(SplittermondSpellItem);
+    spellReference.getItem = () => spellReference;
+    const checkReportReference = {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
+    Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
+    Object.defineProperty(checkReportReference, "toObject", {value: function() {return this;}});
+    Object.defineProperty(spellReference, "toObject", {value: function(){return this;}});
+    prepareForDegreeOfSuccessManager(spellReference, checkReportReference);
+    const manager = SpellMessageDegreesOfSuccessManager
+        .fromRoll(spellReference, checkReportReference);
+    manager.testField = createSpellDegreeOfSuccessField(manager);
+    injectParent(manager);
     return manager;
 }
 
