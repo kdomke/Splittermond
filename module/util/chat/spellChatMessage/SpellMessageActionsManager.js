@@ -29,9 +29,9 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
         const casterReference = AgentReference.initialize(spellReference.getItem().actor);
         const spellActionManagerData = {
             focus: FocusAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
-            ticks: {actorReference: casterReference.toObject(), adjusted: 3},
+            ticks: new TickAction({actorReference: casterReference.toObject(), adjusted: 3}).toObject(),
             damage: DamageAction.initialize(spellReference, checkReportReference).toObject(),
-            activeDefense: {itemReference:spellReference, checkReportReference: checkReportReference.toObject(), },
+            activeDefense: new ActiveDefenseAction({itemReference:spellReference.toObject(), checkReportReference: checkReportReference.toObject()}).toObject(),
             splinterPoint: UseSplinterpointsAction.initialize(casterReference, checkReportReference).toObject(),
             magicFumble: MagicFumbleAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
         };

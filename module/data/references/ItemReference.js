@@ -36,7 +36,7 @@ export class ItemReference extends SplittermondDataModel {
 
     /**@return {T} */
     getItem() {
-        let item = this.actorReference ? this.#getFromActor() : this.#getFromCollection();
+        const item = this.actorReference ? this.#getFromActor() : this.#getFromCollection();
         if (!item) {
             throw new Error("ItemReference could not resolve the item");
         }

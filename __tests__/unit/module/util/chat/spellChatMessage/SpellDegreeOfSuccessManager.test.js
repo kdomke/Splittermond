@@ -6,7 +6,7 @@ import {createSpellDegreeOfSuccessManager} from "./spellRollMessageTestHelper.js
 describe("SpellDegreeOfSuccessManager", () => {
     it("should reduce the total degrees of success as a field is checked", () => {
         const underTest = createSpellDegreeOfSuccessManager();
-        underTest.totalDegreesOfSuccess = 3
+        underTest.checkReportReference.get().degreeOfSuccess = 3
         underTest.usedDegreesOfSuccess = 0;
         underTest.testField.degreeOfSuccessCosts = 3;
         underTest.testField.checked = false;
@@ -19,7 +19,7 @@ describe("SpellDegreeOfSuccessManager", () => {
 
     it ("should increase the total degrees of success as a field is unchecked", () => {
         const underTest = createSpellDegreeOfSuccessManager();
-        underTest.totalDegreesOfSuccess = 3
+        underTest.checkReportReference.get().degreeOfSuccess = 3
         underTest.usedDegreesOfSuccess = 3;
         underTest.testField.degreeOfSuccessCosts = 3;
         underTest.testField.checked = true;

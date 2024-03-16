@@ -26,7 +26,7 @@ import {referencesUtils} from "../../../../../../module/data/references/referenc
         })
 
         it("should delegate spell costs to the degree of success manager", () => {
-            const spellRollMessage = createTestRollMessage();
+            const {spellRollMessage} = createTestRollMessage(afterEach);
             spellRollMessage.degreeOfSuccessManager = sinon.spy(spellRollMessage.degreeOfSuccessManager);
             spellRollMessage[method]();
 
@@ -36,18 +36,12 @@ import {referencesUtils} from "../../../../../../module/data/references/referenc
 });
 
 describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
-    let spellRollMessage;
-    let mock;
-    beforeEach(() => {
-        spellRollMessage = createTestRollMessage();
-        mock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(foundryApi, "getItem").returns(mock)});
-    afterEach(() => sinon.restore());
 
     it("should reduce exhausted focus on check", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.exhaustedFocusUpdate();
 
@@ -55,9 +49,10 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase exhausted focus on uncheck", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, false, true).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.exhaustedFocusUpdate();
 
@@ -65,9 +60,10 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should reduce consumed focus on check", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.consumedFocusUpdate();
 
@@ -75,9 +71,10 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase consumed focus on uncheck", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.consumedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, -1, false, true).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.consumedFocusUpdate();
 
@@ -85,9 +82,10 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should reduce channeled focus on check", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
         spellRollMessage.channelizedFocusUpdate();
 
@@ -95,9 +93,10 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase channeled focus on uncheck", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.channelizedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, true, true).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
         spellRollMessage.channelizedFocusUpdate();
 
@@ -105,27 +104,25 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase focus costs on spell enhancement selection", () => {
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.spellEnhancement.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, true, true).asModifier();
-        mock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
-        sinon.stub(mock,"enhancementCosts").get(() => "2EG/+3V1")
+        spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+        sinon.stub(spellMock,"enhancementCosts").get(() => "2EG/+3V1")
 
         spellRollMessage.spellEnhancementUpdate();
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("15V4");
-    })
+    });
 });
 
 describe("SplittermondSpellRollMessage enacts damage increases correctly", () => {
-    const spellRollMessage = createTestRollMessage();
-    const mock = sinon.createStubInstance(SplittermondSpellItem);
-    before(() => sinon.stub(foundryApi, "getItem").returns(mock));
-    after(() => sinon.restore());
 
     it("should increase damage on check", () => {
+        const {spellRollMessage,spellMock} = createTestRollMessage(afterEach);
         spellRollMessage.degreeOfSuccessManager.damage.checked = false;
         spellRollMessage.actionManager.damage.adjusted = 0;
-        sinon.stub(mock,"damage").get(() =>"1W6");
+        sinon.stub(spellMock,"damage").get(() =>"1W6");
 
         spellRollMessage.damageUpdate();
 
@@ -133,9 +130,10 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
     });
 
     it("should increase damage on check", () => {
+        const {spellRollMessage,spellMock} = createTestRollMessage(after);
         spellRollMessage.degreeOfSuccessManager.damage.checked = true;
         spellRollMessage.actionManager.damage.adjusted = 1;
-        sinon.stub(mock,"damage").get(() =>"1W6");
+        sinon.stub(spellMock,"damage").get(() =>"1W6");
 
         spellRollMessage.damageUpdate();
 
@@ -144,12 +142,9 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
 });
 
 describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
-    const spellRollMessage = createTestRollMessage();
-    const mock = sinon.createStubInstance(SplittermondSpellItem);
-    before(() => sinon.stub(foundryApi, "getItem").returns(mock));
-    after(() => sinon.restore());
 
     it("should reduce ticks on check", () => {
+        const {spellRollMessage} = createTestRollMessage(after);
         spellRollMessage.degreeOfSuccessManager.castDuration.checked = false;
         spellRollMessage.actionManager.ticks.adjusted = 3;
 
@@ -159,6 +154,7 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     });
 
     it("should increase ticks on uncheck", () => {
+        const {spellRollMessage} = createTestRollMessage(after);
         spellRollMessage.degreeOfSuccessManager.castDuration.checked = true;
         spellRollMessage.actionManager.ticks.adjusted = 1;
 
@@ -172,117 +168,102 @@ describe("SplittermondSpellRollMessage actions", () => {
     afterEach(() => sinon.restore());
     it("should upgrade roll total by splinterpoint usage", () => {
         game.i18n = {localize: identity};
-        const underTest = createTestRollMessage();
-        underTest.renderer.checkReport = {
+        const {spellRollMessage,spellMock, actorMock} = createTestRollMessage(afterEach);
+        spellRollMessage.renderer.checkReport = {
             roll: {total: 16, dice: [{total: 12}]},
             skill: {points: 1},
             difficulty: 15,
             rollType: "standard"
         };
-        underTest.actionManager.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(foundryApi, "getActor").returns({spendSplinterpoint: () => ({getBonus: () => 5})})
+        spellRollMessage.checkReport = {...spellRollMessage.checkReport, skill:{...spellRollMessage.checkReport.skill,name: "skill"}};
+        //spellMock.name = "name";
+        actorMock.spendSplinterpoint.returns({getBonus: () => 5});
 
-        underTest.useSplinterpoint();
+        spellRollMessage.useSplinterpoint();
 
-        expect(underTest.actionManager.splinterPoint.used).to.be.true;
-        expect(underTest.degreeOfSuccessManager.totalDegreesOfSuccess).to.equal(2);
+        expect(spellRollMessage.actionManager.splinterPoint.used).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess).to.equal(2);
     });
 
     it("should call actor consume focus", () => {
-        const underTest = createTestRollMessage();
-        underTest.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        underTest.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
-        const stubbedActor = sinon.createStubInstance(SplittermondActor);
-        stubbedActor.consumeCost = sinon.spy();
-        sinon.stub(foundryApi, "getActor").returns(stubbedActor);
-        sinon.stub(foundryApi, "getItem").returns({
-            name: "spell",
-            getCostsForFinishedRoll: () => new Cost(1, 1, true).asPrimaryCost(),
-        });
+        const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(afterEach);
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
+        actorMock.consumeCost = sinon.spy();
+        spellMock.getCostsForFinishedRoll.returns(new Cost(1, 1, true).asPrimaryCost());
 
-        underTest.consumeCosts();
+        spellRollMessage.consumeCosts();
 
-        expect(stubbedActor.consumeCost.called).to.be.true;
-        expect(stubbedActor.consumeCost.firstCall.args).to.contain("K2V1")
+        expect(actorMock.consumeCost.called).to.be.true;
+        expect(actorMock.consumeCost.firstCall.args).to.contain("K2V1")
     });
 
     it("should disable focus degree of success options", () => {
-        const underTest = createTestRollMessage();
-        underTest.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(foundryApi, "getActor").returns({consumeCost: sinon.spy()});
-        sinon.stub(foundryApi, "getItem").returns({
-            name: "spell",
-            getCostsForFinishedRoll: () => (new Cost(1, 0, false).asPrimaryCost())
-        });
+        const {spellRollMessage,spellMock, actorMock} = createTestRollMessage(after);
+        spellRollMessage.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        spellMock.getCostsForFinishedRoll.returns(new Cost(1, 0, false).asPrimaryCost());
 
-        underTest.consumeCosts();
+        spellRollMessage.consumeCosts();
 
-        expect(underTest.actionManager.focus.used).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("exhaustedFocus")).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("channelizedFocus")).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("consumedFocus")).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("spellEnhancement")).to.be.true;
+        expect(spellRollMessage.actionManager.focus.used).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("exhaustedFocus")).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("channelizedFocus")).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("consumedFocus")).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("spellEnhancement")).to.be.true;
     });
 
     it("should disable damage degree of success options", async () => {
-        const underTest = createTestRollMessage();
-        const mock = sinon.createStubInstance(SplittermondSpellItem)
-        sinon.stub(mock,"damage").get(() => "1W6");
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        sinon.stub(spellMock,"damage").get(() => "1W6");
         sinon.stub(foundryApi, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
-        sinon.stub(foundryApi, "getItem").returns(mock);
 
-        await underTest.applyDamage();
+        await spellRollMessage.applyDamage();
 
-        expect(underTest.actionManager.damage.used).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("damage")).to.be.true;
+        expect(spellRollMessage.actionManager.damage.used).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("damage")).to.be.true;
         expect(foundryApi.roll.firstCall.args[0]).to.equal("1d6+0");
     });
 
     it("should call ticks with value on the actor", () => {
-        const underTest = createTestRollMessage();
+        const {spellRollMessage, actorMock, apiGetActorMock} = createTestRollMessage(afterEach);
         const addTicksMock = sinon.stub().withArgs(4);
-        underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        underTest.actionManager.ticks.adjusted = 4;
-        sinon.stub(foundryApi, "getActor").returns({addTicks: addTicksMock});
+        actorMock.addTicks = addTicksMock;
+        spellRollMessage.actionManager.ticks.adjusted = 4;
 
-        underTest.advanceToken();
+        spellRollMessage.advanceToken();
 
-        expect(foundryApi.getActor.called).to.be.true;
+        expect(apiGetActorMock.called).to.be.true;
         expect(addTicksMock.firstCall.args).to.contain(4);
     });
 
     it("should disable token advancement degree of success options", () => {
-        const underTest = createTestRollMessage();
-        underTest.actionManager.ticks.actorReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
-        sinon.stub(foundryApi, "getActor").returns({addTicks: sinon.spy()});
+        const {spellRollMessage, actorMock} = createTestRollMessage(afterEach);
 
-        underTest.advanceToken();
+        spellRollMessage.advanceToken();
 
-        expect(underTest.actionManager.ticks.used).to.be.true;
-        expect(underTest.degreeOfSuccessManager.isUsed("castDuration")).to.be.true;
+        expect(spellRollMessage.actionManager.ticks.used).to.be.true;
+        expect(spellRollMessage.degreeOfSuccessManager.isUsed("castDuration")).to.be.true;
+        expect(actorMock.addTicks.called).to.be.true;
     });
 
     it("should pass fumbles to the fumble action", () => {
-        const manager = createTestRollMessage();
-        manager.actionManager.magicFumble.rollFumble = sinon.stub(manager.actionManager.magicFumble, "rollFumble");
+        const {spellRollMessage} = createTestRollMessage(after);
+        spellRollMessage.actionManager.magicFumble.rollFumble = sinon.stub(spellRollMessage.actionManager.magicFumble, "rollFumble");
 
-        manager.rollMagicFumble();
+        spellRollMessage.rollMagicFumble();
 
-        expect(manager.actionManager.magicFumble.rollFumble.called).to.be.true;
+        expect(spellRollMessage.actionManager.magicFumble.rollFumble.called).to.be.true;
     });
 
     it("should not alter anything for active defense", () => {
-        const manager = createTestRollMessage();
+        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
         const mockDefender = sinon.createStubInstance(SplittermondActor);
         const mockReference = sinon.createStubInstance(AgentReference);
         mockReference.getAgent.returns(mockDefender);
-        const mockSpell = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(mockSpell,"difficulty").get(() => "VTD");
+        sinon.stub(spellMock,"difficulty").get(() => "VTD");
         sinon.stub(referencesUtils, "findBestUserActor").returns(mockReference);
-        sinon.stub(foundryApi, "getItem").returns(mockSpell);
         sinon.spy(SplittermondDataModel.prototype,"updateSource");
 
-        manager.activeDefense();
+        spellRollMessage.activeDefense();
 
         expect(mockDefender.activeDefenseDialog.called).to.be.true;
         expect(SplittermondDataModel.prototype.updateSource.called).to.be.false;
@@ -290,10 +271,11 @@ describe("SplittermondSpellRollMessage actions", () => {
 
 });
 
-function createTestRollMessage() {
-    const spellRollMessage = createSplittermondSpellRollMessage();
+function createTestRollMessage(afterOrAfterEach) {
+    const {messageClass,spellMock,actorMock,apiGetItemMock, apiGetActorMock} = createSplittermondSpellRollMessage()(afterOrAfterEach);
+    const spellRollMessage = messageClass;
     for (const key in {...splittermond.spellEnhancement, spellEnhancement: {}}) {
-        spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
+        messageClass.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
     }
-    return spellRollMessage;
+    return {spellRollMessage,spellMock,actorMock,apiGetItemMock, apiGetActorMock};
 }

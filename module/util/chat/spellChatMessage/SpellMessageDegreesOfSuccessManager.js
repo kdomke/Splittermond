@@ -22,21 +22,22 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
         const spell = spellReference.getItem();
         const degreeOfSuccessOptions = {};
         for (const key in splittermond.spellEnhancement) {
-            degreeOfSuccessOptions[key] = {
+            degreeOfSuccessOptions[key] = new SpellMessageDegreeOfSuccessField({
                 degreeOfSuccessCosts: splittermond.spellEnhancement[key].degreesOfSuccess,
                 checked: false,
                 used: false,
                 isDegreeOfSuccessOption: spell.degreeOfSuccessOptions[key],
-            }
+            })
         }
         return new SpellMessageDegreesOfSuccessManager({
             checkReportReference: checkReportReference.toObject(),
-            spellEnhancement: {
+            //test init fails because these are not objects
+            spellEnhancement: new SpellMessageDegreeOfSuccessField({
                 degreeOfSuccessCosts: parseSpellEnhancementDegreesOfSuccess(spell.enhancementCosts),
                 checked: false,
                 used: false,
                 isDegreeOfSuccessOption: true
-            },
+            }).toObject(),
             ...degreeOfSuccessOptions,
         });
     }

@@ -20,14 +20,6 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
         }
     }
 
-    constructor(...props) {
-        super(...props);
-
-        if (!this.parent || !this.parent instanceof SplittermondSpellRollMessage) {
-            throw new Error(`This class is intended exclusively as child of SplittermondSpellRollMessage`)
-        }
-    }
-
     get template() {
         return "systems/splittermond/templates/chat/spell-chat-card.hbs";
     }

@@ -18,13 +18,6 @@ export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
         }
     }
 
-    constructor(...args) {
-        super(...args);
-        if (!this.parent || !this.parent instanceof SpellMessageDegreesOfSuccessManager){
-            throw new Error("DegreeOfSuccessField is an embedded data field for SpellMessageDegreesOfSuccessManager defined as such");
-        }
-    }
-
     alterCheckState() {
         if (this.used || !this.isAvailable()) {
             console.warn(`Tried to check disabled option!`)
@@ -38,10 +31,19 @@ export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
      */
     isCheckable() {
         return !this.used && (this.checked
-            || this.degreeOfSuccessCosts <= this.parent.openDegreesOfSuccess);
+            || this.degreeOfSuccessCosts <= this.getParent().openDegreesOfSuccess);
     }
 
     isAvailable(){
-        return this.isDegreeOfSuccessOption && this.degreeOfSuccessCosts <= this.parent.totalDegreesOfSuccess;
+        return this.isDegreeOfSuccessOption && this.degreeOfSuccessCosts <= this.getParent().totalDegreesOfSuccess;
+    }
+
+    getParent(){
+        if (this.parent && this.parent instanceof SpellMessageDegreesOfSuccessManager){
+            return this.parent;
+        }else{
+            throw new Error("This class must be a child of SpellMessageDegreesOfSuccessManager")
+        }
+
     }
 }

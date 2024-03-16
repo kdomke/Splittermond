@@ -6,6 +6,7 @@ import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
+import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -28,11 +29,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             checkReport: checkReport,
             spellReference: spellReference.toObject(),
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spellReference, reportReference).toObject(),
-            renderer: {
+            renderer: new SplittermondSpellRollMessageRenderer({
                 messageTitle: spell.name,
                 spellDescription: spell.description,
                 checkReport: checkReport
-            },
+            }).toObject(),
             actionManager: SpellMessageActionsManager.initialize(spellReference, reportReference).toObject(),
             constructorKey: constructorRegistryKey,
         });

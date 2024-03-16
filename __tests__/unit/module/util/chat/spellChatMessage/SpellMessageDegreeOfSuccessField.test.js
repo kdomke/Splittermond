@@ -10,8 +10,11 @@ import {
 import * as helper from "./spellRollMessageTestHelper.js";
 
 describe("SpellMessageDegreeOfSuccessField", () => {
-    it("should throw an error if it is not embedded in a SpellMessageDegreesOfSuccessManager", () => {
-        expect(() => new SpellMessageDegreeOfSuccessField({})).to.throw(Error);
+    it("should throw an error if no parent present", () => {
+        const probe = new SpellMessageDegreeOfSuccessField();
+        probe.isDegreeOfSuccessOption =true;
+
+        expect(() => probe.isAvailable()).to.throw(Error);
     });
 
     it ("should ignore attempts at checking a used field", () =>{
