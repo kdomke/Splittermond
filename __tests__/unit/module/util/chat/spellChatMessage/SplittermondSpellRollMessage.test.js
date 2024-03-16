@@ -169,9 +169,10 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should upgrade roll total by splinterpoint usage", () => {
         game.i18n = {localize: identity};
         const {spellRollMessage,spellMock, actorMock} = createTestRollMessage(afterEach);
-        spellRollMessage.renderer.checkReport = {
-            roll: {total: 16, dice: [{total: 12}]},
-            skill: {points: 1},
+        spellRollMessage.checkReport = {
+            ...spellRollMessage.checkReport,
+            roll: {...spellRollMessage.checkReport.roll, total: 16, dice: [{total: 12}]},
+            skill: {...spellRollMessage.checkReport.skill, points: 1},
             difficulty: 15,
             rollType: "standard"
         };

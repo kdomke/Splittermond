@@ -32,7 +32,8 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             renderer: new SplittermondSpellRollMessageRenderer({
                 messageTitle: spell.name,
                 spellDescription: spell.description,
-                checkReport: checkReport
+                spellReference: spellReference,
+                checkReportReference: reportReference
             }).toObject(),
             actionManager: SpellMessageActionsManager.initialize(spellReference, reportReference).toObject(),
             constructorKey: constructorRegistryKey,
@@ -131,12 +132,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
 
     useSplinterpoint() {
         const splinterPointBonus = this.actionManager.useSplinterPoint();
-        const checkReport = this.renderer.checkReport;
+        const checkReport = this.checkReport;
         checkReport.roll.total += splinterPointBonus;
         const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
         const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
         this.updateSource({checkReport: newCheckReport});
-        this.renderer.updateSource({checkReport: newCheckReport});
     }
 
     rollMagicFumble() {

@@ -3,20 +3,21 @@ import {foundryApi} from "../../../api/foundryApi.js";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
+import {ItemReference} from "../../../data/references/ItemReference.js";
 
 /**
  * @extends {SplittermondDataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
- * @property {CheckReport} checkReport
- * @property {string} messageTitle
- * @property {string} spellDescription
+ * @property {OnAncestorReference<CheckReport>} checkReportReference
+ * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
 export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
 
     static defineSchema() {
         return {
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, blank: false, nullable: false}),
+            spellReference: new fields.EmbeddedDataField(ItemReference,{required: true, blank: false, nullable: false}),
             checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
-            messageTitle: new fields.StringField({required: true, blank: false, nullable: false}),
-            spellDescription: new fields.StringField({required: true, blank: true, nullable: true}),
         }
     }
 
@@ -50,17 +51,19 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
      * @return {SpellDegreessOfSuccessRenderedData}
      */
     renderData() {
+        const checkReport =  this.checkReportReference.get();
+        const spell = this.spellReference.getItem();
         return {
-            rollResultClass: getRollResultClass(this.checkReport),
+            rollResultClass: getRollResultClass(checkReport),
             header: {
-                title: this.messageTitle,
-                rollTypeMessage: foundryApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
-                difficulty: this.checkReport.difficulty,
-                hideDifficulty: this.checkReport.hideDifficulty
+                title: spell.name,
+                rollTypeMessage: foundryApi.localize(`splittermond.rollType.${checkReport.rollType}`),
+                difficulty: checkReport.difficulty,
+                hideDifficulty: checkReport.hideDifficulty
             },
-            rollResult: new RollResultRenderer(this.spellDescription, this.checkReport).render(),
+            rollResult: new RollResultRenderer(spell.description, checkReport).render(),
             degreeOfSuccessDisplay: {
-                degreeOfSuccessMessage: getDegreeOfSuccessMessage(this.checkReport.degreeOfSuccess, this.checkReport.succeeded),
+                degreeOfSuccessMessage: getDegreeOfSuccessMessage(checkReport.degreeOfSuccess, checkReport.succeeded),
                 totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
                 usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
                 openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
