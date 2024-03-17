@@ -4,19 +4,15 @@ import {describe, it} from "mocha";
 import {expect} from "chai";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
-import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import SplittermondActor from "../../../../../../module/actor/actor.js";
-import SplittermondSpellItem from "../../../../../../module/item/spell.js";
-import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
 import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {
     injectParent,
-    postfixActionManager,
     setUpMockActor,
-    setUpMockSpellSelfReference, withToObjectReturnsSelf
+    setUpMockSpellSelfReference,
+    withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper.js";
 
 describe("SpellActionManager", () => {
@@ -249,7 +245,6 @@ export function createSpellActionManager(sandbox) {
 
         const actionManager = SpellMessageActionsManager.initialize(spellReference, checkReportReference);
 
-        postfixActionManager(actionManager);
         injectParent(actionManager);
         return actionManager;
     });

@@ -281,8 +281,7 @@ class FocusAction extends MessageAction {
             adjusted: new fields.EmbeddedDataField(CostModifier, {
                 required: true,
                 blank: false,
-                nullable: false,
-                initial: new Cost(0, 0, false, false).asModifier()
+                nullable: false
             }),
         }
     }
@@ -291,7 +290,9 @@ class FocusAction extends MessageAction {
         return new FocusAction({
             casterReference: casterReference.toObject(),
             spellReference: spellReference.toObject(),
-            checkReportReference: checkReportReference.toObject()
+            checkReportReference: checkReportReference.toObject(),
+            adjusted: new Cost(0, 0, false, false).asModifier().toObject(),
+
         });
     }
 

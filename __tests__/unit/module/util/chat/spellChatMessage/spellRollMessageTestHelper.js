@@ -65,10 +65,6 @@ export function createContext(afterOrAfterEach) {
     return sandbox;
 }
 
-/** @param {SpellMessageActionsManager} actionManager */
-export function postfixActionManager(actionManager) {
-    actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
-}
 
 /** @param {object} object */
 export function injectParent(object) {

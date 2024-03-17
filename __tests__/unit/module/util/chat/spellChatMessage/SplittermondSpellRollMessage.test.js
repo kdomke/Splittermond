@@ -8,7 +8,6 @@ import {
 import {
     createSpellDegreeOfSuccessField,
     injectParent,
-    postfixActionManager,
     prepareForDegreeOfSuccessManager,
     prepareForRenderer,
     setUpMockActor,
@@ -336,7 +335,6 @@ function createSplittermondSpellRollMessage(sandbox) {
             spellMock,
             checkReport
         )
-        postfixActionManager(spellRollMessage.actionManager);
         injectParent(spellRollMessage);
         return {spellRollMessage, spellMock, actorMock};
     });
