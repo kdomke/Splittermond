@@ -29,6 +29,8 @@ import SplittermondSpellItem from "./module/item/spell.js";
 import SplittermondEquipmentItem from "./module/item/equipment.js";
 import SplittermondNPCAttackItem from "./module/item/npcattack.js";
 import SplittermondMastery from "./module/item/mastery.js";
+import {referencesUtils} from "./module/data/references/referencesUtils.js";
+import {foundryApi} from "./module/api/foundryApi.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -538,17 +540,12 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         event.preventDefault();
         event.stopPropagation()
         let type = $(event.currentTarget).closestData("type");
-        
-        const speaker = ChatMessage.getSpeaker();
-        let actor;
-        if (speaker.token) actor = game.actors.tokens[speaker.token];
-        if (!actor) actor = game.actors.get(speaker.actor);
-        if (!actor) {
-            ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
-            return
-        };
-
-        actor.activeDefenseDialog(type);
+        try {
+            const actorReference = referencesUtils.findBestUserActor();
+            actorReference.getAgent().activeDefenseDialog(type)
+        }catch(e){
+            foundryApi.informUser("splittermond.pleaseSelectAToken")
+        }
     });
 
     html.find(".fumble-table-result").click(event => {
