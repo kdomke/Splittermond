@@ -14,8 +14,8 @@ import {referencesUtils} from "../../../data/references/referencesUtils.js";
  * @property {TickAction} ticks
  * @property {DamageAction} damage
  * @property {ActiveDefenseAction} activeDefense
- * @property {MessageAction} splinterPoint
- * @property {MessageAction} magicFumble
+ * @property {UseSplinterpointsAction} splinterPoint
+ * @property {MagicFumbleAction} magicFumble
  */
 export class SpellMessageActionsManager extends SplittermondDataModel {
 
@@ -125,7 +125,8 @@ class ActiveDefenseAction extends MessageAction {
 
 /**
  * @extends {MessageAction<UseSplinterpointsAction,never>}
- * @property {string} skillId
+ * @property {AgentReference} actorReference
+ * @property {OnAncestorReference<CheckReport>} checkReportReference
  */
 class UseSplinterpointsAction extends MessageAction {
     /**
@@ -169,6 +170,12 @@ class UseSplinterpointsAction extends MessageAction {
     }
 }
 
+/**
+ * @extends {MessageAction<MagicFumbleAction,SpellMessageActionsManager>}
+ * @property {AgentReference} casterReference
+ * @property {ItemReference<SplittermondSpellItem>} spellReference
+ * @property {OnAncestorReference<CheckReport>} checkReportReference
+ */
 class MagicFumbleAction extends MessageAction {
     static defineSchema() {
         return {

@@ -2,223 +2,255 @@ import "../../../../foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {createSpellActionManager} from "./spellRollMessageTestHelper.js";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
 import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
+import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
+import {
+    SpellMessageActionsManager
+} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
+import {
+    injectParent,
+    postfixActionManager,
+    setUpMockActor,
+    setUpMockSpellSelfReference, withToObjectReturnsSelf
+} from "./spellRollMessageTestHelper.js";
 
 describe("SpellActionManager", () => {
-
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
     describe("Ticks", () => {
         it("should subtract from the adjusted value", () => {
-            const manager = createSpellActionManager()
-            manager.ticks.adjusted = 3;
-            manager.ticks.used = false;
+            const actionManager = createSpellActionManager(sandbox)
+            actionManager.ticks.adjusted = 3;
+            actionManager.ticks.used = false;
 
-            manager.ticks.subtract(3);
+            actionManager.ticks.subtract(3);
 
-            expect(manager.ticks.adjusted).to.equal(0);
+            expect(actionManager.ticks.adjusted).to.equal(0);
         });
 
         it("should add to the adjusted value", () => {
-            const manager = createSpellActionManager()
-            manager.ticks.adjusted = 3;
-            manager.ticks.used = false;
+            const actionManager = createSpellActionManager(sandbox)
+            actionManager.ticks.adjusted = 3;
+            actionManager.ticks.used = false;
 
-            manager.ticks.add(3);
+            actionManager.ticks.add(3);
 
-            expect(manager.ticks.adjusted).to.equal(6);
+            expect(actionManager.ticks.adjusted).to.equal(6);
         });
 
         it("subtraction should be barred from alteration after usage", () => {
-            const manager = createSpellActionManager()
-            manager.ticks.adjusted = 3;
-            manager.ticks.used = true;
+            const actionManager = createSpellActionManager(sandbox)
+            actionManager.ticks.adjusted = 3;
+            actionManager.ticks.used = true;
 
-            manager.ticks.subtract(3);
+            actionManager.ticks.subtract(3);
 
-            expect(manager.ticks.adjusted).to.equal(3);
+            expect(actionManager.ticks.adjusted).to.equal(3);
         });
 
         it("add should be barred from alteration after usage", () => {
-            const manager = createSpellActionManager()
-            manager.ticks.adjusted = 3;
-            manager.ticks.used = true;
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.ticks.adjusted = 3;
+            actionManager.ticks.used = true;
 
-            manager.ticks.add(3);
+            actionManager.ticks.add(3);
 
-            expect(manager.ticks.adjusted).to.equal(3);
+            expect(actionManager.ticks.adjusted).to.equal(3);
         });
 
         it("should return a cost minmum of 1", () => {
-            const manager = createSpellActionManager()
-            manager.ticks.adjusted = 0;
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.ticks.adjusted = 0;
 
-            expect(manager.ticks.cost).to.equal("1");
+            expect(actionManager.ticks.cost).to.equal("1");
         });
     });
 
     describe("Damage", () => {
         it("should add Costs to the adjusted value", () => {
-            const manager = createSpellActionManager();
-            manager.damage.adjusted = "1W6+1";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.damage.adjusted = 0;
+            sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
-            manager.damage.addCost("1")
 
-            expect(manager.damage.adjusted).to.equal("1W6+2")
+            actionManager.damage.addDamage(1)
+
+            expect(actionManager.damage.cost).to.equal("1W6+2")
         });
 
         it("should subtract Costs to the adjusted value", () => {
-            const manager = createSpellActionManager();
-            manager.damage.adjusted = "1W6+2";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.damage.adjusted = 2;
+            sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
-            manager.damage.subtractCost("1")
+            actionManager.damage.subtractDamage(1)
 
-            expect(manager.damage.adjusted).to.equal("1W6+1")
+            expect(actionManager.damage.cost).to.equal("1W6+2")
         });
 
-        it("should render a minimum cost of 0", () => {
-            const manager = createSpellActionManager();
-            manager.damage.adjusted = "0";
+        it("should not allow addition if action was used", () => {
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.damage.used = true
+            actionManager.damage.adjusted = 3;
 
-            expect(manager.damage.cost).to.equal("0")
-        });
+            actionManager.damage.addDamage(1)
 
-        it("should not allow addion if action was used", () => {
-            const manager = createSpellActionManager();
-            manager.damage.used = true
-            manager.damage.adjusted = "3";
-
-            manager.damage.addCost("1")
-
-            expect(manager.damage.adjusted).to.equal("3")
+            expect(actionManager.damage.adjusted).to.equal(3)
         });
 
         it("should not allow subtraction if action was used", () => {
-            const manager = createSpellActionManager();
-            manager.damage.used = true
-            manager.damage.adjusted = "3";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.damage.used = true;
+            actionManager.damage.adjusted = 3;
 
-            manager.damage.subtractCost("1");
+            actionManager.damage.subtractDamage(1);
 
-            expect(manager.damage.adjusted).to.equal("3")
+            expect(actionManager.damage.adjusted).to.equal(3);
         });
     });
 
 
     describe("Focus", () => {
         it("should pass adjusted focus to the actor", () => {
-            const manager = createSpellActionManager();
-            manager.focus.adjusted = new Cost(0,0,false).asModifier();
-            sinon.stub(foundryApi, "getActor").returns({consumeCost: sinon.spy()});
-            sinon.stub(foundryApi, "getItem").returns({
-                name: "spell",
-                getCostsForFinishedRoll: () => new Cost(9, 3, 0).asPrimaryCost()
-            });
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
+            actionManager.focus.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(9, 3, 0).asPrimaryCost());
+            actionManager.focus.spellReference.getItem().name = "spell";
 
-            manager.focus.subtractCost("1V1");
-            manager.consumeFocus();
+            actionManager.focus.subtractCost("1V1");
+            actionManager.consumeFocus();
 
-            expect(foundryApi.getActor("").consumeCost.lastCall.args[1]).to.contain("11V2")
+            expect(actionManager.focus.casterReference.getAgent().consumeCost.lastCall.args[1]).to.contain("11V2")
         });
         it("should add Costs to the adjusted value", () => {
-            const manager = createSpellActionManager();
-            manager.focus.adjusted = "1V1";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
 
-            manager.focus.addCost("1V1")
+            actionManager.focus.addCost("1V1")
 
-            expect(manager.focus.adjusted).to.equal("2V2")
+
+            expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 2, false, true).asModifier());
         });
 
         it("should subtract Costs to the adjusted value", () => {
-            const manager = createSpellActionManager();
-            manager.focus.adjusted = "2V2";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.adjusted = new Cost(0, 2, false, true).asModifier();
 
-            manager.focus.subtractCost("1V1")
+            actionManager.focus.subtractCost("1V1")
 
-            expect(manager.focus.adjusted).to.equal("1V1")
+
+            expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 1, false, true).asModifier());
         });
 
         it("should apply strict costs", () => {
-            const manager = createSpellActionManager();
-            manager.focus.adjusted = "1V1";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
 
-            manager.focus.addCost("K1V1")
+            actionManager.focus.addCost("K1V1")
 
-            expect(manager.focus.adjusted).to.equal("1V1")
+            expect(actionManager.focus.adjusted).to.deep.equal({
+                _consumed: 1,
+                _channeled: 0,
+                _exhausted: 0,
+                _channeledConsumed: 1,
+            })
         });
 
         it("should render a minimum cost of 1", () => {
-            const manager = createSpellActionManager();
-            manager.focus.adjusted = "0";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.adjusted = new Cost(0, -3, false, true).asModifier();
+            actionManager.focus.spellReference.getItem()
+                .getCostsForFinishedRoll.returns(new Cost(0, 2, 0).asPrimaryCost());
 
-            expect(manager.focus.cost).to.equal("1")
+            expect(actionManager.focus.cost).to.equal("1");
         });
 
         it("should not allow addition if action was used", () => {
-            const manager = createSpellActionManager();
-            manager.focus.used = true
-            manager.focus.adjusted = "3";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.used = true
+            actionManager.focus.adjusted = new Cost(0, 3, false, true).asModifier();
 
-            manager.focus.addCost("1")
+            actionManager.focus.addCost("1")
 
-            expect(manager.focus.adjusted).to.equal("3")
+            expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 3, false, true).asModifier());
         });
 
         it("should not allow subtraction if action was used", () => {
-            const manager = createSpellActionManager();
-            manager.focus.used = true
-            manager.focus.adjusted = "3";
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.focus.used = true
+            actionManager.focus.adjusted = "3";
 
-            manager.focus.subtractCost("1");
+            actionManager.focus.subtractCost("1");
 
-            expect(manager.focus.adjusted).to.equal("3")
+            expect(actionManager.focus.adjusted).to.equal("3")
         });
 
     });
 
     it("should react to fumbles", () => {
-        const manager = createSpellActionManager();
-        const actorMock = sinon.createStubInstance(SplittermondActor);
-        const spellMock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(foundryApi, "getActor").returns(actorMock);
-        sinon.stub(foundryApi, "getItem").returns(spellMock);
-        manager.magicFumble.checkReportReference.get().isFumble = true;
+        const actionManager = createSpellActionManager(sandbox);
+        actionManager.magicFumble.checkReportReference.get().isFumble = true;
 
-        expect(manager.magicFumble.available).to.be.true;
-        expect(manager.splinterPoint.available).to.be.false;
+        expect(actionManager.magicFumble.available).to.be.true;
+        expect(actionManager.splinterPoint.available).to.be.false;
     });
 
     it("should pass fumbles to the actor", () => {
-        const manager = createSpellActionManager();
-        const actorMock = sinon.createStubInstance(SplittermondActor);
-        const spellMock = sinon.createStubInstance(SplittermondSpellItem);
-        sinon.stub(foundryApi, "getActor").returns(actorMock);
-        sinon.stub(foundryApi, "getItem").returns(spellMock);
+        const actionManager = createSpellActionManager(sandbox);
+        actionManager.magicFumble.checkReportReference.get().skill = {name: "skillName"};
 
-        manager.rollMagicFumble();
+        actionManager.rollMagicFumble();
 
-        expect(actorMock.rollMagicFumble.callCount).to.equal(1);
+        expect(actionManager.magicFumble.casterReference.getAgent().rollMagicFumble.callCount).to.equal(1);
     })
 
-
-
     it("should spend splinterpoint on actor", () => {
-        const getBonusFunction = sinon.mock().returns(3);
-        sinon.stub(foundryApi, "getActor").returns({
-            id: "1",
-            documentName: "Actor",
-            spendSplinterpoint: () => ({getBonus: getBonusFunction})
-        })
-        const manager = createSpellActionManager();
-        manager.casterReference = new AgentReference({id: "1", sceneId: null, type: "actor"})
+        const actionManager = createSpellActionManager(sandbox);
+        const getBonusFunction = sandbox.mock().returns(3);
+        actionManager.splinterPoint.actorReference.getAgent().spendSplinterpoint.returns({getBonus: getBonusFunction})
+        actionManager.splinterPoint.checkReportReference.get().skill = {name: "skillName"};
 
-        manager.useSplinterPoint();
+        actionManager.useSplinterPoint();
 
         expect(getBonusFunction.callCount).to.equal(1);
-        expect(manager.splinterPoint.used).to.be.true;
+        expect(actionManager.splinterPoint.used).to.be.true;
     });
-})
+});
+
+export function createSpellActionManager(sandbox) {
+    const spellReference = setUpMockSpellSelfReference(sandbox);
+    const actorMock = setUpMockActor(sandbox);
+
+    actorMock.items = {get: () => spellReference};
+    spellReference.getItem().actor = actorMock;
+
+    const checkReportReference = {}//degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
+    Object.defineProperty(checkReportReference, "get", {
+        value: function () {
+            return this;
+        }
+    });
+    Object.defineProperty(checkReportReference, "toObject", {
+        value: function () {
+            return this;
+        }
+    });
+
+    return withToObjectReturnsSelf(() => {
+        const casterReference = new AgentReference({type: "actor"});
+
+        const actionManager = SpellMessageActionsManager.initialize(spellReference, checkReportReference);
+
+        postfixActionManager(actionManager);
+        injectParent(actionManager);
+        return actionManager;
+    });
+}

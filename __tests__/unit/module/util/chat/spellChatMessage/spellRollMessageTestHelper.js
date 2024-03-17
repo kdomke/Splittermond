@@ -21,57 +21,36 @@ import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {splittermond} from "../../../../../../module/config.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
-
-export function createSpellActionManager() {
-    const casterReference = new AgentReference({type: "actor"});
-    const spellReference = new ItemReference({});
-    const checkReportReference = {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
-    Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
-
-    const actionManager = new SpellMessageActionsManager();
-    const focus = new (SpellMessageActionsManager.defineSchema().focus).type({
-        spellReference,
-        checkReportReference,
-        used: false,
-        available: true,
-        adjusted: new Cost(1, 0, false).asModifier(),
-    });
-    const damage = new (SpellMessageActionsManager.defineSchema().damage).type({
-        used: false,
-        available: true,
-        itemReference: spellReference,
-        checkReportReference,
-    });
-    const ticks = new (SpellMessageActionsManager.defineSchema().ticks).type({
-        used: false,
-        available: true,
-        adjusted: 3,
-        parent: actionManager,
-    });
-
-    const splinterPoint = new (SpellMessageActionsManager.defineSchema().splinterPoint).type({
-        checkReportReference: checkReportReference,
-        actorReference: casterReference,
-        used: false,
-        parent: actionManager,
-    });
-
-    const magicFumble = new (SpellMessageActionsManager.defineSchema().magicFumble).type({
-        casterReference,
-        spellReference,
-        checkReportReference,
-        used: false,
-    });
-    const activeDefense = new (SpellMessageActionsManager.defineSchema().activeDefense).type({
-        itemReference: spellReference,
-        checkReportReference,
-        used: false,
-    });
-    actionManager.updateSource({focus, damage, ticks, splinterPoint, magicFumble, activeDefense})
-    return actionManager;
+export function setUpMockActor(sandbox){
+    const actorMock = sandbox.createStubInstance(SplittermondActor);
+    const apiGetActorMock = sandbox.stub(foundryApi, "getActor").returns(actorMock);
+    actorMock.documentName = "Actor";
+    actorMock.id = "1";
+    return actorMock;
 }
 
-function prepareForDegreeOfSuccessManager(spellMock, checkReport) {
+export function setUpMockSpellSelfReference(sandbox){
+    const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
+    const apiGetItemMock = sandbox.stub(foundryApi, "getItem").returns(spellMock);
+    spellMock.getItem = function() {return this;};
+    Object.defineProperty(spellMock, "toObject", {
+        value: function () {
+            return this;
+        }
+    });
+    return spellMock;
+}
+
+export function withToObjectReturnsSelf(wrappedFunction){
+    const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function () {
+        return this;
+    });
+    const returnValue = wrappedFunction();
+    toObjectMock.restore();
+    return returnValue;
+}
+
+export function prepareForDegreeOfSuccessManager(spellMock, checkReport) {
     sinon.stub(spellMock, "degreeOfSuccessOptions").get(() => sinon.stub().returns(true))
     sinon.stub(spellMock, "enhancementCosts").get(() => "1EG/+1V1");
     sinon.stub(spellMock, "castDuration").get(() => 3);
@@ -79,12 +58,18 @@ function prepareForDegreeOfSuccessManager(spellMock, checkReport) {
     checkReport.degreeOfSuccess = checkReport.degreeOfSuccess ?? 3;
 }
 
-function prepareForRenderer(spellMock, checkReport) {
+export function prepareForRenderer(spellMock, checkReport) {
     sinon.stub(spellMock, "description").get(() => "description");
     spellMock.name = spellMock.name ?? "name";
 }
 
-function withTeardown(messageClass, {
+export function createContext(afterOrAfterEach){
+    const sandbox = sinon.createSandbox();
+    afterOrAfterEach(() => sandbox.restore());
+    return sandbox;
+}
+
+export function withTeardown(messageClass, {
     spellMock = sinon.stub(),
     actorMock = sinon.stub(),
     apiGetItemMock = sinon.stub(),
@@ -112,6 +97,7 @@ export function createSplittermondSpellRollMessage() {
 
     const apiGetItemMock = sinon.stub(foundryApi, "getItem").returns(spellMock);
     const apiGetActorMock = sinon.stub(foundryApi, "getActor").returns(actorMock);
+
     const checkReport = {};
     const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
         .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
@@ -129,12 +115,12 @@ export function createSplittermondSpellRollMessage() {
 }
 
 /** @param {SpellMessageActionsManager} actionManager */
-function postfixActionManager(actionManager) {
+export function postfixActionManager(actionManager) {
     actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
 }
 
 /** @param {object} object */
-function injectParent(object) {
+export function injectParent(object) {
     for (const key in object) {
         if (object[key] && typeof object[key] === "object" && key !== "parent") {
             object[key].parent = object;
