@@ -16,6 +16,10 @@ import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
 import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
 
+let sandbox;
+beforeEach(()=> {sandbox = sinon.createSandbox();});
+afterEach(()=> sandbox.restore());
+
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
         const method = `${key}Update`;
@@ -225,14 +229,14 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should call ticks with value on the actor", () => {
-        const {spellRollMessage, actorMock, apiGetActorMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, actorMock} = createTestRollMessage(afterEach);
         const addTicksMock = sinon.stub().withArgs(4);
         actorMock.addTicks = addTicksMock;
         spellRollMessage.actionManager.ticks.adjusted = 4;
 
         spellRollMessage.advanceToken();
 
-        expect(apiGetActorMock.called).to.be.true;
+        expect(actorMock.addTicks.called).to.be.true;
         expect(addTicksMock.firstCall.args).to.contain(4);
     });
 
@@ -273,10 +277,9 @@ describe("SplittermondSpellRollMessage actions", () => {
 });
 
 function createTestRollMessage(afterOrAfterEach) {
-    const {messageClass,spellMock,actorMock,apiGetItemMock, apiGetActorMock} = createSplittermondSpellRollMessage()(afterOrAfterEach);
-    const spellRollMessage = messageClass;
+    const {spellRollMessage,spellMock,actorMock} = createSplittermondSpellRollMessage(sandbox);
     for (const key in {...splittermond.spellEnhancement, spellEnhancement: {}}) {
-        messageClass.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
+        spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
     }
-    return {spellRollMessage,spellMock,actorMock,apiGetItemMock, apiGetActorMock};
+    return {spellRollMessage,spellMock,actorMock};
 }

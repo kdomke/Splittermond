@@ -69,49 +69,30 @@ export function createContext(afterOrAfterEach){
     return sandbox;
 }
 
-export function withTeardown(messageClass, {
-    spellMock = sinon.stub(),
-    actorMock = sinon.stub(),
-    apiGetItemMock = sinon.stub(),
-    apiGetActorMock = sinon.stub()
-}) {
-    return (afterOrAfterEach) => {
-        afterOrAfterEach(() => {
-            apiGetItemMock.restore();
-            apiGetActorMock.restore();
-        });
-        return {messageClass, spellMock, actorMock, apiGetItemMock, apiGetActorMock}
-    }
-}
 
-export function createSplittermondSpellRollMessage() {
-    const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function () {
-        return this;
+
+export function createSplittermondSpellRollMessage(sandbox) {
+    return withToObjectReturnsSelf( ()=> {
+        const spellMock = setUpMockSpellSelfReference(sandbox);
+        const actorMock = setUpMockActor(sandbox);
+
+        actorMock.items = {get: () => spellMock};
+        spellMock.actor = actorMock;
+
+        const checkReport = {};
+        const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
+            .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
+        prepareForDegreeOfSuccessManager(spellMock, checkReport);
+        prepareForRenderer(spellMock, checkReport);
+
+        const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
+            spellMock,
+            checkReport
+        )
+        postfixActionManager(spellRollMessage.actionManager);
+        injectParent(spellRollMessage);
+        return {spellRollMessage, spellMock, actorMock};
     });
-    const spellMock = sinon.createStubInstance(SplittermondSpellItem);
-    const actorMock = sinon.createStubInstance(SplittermondActor);
-    actorMock.documentName = "Actor";
-    actorMock.id = "1";
-    actorMock.items = {get: () => spellMock};
-    spellMock.actor = actorMock;
-
-    const apiGetItemMock = sinon.stub(foundryApi, "getItem").returns(spellMock);
-    const apiGetActorMock = sinon.stub(foundryApi, "getActor").returns(actorMock);
-
-    const checkReport = {};
-    const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
-        .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
-    prepareForDegreeOfSuccessManager(spellMock, checkReport);
-    prepareForRenderer(spellMock, checkReport);
-
-    const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
-        spellMock,
-        checkReport
-    )
-    postfixActionManager(spellRollMessage.actionManager);
-    injectParent(spellRollMessage);
-    toObjectMock.restore();
-    return withTeardown(spellRollMessage, {spellMock, actorMock, apiGetItemMock, apiGetActorMock});
 }
 
 /** @param {SpellMessageActionsManager} actionManager */
