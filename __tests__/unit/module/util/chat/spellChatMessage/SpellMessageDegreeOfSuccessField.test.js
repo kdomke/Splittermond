@@ -7,17 +7,18 @@ import {
 import {
     SpellMessageDegreesOfSuccessManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
-import * as helper from "./spellRollMessageTestHelper.js";
+import {setUpCheckReportSelfReference} from "./spellRollMessageTestHelper.js";
 
 describe("SpellMessageDegreeOfSuccessField", () => {
     it("should throw an error if no parent present", () => {
-        const probe = new SpellMessageDegreeOfSuccessField();
-        probe.isDegreeOfSuccessOption =true;
+        const probe = new SpellMessageDegreeOfSuccessField({
+            isDegreeOfSuccessOption: true
+        });
 
         expect(() => probe.isAvailable()).to.throw(Error);
     });
 
-    it ("should ignore attempts at checking a used field", () =>{
+    it("should ignore attempts at checking a used field", () => {
         const underTest = defaultSpellDegreeOfSuccessField();
         underTest.checked = true;
         underTest.used = true;
@@ -27,10 +28,10 @@ describe("SpellMessageDegreeOfSuccessField", () => {
         expect(underTest.checked).to.be.true;
     });
 
-    it ("should ignore attempts at checking an unavailable field", () =>{
+    it("should ignore attempts at checking an unavailable field", () => {
         const underTest = defaultSpellDegreeOfSuccessField();
-        underTest.checked= true;
-        underTest.parent.totalDegreesOfSuccess = -1;
+        underTest.checked = true;
+        underTest.parent.checkReportReference.get().degreeOfSuccess = -1;
 
         underTest.alterCheckState()
 
@@ -57,7 +58,7 @@ describe("SpellMessageDegreeOfSuccessField", () => {
         it("should be uncheckable if costs are within available degrees of success", () => {
             const underTest = defaultSpellDegreeOfSuccessField();
             underTest.checked = true;
-            underTest.parent.totalDegreesOfSuccess += underTest.degreeOfSuccessCosts;
+            underTest.parent.checkReportReference.get().degreeOfSuccess += underTest.degreeOfSuccessCosts;
 
             expect(underTest.isCheckable()).to.be.true;
         });
@@ -90,7 +91,7 @@ describe("SpellMessageDegreeOfSuccessField", () => {
         it("should be checkable if costs are within available degrees of success", () => {
             const underTest = defaultSpellDegreeOfSuccessField();
             underTest.checked = true;
-            underTest.parent.totalDegreesOfSuccess += underTest.degreeOfSuccessCosts;
+            underTest.parent.checkReportReference.get().degreeOfSuccess += underTest.degreeOfSuccessCosts;
 
             expect(underTest.isCheckable()).to.be.true;
         });
@@ -105,12 +106,29 @@ describe("SpellMessageDegreeOfSuccessField", () => {
     });
 });
 
+/**@return {SpellMessageDegreeOfSuccessField}*/
 function defaultSpellDegreeOfSuccessField() {
-    const manager = new SpellMessageDegreesOfSuccessManager({
-        totalDegreesOfSuccess: 3,
-        usedDegreesOfSuccess: 0
-    });
-    return helper.createSpellDegreeOfSuccessField(manager);
+    return new SpellMessageDegreeOfSuccessField({
+        degreeOfSuccessCosts: 3,
+        checked: false,
+        used: false,
+        isDegreeOfSuccessOption: true,
+        parent: mockManager(),
+    })
 }
+
+function mockManager() {
+    const degreeOfSuccessManager = new SpellMessageDegreesOfSuccessManager({
+            checkReportReference: setUpCheckReportSelfReference(),
+            usedDegreesOfSuccess: 0,
+        }
+    )
+    degreeOfSuccessManager.checkReportReference = setUpCheckReportSelfReference();
+    degreeOfSuccessManager.checkReportReference.get().degreeOfSuccess = 3;
+
+    degreeOfSuccessManager.usedDegreesOfSuccess = 0;
+    return degreeOfSuccessManager;
+}
+
 
 
