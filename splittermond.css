@@ -1117,6 +1117,12 @@ a.pdflink i {
 .system-splittermond .prosemirror menu .pm-dropdown ul li {
   text-shadow: none;
 }
+.splittermond-inline-label-input {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+}
 .sheet input[type="text"].character-name,
 .sheet input[type="text"].item-name,
 .sheet .directory .directory-header .header-search input.character-name,
@@ -2164,18 +2170,16 @@ li.taglist-item:hover .taglist-item-actions {
   width: 60px;
   text-align: center;
 }
+.compendium-browser .list .available-in {
+  font-family: "Signika";
+  font-size: 10px;
+  white-space: normal;
+}
 .compendium-browser .list .features {
   font-family: "Signika";
   font-size: 10px;
   white-space: normal;
 }
-
-.compendium-browser .list .available-in{
-  font-family: "Signika";
-  font-size: 10px;
-  white-space: normal;
-}
-
 .compendium-browser .list .compendium {
   display: flex;
   flex-direction: column;
@@ -3337,11 +3341,4 @@ ul.checkbox-list li input:checked ~ label::before {
 }
 .system-splittermond .splittermond.compendium-browser main > section.tab.active {
   overflow-y: hidden;
-}
-.splittermond-inline-label-input{
-  align-items: center;
-  display: flex;
-  justify-content: flex-start;
-  text-align: left;
-  /*flex-wrap: wrap;*/
 }
