@@ -1,6 +1,6 @@
 // Less configuration
-var gulp = require('gulp');
-var less = require('gulp-less');
+import gulp from 'gulp'
+import less from 'gulp-less';
 
 gulp.task('less', function (cb) {
     gulp

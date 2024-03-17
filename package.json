@@ -5,7 +5,8 @@
   "main": "splittermond.js",
   "type": "module",
   "scripts": {
-    "test": "node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js"
+    "test": "node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
+    "compileCss": "gulp less"
   },
   "repository": {
     "type": "git",
