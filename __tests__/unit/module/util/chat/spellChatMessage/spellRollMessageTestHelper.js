@@ -6,22 +6,16 @@ import {
     SpellMessageDegreeOfSuccessField
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreeOfSuccessField.js";
 import {
-    SplittermondSpellRollMessage
-} from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
-import {
     SpellMessageActionsManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
-import {ItemReference} from "../../../../../../module/data/references/ItemReference.js";
-import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import sinon from "sinon";
 import {foundryApi} from "../../../../../../module/api/foundryApi.js";
-import {splittermond} from "../../../../../../module/config.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
-export function setUpMockActor(sandbox){
+
+export function setUpMockActor(sandbox) {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
     const apiGetActorMock = sandbox.stub(foundryApi, "getActor").returns(actorMock);
     actorMock.documentName = "Actor";
@@ -29,10 +23,12 @@ export function setUpMockActor(sandbox){
     return actorMock;
 }
 
-export function setUpMockSpellSelfReference(sandbox){
+export function setUpMockSpellSelfReference(sandbox) {
     const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
     const apiGetItemMock = sandbox.stub(foundryApi, "getItem").returns(spellMock);
-    spellMock.getItem = function() {return this;};
+    spellMock.getItem = function () {
+        return this;
+    };
     Object.defineProperty(spellMock, "toObject", {
         value: function () {
             return this;
@@ -41,7 +37,7 @@ export function setUpMockSpellSelfReference(sandbox){
     return spellMock;
 }
 
-export function withToObjectReturnsSelf(wrappedFunction){
+export function withToObjectReturnsSelf(wrappedFunction) {
     const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function () {
         return this;
     });
@@ -63,36 +59,10 @@ export function prepareForRenderer(spellMock, checkReport) {
     spellMock.name = spellMock.name ?? "name";
 }
 
-export function createContext(afterOrAfterEach){
+export function createContext(afterOrAfterEach) {
     const sandbox = sinon.createSandbox();
     afterOrAfterEach(() => sandbox.restore());
     return sandbox;
-}
-
-
-
-export function createSplittermondSpellRollMessage(sandbox) {
-    return withToObjectReturnsSelf( ()=> {
-        const spellMock = setUpMockSpellSelfReference(sandbox);
-        const actorMock = setUpMockActor(sandbox);
-
-        actorMock.items = {get: () => spellMock};
-        spellMock.actor = actorMock;
-
-        const checkReport = {};
-        const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
-            .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
-        prepareForDegreeOfSuccessManager(spellMock, checkReport);
-        prepareForRenderer(spellMock, checkReport);
-
-        const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
-            spellMock,
-            checkReport
-        )
-        postfixActionManager(spellRollMessage.actionManager);
-        injectParent(spellRollMessage);
-        return {spellRollMessage, spellMock, actorMock};
-    });
 }
 
 /** @param {SpellMessageActionsManager} actionManager */
@@ -115,8 +85,16 @@ export function createSpellDegreeOfSuccessManager() {
     spellReference.getItem = () => spellReference;
     const checkReportReference = {degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
     Object.defineProperty(checkReportReference, "get", {value: () => checkReportReference});
-    Object.defineProperty(checkReportReference, "toObject", {value: function() {return this;}});
-    Object.defineProperty(spellReference, "toObject", {value: function(){return this;}});
+    Object.defineProperty(checkReportReference, "toObject", {
+        value: function () {
+            return this;
+        }
+    });
+    Object.defineProperty(spellReference, "toObject", {
+        value: function () {
+            return this;
+        }
+    });
     prepareForDegreeOfSuccessManager(spellReference, checkReportReference);
     const manager = SpellMessageDegreesOfSuccessManager
         .fromRoll(spellReference, checkReportReference);

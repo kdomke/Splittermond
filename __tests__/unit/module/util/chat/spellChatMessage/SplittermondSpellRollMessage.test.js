@@ -5,23 +5,34 @@ import {splittermond} from "../../../../../../module/config.js";
 import {
     SplittermondSpellRollMessage
 } from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
-import {createSpellDegreeOfSuccessField, createSplittermondSpellRollMessage} from "./spellRollMessageTestHelper.js";
+import {
+    createSpellDegreeOfSuccessField,
+    injectParent,
+    postfixActionManager,
+    prepareForDegreeOfSuccessManager,
+    prepareForRenderer,
+    setUpMockActor,
+    setUpMockSpellSelfReference,
+    withToObjectReturnsSelf
+} from "./spellRollMessageTestHelper.js";
 import sinon from "sinon";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import {identity} from "../../../../foundryMocks.js";
 import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
 import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
+import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 
-let sandbox;
-beforeEach(()=> {sandbox = sinon.createSandbox();});
-afterEach(()=> sandbox.restore());
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
     describe(`SplittermondSpellRollMessage behaves correctly for ${key}`, () => {
+        let sandbox;
+        beforeEach(() => {
+            sandbox = sinon.createSandbox();
+        });
+        afterEach(() => sandbox.restore());
         const method = `${key}Update`;
         it(`should have an update method for '${key}'`, () => {
             const spellRollMessage = new SplittermondSpellRollMessage({});
@@ -30,7 +41,7 @@ afterEach(()=> sandbox.restore());
         })
 
         it("should delegate spell costs to the degree of success manager", () => {
-            const {spellRollMessage} = createTestRollMessage(afterEach);
+            const {spellRollMessage} = createTestRollMessage(sandbox);
             spellRollMessage.degreeOfSuccessManager = sinon.spy(spellRollMessage.degreeOfSuccessManager);
             spellRollMessage[method]();
 
@@ -40,9 +51,13 @@ afterEach(()=> sandbox.restore());
 });
 
 describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
-
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
     it("should reduce exhausted focus on check", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
@@ -53,7 +68,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase exhausted focus on uncheck", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, false, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
@@ -64,7 +79,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should reduce consumed focus on check", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
@@ -75,7 +90,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase consumed focus on uncheck", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.consumedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, -1, false, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
@@ -86,7 +101,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should reduce channeled focus on check", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
@@ -97,7 +112,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase channeled focus on uncheck", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.channelizedFocus.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, true, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
@@ -108,11 +123,11 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     });
 
     it("should increase focus costs on spell enhancement selection", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.spellEnhancement.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, true, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
-        sinon.stub(spellMock,"enhancementCosts").get(() => "2EG/+3V1")
+        sinon.stub(spellMock, "enhancementCosts").get(() => "2EG/+3V1")
 
         spellRollMessage.spellEnhancementUpdate();
 
@@ -121,12 +136,16 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
 });
 
 describe("SplittermondSpellRollMessage enacts damage increases correctly", () => {
-
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
     it("should increase damage on check", () => {
-        const {spellRollMessage,spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.damage.checked = false;
         spellRollMessage.actionManager.damage.adjusted = 0;
-        sinon.stub(spellMock,"damage").get(() =>"1W6");
+        sinon.stub(spellMock, "damage").get(() => "1W6");
 
         spellRollMessage.damageUpdate();
 
@@ -134,10 +153,10 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
     });
 
     it("should increase damage on check", () => {
-        const {spellRollMessage,spellMock} = createTestRollMessage(after);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.damage.checked = true;
         spellRollMessage.actionManager.damage.adjusted = 1;
-        sinon.stub(spellMock,"damage").get(() =>"1W6");
+        sinon.stub(spellMock, "damage").get(() => "1W6");
 
         spellRollMessage.damageUpdate();
 
@@ -146,9 +165,13 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
 });
 
 describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
-
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
     it("should reduce ticks on check", () => {
-        const {spellRollMessage} = createTestRollMessage(after);
+        const {spellRollMessage} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.castDuration.checked = false;
         spellRollMessage.actionManager.ticks.adjusted = 3;
 
@@ -158,7 +181,7 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     });
 
     it("should increase ticks on uncheck", () => {
-        const {spellRollMessage} = createTestRollMessage(after);
+        const {spellRollMessage} = createTestRollMessage(sandbox);
         spellRollMessage.degreeOfSuccessManager.castDuration.checked = true;
         spellRollMessage.actionManager.ticks.adjusted = 1;
 
@@ -169,10 +192,14 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
 });
 
 describe("SplittermondSpellRollMessage actions", () => {
-    afterEach(() => sinon.restore());
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
     it("should upgrade roll total by splinterpoint usage", () => {
         game.i18n = {localize: identity};
-        const {spellRollMessage,spellMock, actorMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(sandbox);
         spellRollMessage.checkReport = {
             ...spellRollMessage.checkReport,
             roll: {...spellRollMessage.checkReport.roll, total: 16, dice: [{total: 12}]},
@@ -180,7 +207,10 @@ describe("SplittermondSpellRollMessage actions", () => {
             difficulty: 15,
             rollType: "standard"
         };
-        spellRollMessage.checkReport = {...spellRollMessage.checkReport, skill:{...spellRollMessage.checkReport.skill,name: "skill"}};
+        spellRollMessage.checkReport = {
+            ...spellRollMessage.checkReport,
+            skill: {...spellRollMessage.checkReport.skill, name: "skill"}
+        };
         //spellMock.name = "name";
         actorMock.spendSplinterpoint.returns({getBonus: () => 5});
 
@@ -191,8 +221,8 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should call actor consume focus", () => {
-        const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(afterEach);
-        spellRollMessage.actionManager.focus.adjusted = new Cost(0,0,false).asModifier();
+        const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(sandbox);
+        spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         actorMock.consumeCost = sinon.spy();
         spellMock.getCostsForFinishedRoll.returns(new Cost(1, 1, true).asPrimaryCost());
 
@@ -203,8 +233,12 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should disable focus degree of success options", () => {
-        const {spellRollMessage,spellMock, actorMock} = createTestRollMessage(after);
-        spellRollMessage.actionManager.focus.casterReference = new AgentReference({id: "2", sceneId: "1", type: "actor"});
+        const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(sandbox);
+        spellRollMessage.actionManager.focus.casterReference = new AgentReference({
+            id: "2",
+            sceneId: "1",
+            type: "actor"
+        });
         spellMock.getCostsForFinishedRoll.returns(new Cost(1, 0, false).asPrimaryCost());
 
         spellRollMessage.consumeCosts();
@@ -217,9 +251,9 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should disable damage degree of success options", async () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
-        sinon.stub(spellMock,"damage").get(() => "1W6");
-        sinon.stub(foundryApi, "roll").returns({evaluate: () => ({total: 3, dice:[{total: 3}]})});
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
+        sandbox.stub(spellMock, "damage").get(() => "1W6");
+        sandbox.stub(foundryApi, "roll").returns({evaluate: () => ({total: 3, dice: [{total: 3}]})});
 
         await spellRollMessage.applyDamage();
 
@@ -229,7 +263,7 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should call ticks with value on the actor", () => {
-        const {spellRollMessage, actorMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, actorMock} = createTestRollMessage(sandbox);
         const addTicksMock = sinon.stub().withArgs(4);
         actorMock.addTicks = addTicksMock;
         spellRollMessage.actionManager.ticks.adjusted = 4;
@@ -241,7 +275,7 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should disable token advancement degree of success options", () => {
-        const {spellRollMessage, actorMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, actorMock} = createTestRollMessage(sandbox);
 
         spellRollMessage.advanceToken();
 
@@ -251,7 +285,7 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should pass fumbles to the fumble action", () => {
-        const {spellRollMessage} = createTestRollMessage(after);
+        const {spellRollMessage} = createTestRollMessage(sandbox);
         spellRollMessage.actionManager.magicFumble.rollFumble = sinon.stub(spellRollMessage.actionManager.magicFumble, "rollFumble");
 
         spellRollMessage.rollMagicFumble();
@@ -260,13 +294,13 @@ describe("SplittermondSpellRollMessage actions", () => {
     });
 
     it("should not alter anything for active defense", () => {
-        const {spellRollMessage, spellMock} = createTestRollMessage(afterEach);
+        const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         const mockDefender = sinon.createStubInstance(SplittermondActor);
         const mockReference = sinon.createStubInstance(AgentReference);
         mockReference.getAgent.returns(mockDefender);
-        sinon.stub(spellMock,"difficulty").get(() => "VTD");
+        sinon.stub(spellMock, "difficulty").get(() => "VTD");
         sinon.stub(referencesUtils, "findBestUserActor").returns(mockReference);
-        sinon.spy(SplittermondDataModel.prototype,"updateSource");
+        sinon.spy(SplittermondDataModel.prototype, "updateSource");
 
         spellRollMessage.activeDefense();
 
@@ -276,10 +310,34 @@ describe("SplittermondSpellRollMessage actions", () => {
 
 });
 
-function createTestRollMessage(afterOrAfterEach) {
-    const {spellRollMessage,spellMock,actorMock} = createSplittermondSpellRollMessage(sandbox);
+function createTestRollMessage(sandbox) {
+    const {spellRollMessage, spellMock, actorMock} = createSplittermondSpellRollMessage(sandbox);
     for (const key in {...splittermond.spellEnhancement, spellEnhancement: {}}) {
         spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
     }
-    return {spellRollMessage,spellMock,actorMock};
+    return {spellRollMessage, spellMock, actorMock};
+}
+
+function createSplittermondSpellRollMessage(sandbox) {
+    return withToObjectReturnsSelf(() => {
+        const spellMock = setUpMockSpellSelfReference(sandbox);
+        const actorMock = setUpMockActor(sandbox);
+
+        actorMock.items = {get: () => spellMock};
+        spellMock.actor = actorMock;
+
+        const checkReport = {};
+        const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
+            .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
+        prepareForDegreeOfSuccessManager(spellMock, checkReport);
+        prepareForRenderer(spellMock, checkReport);
+
+        const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
+            spellMock,
+            checkReport
+        )
+        postfixActionManager(spellRollMessage.actionManager);
+        injectParent(spellRollMessage);
+        return {spellRollMessage, spellMock, actorMock};
+    });
 }
