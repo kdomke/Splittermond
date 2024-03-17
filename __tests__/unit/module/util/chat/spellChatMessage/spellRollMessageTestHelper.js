@@ -54,11 +54,6 @@ export function prepareForDegreeOfSuccessManager(spellMock, checkReport) {
     checkReport.degreeOfSuccess = checkReport.degreeOfSuccess ?? 3;
 }
 
-export function prepareForRenderer(spellMock, checkReport) {
-    sinon.stub(spellMock, "description").get(() => "description");
-    spellMock.name = spellMock.name ?? "name";
-}
-
 export function createContext(afterOrAfterEach) {
     const sandbox = sinon.createSandbox();
     afterOrAfterEach(() => sandbox.restore());

@@ -6,10 +6,7 @@ import {
     SplittermondSpellRollMessage
 } from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 import {
-    createSpellDegreeOfSuccessField,
     injectParent,
-    prepareForDegreeOfSuccessManager,
-    prepareForRenderer,
     setUpMockActor,
     setUpMockSpellSelfReference,
     withToObjectReturnsSelf
@@ -22,7 +19,6 @@ import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
 import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
 import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
-import {OnAncestorReference} from "../../../../../../module/data/references/OnAncestorReference.js";
 
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
@@ -310,26 +306,13 @@ describe("SplittermondSpellRollMessage actions", () => {
 });
 
 function createTestRollMessage(sandbox) {
-    const {spellRollMessage, spellMock, actorMock} = createSplittermondSpellRollMessage(sandbox);
-    for (const key in {...splittermond.spellEnhancement, spellEnhancement: {}}) {
-        spellRollMessage.degreeOfSuccessManager[key] = createSpellDegreeOfSuccessField(spellRollMessage.degreeOfSuccessManager);
-    }
-    return {spellRollMessage, spellMock, actorMock};
-}
-
-function createSplittermondSpellRollMessage(sandbox) {
     return withToObjectReturnsSelf(() => {
         const spellMock = setUpMockSpellSelfReference(sandbox);
         const actorMock = setUpMockActor(sandbox);
+        linkSpellAndActor(spellMock, actorMock);
+        setNecessaryDefaultsForSpellproperties(spellMock, sandbox);
 
-        actorMock.items = {get: () => spellMock};
-        spellMock.actor = actorMock;
-
-        const checkReport = {};
-        const checkReportReference = OnAncestorReference.for(SplittermondSpellRollMessage)
-            .identifiedBy("constructorKey", "SplittermondSpellRollMessage").references("checkReport")
-        prepareForDegreeOfSuccessManager(spellMock, checkReport);
-        prepareForRenderer(spellMock, checkReport);
+        const checkReport = {degreeOfSuccess :3};
 
         const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
             spellMock,
@@ -338,4 +321,17 @@ function createSplittermondSpellRollMessage(sandbox) {
         injectParent(spellRollMessage);
         return {spellRollMessage, spellMock, actorMock};
     });
+}
+
+function linkSpellAndActor(spellMock, actorMock){
+    actorMock.items = {get: () => spellMock};
+    spellMock.actor = actorMock;
+}
+
+function setNecessaryDefaultsForSpellproperties(spellMock, sandbox) {
+    sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => sandbox.stub().returns(true))
+    sandbox.stub(spellMock, "enhancementCosts").get(() => "1EG/+1V1");
+    sandbox.stub(spellMock, "castDuration").get(() => 3);
+    sandbox.stub(spellMock, "description").get(() => "description");
+    spellMock.name = "name";
 }
