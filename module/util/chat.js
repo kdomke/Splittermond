@@ -1,5 +1,4 @@
 import * as Tooltip from './tooltip.js';
-import {prepareSpellRollMessage} from './chat-spell.js';
 
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let templateContext = {
@@ -115,8 +114,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             });
             break;
         case "spell":
-            prepareSpellRollMessage(templateContext, data);
-            break;
+            foundryApi.reportError("splittermond.unknownError");
+            throw new Error("Spells are handled wia the chat card module and you should not have reached this point.");
         case "defense":
             templateContext.title = data.itemData.name;
             templateContext.img = data.itemData.img;

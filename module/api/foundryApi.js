@@ -3,6 +3,12 @@ export const foundryApi= new class FoundryApi {
     /**
      * @param {string} messageKey the key to an entry in the localization file
      */
+    reportError(messageKey) {
+        ui.notifications.error(this.localize(messageKey));
+    }
+    /**
+     * @param {string} messageKey the key to an entry in the localization file
+     */
     warnUser(messageKey) {
         ui.notifications.warn(this.localize(messageKey));
     }

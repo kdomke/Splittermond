@@ -33,6 +33,7 @@
     "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
   },
   "splittermond": {
+    "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte erstellen Sie einen Fehlerbericht.",
     "chatCard": {
       "noGMConnected": "Aktion kann nicht ausgeführt werden, da kein berechtigter Nutzer (Spielleiter) verbunden ist.",
       "messageNotFound": "Die zu ändernde Nachricht wurde nicht im Chat Log gefunden.",
