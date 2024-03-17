@@ -7,6 +7,7 @@ import {ItemReference} from "../../../data/references/ItemReference.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 import {referencesUtils} from "../../../data/references/referencesUtils.js";
+import {foundryApi} from "../../../api/foundryApi.js";
 
 /**
  * @extends {SplittermondDataModel<SpellMessageActionsManager,never>}
@@ -118,8 +119,12 @@ class ActiveDefenseAction extends MessageAction {
     }
     set available(__) {}
     activeDefense(){
-        const actorReference  = referencesUtils.findBestUserActor();
-        actorReference.getAgent().activeDefenseDialog(this.itemReference.getItem().difficulty)
+        try {
+            const actorReference = referencesUtils.findBestUserActor();
+            actorReference.getAgent().activeDefenseDialog(this.itemReference.getItem().difficulty)
+        }catch(e){
+            foundryApi.informUser("splittermond.pleaseSelectAToken")
+        }
     }
 }
 
