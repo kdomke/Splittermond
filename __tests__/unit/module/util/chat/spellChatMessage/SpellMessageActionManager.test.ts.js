@@ -10,6 +10,7 @@ import {
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {
     injectParent,
+    setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
     withToObjectReturnsSelf
@@ -228,17 +229,7 @@ export function createSpellActionManager(sandbox) {
     actorMock.items = {get: () => spellReference};
     spellReference.getItem().actor = actorMock;
 
-    const checkReportReference = {}//degreeOfSuccess: 3, isFumble: false, succeeded: true, skill: {name: "skillName"}};
-    Object.defineProperty(checkReportReference, "get", {
-        value: function () {
-            return this;
-        }
-    });
-    Object.defineProperty(checkReportReference, "toObject", {
-        value: function () {
-            return this;
-        }
-    });
+    const checkReportReference = setUpCheckReportSelfReference();
 
     return withToObjectReturnsSelf(() => {
         const casterReference = new AgentReference({type: "actor"});
