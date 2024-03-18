@@ -1,5 +1,13 @@
 import * as Tooltip from './tooltip.js';
+import {foundryApi} from "../api/foundryApi.js";
 
+/**
+ * @param {string|null} userId
+ * @return {boolean}
+ */
+export function canEditMessageOf(userId){
+    return userId === foundryApi.currentUser.id || foundryApi.currentUser.isGM;
+}
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let templateContext = {
         ...data,

@@ -31,6 +31,7 @@ import SplittermondNPCAttackItem from "./module/item/npcattack.js";
 import SplittermondMastery from "./module/item/mastery.js";
 import {referencesUtils} from "./module/data/references/referencesUtils.js";
 import {foundryApi} from "./module/api/foundryApi.js";
+import {canEditMessageOf} from "./module/util/chat.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -482,8 +483,9 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         html.find(".gm-only").remove();
     }
 
-    if (!((actor && actor.isOwner) || game.user.isGM || (data.author.id === game.user.id))) {
-        html.find(".actions button").not(".active-defense").remove();
+    if (!((actor && actor.isOwner) || canEditMessageOf(data.author.id))) {
+        //splittermond-chat-action is handled by chatActionFeature
+        html.find(".actions button").not(".splittermond-chat-action").not(".active-defense").remove();
     }
 
     

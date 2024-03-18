@@ -14,25 +14,27 @@
     </header>
     {{> roll-result rollResult}}
     {{> degree-of-success-display degreeOfSuccessDisplay}}
-    {{#if this.degreeOfSuccessOptions}}
-        <strong>{{localize "splittermond.degreeOfSuccessOptionsHeader"}}</strong>
-        <div class="degree-of-success-description">
-            {{#each this.degreeOfSuccessOptions}}
-                <div class="splittermond-inline-label-input">
-                    <input
-                            id="{{id}}"
-                            type="checkbox"
-                            class="splittermond-chat-action inline-label-input"
-                        {{#if checked}}checked{{/if}}
-                        {{#if disabled}}disabled{{/if}}
-                            data-action="{{action}}"
-                    />
-                    <label class="inline-label" for="{{id}}">{{text}}</label>
-                </div>
-            {{/each}}
-        </div>
-    {{/if}}
-    <div class="actions">
+    <div class="splittermond-chat-action-container">
+        {{#if this.degreeOfSuccessOptions}}
+            <strong>{{localize "splittermond.degreeOfSuccessOptionsHeader"}}</strong>
+            <div class="degree-of-success-description">
+                {{#each this.degreeOfSuccessOptions}}
+                    <div class="splittermond-inline-label-input">
+                        <input
+                                id="{{id}}"
+                                type="checkbox"
+                                class="splittermond-chat-action inline-label-input"
+                            {{#if checked}}checked{{/if}}
+                            {{#if disabled}}disabled{{/if}}
+                                data-action="{{action}}"
+                        />
+                        <label class="inline-label" for="{{id}}">{{text}}</label>
+                    </div>
+                {{/each}}
+            </div>
+        {{/if}}
+    </div>
+    <div class="actions splittermond-chat-action-container">
         <h3>{{localize "splittermond.furtherActions"}}</h3>
         {{#with actions}}
             {{#if activeDefense }}
