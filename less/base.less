@@ -1,3 +1,4 @@
+
 body {
     font-family: @font-primary;
     font-variant-numeric: lining-nums;
@@ -547,10 +548,13 @@ form .notes, form .hint {
     min-height: 100px;
 }
 
-
+:root {
+    scrollbar-color:  none var(--background-parchment);
+}
 ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
+    scrollbar-color:  none var(--background-parchment);
 }
 ::-webkit-scrollbar-thumb {
     outline: none;

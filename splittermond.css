@@ -960,9 +960,13 @@ form .hint {
   height: 100%;
   min-height: 100px;
 }
+:root {
+  scrollbar-color: none var(--background-parchment);
+}
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
+  scrollbar-color: none var(--background-parchment);
 }
 ::-webkit-scrollbar-thumb {
   outline: none;
