@@ -69,11 +69,14 @@ class RollDifficulty {
         }
     }
 
+    /**
+     * @return {RollDifficultyString}
+     */
     get difficulty() {
         if (this.evaluatedDifficulty) {
             return this.evaluatedDifficulty;
-        } else if (Number.isInteger(this._difficulty)) {
-            return /** @type {number} */this._difficulty;
+        } else if (Number.isInteger(Number.parseInt(this._difficulty))) {
+            return `${this._difficulty}`;
         } else {
             return defaultDifficulty;
         }

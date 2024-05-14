@@ -115,7 +115,8 @@ class ActiveDefenseAction extends MessageAction {
     }
 
     get available() {
-        return /Ber|[0-9]+m/.exec(this.itemReference.getItem().range) && this.checkReportReference.get().succeeded;
+        //will fail if the difficulty is not a number, which should only happen if the difficulty is a target property
+        return Number.isNaN(Number.parseFloat(this.itemReference.getItem().difficulty));
     }
     set available(__) {}
     activeDefense(){
