@@ -101,7 +101,7 @@ export default class Skill extends Modifiable {
             return false;
         }
         const principalTarget = Array.from(game.user.targets)[0];
-        const rollDifficulty = parseRollDifficulty(options.difficulty)
+        const rollDifficulty = parseRollDifficulty(checkData.difficulty)
         let hideDifficulty = rollDifficulty.isTargetDependentValue()
         if (principalTarget) {
             rollDifficulty.evaluate(principalTarget);
