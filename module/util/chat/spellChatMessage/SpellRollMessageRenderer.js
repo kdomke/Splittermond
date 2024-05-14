@@ -5,6 +5,7 @@ import {RollResultRenderer} from "../RollResultRenderer.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
+import {parseRollDifficulty} from "../../rollDifficultyParser.js";
 
 /**
  * @extends {SplittermondDataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
@@ -58,7 +59,7 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
             header: {
                 title: spell.name,
                 rollTypeMessage: foundryApi.localize(`splittermond.rollType.${checkReport.rollType}`),
-                difficulty: checkReport.difficulty,
+                difficulty: this.createDifficulty(),
                 hideDifficulty: checkReport.hideDifficulty
             },
             rollResult: new RollResultRenderer(spell.description, checkReport).render(),
@@ -72,6 +73,19 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
             actions: renderActions(this.parent),
         }
     }
+
+    //probably a bad impl. It might make more sense, to pass through a roll result and evaulate here
+    createDifficulty(){
+        const checkReport =  this.checkReportReference.get();
+        const spell = this.spellReference.getItem();
+        if(Number.isInteger(Number.parseInt(spell.difficulty))){
+            return `${checkReport.difficulty}`
+        }else{
+            return `${spell.difficulty} (${checkReport.difficulty})`
+        }
+    }
+
+
 }
 
 /**
