@@ -66,15 +66,60 @@ describe("Cost object operation", () => {
         });
 
     [
-        [new Cost(4, 2, false), new Cost(3, 1, false), {_exhausted:1, _consumed:1, _channeled:1, _channeledConsumed:1}],
-        [new Cost(0, 5, false), new Cost(4, 0, false), {_exhausted:-4, _consumed:5, _channeled:-4, _channeledConsumed:5}],
-        [new Cost(0, 1, true), new Cost(0, 1, false), {_exhausted:0, _consumed:0, _channeled:0, _channeledConsumed:0}],
-        [new Cost(3, 1, false), new Cost(0, 2, true), {_exhausted:3, _consumed:-1, _channeled:3, _channeledConsumed:-1}],
-        [new Cost(0, 0, false), new Cost(3, 0, true), {_exhausted:-3, _consumed:0, _channeled:-3, _channeledConsumed:0}],
-        [new Cost(5, 3, false), new Cost(0, 3, true), {_exhausted:5, _consumed:0, _channeled:5, _channeledConsumed:0}],
-        [new Cost(-5, -3, false), new Cost(0, -3, true), {_exhausted:-5, _consumed:0, _channeled:-5, _channeledConsumed:0}],
-        [new Cost(-3, -1, false), new Cost(0, -2, true), {_exhausted:-3, _consumed:1, _channeled:-3, _channeledConsumed:1}],
-        [new Cost(5, 3, false), new Cost(0, -3, true), {_exhausted:5, _consumed:6, _channeled:5, _channeledConsumed:6}],
+        [new Cost(4, 2, false), new Cost(3, 1, false), {
+            _exhausted: 1,
+            _consumed: 1,
+            _channeled: 1,
+            _channeledConsumed: 1
+        }],
+        [new Cost(0, 5, false), new Cost(4, 0, false), {
+            _exhausted: -4,
+            _consumed: 5,
+            _channeled: -4,
+            _channeledConsumed: 5
+        }],
+        [new Cost(0, 1, true), new Cost(0, 1, false), {
+            _exhausted: 0,
+            _consumed: 0,
+            _channeled: 0,
+            _channeledConsumed: 0
+        }],
+        [new Cost(3, 1, false), new Cost(0, 2, true), {
+            _exhausted: 3,
+            _consumed: -1,
+            _channeled: 3,
+            _channeledConsumed: -1
+        }],
+        [new Cost(0, 0, false), new Cost(3, 0, true), {
+            _exhausted: -3,
+            _consumed: 0,
+            _channeled: -3,
+            _channeledConsumed: 0
+        }],
+        [new Cost(5, 3, false), new Cost(0, 3, true), {
+            _exhausted: 5,
+            _consumed: 0,
+            _channeled: 5,
+            _channeledConsumed: 0
+        }],
+        [new Cost(-5, -3, false), new Cost(0, -3, true), {
+            _exhausted: -5,
+            _consumed: 0,
+            _channeled: -5,
+            _channeledConsumed: 0
+        }],
+        [new Cost(-3, -1, false), new Cost(0, -2, true), {
+            _exhausted: -3,
+            _consumed: 1,
+            _channeled: -3,
+            _channeledConsumed: 1
+        }],
+        [new Cost(5, 3, false), new Cost(0, -3, true), {
+            _exhausted: 5,
+            _consumed: 6,
+            _channeled: 5,
+            _channeledConsumed: 6
+        }],
     ].forEach(
         ([costs1, costs2, expected]) => {
             const actual1 = costs1.asModifier();
@@ -85,12 +130,24 @@ describe("Cost object operation", () => {
             });
         });
     [
-        [new Cost(4, 2, false), {_exhausted:-4, _consumed:-2, _channeled:-4, _channeledConsumed:-2}],
-        [new Cost(0, 5, true), {_exhausted:-0, _consumed:-5, _channeled:-0, _channeledConsumed:-5}],
+        [new Cost(4, 2, false), {_exhausted: -4, _consumed: -2, _channeled: -4, _channeledConsumed: -2}],
+        [new Cost(0, 5, true), {_exhausted: -0, _consumed: -5, _channeled: -0, _channeledConsumed: -5}],
     ].forEach(([costs, expected]) => it(`should negate ${costs} correctly`, () => {
         const result = costs.asModifier().negate();
         expect(result).to.deep.equal(expected);
     }));
+
+    [
+        [new Cost(1, 0, false), 1, new Cost(1, 0, false)],
+        [new Cost(2, 0, false), 2, new Cost(4, 0, false)],
+        [new Cost(0, 3, true), 4, new Cost(0, 12, false)],
+        [new Cost(1, 1, true), -2, new Cost(-2, -2, false)]
+    ].forEach(
+        ([costs, multiplier, expected]) => {
+            it(`should multiply ${costs} correctly`, () => {
+                expect(costs.asModifier().multiply(multiplier)).to.deep.equal(expected.asModifier());
+            });
+        });
 });
 
 describe("Cost object rendering", () => {
@@ -116,19 +173,19 @@ describe("Strict cost objects", () => {
     it("should subtract channeled costs from exhausted cost", () => {
         const costs = new Cost(2, 1, false, true).asModifier();
         const result = costs.subtract(new Cost(1, 1, true).asModifier());
-        expect(result).to.deep.equal({_exhausted: 1, _channeled:-1 , _consumed: 0, _channeledConsumed: -1});
+        expect(result).to.deep.equal({_exhausted: 1, _channeled: -1, _consumed: 0, _channeledConsumed: -1});
     });
 
     it("should  add exhausted costs to channeled costs", () => {
         const costs = new Cost(2, 1, false, true).asModifier();
         const result = costs.add(new Cost(1, 1, true).asModifier());
-        expect(result).to.deep.equal({_exhausted: 3, _channeled:1 , _consumed: 2, _channeledConsumed: 1});
+        expect(result).to.deep.equal({_exhausted: 3, _channeled: 1, _consumed: 2, _channeledConsumed: 1});
     });
 
     it("should respect strictness of both operands", () => {
         const costs = new Cost(2, 1, false, false).asModifier();
         const result = costs.add(new Cost(1, 1, true, true).asModifier());
-        expect(result).to.deep.equal({_exhausted: 2, _channeled:3 , _consumed: 1, _channeledConsumed: 2});
+        expect(result).to.deep.equal({_exhausted: 2, _channeled: 3, _consumed: 1, _channeledConsumed: 2});
     });
 
     it("should add channeled costs to channeled costs", () => {

@@ -87,6 +87,19 @@ export class CostModifier extends SplittermondDataModel{
     }
 
     /**
+     * @param {number} factor
+     * @return {CostModifier}
+     */
+    multiply(factor) {
+       return new this.constructor({
+           _channeled: factor * this._channeled,
+           _channeledConsumed: factor * this._channeledConsumed,
+           _exhausted: factor * this._exhausted,
+           _consumed: factor * this._consumed,
+       })
+    }
+
+    /**
      * @param {CostModifier} cost
      */
     subtract(cost) {
@@ -94,12 +107,7 @@ export class CostModifier extends SplittermondDataModel{
     }
 
     negate() {
-        return new this.constructor({
-            _channeled: -1 * this._channeled,
-            _channeledConsumed: -1 * this._channeledConsumed,
-            _exhausted: -1 * this._exhausted,
-            _consumed: -1 * this._consumed,
-        });
+        return this.multiply(-1);
     }
 
     /**
