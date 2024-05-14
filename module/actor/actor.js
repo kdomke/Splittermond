@@ -900,7 +900,7 @@ export default class SplittermondActor extends Actor {
 
     /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
     spendSplinterpoint(){
-        if(this.splinterpoints > 0) {
+        if(this.splinterpoints.value > 0) {
             this.update({
                 "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
             });
