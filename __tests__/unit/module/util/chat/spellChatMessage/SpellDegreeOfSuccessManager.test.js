@@ -26,7 +26,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         underTest.testField.degreeOfSuccessCosts = 3;
         underTest.testField.checked = false;
 
-        underTest.alterCheckState(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.alterCheckState(/** @type {SpellDegreesOfSuccessOptions} */"testField","");
 
         expect(underTest.openDegreesOfSuccess).to.equal(0);
         expect(underTest.testField.checked).to.be.true;
@@ -39,7 +39,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         underTest.testField.degreeOfSuccessCosts = 3;
         underTest.testField.checked = true;
 
-        underTest.alterCheckState(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.alterCheckState(/** @type {SpellDegreesOfSuccessOptions} */"testField","");
 
         expect(underTest.openDegreesOfSuccess).to.equal(3);
         expect(underTest.testField.checked).to.be.false;
@@ -49,7 +49,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField = sinon.spy(underTest.testField);
 
-        underTest.isAvailable(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.isAvailable(/** @type {SpellDegreesOfSuccessOptions} */"testField", "");
 
         expect(underTest.testField.isAvailable.called).to.be.true;
     });
@@ -58,7 +58,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField = sinon.spy(underTest.testField);
 
-        underTest.isCheckable(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.isCheckable(/** @type {SpellDegreesOfSuccessOptions} */"testField", "");
 
         expect(underTest.testField.isCheckable.called).to.be.true;
     });
@@ -67,7 +67,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField.checked = /** @type {boolean} */"horrendous test value";
 
-        underTest.isChecked(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.isChecked(/** @type {SpellDegreesOfSuccessOptions} */"testField", "");
 
         expect(underTest.testField.checked).to.equal("horrendous test value");
     })
@@ -76,7 +76,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField.used = /** @type {boolean} */"horrendous test value";
 
-        underTest.isUsed(/** @type {SpellDegreesOfSuccessOptions} */"testField");
+        underTest.isUsed(/** @type {SpellDegreesOfSuccessOptions} */"testField", "");
 
         expect(underTest.testField.used).to.equal("horrendous test value");
     });

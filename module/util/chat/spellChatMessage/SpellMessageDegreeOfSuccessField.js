@@ -7,6 +7,7 @@ import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel
  * @property {boolean} checked whether the user has elected to use this option
  * @property {boolean} used whether the effect of this option has been used in an action.
  * @property {boolean} isDegreeOfSuccessOption whether the spell defines this as a degree of success option
+ * @property {number} multiplicity identifies the multiplicity of this option
  */
 export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
     static defineSchema() {
@@ -15,6 +16,7 @@ export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
             checked: new fields.BooleanField({required: true, blank: false, initial: false, nullable: false}),
             used: new fields.BooleanField({required: true, blank: false, initial: false, nullable: false}),
             isDegreeOfSuccessOption: new fields.BooleanField({required: true, blank: false, initial: false, nullable: false}),
+            multiplicity: new fields.NumberField({required: true, blank: false, initial: 1, nullable: false}),
         }
     }
 
@@ -24,6 +26,10 @@ export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
             return;
         }
         this.updateSource({checked: !this.checked});
+    }
+
+    use(){
+        this.updateSource({used: true});
     }
 
     /**
@@ -38,6 +44,9 @@ export class SpellMessageDegreeOfSuccessField extends SplittermondDataModel{
         return this.isDegreeOfSuccessOption && this.degreeOfSuccessCosts <= this.getParent().totalDegreesOfSuccess;
     }
 
+    /**
+     * @return {SpellMessageDegreesOfSuccessManager}
+     */
     getParent(){
         if (this.parent && this.parent instanceof SpellMessageDegreesOfSuccessManager){
             return this.parent;

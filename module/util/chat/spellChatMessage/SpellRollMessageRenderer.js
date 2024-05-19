@@ -5,19 +5,27 @@ import {RollResultRenderer} from "../RollResultRenderer.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
-import {parseRollDifficulty} from "../../rollDifficultyParser.js";
+import {parseCostString} from "../../costs/costParser.js";
 
 /**
  * @extends {SplittermondDataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
  * @property {OnAncestorReference<CheckReport>} checkReportReference
  * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
-export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
+export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel {
 
     static defineSchema() {
         return {
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, blank: false, nullable: false}),
-            spellReference: new fields.EmbeddedDataField(ItemReference,{required: true, blank: false, nullable: false}),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
+            spellReference: new fields.EmbeddedDataField(ItemReference, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
             checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
         }
     }
@@ -35,6 +43,7 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
      * @property {string} action
      * @property {string} checked
      * @property {string} disabled
+     * @property {string} multiplicity
      */
 
     /**
@@ -45,14 +54,14 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
      * @property {number} totalDegreesOfSuccess
      * @property {number} usedDegreesOfSuccess
      * @property {number} openDegreesOfSuccess
-     * @property {Partial<Record<ManagedSpellOptions,SpellDegreessOfSuccessRenderedData>>} degreeOfSuccessOptions
+     * @property {SpellDegreessOfSuccessRenderedData[]} degreeOfSuccessOptions
      * @property {object} actions
      */
     /**
-     * @return {SpellDegreessOfSuccessRenderedData}
+     * @return {SplittermondSpellRollMessageRenderedData}
      */
     renderData() {
-        const checkReport =  this.checkReportReference.get();
+        const checkReport = this.checkReportReference.get();
         const spell = this.spellReference.getItem();
         return {
             rollResultClass: getRollResultClass(checkReport),
@@ -69,22 +78,84 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
                 usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
                 openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
             },
-            degreeOfSuccessOptions: renderDegreeOfSuccessOptions(this.parent),
+            degreeOfSuccessOptions: this.badlyPostfixRenderedOptions(renderDegreeOfSuccessOptions(this.parent)),
             actions: renderActions(this.parent),
         }
     }
 
     //probably a bad impl. It might make more sense, to pass through a roll result and evaulate here
-    createDifficulty(){
-        const checkReport =  this.checkReportReference.get();
+    createDifficulty() {
+        const checkReport = this.checkReportReference.get();
         const spell = this.spellReference.getItem();
-        if(Number.isInteger(Number.parseInt(spell.difficulty))){
+        if (Number.isInteger(Number.parseInt(spell.difficulty))) {
             return `${checkReport.difficulty}`
-        }else{
+        } else {
             return `${spell.difficulty} (${checkReport.difficulty})`
         }
     }
 
+    /**
+     * postfix the available degree of success option to what makes sense at the given point in time.
+     * bad Impl. Ideally, the degreeOfSuccessFields should be adapted and manage their multiplicities and respective
+     * availablities
+     *  @param {SpellDegreessOfSuccessRenderedData[]|null}spellDegreesOfSuccessRenderedData
+     * @return {SpellDegreessOfSuccessRenderedData[]}
+     */
+    badlyPostfixRenderedOptions(spellDegreesOfSuccessRenderedData) {
+        if (!spellDegreesOfSuccessRenderedData) {
+            return null;
+        }
+        for (let i = 0; i < spellDegreesOfSuccessRenderedData.length; i++) {
+            const renderedData = spellDegreesOfSuccessRenderedData[i];
+            if (renderedData.checked) {
+                continue;
+            }
+            if (renderedData.action.includes("castDuration")) {
+                if (renderedData.multiplicity > 2) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1)
+                    i--;
+                } else if (this.parent.actionManager.ticks.cost <= renderedData.multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                }
+            } else if (renderedData.action.includes("channelizedFocus") === 0) {
+                if (renderedData.multiplicity > 4) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                } else if (this.#getSubstractedCost("channelizedFocus", renderedData.multiplicity).channeled === 0) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                }
+            } else if (renderedData.action.includes("exhaustedFocus")) {
+                if (this.#getSubstractedCost("exhaustedFocus", renderedData.multiplicity).exhausted === 0) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                }
+            } else if (renderedData.action.includes("consumedFocus")) {
+                if (renderedData.multiplicity > 4) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                } else if (this.#getSubstractedCost("consumedFocus", renderedData.multiplicity).consumed === 0) {
+                    spellDegreesOfSuccessRenderedData.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        return spellDegreesOfSuccessRenderedData.length === 0 ? null : spellDegreesOfSuccessRenderedData;
+    }
+
+    #getSubstractedCost(costString, multiplicity) {
+        const adjustedCost = parseCostString(this.parent.actionManager.focus.cost).asPrimaryCost();
+        const modifier = this.#calcFocusCostReduction(splittermond.spellEnhancement[costString].focusCostReduction, multiplicity)
+            .subtract(parseCostString("2V1", false).asModifier())
+        return adjustedCost.subtract(modifier);
+
+
+    }
+
+    #calcFocusCostReduction(costString, multiplicity) {
+        return parseCostString(costString).asModifier().multiply(multiplicity);
+    }
 
 }
 
@@ -93,8 +164,8 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel{
  * @param {boolean} succeeded
  * @return {string}
  */
-function getDegreeOfSuccessMessage(degreeOfSuccess,succeeded) {
-    const messageType= `${succeeded ? "success" : "fail"}Message`;
+function getDegreeOfSuccessMessage(degreeOfSuccess, succeeded) {
+    const messageType = `${succeeded ? "success" : "fail"}Message`;
     const messageExtremity = Math.min(Math.abs(degreeOfSuccess), 5);
     return foundryApi.localize(`splittermond.${messageType}.${messageExtremity}`);
 }
@@ -119,33 +190,37 @@ function getRollResultClass(checkReport) {
 
 /**
  * @param {SplittermondSpellRollMessage} spellRollMessage
- * @return {Partial<Record<SpellDegreesOfSuccessOptions,SpellDegreessOfSuccessRenderedData>>}
+ * @return {SpellDegreessOfSuccessRenderedData[]}
  */
 function renderDegreeOfSuccessOptions(spellRollMessage) {
-    const renderedOptions = {};
+    const renderedOptions = [];
     for (const key in splittermond.spellEnhancement) {
-        const renderedOption = renderDegreeOfSuccessOption(spellRollMessage, key);
-        if (renderedOption) {
-            renderedOptions[key] = renderedOption;
+        const fieldsForKey = spellRollMessage.degreeOfSuccessManager.getMultiplicities(key);
+        for (const field of fieldsForKey) {
+            const renderedOption = renderDegreeOfSuccessOption(field, key);
+            if (renderedOption && hasAction(spellRollMessage, renderedOption.action)) {
+                renderedOptions.push(renderedOption);
+            }
         }
     }
     {
         const key = "spellEnhancement"
         const spellEnhancement = renderSpellEnhancementOption(spellRollMessage, key);
         if (spellEnhancement) {
-            renderedOptions[key] = spellEnhancement;
+            renderedOptions.push(spellEnhancement);
         }
     }
-    const renderedOptionsAreEmpty =  Object.keys(renderedOptions).length === 0;
+    const renderedOptionsAreEmpty = Object.keys(renderedOptions).length === 0;
     return renderedOptionsAreEmpty ? null : renderedOptions;
 }
+
 
 /**
  * @param {SplittermondSpellRollMessage} spellRollMessage
  * @param {Exclude<ManagedSpellOptions, SpellDegreesOfSuccessOptions>} key
  */
-function renderSpellEnhancementOption(spellRollMessage,key) {
-    const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage, key);
+function renderSpellEnhancementOption(spellRollMessage, key) {
+    const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage.degreeOfSuccessManager[key], key);
     if (!commonConfig) {
         return null;
     }
@@ -156,39 +231,36 @@ function renderSpellEnhancementOption(spellRollMessage,key) {
 }
 
 /**
- * @param {SplittermondSpellRollMessage} spellRollMessage
- * @param {ManagedSpellOptions} key
+ * @param {SpellMessageDegreeOfSuccessField} field
+ * @param {SpellDegreesOfSuccessOptions} key
  */
-function renderDegreeOfSuccessOption(spellRollMessage, key) {
-    const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage, key)
+function renderDegreeOfSuccessOption(field, key) {
+    const commonConfig = commonRenderDegreeOfSuccessOptions(field, key)
     if (!commonConfig) {
         return null;
     }
     const degreeOfSuccessOptionConfig = splittermond.spellEnhancement[key];
     return {
         ...commonConfig,
-        text: `${degreeOfSuccessOptionConfig.degreesOfSuccess} EG ${foundryApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
+        text: `${field.degreeOfSuccessCosts} EG ${field.multiplicity > 1 ? field.multiplicity:""} ${foundryApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
     };
 }
 
 /**
- * @param {SplittermondSpellRollMessage} spellRollMessage
+ * @param {SpellMessageDegreeOfSuccessField} degreeOfSuccessField
  * @param {ManagedSpellOptions} key
  */
-function commonRenderDegreeOfSuccessOptions(spellRollMessage, key) {
+function commonRenderDegreeOfSuccessOptions(degreeOfSuccessField, key) {
     const actionName = `${key}Update`
-    if (!hasAction(spellRollMessage, actionName)) {
-        console.warn(`SpellRollMessage has no action ${actionName}, will not render option for ${key}!`)
-        return null;
-    }
-    if (!spellRollMessage.degreeOfSuccessManager.isAvailable(key)) {
+    if (!degreeOfSuccessField.isAvailable()) {
         return null;
     }
     return {
         id: `${key}-${new Date().getTime()}`,
         action: actionName,
-        checked: spellRollMessage.degreeOfSuccessManager.isChecked(key),
-        disabled: !spellRollMessage.degreeOfSuccessManager.isCheckable(key)
+        checked: degreeOfSuccessField.checked,
+        disabled: !degreeOfSuccessField.isCheckable(),
+        multiplicity: degreeOfSuccessField.multiplicity
     };
 }
 
@@ -223,10 +295,10 @@ function renderActions(spellRollMessage) {
     if (useSplinterpointRender) {
         renderedOptions["useSplinterpoint"] = useSplinterpointRender;
     }
-    if (rollFumbleRender){
+    if (rollFumbleRender) {
         renderedOptions["rollFumble"] = rollFumbleRender;
     }
-    if(activeDefenseRender){
+    if (activeDefenseRender) {
         renderedOptions["activeDefense"] = activeDefenseRender;
     }
     return renderedOptions;
@@ -267,7 +339,7 @@ function renderUseSplinterpoint(spellRollMessage) {
 }
 
 function renderRollFumble(spellRollMessage) {
-    if(!spellRollMessage.actionManager.magicFumble.available){
+    if (!spellRollMessage.actionManager.magicFumble.available) {
         return null;
     }
     return {
@@ -275,8 +347,8 @@ function renderRollFumble(spellRollMessage) {
     };
 }
 
-function renderActiveDefense(spellRollMessage){
-    if(!spellRollMessage.actionManager.activeDefense.available){
+function renderActiveDefense(spellRollMessage) {
+    if (!spellRollMessage.actionManager.activeDefense.available) {
         return null;
     }
     return {

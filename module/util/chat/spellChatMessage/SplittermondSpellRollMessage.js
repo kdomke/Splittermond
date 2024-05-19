@@ -7,6 +7,7 @@ import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
+import {parseCostString} from "../../costs/costParser.js";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -40,75 +41,110 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         });
     }
 
-    castDurationUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("castDuration")) {
-            this.actionManager.ticks.add(splittermond.spellEnhancement.castDuration.castDurationReduction)
+    /** @param {{multiplicity:number}}data*/
+    castDurationUpdate(data) {
+        const multiplicity = data.multiplicity;
+        if (this.degreeOfSuccessManager.isChecked("castDuration", multiplicity)) {
+            this.actionManager.ticks.add(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         } else {
-            this.actionManager.ticks.subtract(splittermond.spellEnhancement.castDuration.castDurationReduction)
+            this.actionManager.ticks.subtract(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         }
-        this.#alterCheckState("castDuration");
+        this.#alterCheckState("castDuration", multiplicity);
     }
 
-    exhaustedFocusUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("exhaustedFocus")) {
-            this.actionManager.focus.addCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
+    /** @param {{multiplicity:number}}data*/
+    exhaustedFocusUpdate(data) {
+        const multiplicity = data.multiplicity;
+        const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction, multiplicity);
+        if (this.degreeOfSuccessManager.isChecked("exhaustedFocus", multiplicity)) {
+            this.actionManager.focus.addCost(focusCosts)
         } else {
-            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction)
+            this.actionManager.focus.subtractCost(focusCosts)
         }
-        this.#alterCheckState("exhaustedFocus");
+        this.#alterCheckState("exhaustedFocus",multiplicity);
     }
 
-    channelizedFocusUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("channelizedFocus")) {
-            this.actionManager.focus.addCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
+    /** @param {{multiplicity:number}}data*/
+    channelizedFocusUpdate(data) {
+        const multiplicity = data.multiplicity;
+        const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.channelizedFocus.focusCostReduction, multiplicity);
+        if (this.degreeOfSuccessManager.isChecked("channelizedFocus", data.multiplicity)) {
+            this.actionManager.focus.addCost(focusCosts)
         } else {
-            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.channelizedFocus.focusCostReduction)
+            this.actionManager.focus.subtractCost(focusCosts)
         }
-        this.#alterCheckState("channelizedFocus")
+        this.#alterCheckState("channelizedFocus", multiplicity);
     }
 
-    consumedFocusUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("consumedFocus")) {
-            this.actionManager.focus.addCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
+    /** @param {{multiplicity:number}}data*/
+    consumedFocusUpdate(data) {
+        const multiplicity = data.multiplicity;
+        const focusCosts = parseCostString(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
+            .asModifier()
+            .multiply(multiplicity);
+        if (this.degreeOfSuccessManager.isChecked("consumedFocus", multiplicity)) {
+            this.actionManager.focus.addCost(focusCosts)
         } else {
-            this.actionManager.focus.subtractCost(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
+            this.actionManager.focus.subtractCost(focusCosts)
         }
-        this.#alterCheckState("consumedFocus")
+        this.#alterCheckState("consumedFocus", multiplicity)
     }
 
-    rangeUpdate() {
-        this.#alterCheckState("range");
-    }
-
-    damageUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("damage")) {
-            this.actionManager.damage.subtractDamage(splittermond.spellEnhancement.damage.damageIncrease)
+    /** @param {{multiplicity:number}}data*/
+    damageUpdate(data) {
+        const multiplicity = data.multiplicity;
+        if (this.degreeOfSuccessManager.isChecked("damage", multiplicity)) {
+            this.actionManager.damage.subtractDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         } else {
-            this.actionManager.damage.addDamage(splittermond.spellEnhancement.damage.damageIncrease)
+            this.actionManager.damage.addDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         }
-        this.#alterCheckState("damage");
+        this.#alterCheckState("damage", multiplicity);
     }
 
-    effectAreaUpdate() {
-        this.#alterCheckState("effectArea");
+    /** @param {{multiplicity:number}}data*/
+    rangeUpdate(data) {
+        this.#alterCheckState("range", data.multiplicity);
     }
 
-    effectDurationUpdate() {
-        this.#alterCheckState("effectDuration");
+    /** @param {{multiplicity:number}}data*/
+    effectAreaUpdate(data) {
+        this.#alterCheckState("effectArea", data.multiplicity);
     }
 
-    spellEnhancementUpdate() {
-        if (this.degreeOfSuccessManager.isChecked("spellEnhancement")) {
-            this.actionManager.focus.subtractCost(this.spellReference.getItem().enhancementCosts);
+    /** @param {{multiplicity:number}}data*/
+    effectDurationUpdate(data) {
+        this.#alterCheckState("effectDuration", data.multiplicity);
+    }
+
+    /** @param {object}data*/
+    spellEnhancementUpdate(data) {
+        const focusCosts = this.#toCostModifier(this.spellReference.getItem().enhancementCosts, 1);
+        if (this.degreeOfSuccessManager.isChecked("spellEnhancement", "")) {
+            this.actionManager.focus.subtractCost(focusCosts);
         } else {
-            this.actionManager.focus.addCost(this.spellReference.getItem().enhancementCosts);
+            this.actionManager.focus.addCost(focusCosts);
         }
-        this.#alterCheckState("spellEnhancement");
+        this.#alterCheckState("spellEnhancement","");
     }
 
-    /** @param {ManagedSpellOptions} key */
-    #alterCheckState(key) {
-        this.degreeOfSuccessManager.alterCheckState(key);
+
+
+    /**
+     * @param {ManagedSpellOptions} key
+     * @param {number} multiplicity
+     */
+    #alterCheckState(key, multiplicity) {
+        this.degreeOfSuccessManager.alterCheckState(key, multiplicity);
+    }
+
+    /**
+     *
+     * @param {string} cost
+     * @param {number} multiplicity
+     * @return {CostModifier}
+     */
+    #toCostModifier(cost, multiplicity){
+        return parseCostString(cost, true).asModifier().multiply(multiplicity);
     }
 
 

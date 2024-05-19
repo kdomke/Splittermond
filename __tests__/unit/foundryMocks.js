@@ -69,8 +69,11 @@ global.foundry = {
                 }
             }
 
+            /**
+             * @return {object}
+             */
             toObject() {
-                JSON.parse(JSON.stringify(this));
+                return JSON.parse(JSON.stringify(this));
             }
         }
     }

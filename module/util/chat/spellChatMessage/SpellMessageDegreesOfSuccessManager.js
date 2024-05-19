@@ -5,15 +5,32 @@ import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 
 /**
+ * @typedef {1|2|4|8} Multiplicity
+ */
+/**
+ * Defines the multiplicities of degrees of success. It allows for using the same degree of success option up to 16 times.
+ * Example to simulate 6 application of a degree of success, one selects the 2 and 4 multiplicities.
+ * @type {Multiplicity[]}
+ */
+const multiplicities = [1, 2, 4, 8] ;
+
+/**
  * @typedef ManagedSpellOptions
  * @type {SpellDegreesOfSuccessOptions | "spellEnhancement"}
  */
 
+
+/**
+ * @typedef MultipliedOptions
+ * @type {`${SpellDegreesOfSuccessOptions}${Multiplicity}`}
+ */
+
 /**
  * @extends {SplittermondDataModel<SpellMessageDegreesOfSuccessManager>}
- * @extends {Record<ManagedSpellOptions, SpellMessageDegreeOfSuccessField>}
+ * @extends {Record<MultipliedOptions, SpellMessageDegreeOfSuccessField>}
+ * @extends {{spellEnhancement: SpellMessageDegreeOfSuccessField}}
  */
-export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
+export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel {
     /**
      * @param {ItemReference<SplittermondSpellItem>} spellReference
      * @param {OnAncestorReference<CheckReport>} checkReportReference
@@ -22,12 +39,15 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
         const spell = spellReference.getItem();
         const degreeOfSuccessOptions = {};
         for (const key in splittermond.spellEnhancement) {
-            degreeOfSuccessOptions[key] = new SpellMessageDegreeOfSuccessField({
-                degreeOfSuccessCosts: splittermond.spellEnhancement[key].degreesOfSuccess,
-                checked: false,
-                used: false,
-                isDegreeOfSuccessOption: spell.degreeOfSuccessOptions[key],
-            })
+            for (const multiplicity of multiplicities) {
+                degreeOfSuccessOptions[key + multiplicity] = new SpellMessageDegreeOfSuccessField({
+                    degreeOfSuccessCosts: multiplicity * splittermond.spellEnhancement[key].degreesOfSuccess,
+                    checked: false,
+                    used: false,
+                    multiplicity: multiplicity,
+                    isDegreeOfSuccessOption: spell.degreeOfSuccessOptions[key],
+                })
+            }
         }
         return new SpellMessageDegreesOfSuccessManager({
             checkReportReference: checkReportReference.toObject(),
@@ -45,13 +65,21 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
     static defineSchema() {
         return {
             ...createDegreesOfSuccessOptionSchema(),
-            spellEnhancement: new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {required: true, blank: false, nullable: false}),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, blank: false, nullable: false}),
+            spellEnhancement: new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {
+                required: true,
+                blank: false,
+                nullable: false
+            }),
             usedDegreesOfSuccess: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
         }
     }
 
-    get totalDegreesOfSuccess(){
+    get totalDegreesOfSuccess() {
         return this.checkReportReference.get().degreeOfSuccess;
     }
 
@@ -62,42 +90,64 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
 
     /**
      * @param {ManagedSpellOptions} key
+     * @return {SpellMessageDegreeOfSuccessField[]}
+     */
+    getMultiplicities(key) {
+        return multiplicities.map(multiplicity => this[key + multiplicity])
+            .filter(option => !!option)
+    }
+
+    /**
+     * @param {ManagedSpellOptions} key
+     * @param {number} multiplicity
      * @return {boolean}
      */
-    isCheckable(key) {
-        return this[key].isCheckable();
+    isCheckable(key, multiplicity) {
+        return this[key + multiplicity].isCheckable();
     }
 
-    /** @param {ManagedSpellOptions} key
+    /**
+     * @param {ManagedSpellOptions} key
+     * @param {number} multiplicity
      * @return {boolean}
      */
-    isChecked(key) {
-        return this[key].checked;
+    isChecked(key, multiplicity) {
+        return this[key + multiplicity].checked;
     }
 
-    /** @param {ManagedSpellOptions} key
+    /**
+     * @param {ManagedSpellOptions} key
+     * @param {number} multiplicity
      * @return {boolean}
      */
-    isAvailable(key) {
-        return this[key].isAvailable();
+    isAvailable(key, multiplicity) {
+        return this[key + multiplicity].isAvailable();
     }
 
-    /** @param {ManagedSpellOptions} key
+    /**
+     * @deprecated only used in test?
+     * @param {ManagedSpellOptions} key
      * @return {boolean}
      */
-    isUsed(key) {
-        return this[key].used;
+    isUsed(key ) {
+        return this.getMultiplicities(key).some(option => option.used) || this[key]?.used;
     }
 
-    /** @param {ManagedSpellOptions} key*/
-    use(key) {
-        this.updateSource({[key]: {used: true}})
+    /**
+     * @param {ManagedSpellOptions} key
+     */
+    use(key ) {
+        this.getMultiplicities(key).forEach(option => option.use());
+        this[key]?.use();
     }
 
-    /** @param {ManagedSpellOptions} key*/
-    alterCheckState(key) {
-        const isChecked = this[key].checked;
-        isChecked ? this.#onUncheck(key) : this.#onCheck(key);
+    /**
+     * @param {ManagedSpellOptions} key
+     * @param {number} multiplicity
+     */
+    alterCheckState(key, multiplicity) {
+        const isChecked = this[key + multiplicity].checked;
+        isChecked ? this.#onUncheck(key + multiplicity) : this.#onCheck(key + multiplicity);
     }
 
     /** @param {ManagedSpellOptions} key */
@@ -116,11 +166,12 @@ export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel{
 function createDegreesOfSuccessOptionSchema() {
     const schema = {}
     for (const key in splittermond.spellEnhancement) {
-        schema[key] = new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {
-            required: true,
-            blank: false,
-            nullable: false
-        })
+        for (const multiplicity of multiplicities)
+            schema[key + multiplicity] = new fields.EmbeddedDataField(SpellMessageDegreeOfSuccessField, {
+                required: true,
+                blank: false,
+                nullable: false
+            })
     }
     return schema;
 }

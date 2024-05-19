@@ -302,24 +302,22 @@ class FocusAction extends MessageAction {
         });
     }
 
-    /** @param {string} cost a Splittermond cost string ( e.g. K2V1)*/
+    /** @param {CostModifier} cost a Splittermond cost string ( e.g. K2V1)*/
     addCost(cost) {
         if (this.used) {
             console.warn("Attempt alter a used cost action");
             return;
         }
-        const costAdjustment = parseCostString(cost, true).asModifier();
-        this.updateSource({adjusted: this.adjusted.add(costAdjustment)});
+        this.updateSource({adjusted: this.adjusted.add(cost)});
     }
 
-    /** @param {string} cost a Splittermond cost string ( e.g. K2V1)*/
+    /** @param {CostModifier} cost a Splittermond cost string ( e.g. K2V1)*/
     subtractCost(cost) {
         if (this.used) {
             console.warn("Attempt to alter a used cost action");
             return;
         }
-        const costAdjustment = parseCostString(cost, true).asModifier();
-        this.updateSource({adjusted: this.adjusted.subtract(costAdjustment)});
+        this.updateSource({adjusted: this.adjusted.subtract(cost)});
     }
 
     get cost() {

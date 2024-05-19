@@ -5,6 +5,7 @@
  * @property {function(new:T,data: T,...args)} constructor
  * @property {(data: Partial<T>) => void} updateSource
  * @property {() => object} toObject
+ * @property {(scope:string, key:string) => unknown} getFlag
  * @class
  */
 const SplittermondDataModel = class extends foundry.abstract.DataModel {}

@@ -22,8 +22,8 @@ export function chatActionFeature() {
                     return Promise.resolve();
                 }
 
-                const {action, messageId, userId} = data;
-                return handleChatAction(action, messageId, userId);
+                const {messageId, userId} = data;
+                return handleChatAction(data, messageId, userId);
             }
             return Promise.resolve();
         });
@@ -42,7 +42,7 @@ async function onChatCardAction(event) {
     event.preventDefault();
 
     const button = event.currentTarget;
-    const action = button.dataset.action;
+    const dataAttributes = button.dataset;
     const messageId = button.closest(".message").dataset.messageId;
 
     if (!foundryApi.currentUser.isGM) {
@@ -52,20 +52,20 @@ async function onChatCardAction(event) {
 
         return foundryApi.socket.emit(socketEvent, {
             type: "chatAction",
-            action,
+            ...dataAttributes,
             messageId,
             userId: game.user.id,
         });
     }
 
-    return await handleChatAction(action, messageId);
+    return await handleChatAction(dataAttributes, messageId);
 }
 
 function onLocalChatCardAction(event) {
     const button = event.currentTarget;
     const action = button.dataset.localaction;
     const messageId = button.closest(".message").dataset.messageId;
-    return handleLocalChatAction(action, messageId);
+    return handleLocalChatAction({...button.dataset, action}, messageId);
 }
 
 /**

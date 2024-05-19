@@ -45,7 +45,7 @@ export function chatActionFeatureTest(context) {
             const chatCard = SplittermondChatCard.create(actor, message,{type:5, mode:'CHAT.RollPublic'});
             await chatCard.sendToChat();
 
-            await handleChatAction("alterTitle", chatCard.messageId);
+            await handleChatAction({action: "alterTitle"}, chatCard.messageId);
             expect(foundryApi.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
             ChatMessage.deleteDocuments([chatCard.messageId]);
         });
@@ -64,8 +64,8 @@ export function chatActionFeatureTest(context) {
 
             await chatMessage.sendToChat()
             const messageId = chatMessage.messageId;
-            await handleChatAction("spellEnhancementUpdate", messageId);
-            await handleChatAction("consumeCosts", messageId);
+            await handleChatAction({action: "spellEnhancementUpdate", multiplicity: 1 }, messageId);
+            await handleChatAction({action: "consumeCosts", multiplicity: 1 }, messageId);
 
             expect(actor.system.focus.exhausted.value +
                 actor.system.focus.consumed.value +

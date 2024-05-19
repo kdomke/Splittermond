@@ -91,30 +91,32 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
 }
 
 /**
- * @param {string} action the action invoked on the chat card
+ * @param {{action:string}} data the action invoked on the chat card
  * @param {string} messageId the chat card message id
  * @return {Promise<void>}
  */
-export async function handleChatAction(action, messageId) {
+export async function handleChatAction(data, messageId) {
     const chatCard = getChatCard(messageId);
 
-    if(hasAction(chatCard.message, action)){
-        await Promise.resolve(chatCard.message[action]());
+    if(hasAction(chatCard.message, data.action)){
+        await Promise.resolve(chatCard.message[data.action](data));
         await chatCard.updateMessage();
     }else{
         foundryApi.warnUser("splittermond.chatCard.actionNotFound");
-        throw new Error(`Action ${action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
+        const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
+        throw new Error(`Action ${data.action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
     }
 
 }
-export function handleLocalChatAction(action, messageId) {
+export function handleLocalChatAction(data, messageId) {
     const chatCard = getChatCard(messageId);
 
-    if(hasAction(chatCard.message, action)){
-        chatCard.message[action]();
+    if(hasAction(chatCard.message, data.action)){
+        chatCard.message[data.action](data);
     }else{
         foundryApi.warnUser("splittermond.chatCard.actionNotFound");
-        throw new Error(`Action ${action} not found on chat card for message ${chatCard.constructorKey} with ${messageId}`);
+        const chatCardFlag = chatCard.getFlag("splittermond", "chatCard");
+        throw new Error(`Action ${data.action} not found on chat card for message ${chatCardFlag.constructorKey} with ${messageId}`);
     }
 }
 

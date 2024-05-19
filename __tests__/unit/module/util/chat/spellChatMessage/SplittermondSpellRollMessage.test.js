@@ -38,7 +38,7 @@ import {referencesUtils} from "../../../../../../module/data/references/referenc
         it(`should delegate to the degree of success manager for ${key}`, () => {
             const {spellRollMessage} = createTestRollMessage(sandbox);
             spellRollMessage.degreeOfSuccessManager = sinon.spy(spellRollMessage.degreeOfSuccessManager);
-            spellRollMessage[method]();
+            spellRollMessage[method]({multiplicity: 1});
 
             expect(spellRollMessage.degreeOfSuccessManager.alterCheckState.called).to.be.true;
         })
@@ -53,66 +53,66 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     afterEach(() => sandbox.restore());
     it("should reduce exhausted focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
-        spellRollMessage.exhaustedFocusUpdate();
+        spellRollMessage.exhaustedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("11V3");
     });
 
     it("should increase exhausted focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = true;
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, false, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
-        spellRollMessage.exhaustedFocusUpdate();
+        spellRollMessage.exhaustedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("12V3");
     });
 
     it("should reduce consumed focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
-        spellRollMessage.consumedFocusUpdate();
+        spellRollMessage.consumedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("11V2");
     });
 
     it("should increase consumed focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.consumedFocus.checked = true;
+        spellRollMessage.degreeOfSuccessManager.consumedFocus1.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, -1, false, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
-        spellRollMessage.consumedFocusUpdate();
+        spellRollMessage.consumedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("12V3");
     });
 
     it("should reduce channeled focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus.checked = false;
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.checked = false;
         spellRollMessage.actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
-        spellRollMessage.channelizedFocusUpdate();
+        spellRollMessage.channelizedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("K11V3");
     });
 
     it("should increase channeled focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.channelizedFocus.checked = true;
+        spellRollMessage.degreeOfSuccessManager.channelizedFocus1.checked = true;
         spellRollMessage.actionManager.focus.adjusted = new Cost(-1, 0, true, true).asModifier();
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
-        spellRollMessage.channelizedFocusUpdate();
+        spellRollMessage.channelizedFocusUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("K12V3");
     });
@@ -124,7 +124,7 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
         sinon.stub(spellMock, "enhancementCosts").get(() => "2EG/+3V1")
 
-        spellRollMessage.spellEnhancementUpdate();
+        spellRollMessage.spellEnhancementUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.focus.cost).to.deep.equal("15V4");
     });
@@ -138,22 +138,22 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
     afterEach(() => sandbox.restore());
     it("should increase damage on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.damage.checked = false;
+        spellRollMessage.degreeOfSuccessManager.damage1.checked = false;
         spellRollMessage.actionManager.damage.adjusted = 0;
         sinon.stub(spellMock, "damage").get(() => "1W6");
 
-        spellRollMessage.damageUpdate();
+        spellRollMessage.damageUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.damage.cost).to.deep.equal("1W6+1");
     });
 
     it("should increase damage on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.damage.checked = true;
+        spellRollMessage.degreeOfSuccessManager.damage1.checked = true;
         spellRollMessage.actionManager.damage.adjusted = 1;
         sinon.stub(spellMock, "damage").get(() => "1W6");
 
-        spellRollMessage.damageUpdate();
+        spellRollMessage.damageUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.damage.cost).to.deep.equal("1W6");
     });
@@ -167,20 +167,20 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     afterEach(() => sandbox.restore());
     it("should reduce ticks on check", () => {
         const {spellRollMessage} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.castDuration.checked = false;
+        spellRollMessage.degreeOfSuccessManager.castDuration1.checked = false;
         spellRollMessage.actionManager.ticks.adjusted = 3;
 
-        spellRollMessage.castDurationUpdate();
+        spellRollMessage.castDurationUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.ticks.adjusted).to.equal(2);
     });
 
     it("should increase ticks on uncheck", () => {
         const {spellRollMessage} = createTestRollMessage(sandbox);
-        spellRollMessage.degreeOfSuccessManager.castDuration.checked = true;
+        spellRollMessage.degreeOfSuccessManager.castDuration1.checked = true;
         spellRollMessage.actionManager.ticks.adjusted = 1;
 
-        spellRollMessage.castDurationUpdate();
+        spellRollMessage.castDurationUpdate({multiplicity: 1});
 
         expect(spellRollMessage.actionManager.ticks.adjusted).to.equal(2);
     });
@@ -307,7 +307,7 @@ function createTestRollMessage(sandbox) {
         linkSpellAndActor(spellMock, actorMock);
         setNecessaryDefaultsForSpellproperties(spellMock, sandbox);
 
-        const checkReport = {degreeOfSuccess :3};
+        const checkReport = {degreeOfSuccess: 3};
 
         const spellRollMessage = SplittermondSpellRollMessage.createRollMessage(
             spellMock,
@@ -318,7 +318,7 @@ function createTestRollMessage(sandbox) {
     });
 }
 
-function linkSpellAndActor(spellMock, actorMock){
+function linkSpellAndActor(spellMock, actorMock) {
     actorMock.items = {get: () => spellMock};
     spellMock.actor = actorMock;
 }
