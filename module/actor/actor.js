@@ -913,7 +913,7 @@ export default class SplittermondActor extends Actor {
         this.update({system: {splinterpoints: {value:  parseInt(this.splinterpoints.value) - 1}}});
         checkMessageData.availableSplinterpoints = 0;
 
-        let checkData = Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
+        let checkData = await Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
         if (checkData.succeeded && parseInt(checkMessageData.skillPoints) == 0 && (message.rolls[0]._total - checkMessageData.difficulty) >= 3) {
             checkData.degreeOfSuccess += 1;
         }
