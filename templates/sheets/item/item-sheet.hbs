@@ -28,7 +28,7 @@
                 <div class="skill">
                     <ul class="taglist-small">
                         {{#each item.availableInList}}
-                        <li {{#if (eq this ../item.system.skill)}} class="active"{{/if}}>{{lookup (concat "splittermond.skillLabel." this) 'string'}}</li>
+                        <li {{#if (eq this.label (localize (concat "splittermond.skillLabel." ../item.system.skill)))}} class="active"{{/if}}>{{this.label}}</li>
                         {{/each}}
                         <li class="active">{{localize "splittermond.masteryItem.level" }} {{item.system.level}}</li>
                     </ul>
