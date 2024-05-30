@@ -35,7 +35,7 @@ import {referencesUtils} from "../../../../../../module/data/references/referenc
             expect(method in Object.getPrototypeOf(spellRollMessage), `${method} is in SpellRollMessage`).to.be.true;
         })
 
-        it("should delegate spell costs to the degree of success manager", () => {
+        it(`should delegate to the degree of success manager for ${key}`, () => {
             const {spellRollMessage} = createTestRollMessage(sandbox);
             spellRollMessage.degreeOfSuccessManager = sinon.spy(spellRollMessage.degreeOfSuccessManager);
             spellRollMessage[method]();
