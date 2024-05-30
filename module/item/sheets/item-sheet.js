@@ -14,7 +14,7 @@ export default class SplittermondItemSheet extends ItemSheet {
      * @param {{getProperty:(object, string)=> unknown}} propertyResolver
      * @param {{localize:(string)=>string}} localizer
      * @param config
-     * @param {enrichHTML:(string)=>{string}} textEditor
+     * @param {enrichHTML:(string)=>Promise<string>} textEditor
      */
     constructor(
         item,
@@ -42,7 +42,7 @@ export default class SplittermondItemSheet extends ItemSheet {
      * @public
      * @returns SplittermondItemSheetData
      */
-    getData() {
+    async getData() {
         /**
          * @typedef ItemSheetData
          * @type {{cssClass:string, editable:any, document: ClientDocument, data: any, limited: any, options: any, owner: any,title: string, type: string}}
@@ -52,9 +52,8 @@ export default class SplittermondItemSheet extends ItemSheet {
         data.statBlock = this._getStatBlock();
         data.typeLabel = "splittermond." + data.data.type;
 
-        data.description = this.textEditor.enrichHTML(data.data.system.description, {async: false});
-
-        return data;
+        return this.textEditor.enrichHTML(data.data.system.description)
+            .then(description => ({...data, description}));
     }
 
     /**
@@ -67,11 +66,11 @@ export default class SplittermondItemSheet extends ItemSheet {
          */
         let sheetProperties = duplicate(this.itemSheetProperties);
         sheetProperties.forEach(grp => {
-            grp.properties.forEach(/** @type {InputItemProperty|ItemSheetPropertyDisplayProperty}*/prop => {
+            grp.properties.forEach(async /** @type {InputItemProperty|ItemSheetPropertyDisplayProperty}*/prop => {
                 prop.value = this.propertyResolver.getProperty(this.item, prop.field);
                 prop.placeholderText = prop.placeholderText ?? prop.label;
                 if (prop.help) {
-                    prop.help = this.textEditor.enrichHTML(this.localizer.localize(prop.help), {async: false});
+                    prop.help = await this.textEditor.enrichHTML(this.localizer.localize(prop.help));
                 }
             });
         });
