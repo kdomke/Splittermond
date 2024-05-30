@@ -88,7 +88,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
         damageFormula += damageModifier;
     }
 
-    const roll = new Roll(damageFormula, {}).evaluate({ async: false });
+    const roll = await new Roll(damageFormula, {}).evaluate();
     if (feature["scharf"]) {
         let scharfBonus = 0;
         roll.terms[0].results.forEach(r => {

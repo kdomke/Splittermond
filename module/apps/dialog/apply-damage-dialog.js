@@ -46,7 +46,7 @@ export default class ApplyDamageDialog extends Dialog {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg'   style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/><img src='../../icons/dice/d10black.svg' style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.apply"),
                         callback: (html) => {
-                            let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+                            let fd = (new FormDataExtended(html[0].querySelector("form"))).object;
                             let damageString = fd.damage+"";
                             if (fd.type=== "K") {
                                 damageString = "K"+fd.damage;
