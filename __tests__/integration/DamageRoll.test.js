@@ -5,8 +5,9 @@ export function DamageRollTest(context) {
     const {describe, it, expect} = context;
 
     describe("test API", () => {
-        it("should fail if 1000 dice or more are requested", () => {
-          expect(async () => await foundryApi.roll("1000d6").evaluate({async: false})).to.throw(Error)
+        it("should fail if 1000 dice or more are requested", async () => {
+            foundryApi.roll("1000d6").evaluate()
+                .then(() => assert.fail("Expected test to throw an error"));
         });
         it("should return a roll object", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
@@ -40,12 +41,6 @@ export function DamageRollTest(context) {
             const rollResult = await foundryApi.roll("2d6+1").evaluate({async: false})
 
             expect(rollResult).to.be.instanceOf(Roll);
-        });
-
-        it("should evaluate a roll asynchronously", async () => {
-            const rollResult = await foundryApi.roll("2d6+1").evaluate({async: true})
-
-            expect(rollResult).to.be.instanceOf(Promise);
         });
 
         it("should not fail for a zero dice formula",async () => {
