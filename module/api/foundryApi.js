@@ -62,8 +62,6 @@ export const foundryApi= new class FoundryApi {
      * @property IC: 2
      * @property OOC: 1
      * @property OTHER: 0
-     * @property ROLL: 5
-     * @property WHISPER: 4
      */
 
     /** @return {ChatMessageTypes} */
@@ -143,7 +141,7 @@ export const foundryApi= new class FoundryApi {
     /**
      * @typedef Roll
      * @type {object}
-     * @property {((options:{async: true})=>Promise<Roll>} evaluate
+     * @property {()=>Promise<Roll>} evaluate
      * @property {number} _total
      * @property {Readonly<number>} total
      * @property {(Die|OperatorTerm|NumericTerm)[]}terms

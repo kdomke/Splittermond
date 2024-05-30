@@ -31,7 +31,7 @@ export async function check(skill, difficulty , rollType = "standard", skillModi
         skillValue: skill.value,
         modifier: skillModifier
     };
-    const roll = new Roll(rollFormula, rollData).evaluate({async: false}); //API usage!
+    const roll = new Roll(rollFormula, rollData).evaluate();
 
     return await evaluateCheck(roll, skill.points, difficulty, rollType);
 }

@@ -140,7 +140,7 @@ export function chatActionFeatureTest(context) {
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
-                type: foundryApi.chatMessageTypes.ROLL,
+                rolls:[JSON.stringify(await foundryApi.roll("1d6").evaluate())],
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -160,7 +160,7 @@ export function chatActionFeatureTest(context) {
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
-                type: foundryApi.chatMessageTypes.ROLL,
+                rolls: [JSON.stringify(await foundryApi.roll("1d6").evaluate())],
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -196,13 +196,11 @@ export function chatActionFeatureTest(context) {
         it("delivers the the correct chat message types", ()=> {
             const types = foundryApi.chatMessageTypes;
             expect(types, "chatMessageTypes is an object").to.be.an("object");
-            expect(Object.keys(types).length).to.equal(6);
+            expect(Object.keys(types).length).to.equal(4);
             expect(types.EMOTE, "chatMessageTypes has an emote").to.be.a("number");
             expect(types.IC, "chatMessageTypes has an in character").to.be.a("number");
             expect(types.OOC, "chatMessageTypes has an out of character").to.be.a("number");
             expect(types.OTHER, "chatMessageTypes has an other").to.be.a("number");
-            expect(types.ROLL, "chatMessageTypes has a roll").to.be.a("number");
-            expect(types.WHISPER, "chatMessageTypes has a whisper").to.be.a("number");
         });
 
         function isUser(object) {
