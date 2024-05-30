@@ -160,7 +160,7 @@ export function chatActionFeatureTest(context) {
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
-                rolls: [JSON.stringify(await foundryApi.roll("1d6").evaluate())],
+                rolls: [await foundryApi.roll("1d6").evaluate()],
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -174,6 +174,53 @@ export function chatActionFeatureTest(context) {
             expect(retrievedMessage, "message was found").to.not.be.undefined;
             expect(retrievedMessage.getFlag("splittermond", "chatCard"))
                 .to.deep.equal(sampleMessageContent.flags.splittermond.chatCard);
+            ChatMessage.deleteDocuments([message.id]);
+        });
+
+        it("should accept a roll as string",async () => {
+            const actor = getActor(this);
+            const speaker = foundryApi.getSpeaker({actor});
+            const roll =JSON.stringify(await foundryApi.roll("1d6").evaluate())
+            const sampleMessageContent = {
+                user: foundryApi.currentUser.id,
+                speaker,
+                rolls: [roll],
+                content: "Random text content",
+            };
+            const message = await foundryApi.createChatMessage(sampleMessageContent);
+            expect(message.rolls[0]).to.be.instanceOf(foundryApi.roll("1d6").constructor);
+            ChatMessage.deleteDocuments([message.id]);
+        });
+
+        it("should accept a roll as object ",async () => {
+            const actor = getActor(this);
+            const speaker = foundryApi.getSpeaker({actor});
+            const roll =await foundryApi.roll("1d12").evaluate();
+            const sampleMessageContent = {
+                user: foundryApi.currentUser.id,
+                speaker,
+                rolls: [roll],
+                content: "Random text content",
+            };
+            const message = await foundryApi.createChatMessage(sampleMessageContent);
+            expect(message.rolls[0].dice[0].faces).to.equal(12);
+            ChatMessage.deleteDocuments([message.id]);
+        });
+
+        it("should accept a whisper property",async () => {
+            const actor = getActor(this);
+            const speaker = foundryApi.getSpeaker({actor});
+            const roll =JSON.stringify(await foundryApi.roll("1d19").evaluate())
+            const sampleMessageContent = {
+                user: foundryApi.currentUser.id,
+                speaker,
+                rolls: [roll],
+                rollMode: "whisper",//Don't ask me why this is necessary, but it
+                whisper: [foundryApi.currentUser],
+                content: "Random text content",
+            };
+            const message = await foundryApi.createChatMessage(sampleMessageContent);
+            expect(message.whisper).to.deep.equal([foundryApi.currentUser.id]);
             ChatMessage.deleteDocuments([message.id]);
         });
 

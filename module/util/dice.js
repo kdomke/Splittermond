@@ -109,10 +109,10 @@ export async function damage(damageFormula, featureString, damageSource = "") {
 
     let chatData = {
         user: game.user.id,
-        roll: roll,
+        rolls: [roll],
         content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
         sound: CONFIG.sounds.dice,
-        type: CONST.CHAT_MESSAGE_TYPES.ROLL
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER
     };
 
     return ChatMessage.create(chatData);

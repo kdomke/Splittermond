@@ -9,12 +9,20 @@ import {foundryApi} from "../../api/foundryApi.js";
  * @property {()=>object} getData
  * @property {Readonly<string>} constructorKey
  */
+
+/**
+ * @typedef ChatOptions
+ * @type {object}
+ * @property {ChatMessageTypes} type
+ * @property {?string} mode
+ * @property {Roll[]|string[]} rolls evaluated roll instances for the chat message. If this is not a roll, use empty array.
+ */
 export class SplittermondChatCard extends SplittermondChatCardModel {
     /**
      *
      * @param {SplittermondActor} actor
      * @param {SplittermondChatMessage & foundry.abstract.DataModel} message
-     * @param {{type: ChatMessageTypes, mode?: string}} chatOptions
+     * @param {{type: ChatMessageTypes, mode?: string, rolls:string[]}} chatOptions
      * @return {SplittermondChatCard}
      */
     static create(actor, message,chatOptions) {
@@ -42,8 +50,11 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
         const chatData = {
             user: this.foundryApiWrapper.currentUser.id,
             speaker: this.speaker,
+            rolls: this.chatOptions.rolls,
+            whisper : [],//this is provisional and makes rolls always public
             type: this.chatOptions.type,
             rollMode: this.chatOptions.mode,
+            //TODO: we need to check whether we need to fill whisper with appropriat user roles
             content: content,
             flags: {
                 splittermond: {

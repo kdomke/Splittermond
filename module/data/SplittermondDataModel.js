@@ -21,16 +21,15 @@ const SplittermondDataModel = class extends foundry.abstract.DataModel {}
  */
 /**
  * @template {typeof SplittermondDataModel} T
- * @type {object}
  * @property {function(new:ObjectField, x: DataFieldOption<unknown>)} ObjectField
  * @property {function(new:SchemaField, x:unknown,y:DataFieldOption<unknown>)} SchemaField
  * @property {function(new:BooleanField, x:DataFieldOption<boolean>)} BooleanField
  * @property {function(new:EmbeddedDataField<T>, x:T, y:DataFieldOption<unknown>)}
  * @property {function(new:StringField, x:DataFieldOption<string>)} StringField
  * @property {function(new:NumberField, x:DataFieldOption<number>)} NumberField
+ * @property {function(new:ArrayField, x:typeof fields[string], y:DataFieldOption<unknown>)} ArrayField
  */
 const fields = foundry.data.fields;
-
 
 export {SplittermondDataModel, fields};
 

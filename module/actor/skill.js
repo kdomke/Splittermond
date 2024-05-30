@@ -122,7 +122,8 @@ export default class Skill extends Modifiable {
         if (options.type === "spell") {
             return {
                 rollOptions: {
-                    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+                    rolls:[JSON.stringify(rollResult.roll)],
+                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
                     mode: checkData.rollMode,
                 },
                 /**@type CheckReport*/

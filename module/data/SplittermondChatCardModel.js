@@ -12,6 +12,8 @@ export class SplittermondChatCardModel extends SplittermondDataModel {
             chatOptions: new fields.SchemaField({
                 type: new fields.NumberField({required: true, nullable: false}),
                 mode: new fields.StringField({required: false, blank: false, nullable: false}),
+                rolls: new fields.ArrayField(new fields.StringField(),{required:true, nullable:false, initial: []}),
+                whisper: new fields.ArrayField(new fields.StringField(), {required:true, nullable:false, initial: []}),
             }, {required: true, blank: false}),
             messageId: new fields.StringField({required: false, blank: false}),
             speaker: new fields.ObjectField({required: true, blank: false}),

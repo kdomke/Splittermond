@@ -1009,10 +1009,10 @@ export default class SplittermondActor extends Actor {
         let chatData = {
             user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
-            roll: roll,
+            rolls: [roll],
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.OTHER
         };
 
         ChatMessage.create(chatData);
@@ -1102,10 +1102,10 @@ export default class SplittermondActor extends Actor {
                         let chatData = {
                             user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
-                            roll: roll,
+                            rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
-                            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+                            type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
                         ChatMessage.create(chatData);
@@ -1163,10 +1163,10 @@ export default class SplittermondActor extends Actor {
                         let chatData = {
                             user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
-                            roll: roll,
+                            rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
-                            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+                            type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
                         ChatMessage.create(chatData);
