@@ -140,7 +140,7 @@ export default class Skill extends Modifiable {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
-        let data = Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
+        let data = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
         let skillAttributes = {};
         if (this.attribute1?.id && this.attribute1?.value) {
             skillAttributes[this.attribute1.id] = this.attribute1.value;

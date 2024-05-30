@@ -545,7 +545,7 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         let chatMessageId = $(event.currentTarget).closestData("message-id");
         let message = game.messages.get(chatMessageId);
         
-        const speaker = message.data.speaker;
+        const speaker = message.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);

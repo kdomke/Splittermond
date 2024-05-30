@@ -903,7 +903,8 @@ export default class SplittermondActor extends Actor {
 
         let checkMessageData = message.data.flags.splittermond.check;
 
-        message.roll._total = message.roll._total + 3;
+        //Magic number 0; Message comes with a storage for several rolls, but we only set one roll in chat.js.
+        message.rolls[0]._total = message.rolls[0]._total + 3;
         checkMessageData.modifierElements.push({
             value: 3,
             description: game.i18n.localize("splittermond.splinterpoint")
@@ -912,8 +913,8 @@ export default class SplittermondActor extends Actor {
         this.system.splinterpoints.value = parseInt(this.system.splinterpoints.value) - 1;
         checkMessageData.availableSplinterpoints = 0;
 
-        let checkData = Dice.evaluateCheck(message.roll, checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
-        if (checkData.succeeded && parseInt(checkMessageData.skillPoints) == 0 && (message.roll._total - checkMessageData.difficulty) >= 3) {
+        let checkData = Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
+        if (checkData.succeeded && parseInt(checkMessageData.skillPoints) == 0 && (message.rolls[0]._total - checkMessageData.difficulty) >= 3) {
             checkData.degreeOfSuccess += 1;
         }
 

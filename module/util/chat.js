@@ -344,7 +344,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let checkMessageData = {
         user: game.user.id,
         speaker: ChatMessage.getSpeaker({ actor: actor }),
-        roll: roll,
+        rolls: [roll],
         content: await renderTemplate(template, templateContext),
         sound: CONFIG.sounds.dice,
         type: CONST.CHAT_MESSAGE_TYPES.ROLL,

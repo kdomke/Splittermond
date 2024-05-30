@@ -1,4 +1,4 @@
-export function check(skill, difficulty = 15, rollType = "standard", modifier = 0) {
+export async function check(skill, difficulty = 15, rollType = "standard", modifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
@@ -16,10 +16,19 @@ export function check(skill, difficulty = 15, rollType = "standard", modifier = 
 
     const roll = new Roll(rollFormula, rollData).evaluate({ async: false });
 
-    return evaluateCheck(roll, skill.points, difficulty, rollType);
+    return await evaluateCheck(roll, skill.points, difficulty, rollType);
 }
 
-export function evaluateCheck(roll, skillPoints, difficulty, rollType) {
+/**
+ *
+ * @param {{Promise<unknown>}}roll
+ * @param skillPoints
+ * @param difficulty
+ * @param rollType
+ * @returns {{difficulty, degreeOfSuccess: (*|number), degreeOfSuccessMessage: *, isCrit: boolean, isFumble: boolean, roll, succeeded: boolean}}
+ */
+export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
+    roll = await roll;
     const difference = roll.total - difficulty;
 
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
