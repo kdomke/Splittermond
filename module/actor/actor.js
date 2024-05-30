@@ -894,14 +894,14 @@ export default class SplittermondActor extends Actor {
     }
 
     async useSplinterpointBonus(message) {
-        if (!message.data.flags.splittermond
-            || !message.data.flags.splittermond.check
-            || parseInt(this.data.data.splinterpoints.value) <= 0
-            || message.data.flags.splittermond.check.isFumble) {
+        if (!message.flags.splittermond
+            || !message.flags.splittermond.check
+            || parseInt(this.splinterpoints.value) <= 0
+            || message.flags.splittermond.check.isFumble) {
             return;
         }
 
-        let checkMessageData = message.data.flags.splittermond.check;
+        let checkMessageData = message.flags.splittermond.check;
 
         //Magic number 0; Message comes with a storage for several rolls, but we only set one roll in chat.js.
         message.rolls[0]._total = message.rolls[0]._total + 3;
@@ -910,7 +910,7 @@ export default class SplittermondActor extends Actor {
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.system.splinterpoints.value = parseInt(this.system.splinterpoints.value) - 1;
+        this.update({system: {splinterpoints: {value:  parseInt(this.splinterpoints.value) - 1}}});
         checkMessageData.availableSplinterpoints = 0;
 
         let checkData = Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
