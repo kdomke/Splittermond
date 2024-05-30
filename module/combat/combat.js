@@ -105,11 +105,11 @@ export default class SplittermondCombat extends Combat {
         if (value < 10000) {
             if (!first) {
                 value = this.combatants.reduce((acc, c) => {
-                    return ((Math.round(c.initiative) == value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
+                    return ((Math.round(c.initiative) === value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
                 }, value);
             } else {
                 value = this.combatants.reduce((acc, c) => {
-                    return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
+                    return ((Math.round(c.initiative) === value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
                 }, value);
             }
         } else {
