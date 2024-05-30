@@ -192,24 +192,19 @@ describe("SplittermondSpellRollMessage actions", () => {
         sandbox = sinon.createSandbox();
     });
     afterEach(() => sandbox.restore());
-    it("should upgrade roll total by splinterpoint usage", () => {
+    it("should upgrade roll total by splinterpoint usage", async () => {
         game.i18n = {localize: identity};
         const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(sandbox);
-        spellRollMessage.checkReport = {
-            ...spellRollMessage.checkReport,
-            roll: {...spellRollMessage.checkReport.roll, total: 16, dice: [{total: 12}]},
-            skill: {...spellRollMessage.checkReport.skill, points: 1},
-            difficulty: 15,
-            rollType: "standard"
-        };
-        spellRollMessage.checkReport = {
-            ...spellRollMessage.checkReport,
-            skill: {...spellRollMessage.checkReport.skill, name: "skill"}
-        };
-        //spellMock.name = "name";
+        spellRollMessage.checkReport.degreesOfSuccess = 1;
+        spellRollMessage.checkReport.roll = {...spellRollMessage.checkReport.roll, total: 16, dice: [{total: 12}]};
+        spellRollMessage.checkReport.skill = {...spellRollMessage.checkReport.skill, points: 1};
+        spellRollMessage.checkReport.difficulty = 15;
+        spellRollMessage.checkReport.rollType = "standard";
+        spellRollMessage.checkReport.skill = {...spellRollMessage.checkReport.skill, name: "skill"};
+
         actorMock.spendSplinterpoint.returns({getBonus: () => 5});
 
-        spellRollMessage.useSplinterpoint();
+        await spellRollMessage.useSplinterpoint();
 
         expect(spellRollMessage.actionManager.splinterPoint.used).to.be.true;
         expect(spellRollMessage.degreeOfSuccessManager.totalDegreesOfSuccess).to.equal(2);

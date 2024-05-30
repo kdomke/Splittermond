@@ -130,11 +130,11 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         this.degreeOfSuccessManager.use("castDuration")
     }
 
-    useSplinterpoint() {
+    async useSplinterpoint() {
         const splinterPointBonus = this.actionManager.useSplinterPoint();
         const checkReport = this.checkReport;
         checkReport.roll.total += splinterPointBonus;
-        const updatedReport = evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
+        const updatedReport = await evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
         const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
         this.updateSource({checkReport: newCheckReport});
     }

@@ -99,7 +99,7 @@ export async function handleChatAction(action, messageId) {
     const chatCard = getChatCard(messageId);
 
     if(hasAction(chatCard.message, action)){
-        chatCard.message[action]();
+        await Promise.resolve(chatCard.message[action]());
         await chatCard.updateMessage();
     }else{
         foundryApi.warnUser("splittermond.chatCard.actionNotFound");
