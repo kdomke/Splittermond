@@ -11,12 +11,12 @@ export function compendiumBrowserTest(context) {
         });
 
         it("receives an index with objects that have the expected properties", async () => {
-            if (game.packs.length === 0) {
+            const searchParam = {fields: ["system.skill", "name"]};
+            const firstItemCompendium = game.packs.find(p => p.documentName === "Item")
+            if (!firstItemCompendium) {
                 this.skip();
             }
-            const searchParam = {fields: ["system.skill", "name"]};
-            const firstCompendiumKey = game.packs.keys().next().value;
-            const index = await game.packs.get(firstCompendiumKey).getIndex(searchParam);
+            const index = await firstItemCompendium.getIndex(searchParam);
             expect(index).to.be.instanceOf(Collection).and.to.have.length.greaterThan(0);
             const indexKey = index.keys().next().value;
             searchParam.fields.forEach(expectedProperty => {
