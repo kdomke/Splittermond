@@ -201,7 +201,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.actor.items.get(itemId);
-            item.update({ "data.equipped": !item.system.equipped });
+            item.update({ "system.equipped": !item.system.equipped });
         });
 
         html.find('[data-field]').change(event => {
