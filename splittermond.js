@@ -185,14 +185,10 @@ Hooks.once("init", function () {
 Hooks.on("redraw-combat-tick", async () => {
     await game.splittermond.tickBarHud.render(false);
 
-    //yes i know this is not ideal, but ether this or an websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    //yes i know this is not ideal, but either this or a websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    //Update: Since foundry now has its own socket system, this should maybe be changed?
     const currentScene = game.scenes.current?.id || null;    
-    let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
-    if(combats.length === 0)
-    {
-       return;
-    }
-    var activeCombat = combats[0]
+    let activeCombat = game.combats.find(c => (c.scene === null) || (c.data.scene === currentScene));
     if(activeCombat == null)
     {
         return;
