@@ -607,25 +607,25 @@ export default class SplittermondActor extends Actor {
                     name: w
                 })
             });
-            newData.data.attributes = duplicate(this.data._source.data.attributes);
+            newData.system.attributes = duplicate(this.system.attributes);
             data.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
-                    newData.data.attributes[id].species = 0;
-                    newData.data.attributes[id].initial = a.startValue;
-                    newData.data.attributes[id].advances = a.value - a.startValue;
+                    newData.system.attributes[id].species = 0;
+                    newData.system.attributes[id].initial = a.startValue;
+                    newData.system.attributes[id].advances = a.value - a.startValue;
                 }
 
                 if (id === "size") {
-                    newData.data.species.size = a.value;
+                    newData.system.species.size = a.value;
                 }
 
             });
-            newData.data.skills = duplicate(this.data._source.data.skills);
+            newData.system.skills = duplicate(this.system.skills);
             data.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
-                if (newData.data.skills[id]) {
-                    newData.data.skills[id].points = s.points;
+                if (newData.system.skills[id]) {
+                    newData.system.skills[id].points = s.points;
 
                     s.masterships.forEach((m) => {
                         let modifierStr = CONFIG.splittermond.modifier[m.id] || "";
@@ -862,7 +862,7 @@ export default class SplittermondActor extends Actor {
                 let updateItems = [];
 
                 newItems = newItems.filter((i) => {
-                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
+                    let foundItem = this.system.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
                     if (foundItem) {
                         i._id = foundItem.id;
                         delete i.img;
@@ -872,7 +872,7 @@ export default class SplittermondActor extends Actor {
                     return true;
                 });
 
-                newData.data.currency = this.data.data.currency;
+                newData.system.currency = this.system.currency;
 
                 this.update(newData);
                 await this.updateEmbeddedDocuments("Item", updateItems);
