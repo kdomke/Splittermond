@@ -928,7 +928,7 @@ export default class SplittermondActor extends Actor {
             "flags.splittermond.check": chatMessageData.flags.splittermond.check
         });
         this.update({
-            "data.splinterpoints.value": this.system.splinterpoints.value
+            "system.splinterpoints.value": this.system.splinterpoints.value
         })
     }
 

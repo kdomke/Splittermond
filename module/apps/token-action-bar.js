@@ -163,7 +163,7 @@ export default class TokenActionBar extends Application {
         html.find('.toggle-equipped').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.currentActor.items.get(itemId);
-            item.update({ "data.equipped": !item.system.equipped });
+            item.update({ "system.equipped": !item.system.equipped });
         });
 
         html.find('.prepare-spell').click(event => {
