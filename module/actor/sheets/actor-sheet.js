@@ -16,16 +16,10 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     async getData() {
         const sheetData = super.getData();
-        //sheetData.data = sheetData.data.data;
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
         sheetData.hideSkills = this._hideSkills;
-        // [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(skill => {
-        //     sheetData.data.skills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
-        //         (parseInt(sheetData.data.skills[skill].points) > 0) || !this._hideSkills;
-        // });
-
         sheetData.generalSkills = {};
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
             || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
