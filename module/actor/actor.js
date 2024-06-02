@@ -1202,7 +1202,7 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        return this.update({ "data.focus": focusData, "data.health": healthData });
+        return this.update({ "system.focus": focusData, "system.health": healthData });
     }
 
     async longRest() {
