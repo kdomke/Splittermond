@@ -1229,8 +1229,8 @@ export default class SplittermondActor extends Actor {
             dialog.render(true);
         });
 
-        let focusData = duplicate(data.focus);
-        let healthData = duplicate(data.health);
+        let focusData = duplicate(this.system.focus);
+        let healthData = duplicate(this.system.health);
 
 
         if (await p) {
@@ -1245,7 +1245,7 @@ export default class SplittermondActor extends Actor {
         focusData.consumed.value = Math.max(focusData.consumed.value - data.focusRegeneration.multiplier * this.attributes.willpower.value - data.focusRegeneration.bonus, 0);
         healthData.consumed.value = Math.max(healthData.consumed.value - data.healthRegeneration.multiplier * this.attributes.constitution.value - data.healthRegeneration.bonus, 0);
 
-        return this.update({ "data.focus": focusData, "data.health": healthData });
+        return this.update({ "system.focus": focusData, "system.health": healthData });
     }
 
     consumeCost(type, valueStr, description) {

@@ -239,9 +239,9 @@ export default class SplittermondActorSheet extends ActorSheet {
                 return prev ? prev[curr] : null
             }, this.actor.toObject()));
             let updateData = {}
-            if (array === "data.focus.channeled.entries") {
+            if (array === "system.focus.channeled.entries") {
                 let tempValue = parseInt(this.actor.system.focus.exhausted.value) + parseInt(arrayData[idx].costs);
-                updateData["data.focus.exhausted.value"] = tempValue;
+                updateData["system.focus.exhausted.value"] = tempValue;
             }
 
             arrayData.splice(idx, 1);
@@ -255,7 +255,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.focus.channeled.entries": channeledEntries });
+            this.actor.update({ "system.focus.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="add-channeled-health"]').click(event => {
@@ -264,7 +264,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.health.channeled.entries": channeledEntries });
+            this.actor.update({ "system.health.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="long-rest"]').click(event => {
