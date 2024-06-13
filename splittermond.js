@@ -267,11 +267,9 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
 
 });
 
-Hooks.on('preCreateActor', (actor) => {
+Hooks.on('preCreateActor', async (actor) => {
     if (actor.type === 'character') {
-        actor.data.token.vision = true;
-        actor.data.token.actorLink = true;
-        actor.data.token.name = actor.name;
+        await actor.prototypeToken.updateSource({vision: true, actorLink: true, name: actor.name});
     }
 });
 

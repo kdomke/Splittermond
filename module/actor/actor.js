@@ -546,33 +546,35 @@ export default class SplittermondActor extends Actor {
 
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
+            const genesisData = data;
             let newData = this.toObject();
             let newItems = [];
-            newData.data = {};
+            newData.system = {};
 
-            newData.data.species = {
-                value: data.race
+            newData.system.species = {
+                value: genesisData.race
             }
-            newData.data.sex = data.gender;
-            newData.data.culture = data.culture;
-            newData.data.ancestry = data.background;
-            newData.data.education = data.education;
-            newData.data.experience = {
-                free: data.freeExp,
-                spent: data.investedExp
+            newData.name = genesisData.name;
+            newData.system.sex = genesisData.gender;
+            newData.system.culture = genesisData.culture;
+            newData.system.ancestry = genesisData.background;
+            newData.system.education = genesisData.education;
+            newData.system.experience = {
+                free: genesisData.freeExp,
+                spent: genesisData.investedExp
             };
-            newData.data.currency = {
+            newData.system.currency = {
                 S: 0,
                 L: 0,
                 T: 0
             };
-            let moonSignDescription = data.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
+            let moonSignDescription = genesisData.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
             moonSignDescription = "<p>" + moonSignDescription.split("\n").join("</p><p>") + "</p>";
 
             let moonSignImage = "systems/splittermond/images/moonsign/" + data.moonSign.name.split(" ").join("_").toLowerCase() + ".png";
             let moonsignObj = {
                 type: "moonsign",
-                name: data.moonSign.name,
+                name: genesisData.moonSign.name,
                 img: moonSignImage,
                 data: {
                     description: moonSignDescription
@@ -589,26 +591,26 @@ export default class SplittermondActor extends Actor {
             newItems.push(moonsignObj);
 
 
-            data.weaknesses.forEach((w) => {
+            genesisData.weaknesses.forEach((w) => {
                 newItems.push({
                     type: "weakness",
                     name: w
                 })
             });
-            data.languages.forEach((w) => {
+            genesisData.languages.forEach((w) => {
                 newItems.push({
                     type: "language",
                     name: w
                 })
             });
-            data.cultureLores.forEach((w) => {
+            genesisData.cultureLores.forEach((w) => {
                 newItems.push({
                     type: "culturelore",
                     name: w
                 })
             });
             newData.system.attributes = duplicate(this.system.attributes);
-            data.attributes.forEach((a) => {
+            genesisData.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
                     newData.system.attributes[id].species = 0;
@@ -622,7 +624,7 @@ export default class SplittermondActor extends Actor {
 
             });
             newData.system.skills = duplicate(this.system.skills);
-            data.skills.forEach((s) => {
+            genesisData.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
                 if (newData.system.skills[id]) {
                     newData.system.skills[id].points = s.points;
@@ -656,7 +658,7 @@ export default class SplittermondActor extends Actor {
 
             });
 
-            data.powers.forEach((s) => {
+            genesisData.powers.forEach((s) => {
                 newItems.push({
                     type: "strength",
                     name: s.name,
@@ -668,7 +670,7 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.resources.forEach((r) => {
+            genesisData.resources.forEach((r) => {
                 newItems.push({
                     type: "resource",
                     name: r.name,
@@ -679,7 +681,7 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.spells.forEach((s) => {
+            genesisData.spells.forEach((s) => {
                 let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(s.longDescription);
                 if (damage) {
                     damage = damage[0] || "";
@@ -700,7 +702,7 @@ export default class SplittermondActor extends Actor {
                     type: "spell",
                     name: s.name,
                     img: CONFIG.splittermond.icons.spell[s.id] || CONFIG.splittermond.icons.spell.default,
-                    data: {
+                    system: {
                         description: s.longDescription,
                         skill: skill,
                         skillLevel: s.schoolGrade,
@@ -726,12 +728,12 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.armors.forEach((a) => {
+            genesisData.armors.forEach((a) => {
                 newItems.push({
                     type: "armor",
                     name: a.name,
                     img: CONFIG.splittermond.icons.armor[a.name] || CONFIG.splittermond.icons.armor.default,
-                    data: {
+                    system: {
                         defenseBonus: a.defense,
                         tickMalus: a.tickMalus,
                         handicap: a.handicap,
@@ -741,12 +743,12 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.shields.forEach((s) => {
+            genesisData.shields.forEach((s) => {
                 newItems.push({
                     type: "shield",
                     name: s.name,
                     img: CONFIG.splittermond.icons.shield[s.name] || CONFIG.splittermond.icons.shield.default,
-                    data: {
+                    system: {
                         skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                             return s.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                         }),
@@ -759,13 +761,13 @@ export default class SplittermondActor extends Actor {
             });
 
 
-            data.meleeWeapons.forEach((w) => {
+            genesisData.meleeWeapons.forEach((w) => {
                 if (w.name !== "Waffenlos") {
                     newItems.push({
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
-                        data: {
+                        system: {
                             skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                                 return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                             }),
@@ -780,10 +782,10 @@ export default class SplittermondActor extends Actor {
                 }
             });
 
-            data.longRangeWeapons.forEach((w) => {
+            genesisData.longRangeWeapons.forEach((w) => {
                 const itemData = newItems.find(i => i.name === w.name && i.type === "weapon");
                 if (itemData) {
-                    itemData.data.secondaryAttack = {
+                    itemData.system.secondaryAttack = {
                         skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                             return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                         }),
@@ -799,7 +801,7 @@ export default class SplittermondActor extends Actor {
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
-                        data: {
+                        system: {
                             skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                                 return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                             }),
@@ -815,23 +817,21 @@ export default class SplittermondActor extends Actor {
 
             });
 
-            data.items.forEach((e) => {
+            genesisData.items.forEach((e) => {
                 newItems.push({
                     type: "equipment",
                     name: e.name,
                     img: CONFIG.splittermond.icons.equipment[e.name] || CONFIG.splittermond.icons.equipment.default,
-                    data: {
+                    system: {
                         quantity: e.count
                     }
                 });
             });
 
-            if (data.telare) {
-
-                newData.data.currency.S = Math.floor(data.telare / 10000);
-                newData.data.currency.L = Math.floor(data.telare / 100) - newData.data.currency.S * 100;
-                newData.data.currency.T = Math.floor(data.telare) - newData.data.currency.L * 100 - newData.data.currency.S * 10000;
-
+            if (genesisData.telare) {
+                newData.system.currency.S = Math.floor(genesisData.telare / 10000);
+                newData.system.currency.L = Math.floor(genesisData.telare / 100) - newData.system.currency.S * 100;
+                newData.system.currency.T = Math.floor(genesisData.telare) - newData.system.currency.L * 100 - newData.system.currency.S * 10000;
             }
 
             let p = new Promise((resolve, reject) => {
@@ -862,7 +862,7 @@ export default class SplittermondActor extends Actor {
                 let updateItems = [];
 
                 newItems = newItems.filter((i) => {
-                    let foundItem = this.system.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
+                    let foundItem = this.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
                     if (foundItem) {
                         i._id = foundItem.id;
                         delete i.img;
@@ -874,19 +874,18 @@ export default class SplittermondActor extends Actor {
 
                 newData.system.currency = this.system.currency;
 
-                this.update(newData);
+                await this.update(newData);
                 await this.updateEmbeddedDocuments("Item", updateItems);
                 await this.createEmbeddedDocuments("Item", newItems);
 
                 return this.update(newData);
 
             }
-            newData.name = data.name;
-            newData.token.name = data.name;
-            newData.token.actorLink = true;
+            newData.name = genesisData.name;
+            newData.prototypeToken.name =genesisData.name;
+            newData.prototypeToken.actorLink = true;
             newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
-
         }
 
 
