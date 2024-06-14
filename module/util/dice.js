@@ -82,7 +82,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
 
     const damage = DamageRoll.parse(damageFormula, featureString);
 
-    const roll = damage.evaluate();
+    const roll = await damage.evaluate();
 
     let actions = [];
 
