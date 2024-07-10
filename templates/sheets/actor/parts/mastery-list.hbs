@@ -10,9 +10,9 @@
     <ol class="list-body">
         {{#*inline "masteriesBySkill"}}
         <li class="list-item" data-skill="{{skillId}}"><label>{{localize skill.label}}</label>
-            <ul class="taglist">
+            <ul class="taglist item-list">
                 {{#each skill.masteries}}
-                <li class="taglist-item draggable" data-item-id="{{this._id}}">
+                <li class="taglist-item item" data-item-id="{{this._id}}">
                     <div class="taglist-item-name"><a data-action="edit-item">{{this.name}}</a></div>
 
                     <div class="taglist-item-actions">

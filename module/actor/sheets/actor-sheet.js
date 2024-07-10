@@ -10,7 +10,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["splittermond", "sheet", "actor"]
+            classes: ["splittermond", "sheet", "actor"]            
         });
     }
 
@@ -379,7 +379,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = this.actor.items.find(el => el.id === itemId)?.data;
+                const itemData = this.actor.items.find(el => el.id === itemId)?.system;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,

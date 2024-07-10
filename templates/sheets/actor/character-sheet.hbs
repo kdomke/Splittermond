@@ -128,9 +128,9 @@
                         </button>
                     </div>
                 </div>
-                <ul class="list-body strengths">
+                <ul class="list-body item-list strengths">
                     {{#each itemsByType.strength}}
-                    <li class="list-item" data-item-id="{{this._id}}">
+                    <li class="list-item item" data-item-id="{{this._id}}">
                         <div class="name">{{this.name}}
                             {{#if this.multiple}}
                             (x{{this.system.quantity}})
