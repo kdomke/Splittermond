@@ -3192,7 +3192,7 @@ ul.checkbox-list li input:checked ~ label::before {
   flex-direction: column;
   break-inside: avoid-column;
   margin-bottom: 1em;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   font-size: 18px;
 }
 .splittermond .item-sheet-stat-block .item-sheet-stat-block-item label {
