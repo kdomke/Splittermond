@@ -123,7 +123,7 @@ splittermond.skillGroups = {
         "watermagic",
         "windmagic"]
 };
-splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]
+splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic];
 splittermond.resources = {
     core: ["reputation",
         "contacts",
@@ -186,7 +186,7 @@ splittermond.skillAttributes = {
     "watermagic": ["mystic", "intuition"],
     "windmagic": ["mystic", "mind"]
 };
-
+/**@typedef {"standard", "standardGrandmaster", "risk", "riskGrandmaster", "safety", "safetyGrandmaster"} RollType*/
 splittermond.rollType = {
     standard: {
         label: "splittermond.rollType.standard",
@@ -212,7 +212,7 @@ splittermond.rollType = {
         label: "splittermond.rollType.safetyGrandmaster",
         rollFormula: "3d10kh1"
     }
-}
+};
 
 splittermond.complexityOptions = {
     U: "splittermond.complexityOptions.untrained",
@@ -220,14 +220,14 @@ splittermond.complexityOptions = {
     F: "splittermond.complexityOptions.expert",
     M: "splittermond.complexityOptions.master",
     A: "splittermond.complexityOptions.instruction",
-}
+};
 
 splittermond.availabilityOptions = {
     village: "splittermond.availabilityOptions.village",
     town: "splittermond.availabilityOptions.town",
     city: "splittermond.availabilityOptions.city",
     metropolis: "splittermond.availabilityOptions.metropolis",
-}
+};
 
 splittermond.fightingSkillOptions = {
     melee: "splittermond.skillLabel.melee",
@@ -237,7 +237,7 @@ splittermond.fightingSkillOptions = {
     longrange: "splittermond.skillLabel.longrange",
     staffs: "splittermond.skillLabel.staffs",
     throwing: "splittermond.skillLabel.throwing"
-}
+};
 
 splittermond.meleeFightingSkillOptions = {
     melee: "splittermond.skillLabel.melee",
@@ -245,7 +245,7 @@ splittermond.meleeFightingSkillOptions = {
     chains: "splittermond.skillLabel.chains",
     blades: "splittermond.skillLabel.blades",
     staffs: "splittermond.skillLabel.staffs"
-}
+};
 
 splittermond.attributeOptions = {
     charisma: "splittermond.attribute.charisma.long",
@@ -256,7 +256,7 @@ splittermond.attributeOptions = {
     strength: "splittermond.attribute.strength.long",
     mind: "splittermond.attribute.mind.long",
     willpower: "splittermond.attribute.willpower.long",
-}
+};
 
 splittermond.spellSkillsOption = {
     "arcanelore": "splittermond.skillLabel.arcanelore",
@@ -279,7 +279,7 @@ splittermond.spellSkillsOption = {
     "transformationmagic": "splittermond.skillLabel.transformationmagic",
     "watermagic": "splittermond.skillLabel.watermagic",
     "windmagic": "splittermond.skillLabel.windmagic"
-}
+};
 
 splittermond.masterySkillsOption = {
     "melee": "splittermond.skillLabel.melee",
@@ -336,7 +336,7 @@ splittermond.masterySkillsOption = {
     "watermagic": "splittermond.skillLabel.watermagic",
     "windmagic": "splittermond.skillLabel.windmagic",
     "none": "splittermond.skillLabel.none"
-}
+};
 
 splittermond.displayOptions = {
     itemSheet: {
@@ -371,10 +371,26 @@ splittermond.displayOptions = {
     }
 }
 
+/**
+ * @typedef SplittermondItemSheetProperties
+ * @type {[{groupName: string, properties: [InputItemProperty|ItemSheetPropertyDisplayProperty]}]}
+ */
+/**
+ * @typedef ItemSheetPropertyDisplayProperty
+ * @type {{field: !string, template: "readonly"|"readonlyLocalize"|"input"|"select"|"bool"|"inputNumberWithSpinner", label: string, help: ?string}}
+ */
+/**
+ * @typedef InputItemProperty
+ * @type {ItemSheetPropertyDisplayProperty & {template: "input", placeholderText: label: string}}
+*/
+
 splittermond.itemSheetProperties = {
     species: [
         {
             groupName: "splittermond.general",
+            /**
+             * @type SplittermondItemSheetProperties
+             */
             properties: [
                 {
                     field: "system.size",
@@ -400,7 +416,8 @@ splittermond.itemSheetProperties = {
             groupName: "splittermond.general",
             properties: [
                 {
-                    field: "system.availableIn",
+                    field: "availableIn",
+                    placeholderText: "splittermond.masteryAvailableInPlaceholderText",
                     label: "splittermond.availableIn",
                     template: "input"
                 },
@@ -597,8 +614,11 @@ splittermond.itemSheetProperties = {
             ]
         }
     ]
-}
+};
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.weapon = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -710,6 +730,9 @@ splittermond.itemSheetProperties.weapon = [
     }
 ]
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.armor = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -747,8 +770,11 @@ splittermond.itemSheetProperties.armor = [
             }
         ]
     }
-]
+];
 
+/**
+ * @type SplittermondItemSheetProperties
+ */
 splittermond.itemSheetProperties.shield = [
     ...splittermond.itemSheetProperties.equipment,
     {
@@ -788,14 +814,14 @@ splittermond.itemSheetProperties.shield = [
             }
         ]
     }
-]
-
+];
 splittermond.itemSheetProperties.spell = [
     {
         groupName: "splittermond.generalProperties",
         properties: [
             {
-                field: "system.availableIn",
+                field: "availableIn",
+                placeholderText: "splittermond.spellAvailableInPlaceholderText",
                 label: "splittermond.availableIn",
                 template: "input"
             },
@@ -813,11 +839,13 @@ splittermond.itemSheetProperties.spell = [
             {
                 field: "system.spellType",
                 label: "splittermond.spellType",
+                placeholderText: "splittermond.spellTypePlaceholderText",
                 template: "input"
             },
             {
                 field: "system.costs",
                 label: "splittermond.focusCosts",
+                placeholderText: "splittermond.focusCostsPlaceholderText",
                 template: "input"
             },
             {
@@ -912,7 +940,7 @@ splittermond.itemSheetProperties.spell = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.npcfeature = [
     {
@@ -926,7 +954,7 @@ splittermond.itemSheetProperties.npcfeature = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.moonsign = [
     {
@@ -944,7 +972,7 @@ splittermond.itemSheetProperties.moonsign = [
             }
         ]
     }
-]
+];
 
 splittermond.itemSheetProperties.npcattack = [
     {
@@ -977,7 +1005,7 @@ splittermond.itemSheetProperties.npcattack = [
             }
         ]
     }
-]
+];
 
 splittermond.icons = {
     equipment: {
@@ -995,7 +1023,7 @@ splittermond.icons = {
     spell: {
         default: "icons/svg/daze.svg"
     }
-}
+};
 
 splittermond.modifier = {
     addsplinter: "splinterpoints +2",
@@ -1026,10 +1054,8 @@ splittermond.modifier = {
     "erhöhte lebensregeneration": "healthRegeneration.multiplier 3",
     "erhöhter fokuspool": "FO +5",
     "flink": "GSW +1",
-    "sprinter": "GSW +1",
     "hoher geistiger widerstand": "GW +2",
     "hoher körperlicher widerstand": "KW +2",
-    "natürlicher rüstungsschutz": "SR +1",
     "robust": "LP +1",
     "verbesserte initiative": "INI -3",
     "zusätzliche splitterpunkte": "splinterpoints +2",
@@ -1045,7 +1071,7 @@ splittermond.modifier = {
     "schildträger ii": "tickMalus.shield.mod -1",
     "schildträger 2": "tickMalus.shield.mod -1",
     "natürlicher rüstungsschutz": "SR +1"
-}
+};
 
 splittermond.fumbleTable = {
     fight: [
@@ -1229,19 +1255,71 @@ splittermond.weaponFeatures = [ "Ablenkend",
                                 "Zweihändig"
                             ];
 
-splittermond.Item = {
-    documentClasses: {
-        default: SplittermondItem,
-        weapon: SplittermondWeaponItem,
-        shield: SplittermondShieldItem,
-        armor: SplittermondArmorItem,
-        spell: SplittermondSpellItem,
-        equipment: SplittermondEquipmentItem,
-        npcattack: SplittermondNPCAttackItem,
-        mastery: SplittermondMastery
+
+/**
+ * @typedef {{degreesOfSuccess:number, textTemplate:string, focusCostReduction:string, castDurationReduction:number, damageIncrease:string}} SplittermondSpellEnhancement
+ * @typedef {Record<SpellDegreesOfSuccessOptions, SplittermondSpellEnhancement>} SplittermondSpellEnhancements
+ */
+/** @type SplittermondSpellEnhancements */
+splittermond.spellEnhancement = {
+    castDuration: {
+        degreesOfSuccess: 3,
+        textTemplate: "splittermond.degreeOfSuccessOptions.castDuration",
+        focusCostReduction: "0",
+        castDurationReduction: 1, //TODO: check
+        damageIncrease: 0,
+    },
+    exhaustedFocus: {
+        degreesOfSuccess: 1,
+        textTemplate: "splittermond.degreeOfSuccessOptions.exhaustedFocus",
+        focusCostReduction: "1",
+        castDurationReduction: 0,
+        damageIncrease: 0,
+    },
+    channelizedFocus: {
+        degreesOfSuccess: 2,
+        textTemplate: "splittermond.degreeOfSuccessOptions.channelizedFocus",
+        focusCostReduction: "K1",
+        castDurationReduction: 0,
+        damageIncrease: 0,
+    },
+    consumedFocus: {
+        degreesOfSuccess: 3,
+        textTemplate: "splittermond.degreeOfSuccessOptions.consumedFocus",
+        focusCostReduction: "1V1",
+        castDurationReduction: 0,
+        damageIncrease: 0,
+    },
+    range: {
+        degreesOfSuccess: 1,
+        textTemplate: "splittermond.degreeOfSuccessOptions.range",
+        focusCostReduction: "0",
+        castDurationReduction: 0,
+        damageIncrease: 0,
+    },
+    damage: {
+        degreesOfSuccess: 1,
+        textTemplate: "splittermond.degreeOfSuccessOptions.damage",
+        focusCostReduction: "0",
+        castDurationReduction: 0,
+        damageIncrease: 1,
+    },
+    effectArea: {
+        degreesOfSuccess: 3,
+        textTemplate: "splittermond.degreeOfSuccessOptions.effectArea",
+        focusCostReduction: "0",
+        castDurationReduction: 0,
+        damageIncrease: 0,
+    },
+    effectDuration: {
+        degreesOfSuccess: 2,
+        textTemplate: "splittermond.degreeOfSuccessOptions.effectDuration",
+        focusCostReduction: "0",
+        castDurationReduction: 0,
+        damageIncrease: 0,
     }
 };
-
-
-
+splittermond.degreeOfSuccessThresholds = {
+    critical : 5
+}
 

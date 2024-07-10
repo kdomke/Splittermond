@@ -3,6 +3,7 @@ import CheckDialog from "../apps/dialog/check-dialog.js"
 import * as Dice from "../util/dice.js"
 import * as Chat from "../util/chat.js";
 import * as Tooltip from "../util/tooltip.js";
+import {parseRollDifficulty} from "../util/rollDifficultyParser.js";
 
 
 export default class Skill extends Modifiable {
@@ -24,7 +25,7 @@ export default class Skill extends Modifiable {
         this._cache = {
             enabled: false,
             value: null
-        }
+        };
     }
 
     toObject() {
@@ -62,7 +63,7 @@ export default class Skill extends Modifiable {
     }
 
     get isGrandmaster() {
-        return this.actor.items.find(i => i.type == "mastery" && (i.system.isGrandmaster || 0) && i.system.skill == this.id);
+        return this.actor.items.find(i => i.type === "mastery" && (i.system.isGrandmaster || 0) && i.system.skill === this.id);
     }
 
     enableCaching() {
@@ -75,80 +76,80 @@ export default class Skill extends Modifiable {
     }
 
     get maneuvers() {
-        return this.actor.items.filter(i => i.type == "mastery" && (i.system.isManeuver || false) && i.system.skill == this.id);
+        return this.actor.items.filter(i => i.type === "mastery" && (i.system.isManeuver || false) && i.system.skill === this.id);
     }
 
-    async roll(options = {}) {
-        let emphasisData = [];
-        let selectableModifier = this.selectableModifier;
-        let preSelectedModifier = options.preSelectedModifier || [];
-        preSelectedModifier = preSelectedModifier.map(s => s.trim().toLowerCase());
-        if (selectableModifier) {
-            emphasisData = Object.entries(selectableModifier).map(([key, value]) => {
-                return {
-                    name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
-                    value: value,
-                    active: preSelectedModifier.includes(key.trim().toLowerCase())
-                }
-            });
-        }
-
-        let title = options.title || game.i18n.localize(this.label);
-        if (options.subtitle)
-            title = `${title} - ${options.subtitle}`;
-
-        let skillFormula = this.getFormula();
-        skillFormula.addOperator("=")
-        skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
-
-        let checkData = await CheckDialog.create({
-            difficulty: options.difficulty || 15,
-            modifier: options.modifier || 0,
-            emphasis: emphasisData,
-            title: title,
-            skill: this,
-            skillTooltip: skillFormula.render(),
-        });
-
-        if (!checkData) return false;
-
-        checkData.modifierElements = [... this.actor.modifier.static(this._modifierPath).map(mod => { return { value: mod.value, description: mod.name } }), ...checkData.modifierElements];
-
-        let target = Array.from(game.user.targets)[0];
-        let hideDifficulty = false;
-        if (target) {
-            switch (checkData.difficulty) {
-                case "VTD":
-                    checkData.difficulty = target.actor.derivedValues.defense.value;
-                    hideDifficulty = true;
-                    break;
-                case "KW":
-                    checkData.difficulty = target.actor.derivedValues.bodyresist.value;
-                    hideDifficulty = true;
-                    break;
-                case "GW":
-                    checkData.difficulty = target.actor.derivedValues.mindresist.value;
-                    hideDifficulty = true;
-                    break;
+    /** @return {Record<string,number>} */
+    get attributeValues() {
+        const skillAttributes = {};
+        [this.attribute1, this.attribute2].forEach(attribute => {
+            if (attribute?.id && attribute?.value) {
+                skillAttributes[attribute.id] = attribute.value;
             }
+        });
+        return skillAttributes;
+    }
+
+    /**
+     * @param {{difficulty: unknown, preSelectedModifier:string[], subtitle:?string, title:?string, type:string}} options
+     * @return {Promise<*|boolean>}
+     */
+    async roll(options = {}) {
+        let checkData = await this.prepareRollDialog(
+            options.preSelectedModifier ?? [], options.title, options.subtitle, options.difficulty, options.modifier);
+        if (!checkData) {
+            return false;
         }
-
-        checkData.difficulty = parseInt(checkData.difficulty);
-
+        const principalTarget = Array.from(game.user.targets)[0];
+        const rollDifficulty = parseRollDifficulty(checkData.difficulty)
+        let hideDifficulty = rollDifficulty.isTargetDependentValue()
+        if (principalTarget) {
+            rollDifficulty.evaluate(principalTarget);
+        }
+        checkData.difficulty = rollDifficulty.difficulty;
         if (this.isGrandmaster) {
             checkData.rollType = checkData.rollType + "Grandmaster";
         }
 
-        let data = Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
-        let skillAttributes = {};
-        if (this.attribute1?.id && this.attribute1?.value) {
-            skillAttributes[this.attribute1.id] = this.attribute1.value;
+        let rollResult = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
+        let skillAttributes = this.attributeValues;
+        /**
+         * @typedef {Omit<GenericRollEvaluation, "roll">} CheckReport
+         * @property {{id:string, attributes:Record<string,number>, points:number}} skill
+         * @property {{total:number, dice: [{total:number}], tooltip: string}} roll
+         * @property {string[]} modifierElements
+         */
+        if (options.type === "spell") {
+            return {
+                rollOptions: {
+                    rolls:[JSON.stringify(rollResult.roll)],
+                    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+                    mode: checkData.rollMode,
+                },
+                /**@type CheckReport*/
+                report: {
+                    skill: {
+                        id: this.id,
+                        attributes: skillAttributes,
+                        points: this.points
+                    },
+                    difficulty: rollResult.difficulty,
+                    rollType: checkData.rollType,
+                    roll: {
+                        total: rollResult.roll.total,
+                        dice: rollResult.roll.dice,
+                        tooltip: await rollResult.roll.getTooltip(),
+                    },
+                    modifierElements: checkData.modifierElements,
+                    succeeded: rollResult.succeeded,
+                    isFumble: rollResult.isFumble,
+                    isCrit: rollResult.isCrit,
+                    degreeOfSuccess: rollResult.degreeOfSuccess,
+                    hideDifficulty: hideDifficulty,
+                }
+            }
         }
 
-        if (this.attribute2?.id && this.attribute2?.value) {
-            skillAttributes[this.attribute2.id] = this.attribute2.value;
-        }
 
         let checkMessageData = {
             type: options.type || "skill",
@@ -156,20 +157,76 @@ export default class Skill extends Modifiable {
             skillValue: this.value,
             skillPoints: this.points,
             skillAttributes: skillAttributes,
-            difficulty: data.difficulty,
+            difficulty: rollResult.difficulty,
             rollType: checkData.rollType,
             modifierElements: checkData.modifierElements,
-            succeeded: data.succeeded,
-            isFumble: data.isFumble,
-            isCrit: data.isCrit,
-            degreeOfSuccess: data.degreeOfSuccess,
+            succeeded: rollResult.succeeded,
+            isFumble: rollResult.isFumble,
+            isCrit: rollResult.isCrit,
+            degreeOfSuccess: rollResult.degreeOfSuccess,
             availableSplinterpoints: this.actor.type === "character" ? this.actor.system.splinterpoints.value : 0,
             hideDifficulty: hideDifficulty,
             maneuvers: checkData.maneuvers || [],
             ...(options.checkMessageData || {})
+        };
+
+        return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, rollResult.roll, checkMessageData));
+    }
+
+    /**
+     * @typedef {number|'VTD','KW','GW'} RollDifficultyString
+     */
+
+    /**
+     * @typedef {{name: string, label:string, value: unknown, active:boolean}} EmphasisData
+     */
+    /**
+     * @typedef {{difficulty:RollDifficultyString, modifier:number, emphasis: EmphasisData, rollMode: unknown}} CheckDialogOptions
+     * @param {string[]}selectedModifiers
+     * @param {string} title
+     * @param {string} subtitle
+     * @param {RollDifficultyString} difficulty
+     * @param {number} modifier
+     * @return {Promise<CheckDialogOptions>}
+     */
+    async prepareRollDialog(selectedModifiers, title, subtitle, difficulty, modifier) {
+        let emphasisData = [];
+        let selectableModifier = this.selectableModifier;
+        selectedModifiers = selectedModifiers.map(s => s.trim().toLowerCase());
+        if (selectableModifier) {
+            emphasisData = Object.entries(selectableModifier).map(([key, value]) => {
+                return {
+                    name: key,
+                    label: key + (value > 0 ? " +" : " ") + value,
+                    value: value,
+                    active: selectedModifiers.includes(key.trim().toLowerCase())
+                };
+            });
         }
 
-        return ChatMessage.create(await Chat.prepareCheckMessageData(this.actor, checkData.rollMode, data.roll, checkMessageData));
+        let skillFormula = this.getFormula();
+        skillFormula.addOperator("=");
+        skillFormula.addPart(this.value, game.i18n.localize("splittermond.skillValueAbbrev"));
+
+        return CheckDialog.create({
+            difficulty: difficulty || 15,
+            modifier: modifier || 0,
+            emphasis: emphasisData,
+            title: this.#createRollDialogTitle(title, subtitle),
+            skill: this,
+            skillTooltip: skillFormula.render(),
+        });
+    }
+
+    /**
+     * @param {string} title
+     * @param {string} subtitle
+     * @return {string}
+     */
+    #createRollDialogTitle(title, subtitle) {
+        const displayTitle = title || game.i18n.localize(this.label);
+        const displaySubtitle = subtitle || "";
+        return displaySubtitle ? displayTitle : `${displayTitle} - ${displaySubtitle}`;
     }
 
     getFormula() {

@@ -1,0 +1,37 @@
+<div class="roll-summary dice-roll">
+    <div class="roll-total">{{rollTotal}}</div>
+    <div class="dice-tooltip">
+        {{#if skillAndModifierTooltip}}
+            {{> skillAndModifierTooltip skillAndModifierTooltip}}
+        {{/if}}
+        {{{rollTooltip}}}
+        {{#if actionDescription}}
+            {{> actionDescription actionDescription}}
+        {{/if}}
+    </div>
+</div>
+
+{{#* inline "skillAndModifierTooltip" }}
+    <section class="tooltip-part">
+        <p>
+            <span class="formula">
+                {{#each this}}
+                    <span class="{{classes}}">
+                    <span class="value">{{value}}</span>
+                        {{#if description}}
+                            <span class="description">{{description}}</span>
+                        {{/if}}
+                </span>
+                {{/each}}
+            </span>
+        </p>
+    </section>
+{{/inline}}
+
+{{#* inline "actionDescription"}}
+    <section class="tooltip-part">
+        <p>
+            {{{this}}}
+        </p>
+    </section>
+{{/inline}}

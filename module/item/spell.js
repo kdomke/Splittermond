@@ -1,33 +1,74 @@
 import SplittermondItem from "./item.js";
 import AttackableItem from "./attackable-item.js";
 
-import * as Costs from "../util/costs.js";
+import {getSpellAvailabilityParser} from "./availabilityParser.js";
+import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
+import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
+import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
+import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+import {splittermond} from "../config.js";
+import {PrimaryCost} from "../util/costs/PrimaryCost.js";
+import {Cost} from "../util/costs/Cost.js";
 
+
+/**
+ * @extends SplittermondItem
+ * @property {SplittermondSpellData} system
+ * @property {SplittermondActor} actor
+ */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
-    get costs() {
-        if (this.actor) {
-            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellCostReduction), this.system.costs);
-        } else {
-            return this.system.costs;
-        }
-        
+    constructor(
+        data,
+        context = {},
+        availabilityParser = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic)
+    ) {
+        super(data, context);
+        this.availabilityParser = availabilityParser;
     }
 
+
+    /** @return {string} */
+    get costs() {
+        return this.actor ?
+            calculateReducedSpellCosts(this.system, this.actor.system.spellCostReduction) :
+            this.system.costs;
+    }
+
+    /** @return {string} */
     get enhancementCosts() {
         if (this.actor) {
-            return Costs.calcSpellCostReduction(Costs.getReductionsBySpell(this.system, this.actor.system.spellEnhancedCostReduction), this.system.enhancementCosts, true);
+            const requiredDegreesOfSuccess = parseSpellEnhancementDegreesOfSuccess(this.system.enhancementCosts);
+            const reducedCosts = calculateReducedEnhancementCosts(this.system, this.actor.system.spellEnhancedCostReduction)
+            return `${requiredDegreesOfSuccess}EG/+${reducedCosts}`;
         } else {
             return this.system.enhancementCosts;
         }
     }
+
+    get availableIn() {
+        return this.availabilityParser.toDisplayRepresentation(this.system.availableIn);
+    }
+
+    /**
+     * @override
+     */
+    update(data, context) {
+        if ("availableIn" in data) {
+            data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
+            delete data.availableIn;
+        }
+        return super.update(data, context);
+    }
+
 
     get skill() {
         return this.actor?.skills[this.system.skill];
     }
 
     get enoughFocus() {
-        let costData = Costs.parseCostsString(this.costs);
+        let costData = parseCostString(this.costs).asPrimaryCost();
         let costTotal = costData.channeled + costData.exhausted + costData.consumed;
         return costTotal <= this.actor?.system.focus.available.value;
     }
@@ -73,16 +114,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get availableInList() {
-        if (this.system.availableIn.trim() == '') return [];
-        let list = this.system.availableIn.split(",").map(item => {
-            let data = item.trim().toLowerCase().split(/[ :]/);
-            return {
-                label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
-                skillId: data[0].trim(),
-                spellLevel: data[1].trim()
-            }
-        });
-        return list;
+        return produceSpellAvailabilityTags(this.system, this.availabilityParser);
     }
 
     async roll(options) {
@@ -111,9 +143,35 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
                 spellTypeList: this.spellTypeList,
                 damage: this.damage
             }
-        }
+        };
 
-        return this.skill.roll(options);
+        return this.skill.roll(options)
+            .then(result =>
+                !result ?
+                    false :
+                    SplittermondChatCard.create(
+                        this.actor,
+                        SplittermondSpellRollMessage.createRollMessage(
+                            this,
+                            result.report,
+                        ), result.rollOptions)
+                        .sendToChat()
+            ).then((result) => result ?? true);
     }
 
+    /**
+     * @param {number} degreeOfSuccess
+     * @param {boolean} successful
+     * @return {PrimaryCost}
+     */
+    getCostsForFinishedRoll(degreeOfSuccess, successful) {
+        const critReduction = degreeOfSuccess >= splittermond.degreeOfSuccessThresholds.critical ?
+            new Cost(0, 1, false, true) :
+            new Cost(0, 0, false, true);
+        if (successful) {
+            return parseCostString(this.costs).asPrimaryCost().subtract(critReduction.asModifier());
+        } else {
+            return parseCostString(`${Math.abs(degreeOfSuccess)}`).asPrimaryCost();
+        }
+    }
 }

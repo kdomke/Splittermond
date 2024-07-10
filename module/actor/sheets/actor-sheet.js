@@ -1,5 +1,4 @@
 import * as Dice from "../../util/dice.js"
-import * as Costs from "../../util/costs.js"
 import * as Tooltip from "../../util/tooltip.js"
 
 export default class SplittermondActorSheet extends ActorSheet {
@@ -11,22 +10,16 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["splittermond", "sheet", "actor"]
+            classes: ["splittermond", "sheet", "actor"]            
         });
     }
 
     async getData() {
         const sheetData = super.getData();
-        //sheetData.data = sheetData.data.data;
 
         Handlebars.registerHelper('modifierFormat', (data) => parseInt(data) > 0 ? "+" + parseInt(data) : data);
 
         sheetData.hideSkills = this._hideSkills;
-        // [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(skill => {
-        //     sheetData.data.skills[skill].isVisible = ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skill) ||
-        //         (parseInt(sheetData.data.skills[skill].points) > 0) || !this._hideSkills;
-        // });
-
         sheetData.generalSkills = {};
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
             || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
@@ -202,7 +195,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         html.find('[data-action="toggle-equipped"]').click(event => {
             const itemId = $(event.currentTarget).closestData('item-id');
             const item = this.actor.items.get(itemId);
-            item.update({ "data.equipped": !item.system.equipped });
+            item.update({ "system.equipped": !item.system.equipped });
         });
 
         html.find('[data-field]').change(event => {
@@ -246,9 +239,9 @@ export default class SplittermondActorSheet extends ActorSheet {
                 return prev ? prev[curr] : null
             }, this.actor.toObject()));
             let updateData = {}
-            if (array === "data.focus.channeled.entries") {
+            if (array === "system.focus.channeled.entries") {
                 let tempValue = parseInt(this.actor.system.focus.exhausted.value) + parseInt(arrayData[idx].costs);
-                updateData["data.focus.exhausted.value"] = tempValue;
+                updateData["system.focus.exhausted.value"] = tempValue;
             }
 
             arrayData.splice(idx, 1);
@@ -262,7 +255,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.focus.channeled.entries": channeledEntries });
+            this.actor.update({ "system.focus.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="add-channeled-health"]').click(event => {
@@ -271,7 +264,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 description: game.i18n.localize("splittermond.description"),
                 costs: 1
             });
-            this.actor.update({ "data.health.channeled.entries": channeledEntries });
+            this.actor.update({ "system.health.channeled.entries": channeledEntries });
         });
 
         html.find('[data-action="long-rest"]').click(event => {
@@ -386,7 +379,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
             const itemId = event.currentTarget.dataset.itemId;
             if (itemId) {
-                const itemData = this.actor.items.find(el => el.id === itemId)?.data;
+                const itemData = this.actor.items.find(el => el.id === itemId)?.system;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
                     data: itemData,

@@ -51,22 +51,6 @@ export default class SplittermondCombat extends Combat {
         return this.update({round: 0});
     }
 
-
-/*
-    setupTurns() {
-            const turns = this.combatants.contents.sort(this._sortCombatants)
-
-            let c = turns[0];
-            this.current = {
-                round: this.round,
-                turn: 0,
-                combatantId: c ? c.id : null,
-                tokenId: c ? c.token.id : null,
-                tick: this.currentTick
-            };
-            return this.turns = turns;
-    }
-*/
     async nextTurn(nTicks = 0) {
         if (nTicks == 0) {
             let p = new Promise((resolve, reject) => {
@@ -105,11 +89,11 @@ export default class SplittermondCombat extends Combat {
         if (value < 10000) {
             if (!first) {
                 value = this.combatants.reduce((acc, c) => {
-                    return ((Math.round(c.initiative) == value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
+                    return ((Math.round(c.initiative) === value) ? Math.max((c.initiative || 0) + 0.01, acc) : acc);
                 }, value);
             } else {
                 value = this.combatants.reduce((acc, c) => {
-                    return ((Math.round(c.initiative) == value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
+                    return ((Math.round(c.initiative) === value) ? Math.min((c.initiative || 0) - 0.01, acc) : acc);
                 }, value);
             }
         } else {
@@ -129,7 +113,8 @@ export default class SplittermondCombat extends Combat {
     }
 
     get combatant() {
-        return this.turns[0];
+        //this function may be called during setup turns, where the "turns" array does not yet exist.
+        return this.turns?.[0];
     }
 
     get currentTick() {

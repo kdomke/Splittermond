@@ -61,7 +61,7 @@ export default class CheckDialog extends Dialog {
     }
 
     static _prepareFormData(html, checkData) {
-        let fd = (new FormDataExtended(html[0].querySelector("form"))).toObject();
+        let fd = (new FormDataExtended(html[0].querySelector("form"))).object;
         fd.modifierElements = [];
         if (parseInt(fd.modifier) || 0) {
             fd.modifierElements.push({

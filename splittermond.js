@@ -15,16 +15,29 @@ import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
-import SplittermondCompendiumBrowser from "./module/apps/compendium-browser.js";
+import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
 import { registerSystemSettings } from "./module/settings.js";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 import TokenActionBar from "./module/apps/token-action-bar.js";
 
+import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
+import {chatActionFeature} from "./module/util/chat/chatActionFeature.js";
+import SplittermondWeaponItem from "./module/item/weapon.js";
+import SplittermondShieldItem from "./module/item/shield.js";
+import SplittermondArmorItem from "./module/item/armor.js";
+import SplittermondSpellItem from "./module/item/spell.js";
+import SplittermondEquipmentItem from "./module/item/equipment.js";
+import SplittermondNPCAttackItem from "./module/item/npcattack.js";
+import SplittermondMastery from "./module/item/mastery.js";
+import {referencesUtils} from "./module/data/references/referencesUtils.js";
+import {foundryApi} from "./module/api/foundryApi.js";
+import {canEditMessageOf} from "./module/util/chat.js";
+
 
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);
-    return (value) ? value : defaultValue;
-}
+    return  value ?? defaultValue;
+};
 
 function handlePdf(links) {
     if(!ui.PDFoundry){
@@ -60,6 +73,11 @@ Hooks.once("ready", function () {
 });
 
 Hooks.once("init", function () {
+    console.log(
+        " __\n"+
+        "(_  ._  | o _|_ _|_  _  ._ ._ _   _  ._   _|\n" +
+        "__) |_) | |  |_  |_ (/_ |  | | | (_) | | (_|\n" +
+        "    |");
     console.log("Splittermond | Initialising Splittermond System ...");
     if (CONFIG.compatibility) {
         CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
@@ -70,7 +88,19 @@ Hooks.once("init", function () {
     CONFIG.Item.documentClass = SplittermondItem;
     CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
-    CONFIG.splittermond = splittermond;
+    CONFIG.splittermond = {...splittermond};
+    CONFIG.splittermond.Item = {
+        documentClasses: {
+            default: SplittermondItem,
+            weapon: SplittermondWeaponItem,
+            shield: SplittermondShieldItem,
+            armor: SplittermondArmorItem,
+            spell: SplittermondSpellItem,
+            equipment: SplittermondEquipmentItem,
+            npcattack: SplittermondNPCAttackItem,
+            mastery: SplittermondMastery
+        }
+    };
 
     registerSystemSettings();
 
@@ -151,9 +181,11 @@ Hooks.once("init", function () {
             accum += block.fn(i);
         return accum;
     });
+    getTemplate(`${templateBasePath}/chat/partials/degree-of-success-display.hbs`)
+        .then(template => {Handlebars.registerPartial("degree-of-success-display", template)});
+    getTemplate(`${templateBasePath}/chat/partials/roll-result.hbs`)
+        .then(template => {Handlebars.registerPartial("roll-result", template)});
 
-    
-    
     //if (game.data.version.startsWith("0.")) {
         document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
         /*
@@ -171,23 +203,17 @@ Hooks.once("init", function () {
         });
     }
     */  
-
-
-
+    quenchTestsInit(); //starts quench tests when ready
     console.log("Splittermond | DONE!");
 });
 
 Hooks.on("redraw-combat-tick", async () => {
     await game.splittermond.tickBarHud.render(false);
 
-    //yes i know this is not ideal, but ether this or an websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    //yes i know this is not ideal, but either this or a websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
+    //Update: Since foundry now has its own socket system, this should maybe be changed?
     const currentScene = game.scenes.current?.id || null;    
-    let combats = game.combats.filter(c => (c.data.scene === null) || (c.data.scene === currentScene));
-    if(combats.length == 0)
-    {
-       return;
-    }
-    var activeCombat = combats[0]
+    let activeCombat = game.combats.find(c => (c.scene === null) || (c.data.scene === currentScene));
     if(activeCombat == null)
     {
         return;
@@ -266,15 +292,14 @@ Hooks.on("hotbarDrop", async (bar, data, slot) => {
 
 });
 
-Hooks.on('preCreateActor', (actor) => {
+Hooks.on('preCreateActor', async (actor) => {
     if (actor.type === 'character') {
-        actor.data.token.vision = true;
-        actor.data.token.actorLink = true;
-        actor.data.token.name = actor.name;
+        await actor.prototypeToken.updateSource({vision: true, actorLink: true, name: actor.name});
     }
 });
 
 Hooks.on('init', function(){
+
     // Patch enrichHTML function for Custom Links
 
     CONFIG.TextEditor.enrichers.push(
@@ -413,7 +438,7 @@ function commonEventHandler(app, html, data) {
         let message = $(event.currentTarget).closestData("message");
         let chatMessageId = $(event.currentTarget).closestData("message-id");
         
-        const speaker = game.messages.get(chatMessageId).data.speaker;
+        const speaker = game.messages.get(chatMessageId).speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
@@ -458,8 +483,9 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         html.find(".gm-only").remove();
     }
 
-    if (!((actor && actor.isOwner) || game.user.isGM || (data.author.id === game.user.id))) {
-        html.find(".actions button").not(".active-defense").remove();
+    if (!((actor && actor.isOwner) || canEditMessageOf(data.author.id))) {
+        //splittermond-chat-action is handled by chatActionFeature
+        html.find(".actions button").not(".splittermond-chat-action").not(".active-defense").remove();
     }
 
     
@@ -516,17 +542,12 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         event.preventDefault();
         event.stopPropagation()
         let type = $(event.currentTarget).closestData("type");
-        
-        const speaker = ChatMessage.getSpeaker();
-        let actor;
-        if (speaker.token) actor = game.actors.tokens[speaker.token];
-        if (!actor) actor = game.actors.get(speaker.actor);
-        if (!actor) {
-            ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
-            return
-        };
-
-        actor.activeDefenseDialog(type);
+        try {
+            const actorReference = referencesUtils.findBestUserActor();
+            actorReference.getAgent().activeDefenseDialog(type)
+        }catch(e){
+            foundryApi.informUser("splittermond.pleaseSelectAToken")
+        }
     });
 
     html.find(".fumble-table-result").click(event => {
@@ -540,7 +561,7 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         let chatMessageId = $(event.currentTarget).closestData("message-id");
         let message = game.messages.get(chatMessageId);
         
-        const speaker = message.data.speaker;
+        const speaker = message.speaker;
         let actor;
         if (speaker.token) actor = game.actors.tokens[speaker.token];
         if (!actor) actor = game.actors.get(speaker.actor);
@@ -568,4 +589,6 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 Hooks.on("renderCompendiumDirectory", (app, html, data) => {
     const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
     html.find(".header-actions").append(compendiumBrowserButton);
-})
+});
+
+chatActionFeature()

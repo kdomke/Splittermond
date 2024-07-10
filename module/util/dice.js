@@ -1,41 +1,71 @@
-export function check(skill, difficulty = 15, rollType = "standard", modifier = 0) {
+/**
+ * @typedef {{total:number, getTooltip():Promise<string>, dice: [{total:number}]}} RollResultForSplittermond
+ * @typedef {{
+    difficulty: number
+    rollType: RollType
+    succeeded: boolean,
+    isFumble: boolean,
+    isCrit: boolean,
+    degreeOfSuccess: number,
+    degreeOfSuccessMessage: string,
+    roll: RollResultForSplittermond,
+ }} GenericRollEvaluation
+ */
+import {DamageRoll} from "./damage/DamageRoll.js";
+
+/**
+ * @param skill
+ * @param {RollDifficultyString} difficulty
+ * @param {RollType} rollType
+ * @param {number} skillModifier
+ * @return {GenericRollEvaluation}
+ */
+export async function check(skill, difficulty , rollType = "standard", skillModifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
-    if (modifier) {
+    if (skillModifier) {
         rollFormula += " + @modifier";
     }
     let rollData = {
         skillValue: skill.value,
-        modifier: modifier
+        modifier: skillModifier
     };
-    difficulty = parseInt(difficulty);
-    if (isNaN(difficulty)) {
-        difficulty = 0;
-    }
+    const roll = new Roll(rollFormula, rollData).evaluate();
 
-    const roll = new Roll(rollFormula, rollData).evaluate({ async: false });
-
-    return evaluateCheck(roll, skill.points, difficulty, rollType);
+    return await evaluateCheck(roll, skill.points, difficulty, rollType);
 }
 
-export function evaluateCheck(roll, skillPoints, difficulty, rollType) {
+/**
+ *
+ * @param {Promise<{dice:{total:number}[], total:number}>} roll
+ * @param skillPoints
+ * @param {RollDifficultyString} difficulty
+ * @param rollType
+ * @return {GenericRollEvaluation}
+ */
+export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
+    roll = await roll;
     const difference = roll.total - difficulty;
 
     let degreeOfSuccess = Math.sign(difference) * Math.floor(Math.abs(difference / 3));
     degreeOfSuccess = ((skillPoints < 1) ? Math.min(degreeOfSuccess, 0) : degreeOfSuccess);
-    const isFumble = rollType != "safety" && roll.dice[0].total <= 3;
+    const isFumble = rollType !== "safety" && roll.dice[0].total <= 3;
     const isCrit = roll.dice[0].total >= 19;
     const succeeded = difference >= 0 && !isFumble;
     degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
     degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
 
-    let degreeOfSuccessMessage = game.i18n.localize(`splittermond.${succeeded ? "success" : "fail"}Message.${Math.min(Math.abs(degreeOfSuccess), 5)}`);
+    const degreeOfSuccessMessageModifier = Math.min(Math.abs(degreeOfSuccess), 5)
+    let degreeOfSuccessMessage;
     if (isCrit) {
         degreeOfSuccessMessage = game.i18n.localize(`splittermond.critical`);
-    }
-    if (isFumble) {
+    } else if (isFumble) {
         degreeOfSuccessMessage = game.i18n.localize(`splittermond.fumble`);
+    } else if (succeeded) {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.successMessage.${degreeOfSuccessMessageModifier}`);
+    } else {
+        degreeOfSuccessMessage = game.i18n.localize(`splittermond.failMessage.${degreeOfSuccessMessageModifier}`);
     }
     return {
         difficulty: difficulty,
@@ -49,62 +79,10 @@ export function evaluateCheck(roll, skillPoints, difficulty, rollType) {
 }
 
 export async function damage(damageFormula, featureString, damageSource = "") {
-    let feature = {};
-    featureString.split(',').forEach(feat => {
-        let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
-        if (temp[1]) {
-            feature[temp[1].toLowerCase()] = {
-                name: temp[0],
-                value: parseInt(temp[2]) || 1
-            };
-        }
-    });
-    // sanatize String
-    damageFormula = damageFormula.toLowerCase().replace("w", "d").replace(" ", "");
-    let damageFormulaData = /([0-9]{0,1})d(6|10)([+\-0-9]*)/.exec(damageFormula);
-    let nDices = parseInt(damageFormulaData[1] || 1);
-    let nFaces = parseInt(damageFormulaData[2]);
-    let damageModifier = damageFormulaData[3];
 
+    const damage = DamageRoll.parse(damageFormula, featureString);
 
-
-    damageFormula = `${nDices}d${nFaces}`;
-    if (feature["exakt"]) {
-        feature["exakt"].active = true;
-        let temp = nDices + feature["exakt"].value
-        damageFormula = `${temp}d${nFaces}kh${nDices}`;
-    }
-
-    if (damageModifier) {
-        damageFormula += damageModifier;
-    }
-
-    const roll = new Roll(damageFormula, {}).evaluate({ async: false });
-    if (feature["scharf"]) {
-        let scharfBonus = 0;
-        roll.terms[0].results.forEach(r => {
-            if (r.active) {
-                if (r.result < feature["scharf"].value) {
-                    feature["scharf"].active = true;
-                    scharfBonus += feature["scharf"].value - r.result;
-                }
-            }
-        });
-        roll._total += scharfBonus;
-    }
-
-    if (feature["kritisch"]) {
-        let kritischBonus = 0;
-        roll.terms[0].results.forEach(r => {
-            if (r.active) {
-                if (r.result === roll.terms[0].faces) {
-                    feature["kritisch"].active = true;
-                    kritischBonus += feature["kritisch"].value;
-                }
-            }
-        });
-        roll._total += kritischBonus;
-    }
+    const roll = await damage.evaluate();
 
     let actions = [];
 
@@ -123,7 +101,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
     let templateContext = {
         roll: roll,
         source: damageSource,
-        features: feature,
+        features: damage.toObject().features,
         formula: damageFormula,
         tooltip: await roll.getTooltip(),
         actions: actions
@@ -131,21 +109,17 @@ export async function damage(damageFormula, featureString, damageSource = "") {
 
     let chatData = {
         user: game.user.id,
-        roll: roll,
+        rolls: [roll],
         content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
         sound: CONFIG.sounds.dice,
-        type: CONST.CHAT_MESSAGE_TYPES.ROLL
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER
     };
 
-    ChatMessage.create(chatData);
-
-
-    //roll.toMessage(chatData)
-
+    return ChatMessage.create(chatData);
 }
 
 export function riskModifier() {
-    if (this.results.length == 4) {
+    if (this.results.length === 4) {
         const sortedResult = this.results.map(i => {
             return {
                 result: i.result,
@@ -176,7 +150,7 @@ export function riskModifier() {
         }
     }
 
-    if (this.results.length == 5) { // Grandmaster
+    if (this.results.length === 5) { // Grandmaster
         let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,
@@ -219,7 +193,7 @@ export function riskModifier() {
         }
     }
 
-    if (this.results.length == 3) { // Grandmaster (Standard)
+    if (this.results.length === 3) { // Grandmaster (Standard)
         let sortedResult = this.results.slice(0, -1).map(i => {
             return {
                 result: i.result,

@@ -36,7 +36,7 @@
                     {{#each items.spell}}
                     <li class="list-item draggable" data-item-id="{{this.uuid}}"
                         data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
-                        data-skill-level="this.system.skillLevel">
+                        data-skill-level="{{this.system.skillLevel}}">
                         <div><label>{{this.name}}</label>
                             <div class="available-in">
                                 <ul class="taglist-small">
@@ -96,7 +96,7 @@
                             <div class="available-in">
                                 <ul class="taglist-small">
                                     {{#each this.availableInList}}
-                                    <li class="active">{{localize (lookup (concat "splittermond.skillLabel." this) 'string')}}</li>
+                                    <li class="active">{{this.label}}</li>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -150,9 +150,9 @@
                         </div>
                         <div class="skill">
                             <ul class="taglist-small">
-                                <li class="active">{{localize (lookup (concat "splittermond.skillLabel." this.system.skill) 'string')}}</li>
+                                <li class="active">{{localize (concat "splittermond.skillLabel." this.system.skill) 'string'}}</li>
                                 {{#if this.hasSecondaryAttack}}
-                                <li>{{localize (lookup (concat "splittermond.skillLabel." this.system.secondaryAttack.skill) 'string')}}</li>
+                                <li>{{localize (concat "splittermond.skillLabel." this.system.secondaryAttack.skill) 'string'}}</li>
                                 {{/if}}
                             </ul>
                             

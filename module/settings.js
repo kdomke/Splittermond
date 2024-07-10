@@ -32,7 +32,7 @@ export const registerSystemSettings = function () {
       console.log("HGMultiplier adjusted!");
       game.splittermond.heroLevel = CONFIG.splittermond.heroLevel.map(function (x) { return x * mult; });
       game.actors.forEach(actor => {
-        if (actor.data.type == "character") {
+        if (actor.system.type == "character") {
           actor.prepareData();
         }
       });

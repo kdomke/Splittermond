@@ -1,7 +1,6 @@
 import * as Dice from "../util/dice.js"
 
-import * as Costs from "../util/costs.js"
-import CheckDialog from "../apps/dialog/check-dialog.js"
+import CheckDialog from "../apps/dialog/check-dialog.js";
 import * as Chat from "../util/chat.js";
 
 import Attribute from "./attribute.js";
@@ -10,7 +9,14 @@ import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
+import {parseCostString} from "../util/costs/costParser.js";
+import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.js";
 
+/**
+ * @property {SplittermondSpellData} system
+ * @property {Map<string, SplittermondItem> & Array<SplittermondItem> } items
+ * @property {Readonly<string>} id
+ */
 export default class SplittermondActor extends Actor {
 
     actorData() {
@@ -48,7 +54,7 @@ export default class SplittermondActor extends Actor {
 
         [...Object.values(this.attributes), ...Object.values(this.derivedValues), ...Object.values(this.skills)].forEach(e => e.disableCaching());
         [...Object.values(this.attributes)].forEach(e => e.enableCaching());
-        const data = this.system;
+        let data = this.system;
 
 
         this.attacks = [];
@@ -105,8 +111,7 @@ export default class SplittermondActor extends Actor {
             levelMod: 0
         }
 
-        data.spellCostReduction = {};
-        data.spellEnhancedCostReduction = {};
+        data = initializeSpellCostManagement(data);
 
         if (this.type === "character") {
             data.focusRegeneration = {
@@ -148,6 +153,7 @@ export default class SplittermondActor extends Actor {
         return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
 
+    /**@return {{value:number, max:number}|undefined}*/
     get splinterpoints() {
         return this.system.splinterpoints;
     }
@@ -471,57 +477,10 @@ export default class SplittermondActor extends Actor {
                         break;
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
-                            var labelParts = modifierLabel.split(".");
-                            var spellGroup = "*";
-
-                            if (labelParts.length >= 2) {
-                                spellGroup = labelParts[1].trim();
-                                if (labelParts.length == 3) {
-                                    spellGroup += "." + labelParts[2].trim();
-                                }
-                            }
-
-                            if (spellGroup == "*" && item.system.skill) {
-                                spellGroup = item.system.skill;
-                            }
-
-                            var group = data.spellCostReduction[spellGroup.toLowerCase()] = data.spellCostReduction[spellGroup.toLowerCase()] || {
-                                consumed: 0,
-                                exhausted: 0,
-                                channeled: 0,
-                            };
-                            var parsedFocusReduction = Costs.parseCostsString(value);
-                            group.consumed += parsedFocusReduction.consumed || 0;
-                            group.exhausted += parsedFocusReduction.exhausted || 0;
-                            group.channeled += parsedFocusReduction.channeled || 0;
-
-                            return;
+                            data.spellCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
                         }
                         else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-                            var labelParts = modifierLabel.split(".");
-                            var spellGroup = "*";
-
-                            if (labelParts.length >= 2) {
-                                spellGroup = labelParts[1].trim();
-                                if (labelParts.length == 3) {
-                                    spellGroup += "." + labelParts[2].trim();
-                                }
-                            }
-
-                            if (spellGroup == "*" && item.system.skill) {
-                                spellGroup = item.system.skill;
-                            }
-
-                            var group = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] = data.spellEnhancedCostReduction[spellGroup.toLowerCase()] || {
-                                consumed: 0,
-                                exhausted: 0,
-                                channeled: 0,
-                            };
-                            var parsedFocusReduction = Costs.parseCostsString(value);
-                            group.consumed += parsedFocusReduction.consumed || 0;
-                            group.exhausted += parsedFocusReduction.exhausted || 0;
-                            group.channeled += parsedFocusReduction.channeled || 0;
-
+                            data.spellEnhancedCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
                             return;
                         }
 
@@ -593,33 +552,35 @@ export default class SplittermondActor extends Actor {
 
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
+            const genesisData = data;
             let newData = this.toObject();
             let newItems = [];
-            newData.data = {};
+            newData.system = {};
 
-            newData.data.species = {
-                value: data.race
+            newData.system.species = {
+                value: genesisData.race
             }
-            newData.data.sex = data.gender;
-            newData.data.culture = data.culture;
-            newData.data.ancestry = data.background;
-            newData.data.education = data.education;
-            newData.data.experience = {
-                free: data.freeExp,
-                spent: data.investedExp
+            newData.name = genesisData.name;
+            newData.system.sex = genesisData.gender;
+            newData.system.culture = genesisData.culture;
+            newData.system.ancestry = genesisData.background;
+            newData.system.education = genesisData.education;
+            newData.system.experience = {
+                free: genesisData.freeExp,
+                spent: genesisData.investedExp
             };
-            newData.data.currency = {
+            newData.system.currency = {
                 S: 0,
                 L: 0,
                 T: 0
             };
-            let moonSignDescription = data.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
+            let moonSignDescription = genesisData.moonSign.description.replace(/Grad [1234]:/g, (m) => "<strong>" + m + "</strong>");
             moonSignDescription = "<p>" + moonSignDescription.split("\n").join("</p><p>") + "</p>";
 
             let moonSignImage = "systems/splittermond/images/moonsign/" + data.moonSign.name.split(" ").join("_").toLowerCase() + ".png";
             let moonsignObj = {
                 type: "moonsign",
-                name: data.moonSign.name,
+                name: genesisData.moonSign.name,
                 img: moonSignImage,
                 data: {
                     description: moonSignDescription
@@ -636,43 +597,43 @@ export default class SplittermondActor extends Actor {
             newItems.push(moonsignObj);
 
 
-            data.weaknesses.forEach((w) => {
+            genesisData.weaknesses.forEach((w) => {
                 newItems.push({
                     type: "weakness",
                     name: w
                 })
             });
-            data.languages.forEach((w) => {
+            genesisData.languages.forEach((w) => {
                 newItems.push({
                     type: "language",
                     name: w
                 })
             });
-            data.cultureLores.forEach((w) => {
+            genesisData.cultureLores.forEach((w) => {
                 newItems.push({
                     type: "culturelore",
                     name: w
                 })
             });
-            newData.data.attributes = duplicate(this.data._source.data.attributes);
-            data.attributes.forEach((a) => {
+            newData.system.attributes = duplicate(this.system.attributes);
+            genesisData.attributes.forEach((a) => {
                 const id = a.id.toLowerCase();
                 if (CONFIG.splittermond.attributes.includes(id)) {
-                    newData.data.attributes[id].species = 0;
-                    newData.data.attributes[id].initial = a.startValue;
-                    newData.data.attributes[id].advances = a.value - a.startValue;
+                    newData.system.attributes[id].species = 0;
+                    newData.system.attributes[id].initial = a.startValue;
+                    newData.system.attributes[id].advances = a.value - a.startValue;
                 }
 
                 if (id === "size") {
-                    newData.data.species.size = a.value;
+                    newData.system.species.size = a.value;
                 }
 
             });
-            newData.data.skills = duplicate(this.data._source.data.skills);
-            data.skills.forEach((s) => {
+            newData.system.skills = duplicate(this.system.skills);
+            genesisData.skills.forEach((s) => {
                 let id = s.id.toLowerCase();
-                if (newData.data.skills[id]) {
-                    newData.data.skills[id].points = s.points;
+                if (newData.system.skills[id]) {
+                    newData.system.skills[id].points = s.points;
 
                     s.masterships.forEach((m) => {
                         let modifierStr = CONFIG.splittermond.modifier[m.id] || "";
@@ -703,7 +664,7 @@ export default class SplittermondActor extends Actor {
 
             });
 
-            data.powers.forEach((s) => {
+            genesisData.powers.forEach((s) => {
                 newItems.push({
                     type: "strength",
                     name: s.name,
@@ -715,7 +676,7 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.resources.forEach((r) => {
+            genesisData.resources.forEach((r) => {
                 newItems.push({
                     type: "resource",
                     name: r.name,
@@ -726,7 +687,7 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.spells.forEach((s) => {
+            genesisData.spells.forEach((s) => {
                 let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(s.longDescription);
                 if (damage) {
                     damage = damage[0] || "";
@@ -747,7 +708,7 @@ export default class SplittermondActor extends Actor {
                     type: "spell",
                     name: s.name,
                     img: CONFIG.splittermond.icons.spell[s.id] || CONFIG.splittermond.icons.spell.default,
-                    data: {
+                    system: {
                         description: s.longDescription,
                         skill: skill,
                         skillLevel: s.schoolGrade,
@@ -773,12 +734,12 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.armors.forEach((a) => {
+            genesisData.armors.forEach((a) => {
                 newItems.push({
                     type: "armor",
                     name: a.name,
                     img: CONFIG.splittermond.icons.armor[a.name] || CONFIG.splittermond.icons.armor.default,
-                    data: {
+                    system: {
                         defenseBonus: a.defense,
                         tickMalus: a.tickMalus,
                         handicap: a.handicap,
@@ -788,12 +749,12 @@ export default class SplittermondActor extends Actor {
                 })
             });
 
-            data.shields.forEach((s) => {
+            genesisData.shields.forEach((s) => {
                 newItems.push({
                     type: "shield",
                     name: s.name,
                     img: CONFIG.splittermond.icons.shield[s.name] || CONFIG.splittermond.icons.shield.default,
-                    data: {
+                    system: {
                         skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                             return s.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                         }),
@@ -806,13 +767,13 @@ export default class SplittermondActor extends Actor {
             });
 
 
-            data.meleeWeapons.forEach((w) => {
+            genesisData.meleeWeapons.forEach((w) => {
                 if (w.name !== "Waffenlos") {
                     newItems.push({
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
-                        data: {
+                        system: {
                             skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                                 return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                             }),
@@ -827,10 +788,10 @@ export default class SplittermondActor extends Actor {
                 }
             });
 
-            data.longRangeWeapons.forEach((w) => {
+            genesisData.longRangeWeapons.forEach((w) => {
                 const itemData = newItems.find(i => i.name === w.name && i.type === "weapon");
                 if (itemData) {
-                    itemData.data.secondaryAttack = {
+                    itemData.system.secondaryAttack = {
                         skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                             return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                         }),
@@ -846,7 +807,7 @@ export default class SplittermondActor extends Actor {
                         type: "weapon",
                         name: w.name,
                         img: CONFIG.splittermond.icons.weapon[w.name] || CONFIG.splittermond.icons.weapon.default,
-                        data: {
+                        system: {
                             skill: CONFIG.splittermond.skillGroups.fighting.find(skill => {
                                 return w.skill.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
                             }),
@@ -862,23 +823,21 @@ export default class SplittermondActor extends Actor {
 
             });
 
-            data.items.forEach((e) => {
+            genesisData.items.forEach((e) => {
                 newItems.push({
                     type: "equipment",
                     name: e.name,
                     img: CONFIG.splittermond.icons.equipment[e.name] || CONFIG.splittermond.icons.equipment.default,
-                    data: {
+                    system: {
                         quantity: e.count
                     }
                 });
             });
 
-            if (data.telare) {
-
-                newData.data.currency.S = Math.floor(data.telare / 10000);
-                newData.data.currency.L = Math.floor(data.telare / 100) - newData.data.currency.S * 100;
-                newData.data.currency.T = Math.floor(data.telare) - newData.data.currency.L * 100 - newData.data.currency.S * 10000;
-
+            if (genesisData.telare) {
+                newData.system.currency.S = Math.floor(genesisData.telare / 10000);
+                newData.system.currency.L = Math.floor(genesisData.telare / 100) - newData.system.currency.S * 100;
+                newData.system.currency.T = Math.floor(genesisData.telare) - newData.system.currency.L * 100 - newData.system.currency.S * 10000;
             }
 
             let p = new Promise((resolve, reject) => {
@@ -909,7 +868,7 @@ export default class SplittermondActor extends Actor {
                 let updateItems = [];
 
                 newItems = newItems.filter((i) => {
-                    let foundItem = this.data.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
+                    let foundItem = this.items.find((im) => im.type === i.type && im.name.trim().toLowerCase() === i.name.trim().toLowerCase());
                     if (foundItem) {
                         i._id = foundItem.id;
                         delete i.img;
@@ -919,48 +878,68 @@ export default class SplittermondActor extends Actor {
                     return true;
                 });
 
-                newData.data.currency = this.data.data.currency;
+                newData.system.currency = this.system.currency;
 
-                this.update(newData);
+                await this.update(newData);
                 await this.updateEmbeddedDocuments("Item", updateItems);
                 await this.createEmbeddedDocuments("Item", newItems);
 
                 return this.update(newData);
 
             }
-            newData.name = data.name;
-            newData.token.name = data.name;
-            newData.token.actorLink = true;
+            newData.name = genesisData.name;
+            newData.prototypeToken.name =genesisData.name;
+            newData.prototypeToken.actorLink = true;
             newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
-
         }
 
 
         return super.importFromJSON(json);
     }
 
+    /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
+    spendSplinterpoint(){
+        if(this.splinterpoints.value > 0) {
+            this.update({
+                "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
+            });
+            return {pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName)}
+        };
+        return {pointSpent: false, getBonus:()=> 0};
+    }
+
+    /**
+     * This is a stub
+     * @param {string} skillName
+     * @return {number}
+     */
+    #getSplinterpointBonus(skillName){
+        return 3;
+    }
+
     async useSplinterpointBonus(message) {
-        if (!message.data.flags.splittermond
-            || !message.data.flags.splittermond.check
-            || parseInt(this.data.data.splinterpoints.value) <= 0
-            || message.data.flags.splittermond.check.isFumble) {
+        if (!message.flags.splittermond
+            || !message.flags.splittermond.check
+            || parseInt(this.splinterpoints.value) <= 0
+            || message.flags.splittermond.check.isFumble) {
             return;
         }
 
-        let checkMessageData = message.data.flags.splittermond.check;
+        let checkMessageData = message.flags.splittermond.check;
 
-        message.roll._total = message.roll._total + 3;
+        //Magic number 0; Message comes with a storage for several rolls, but we only set one roll in chat.js.
+        message.rolls[0]._total = message.rolls[0]._total + 3;
         checkMessageData.modifierElements.push({
             value: 3,
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.system.splinterpoints.value = parseInt(this.system.splinterpoints.value) - 1;
+        this.update({system: {splinterpoints: {value:  parseInt(this.splinterpoints.value) - 1}}});
         checkMessageData.availableSplinterpoints = 0;
 
-        let checkData = Dice.evaluateCheck(message.roll, checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
-        if (checkData.succeeded && parseInt(checkMessageData.skillPoints) == 0 && (message.roll._total - checkMessageData.difficulty) >= 3) {
+        let checkData = await Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
+        if (checkData.succeeded && parseInt(checkMessageData.skillPoints) == 0 && (message.rolls[0]._total - checkMessageData.difficulty) >= 3) {
             checkData.degreeOfSuccess += 1;
         }
 
@@ -974,7 +953,7 @@ export default class SplittermondActor extends Actor {
             "flags.splittermond.check": chatMessageData.flags.splittermond.check
         });
         this.update({
-            "data.splinterpoints.value": this.system.splinterpoints.value
+            "system.splinterpoints.value": this.system.splinterpoints.value
         })
     }
 
@@ -1001,7 +980,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollAttackFumble() {
-        let roll = new Roll("2d10").roll({ async: false });
+        let roll = await (new Roll("2d10")).evaluate();
 
         let result = CONFIG.splittermond.fumbleTable.fight.find(el => el.min <= roll.total && el.max >= roll.total);
 
@@ -1030,15 +1009,21 @@ export default class SplittermondActor extends Actor {
         let chatData = {
             user: game.user.id,
             speaker: ChatMessage.getSpeaker({ actor: this }),
-            roll: roll,
+            rolls: [roll],
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
-            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+            type: CONST.CHAT_MESSAGE_TYPES.OTHER
         };
 
         ChatMessage.create(chatData);
     }
 
+    /**
+     * @param {number} eg
+     * @param {string} costs A cost string as used for Splittermond spells
+     * @param {SplittermondSkill} skill
+     * @return {Promise<void>}
+     */
     async rollMagicFumble(eg = 0, costs = 0, skill = "") {
 
         let defaultTable = "sorcerer";
@@ -1078,7 +1063,7 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll({ async: false });
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -1117,10 +1102,10 @@ export default class SplittermondActor extends Actor {
                         let chatData = {
                             user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
-                            roll: roll,
+                            rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
-                            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+                            type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
                         ChatMessage.create(chatData);
@@ -1141,7 +1126,7 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll({ async: false });
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -1178,10 +1163,10 @@ export default class SplittermondActor extends Actor {
                         let chatData = {
                             user: game.user.id,
                             speaker: ChatMessage.getSpeaker({ actor: this }),
-                            roll: roll,
+                            rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
-                            type: CONST.CHAT_MESSAGE_TYPES.ROLL
+                            type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
                         ChatMessage.create(chatData);
@@ -1195,7 +1180,7 @@ export default class SplittermondActor extends Actor {
         return;
     }
 
-    async addTicks(value = 3, message = "") {
+    async addTicks(value = 3, message = "", askPlayer=true) {
         const combat = game.combat;
         value = parseInt(value);
         if (!value) return;
@@ -1205,7 +1190,8 @@ export default class SplittermondActor extends Actor {
         let combatant = combat.combatants.find((c) => c.actor === this);
 
         if (!combatant) return;
-
+        let nTicks = value;
+        if(askPlayer){
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
                 title: this.name + " - Ticks",
@@ -1222,7 +1208,8 @@ export default class SplittermondActor extends Actor {
             dialog.render(true);
         });
 
-        let nTicks = await p;
+        nTicks = await p;
+        }
 
         let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
 
@@ -1248,7 +1235,7 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        return this.update({ "data.focus": focusData, "data.health": healthData });
+        return this.update({ "system.focus": focusData, "system.health": healthData });
     }
 
     async longRest() {
@@ -1275,8 +1262,8 @@ export default class SplittermondActor extends Actor {
             dialog.render(true);
         });
 
-        let focusData = duplicate(data.focus);
-        let healthData = duplicate(data.health);
+        let focusData = duplicate(this.system.focus);
+        let healthData = duplicate(this.system.health);
 
 
         if (await p) {
@@ -1291,12 +1278,18 @@ export default class SplittermondActor extends Actor {
         focusData.consumed.value = Math.max(focusData.consumed.value - data.focusRegeneration.multiplier * this.attributes.willpower.value - data.focusRegeneration.bonus, 0);
         healthData.consumed.value = Math.max(healthData.consumed.value - data.healthRegeneration.multiplier * this.attributes.constitution.value - data.healthRegeneration.bonus, 0);
 
-        return this.update({ "data.focus": focusData, "data.health": healthData });
+        return this.update({ "system.focus": focusData, "system.health": healthData });
     }
 
+    /**
+     *
+     * @param {CostTypes} type
+     * @param {string} valueStr  a string of same form as given for Splittermond Spells
+     * @param description
+     */
     consumeCost(type, valueStr, description) {
         const data = this.system;
-        let costData = Costs.parseCostsString(valueStr.toString());
+        let costData = parseCostString(valueStr.toString()).asPrimaryCost();
 
         let subData = duplicate(data[type]);
 
@@ -1317,20 +1310,20 @@ export default class SplittermondActor extends Actor {
         if (!subData.exhausted.value) {
             subData.exhausted = {
                 value: 0
-            }
+            };
         }
 
         if (!subData.consumed.value) {
             subData.consumed = {
                 value: 0
-            }
+            };
         }
 
         subData.exhausted.value += costData.exhausted;
         subData.consumed.value += costData.consumed;
 
         this.update({
-            "data": {
+            "system": {
                 [type]: subData
             }
         });

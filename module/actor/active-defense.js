@@ -11,10 +11,11 @@ export default class ActiveDefense {
     }
 
     async roll(options = {}) {
-        if (!this.actor) return;
+        if (!this.actor) return Promise.resolve(false);
 
         options = duplicate(options)
         options.type = "defense";
+        options.preSelectedModifier = [];
         options.difficulty = 15;
         options.title = `${game.i18n.localize(`splittermond.activeDefense`)}: ${game.i18n.localize(this.actor.derivedValues[this.type].label.long)} - ${this.name}`;
         options.checkMessageData = {

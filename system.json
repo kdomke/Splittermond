@@ -1,12 +1,16 @@
 {
-  "name": "splittermond",
   "id": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.10.4",
-  "authors": [{
-    "name": "Simon"
-  }],
+  "version": "0.12.0",
+  "authors": [
+    {
+      "name": "Simon"
+    },
+    {
+      "name": "m-2 squared"
+    }
+  ],
   "scripts": [],
   "esmodules": [
     "splittermond.js"
@@ -85,15 +89,17 @@
     }
   ],
   "socket": true,
-  "gridDistance": 1,
-  "gridUnits": "m",
+  "grid": {
+    "distance": 1,
+    "units": "m"
+  },
   "initiative": "@initiative - 1d6",
   "primaryTokenAttribute": "healthBar",
   "secondaryTokenAttribute": "focusBar",
   "compatibility": {
-    "minimum": 10,
-    "verified": 10, 
-    "maximum": 11
+    "minimum": 12,
+    "verified": 12.326,
+    "maximum": 12
   },
   "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
   "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
