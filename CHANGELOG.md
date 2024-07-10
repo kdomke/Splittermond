@@ -1,3 +1,12 @@
+## 0.12.0##
+2024-07-10
+
+Diese Version ist nicht mehr V11 kompatibel. Bitte updatet auf V12. Diese Version basiert auf den mühevollen Arbeiten von `m-2 squared`. Vielen Dank dafür!
+
+* added: V12 support
+* added: neue dynamische Zauber-Chat-Card
+* changed: sehr viel Refactoring
+
 ## 0.10.4##
 2023-08-28
 
