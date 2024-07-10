@@ -7,6 +7,15 @@ Diese Version ist nicht mehr V11 kompatibel. Bitte updatet auf V12. Diese Versio
 * added: neue dynamische Zauber-Chat-Card
 * changed: sehr viel Refactoring
 
+## 0.11.0##
+2023-07-10
+
+Diese Version ist nicht mehr V10 kompatibel. Bitte updatet auf V11 oder V12. Die Änderungen basieren auf den Arbeiten von `m-2 squared`. Vielen Dank dafür!
+
+* added: Zauber können im Compendium nun nach Schwelle gefiltert werden
+* added: negative Zauberkostenreduktion ist möglich
+* changed: Viel Code "unter der Haube"
+
 ## 0.10.4##
 2023-08-28
 
