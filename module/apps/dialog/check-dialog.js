@@ -47,7 +47,7 @@ export default class CheckDialog extends Dialog {
                         //icon: "<img src='../../icons/dice/d10black.svg' style='border: none; opacity: 0.5' width=18 height=18/><img src='../../icons/dice/d10black.svg'  style='border: none' width=18 height=18/>",
                         label: game.i18n.localize("splittermond.rollType.safety"),
                         callback: (html) => {
-                            let fd = CheckDialog._prepareFormData(target, checkData);
+                            let fd = CheckDialog._prepareFormData(html, checkData);
                             fd.rollType = "safety";
                             resolve(fd);
                         }
