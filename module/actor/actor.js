@@ -1063,7 +1063,7 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll({ async: false });
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -1126,7 +1126,7 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).roll({ async: false });
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
