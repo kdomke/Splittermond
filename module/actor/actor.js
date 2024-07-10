@@ -980,7 +980,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollAttackFumble() {
-        let roll = new Roll("2d10").roll({ async: false });
+        let roll = await (new Roll("2d10")).evaluate();
 
         let result = CONFIG.splittermond.fumbleTable.fight.find(el => el.min <= roll.total && el.max >= roll.total);
 
