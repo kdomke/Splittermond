@@ -5,6 +5,7 @@
   "main": "splittermond.js",
   "type": "module",
   "scripts": {
+    "build" : "tsc && npm run test && npm run compileCss",
     "test": "node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
     "compileCss": "gulp less"
   },
@@ -16,6 +17,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt#readme",
   "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
     "chai": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-less": "^4.0.1",
@@ -23,7 +25,8 @@
     "jquery": "^3.7.1",
     "jsdom": "^23.2.0",
     "mocha": "^10.2.0",
-    "sinon": "^17.0.1"
+    "sinon": "^17.0.1",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@types/sinon": "^17.0.3"
