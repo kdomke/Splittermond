@@ -1,13 +1,13 @@
-import {parseCostString} from "../../costs/costParser.js";
-import {Cost, CostModifier} from "../../costs/Cost.js";
-import {AgentReference} from "../../../data/references/AgentReference.js";
-import {DamageRoll} from "../../damage/DamageRoll.js";
+import { parseCostString } from "../../costs/costParser.js";
+import { Cost, CostModifier } from "../../costs/Cost.js";
+import { AgentReference } from "../../../data/references/AgentReference.js";
+import { DamageRoll } from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
-import {ItemReference} from "../../../data/references/ItemReference.js";
-import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
-import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
-import {referencesUtils} from "../../../data/references/referencesUtils.js";
-import {foundryApi} from "../../../api/foundryApi.js";
+import { ItemReference } from "../../../data/references/ItemReference.js";
+import { fields, SplittermondDataModel } from "../../../data/SplittermondDataModel.js";
+import { OnAncestorReference } from "../../../data/references/OnAncestorReference.js";
+import { referencesUtils } from "../../../data/references/referencesUtils.js";
+import { foundryApi } from "../../../api/foundryApi.js";
 
 /**
  * @extends {SplittermondDataModel<SpellMessageActionsManager,never>}
@@ -30,9 +30,9 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
         const casterReference = AgentReference.initialize(spellReference.getItem().actor);
         const spellActionManagerData = {
             focus: FocusAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
-            ticks: new TickAction({actorReference: casterReference.toObject(), adjusted: 3}).toObject(),
+            ticks: new TickAction({ actorReference: casterReference.toObject(), adjusted: 3 }).toObject(),
             damage: DamageAction.initialize(spellReference, checkReportReference).toObject(),
-            activeDefense: new ActiveDefenseAction({itemReference:spellReference.toObject(), checkReportReference: checkReportReference.toObject()}).toObject(),
+            activeDefense: new ActiveDefenseAction({ itemReference: spellReference.toObject(), checkReportReference: checkReportReference.toObject() }).toObject(),
             splinterPoint: UseSplinterpointsAction.initialize(casterReference, checkReportReference).toObject(),
             magicFumble: MagicFumbleAction.initialize(casterReference, spellReference, checkReportReference).toObject(),
         };
@@ -41,10 +41,10 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
 
     static defineSchema() {
         return {
-            focus: new fields.EmbeddedDataField(FocusAction, {required: true, nullable: false}),
-            ticks: new fields.EmbeddedDataField(TickAction, {required: true, nullable: false}),
-            damage: new fields.EmbeddedDataField(DamageAction, {required: true, nullable: false}),
-            activeDefense: new fields.EmbeddedDataField(ActiveDefenseAction, {required: true, nullable: false}),
+            focus: new fields.EmbeddedDataField(FocusAction, { required: true, nullable: false }),
+            ticks: new fields.EmbeddedDataField(TickAction, { required: true, nullable: false }),
+            damage: new fields.EmbeddedDataField(DamageAction, { required: true, nullable: false }),
+            activeDefense: new fields.EmbeddedDataField(ActiveDefenseAction, { required: true, nullable: false }),
             splinterPoint: new fields.EmbeddedDataField(UseSplinterpointsAction, {
                 required: true,
                 nullable: false
@@ -94,8 +94,8 @@ export class SpellMessageActionsManager extends SplittermondDataModel {
 class MessageAction extends SplittermondDataModel {
     static defineSchema() {
         return {
-            used: new fields.BooleanField({required: true, blank: false, nullable: false, initial: false}),
-            available: new fields.BooleanField({required: true, blank: false, nullable: false, initial: true}),
+            used: new fields.BooleanField({ required: true, blank: false, nullable: false, initial: false }),
+            available: new fields.BooleanField({ required: true, blank: false, nullable: false, initial: true }),
         }
     }
 }
@@ -109,8 +109,8 @@ class ActiveDefenseAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
-            itemReference: new  fields.EmbeddedDataField(ItemReference, {required:true, nullable:false}),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, { required: true, nullable: false }),
+            itemReference: new fields.EmbeddedDataField(ItemReference, { required: true, nullable: false }),
         }
     }
 
@@ -118,12 +118,12 @@ class ActiveDefenseAction extends MessageAction {
         //will fail if the difficulty is not a number, which should only happen if the difficulty is a target property
         return Number.isNaN(Number.parseFloat(this.itemReference.getItem().difficulty));
     }
-    set available(__) {}
-    activeDefense(){
+    set available(__) { }
+    activeDefense() {
         try {
             const actorReference = referencesUtils.findBestUserActor();
             actorReference.getAgent().activeDefenseDialog(this.itemReference.getItem().difficulty)
-        }catch(e){
+        } catch (e) {
             foundryApi.informUser("splittermond.pleaseSelectAToken")
         }
     }
@@ -150,7 +150,7 @@ class UseSplinterpointsAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, { required: true, nullable: false }),
             actorReference: new fields.EmbeddedDataField(AgentReference, {
                 required: true,
                 blank: false,
@@ -171,7 +171,7 @@ class UseSplinterpointsAction extends MessageAction {
     }
 
     useSplinterpoint() {
-        this.updateSource({used: true});
+        this.updateSource({ used: true });
         return this.actorReference.getAgent().spendSplinterpoint().getBonus(this.checkReportReference.get().skill.name);
     }
 }
@@ -186,9 +186,9 @@ class MagicFumbleAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
-            spellReference: new fields.EmbeddedDataField(ItemReference, {required: true, nullable: false}),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
+            casterReference: new fields.EmbeddedDataField(AgentReference, { required: true, nullable: false }),
+            spellReference: new fields.EmbeddedDataField(ItemReference, { required: true, nullable: false }),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, { required: true, nullable: false }),
         }
     }
 
@@ -203,7 +203,8 @@ class MagicFumbleAction extends MessageAction {
             used: false,
             casterReference: casterReference.toObject(),
             spellReference: spellReference.toObject(),
-            checkReportReference: checkReportReference.toObject()});
+            checkReportReference: checkReportReference.toObject()
+        });
     }
 
     get available() {
@@ -213,11 +214,11 @@ class MagicFumbleAction extends MessageAction {
     set available(__) {
     }
 
-    rollFumble(){
-        this.updateSource({used: true});
-        const eg = this.checkReportReference.degreeOfSuccess
-        const costs = this.spellReference.getItem().cost
-        const skill = this.checkReportReference.get().skill.name;
+    rollFumble() {
+        this.updateSource({ used: true });
+        const eg = -this.checkReportReference.get().degreeOfSuccess
+        const costs = this.spellReference.getItem().costs
+        const skill = this.checkReportReference.get().skill.id;
         this.casterReference.getAgent().rollMagicFumble(eg, costs, skill);
     }
 }
@@ -232,8 +233,8 @@ class TickAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            actorReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
-            adjusted: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
+            actorReference: new fields.EmbeddedDataField(AgentReference, { required: true, nullable: false }),
+            adjusted: new fields.NumberField({ required: true, blank: false, nullable: false, initial: 0 }),
         }
     }
 
@@ -260,7 +261,7 @@ class TickAction extends MessageAction {
     }
 
     advanceToken() {
-        this.updateSource({used: true});
+        this.updateSource({ used: true });
         this.actorReference.getAgent().addTicks(this.adjusted, "", false);//we don't wait for the promise, because we're done.
     }
 
@@ -277,8 +278,8 @@ class FocusAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            casterReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
+            casterReference: new fields.EmbeddedDataField(AgentReference, { required: true, nullable: false }),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, { required: true, nullable: false }),
             spellReference: new fields.EmbeddedDataField(ItemReference, {
                 required: true,
                 blank: false,
@@ -308,7 +309,7 @@ class FocusAction extends MessageAction {
             console.warn("Attempt alter a used cost action");
             return;
         }
-        this.updateSource({adjusted: this.adjusted.add(cost)});
+        this.updateSource({ adjusted: this.adjusted.add(cost) });
     }
 
     /** @param {CostModifier} cost a Splittermond cost string ( e.g. K2V1)*/
@@ -317,7 +318,7 @@ class FocusAction extends MessageAction {
             console.warn("Attempt to alter a used cost action");
             return;
         }
-        this.updateSource({adjusted: this.adjusted.subtract(cost)});
+        this.updateSource({ adjusted: this.adjusted.subtract(cost) });
     }
 
     get cost() {
@@ -331,7 +332,7 @@ class FocusAction extends MessageAction {
     }
 
     consumeFocus() {
-        this.updateSource({used: true});
+        this.updateSource({ used: true });
         this.casterReference.getAgent().consumeCost("focus", this.cost, this.spellReference.getItem().name);
     }
 
@@ -347,9 +348,9 @@ class DamageAction extends MessageAction {
     static defineSchema() {
         return {
             ...MessageAction.defineSchema(),
-            itemReference: new fields.EmbeddedDataField(ItemReference, {required: true, blank: false, nullable: false}),
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {required: true, nullable: false}),
-            adjusted: new fields.NumberField({required: true, blank: false, nullable: false, initial: 0}),
+            itemReference: new fields.EmbeddedDataField(ItemReference, { required: true, blank: false, nullable: false }),
+            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, { required: true, nullable: false }),
+            adjusted: new fields.NumberField({ required: true, blank: false, nullable: false, initial: 0 }),
         }
     }
 
@@ -375,7 +376,7 @@ class DamageAction extends MessageAction {
             console.warn("Attempt to alter a used cost action");
             return;
         }
-        this.updateSource({adjusted: this.adjusted + amount});
+        this.updateSource({ adjusted: this.adjusted + amount });
     }
 
     /**@param {number} amount*/
@@ -384,7 +385,7 @@ class DamageAction extends MessageAction {
             console.warn("Attempt to alter a used cost action");
             return;
         }
-        this.updateSource({adjusted: this.adjusted - amount});
+        this.updateSource({ adjusted: this.adjusted - amount });
     }
 
     get cost() {
@@ -394,7 +395,7 @@ class DamageAction extends MessageAction {
     }
 
     applyDamage() {
-        this.updateSource({used: true});
+        this.updateSource({ used: true });
         return Dice.damage(this.cost, "", this.itemReference.getItem().name); //we don't wait for the promise, because we're done.
     }
 }

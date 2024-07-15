@@ -1027,6 +1027,7 @@ export default class SplittermondActor extends Actor {
     async rollMagicFumble(eg = 0, costs = 0, skill = "") {
 
         let defaultTable = "sorcerer";
+        eg = Math.abs(eg);
         let lowerFumbleResult = this.modifier.value("lowerfumbleresult/" + skill)
         lowerFumbleResult += this.modifier.value("lowerfumbleresult/*");
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
