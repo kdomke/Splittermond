@@ -1,4 +1,4 @@
-import {foundryApi} from "../../api/foundryApi.js";
+import { foundryApi } from "../../api/foundryApi.js";
 
 export class DamageRoll {
 
@@ -9,7 +9,7 @@ export class DamageRoll {
     static parse(damageString, featureString = "") {
         const features = parseFeatureString(featureString);
         const damage = parseDamageString(damageString);
-        return new DamageRoll({...damage, features});
+        return new DamageRoll({ ...damage, features });
     }
 
     /**
@@ -18,7 +18,7 @@ export class DamageRoll {
      * @param {number} damageModifier
      * @param {Record<string, {name:string, value:number, active:boolean}>} features
      */
-    constructor({nDice, nFaces, damageModifier, features}) {
+    constructor({ nDice, nFaces, damageModifier, features }) {
         this._nDice = nDice;
         this._nFaces = nFaces;
         this._damageModifier = damageModifier;
@@ -72,7 +72,7 @@ export class DamageRoll {
                     if (r.result < this._features["scharf"].value) {
                         this._features["scharf"].active = true;
                         scharfBonus += this._features["scharf"].value - r.result;
-                        r.result = this._features["scharf"].value;
+                        //r.result = this._features["scharf"].value;
                     }
                 }
             });
@@ -92,7 +92,7 @@ export class DamageRoll {
                 if (r.active) {
                     if (r.result === roll.terms[0].faces) {
                         this._features["kritisch"].active = true;
-                        r.result += this._features["kritisch"].value;
+                        //r.result += this._features["kritisch"].value;
                         kritischBonus += this._features["kritisch"].value;
                     }
                 }
@@ -160,12 +160,12 @@ function parseDamageString(damageString) {
     //throwing more than 999 dice is not supported by Foundr V11.
     const damageFormulaData = /([0-9]{1,999})d(6|10)(\s*([+-])\s*([0-9]*))?/.exec(sanitizedFormula);
     if (!damageFormulaData) {
-        return {nDice: 0, nFaces: 0, damageModifier: 0};
+        return { nDice: 0, nFaces: 0, damageModifier: 0 };
     }
     const nDice = parseInt(damageFormulaData[1] || 1);
     const nFaces = parseInt(damageFormulaData[2]);
     const sign = damageFormulaData[4] === "-" ? -1 : 1;
     const parsedDamageModifier = sign * parseInt(damageFormulaData[5]);
     const damageModifier = isNaN(parsedDamageModifier) ? 0 : parsedDamageModifier;
-    return {nDice, nFaces, damageModifier};
+    return { nDice, nFaces, damageModifier };
 }
