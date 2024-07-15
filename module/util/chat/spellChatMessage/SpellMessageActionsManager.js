@@ -396,6 +396,6 @@ class DamageAction extends MessageAction {
 
     applyDamage() {
         this.updateSource({ used: true });
-        return Dice.damage(this.cost, "", this.itemReference.getItem().name); //we don't wait for the promise, because we're done.
+        return Dice.damage(this.cost, this.itemReference.getItem().system.features, this.itemReference.getItem().name); //we don't wait for the promise, because we're done.
     }
 }
