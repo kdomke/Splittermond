@@ -9,8 +9,8 @@ import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
-import {parseCostString} from "../util/costs/costParser.js";
-import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.js";
+import { parseCostString } from "../util/costs/costParser.js";
+import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.js";
 
 /**
  * @property {SplittermondSpellData} system
@@ -144,7 +144,7 @@ export default class SplittermondActor extends Actor {
             if (parseInt(this.system.damageReduction.value) != 0) {
                 this.modifier.add("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), this.system.damageReduction.value);
             }
-            
+
         }
 
     }
@@ -169,12 +169,12 @@ export default class SplittermondActor extends Actor {
 
     prepareDerivedData() {
         //console.log(`prepareDerivedData() - ${this.type}: ${this.name}`);
-        
+
         super.prepareDerivedData();
-        
+
         this.spells = (this.items.filter(i => i.type === "spell") || []);
         this.spells.sort((a, b) => (a.sort - b.sort));
-        
+
         this._prepareModifier();
 
         this._prepareHealthFocus();
@@ -470,10 +470,10 @@ export default class SplittermondActor extends Actor {
                         });
                         break;
                     case "damage":
-                        this.modifier.add("damage."+emphasis, name, value, item, type, false);
+                        this.modifier.add("damage." + emphasis, name, value, item, type, false);
                         break;
                     case "weaponspeed":
-                        this.modifier.add("weaponspeed."+emphasis, name, value, item, type, false);
+                        this.modifier.add("weaponspeed." + emphasis, name, value, item, type, false);
                         break;
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
@@ -582,7 +582,7 @@ export default class SplittermondActor extends Actor {
                 type: "moonsign",
                 name: genesisData.moonSign.name,
                 img: moonSignImage,
-                data: {
+                system: {
                     description: moonSignDescription
                 }
             }
@@ -648,7 +648,7 @@ export default class SplittermondActor extends Actor {
                         let newMastership = {
                             type: "mastery",
                             name: m.name,
-                            data: {
+                            system: {
                                 skill: id,
                                 level: m.level,
                                 description: description,
@@ -668,7 +668,7 @@ export default class SplittermondActor extends Actor {
                 newItems.push({
                     type: "strength",
                     name: s.name,
-                    data: {
+                    system: {
                         quantity: s.count,
                         description: s.longDescription,
                         modifier: CONFIG.splittermond.modifier[s.id] || ""
@@ -680,7 +680,7 @@ export default class SplittermondActor extends Actor {
                 newItems.push({
                     type: "resource",
                     name: r.name,
-                    data: {
+                    system: {
                         value: r.value,
                         description: r.description
                     }
@@ -888,7 +888,7 @@ export default class SplittermondActor extends Actor {
 
             }
             newData.name = genesisData.name;
-            newData.prototypeToken.name =genesisData.name;
+            newData.prototypeToken.name = genesisData.name;
             newData.prototypeToken.actorLink = true;
             newData.items = duplicate(newItems);
             json = JSON.stringify(newData);
@@ -899,14 +899,14 @@ export default class SplittermondActor extends Actor {
     }
 
     /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
-    spendSplinterpoint(){
-        if(this.splinterpoints.value > 0) {
+    spendSplinterpoint() {
+        if (this.splinterpoints.value > 0) {
             this.update({
                 "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
             });
-            return {pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName)}
+            return { pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName) }
         };
-        return {pointSpent: false, getBonus:()=> 0};
+        return { pointSpent: false, getBonus: () => 0 };
     }
 
     /**
@@ -914,7 +914,7 @@ export default class SplittermondActor extends Actor {
      * @param {string} skillName
      * @return {number}
      */
-    #getSplinterpointBonus(skillName){
+    #getSplinterpointBonus(skillName) {
         return 3;
     }
 
@@ -935,7 +935,7 @@ export default class SplittermondActor extends Actor {
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.update({system: {splinterpoints: {value:  parseInt(this.splinterpoints.value) - 1}}});
+        this.update({ system: { splinterpoints: { value: parseInt(this.splinterpoints.value) - 1 } } });
         checkMessageData.availableSplinterpoints = 0;
 
         let checkData = await Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
@@ -1027,7 +1027,7 @@ export default class SplittermondActor extends Actor {
     async rollMagicFumble(eg = 0, costs = 0, skill = "") {
 
         let defaultTable = "sorcerer";
-        let lowerFumbleResult = this.modifier.value("lowerfumbleresult/"+skill) 
+        let lowerFumbleResult = this.modifier.value("lowerfumbleresult/" + skill)
         lowerFumbleResult += this.modifier.value("lowerfumbleresult/*");
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
@@ -1180,7 +1180,7 @@ export default class SplittermondActor extends Actor {
         return;
     }
 
-    async addTicks(value = 3, message = "", askPlayer=true) {
+    async addTicks(value = 3, message = "", askPlayer = true) {
         const combat = game.combat;
         value = parseInt(value);
         if (!value) return;
@@ -1191,24 +1191,24 @@ export default class SplittermondActor extends Actor {
 
         if (!combatant) return;
         let nTicks = value;
-        if(askPlayer){
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: this.name + " - Ticks",
-                content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
-                buttons: {
-                    ok: {
-                        label: "Ok",
-                        callback: html => {
-                            resolve(parseInt(html.find('.ticks')[0].value));
+        if (askPlayer) {
+            let p = new Promise((resolve, reject) => {
+                let dialog = new Dialog({
+                    title: this.name + " - Ticks",
+                    content: `<p>${message}</p><input type='text' class='ticks' value='${value}'>`,
+                    buttons: {
+                        ok: {
+                            label: "Ok",
+                            callback: html => {
+                                resolve(parseInt(html.find('.ticks')[0].value));
+                            }
                         }
                     }
-                }
+                });
+                dialog.render(true);
             });
-            dialog.render(true);
-        });
 
-        nTicks = await p;
+            nTicks = await p;
         }
 
         let newInitiative = Math.round(combatant.initiative) + parseInt(nTicks);
