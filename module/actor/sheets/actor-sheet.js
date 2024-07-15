@@ -10,7 +10,7 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            classes: ["splittermond", "sheet", "actor"]            
+            classes: ["splittermond", "sheet", "actor"]
         });
     }
 
@@ -46,7 +46,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 sheetData.fightingSkills[skill] = duplicate(sheetData.data.system.skills[skill]);
                 sheetData.fightingSkills[skill].label = `splittermond.skillLabel.${skill}`;
             });
-        
+
         sheetData.data.system.biographyHTML = await TextEditor.enrichHTML(sheetData.data.system.biography, {
             relativeTo: this.actor,
             rolls: true,
@@ -145,7 +145,7 @@ export default class SplittermondActorSheet extends ActorSheet {
             if (itemType === "mastery") {
                 const skill = $(event.currentTarget).closestData('skill');
                 if (skill) {
-                    itemData.data = {
+                    itemData.system = {
                         skill: skill
                     }
                 }
@@ -159,12 +159,12 @@ export default class SplittermondActorSheet extends ActorSheet {
             let p = new Promise((resolve, reject) => {
                 let dialog = new Dialog({
                     title: game.i18n.localize("splittermond.deleteItem"),
-                    content: "<p>" + game.i18n.format("splittermond.deleteItemQuestion", {itemName: this.actor.items.get(itemId).name}) + "</p>",
+                    content: "<p>" + game.i18n.format("splittermond.deleteItemQuestion", { itemName: this.actor.items.get(itemId).name }) + "</p>",
                     buttons: {
                         delete: {
                             label: game.i18n.localize("splittermond.delete"),
                             callback: html => {
-                                
+
                                 resolve(true);
                             }
                         },
@@ -183,8 +183,8 @@ export default class SplittermondActorSheet extends ActorSheet {
                 await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
                 await Hooks.call("redraw-combat-tick");
             }
-           
-            
+
+
         });
 
         html.find('[data-action="edit-item"]').click(event => {
@@ -382,7 +382,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                 const itemData = this.actor.items.find(el => el.id === itemId)?.system;
                 event.originalEvent.dataTransfer.setData("text/plain", JSON.stringify({
                     type: "Item",
-                    data: itemData,
+                    system: itemData,
                     actorId: this.actor._id
                 }));
                 event.stopPropagation();
@@ -589,7 +589,7 @@ export default class SplittermondActorSheet extends ActorSheet {
                     itemData.system.skillLevel = skillData[1];
                 }
 
-                if (!itemData.data.skill) {
+                if (!itemData.system.skill) {
                     return;
                 }
             }

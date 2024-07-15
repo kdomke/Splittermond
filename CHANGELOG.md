@@ -1,3 +1,11 @@
+## 0.12.1##
+2024-07-15
+
+* fixed: Genesis Import (Meisterschaften wurden falsch importiert)
+* fixed: Drag-n-drop von Zaubern auf das Sheet 
+* fixed: Magiepatzer-Dialog wurde nicht korrekt vorausgefüllt
+* fixed: Merkmale werden bei Schadenswürfen in Zaubern wieder berücksichtigts
+
 ## 0.12.0##
 2024-07-10
 
