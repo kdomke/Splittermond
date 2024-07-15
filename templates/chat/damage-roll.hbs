@@ -11,7 +11,7 @@
     {{#if features}}
     <ul class="features">
         {{#each features}}
-        <li class="{{#if this.active}}active{{/if}}">{{this.name}}</li>
+        <li class="{{#if this.active}}active{{/if}}">{{this.name}}{{#if this.value}} {{this.value}}{{/if}}</li>
         {{/each}}
     </ul>
     {{/if}}
