@@ -51,7 +51,7 @@ const fields: DataFields = foundry.data.fields;
 
 type DefineSchemaType = () => any;
 type DataModelSchemaType<T extends DefineSchemaType> = MemberDefinitionContainerMapper<ReturnType<T>>;
-type MemberDefinitionContainerMapper<T> = { [KEY in keyof T]: DataFieldMapper<T[KEY]> }
+type MemberDefinitionContainerMapper<T> = MakeUndefinedOptional<{ [KEY in keyof T]: DataFieldMapper<T[KEY]> }>
 type DataFieldMapper<T> =
     T extends ObjectField<infer REQ, infer NULL> ? ObjectFieldMap<REQ, NULL> :
         T extends BooleanField<infer REQ, infer NULL> ? BooleanFieldMap<REQ, NULL> :
@@ -73,40 +73,13 @@ type SchemaFieldMap<S, REQ, NULL> = MemberDefinitionContainerMapper<S> | WithReq
 type WithReq<REQ> = REQ extends true ? never : undefined;
 type WithNull<NULL> = NULL extends true ? null : never;
 
+type HasUndefined<T> = T extends undefined ? true : false
+type FilterUndefined<CONDITION, RETURN> = HasUndefined<CONDITION> extends false ? never : RETURN
+type DefinedOnly<CONDITON, RETURN> = HasUndefined<CONDITON> extends false ? RETURN : never
+type MakeUndefinedOptional<T> =
+    { [OPTIONAL in keyof T as FilterUndefined<T[OPTIONAL], OPTIONAL>]+?: Exclude<T[OPTIONAL], undefined> } &
+    { [REQUIRED in keyof T as DefinedOnly<T[REQUIRED], REQUIRED>]: T[REQUIRED] };
+
 export {SplittermondDataModel, fields};
 export type {DataModelSchemaType}
-/*
-type FindUndefined<T> = { [K in keyof T as T[K] extends undefined ? K : never]: T[K] };
-type OptionalIfUndefined<T, V> = Partial<Pick<T, KeysMatching<T, V>>>;
 
-
-
-type FilterOutUndefined<T> = {
-    [K in keyof T as T[K] extends undefined ? never : K]: T[K]
-};
-
-interface MyObject {
-    a: number;
-    b: undefined;
-    c: string | null;
-    d: number;
-    e: string | undefined;
-}
-
-type FilteredObject = FilterOutUndefined<MyObject>; // { a: number; d: number; }
-
-type KeysMatching<T, V> = {
-    [K in keyof T]-?: T[K] extends V ? K : never;
-}[keyof T];
-
-// Example usage:
-interface Thing {
-    id: string;
-    do: string | undefined;
-    di: undefined;
-    price: number;
-    other: { stuff: boolean };
-}
-
-const stringOrUndefinedKeys: KeysMatching<Thing, undefined>[] = ['id', 'do', 'di', "price", "other"]; // Allowed
-*/

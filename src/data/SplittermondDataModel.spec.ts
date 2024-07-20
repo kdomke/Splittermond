@@ -1,19 +1,40 @@
 // noinspection JSUnusedLocalSymbols
 
+/*
+ * This file contains test cases that verify that the types that are supposed to facilitate getting the of any
+ * DataModel object from Its "defineSchema" method works as intended.
+ */
 import {DataModelSchemaType, SplittermondDataModel} from "./SplittermondDataModel";
 import {fields} from "./SplittermondDataModel";
 
 
 type Not<T> = T extends true ? false : true;
 type IsNever<T> = [T] extends [never] ? true : false;
-type IsUndefined<T> = T extends undefined ? true : false;
+type ContainsUndefined<T> = (T extends undefined ? true : false) extends false ? false: true;
 
 namespace TestTestTypes {
     const verifyIsNever: IsNever<never> = true;
+    const verifyIsAlsoNever: IsNever<string & never> = true;
     const verifyIsNotNever: IsNever<string> = false;
-    const verifyIsUndefined: IsUndefined<undefined> = true;
-    const verifyIsNotUndefined: IsUndefined<string> = false;
-    const verifyIsAlsoNotUndefined: IsUndefined<string | undefined> = false;
+    const verifyIsAlsoNotNever: IsNever<string | never> = false;
+    const verifyIsUndefined: ContainsUndefined<undefined> = true;
+    const verifyIsNotUndefined: ContainsUndefined<string> = false;
+    const verifyIsAlsoNotUndefined: ContainsUndefined<string | undefined> = true;
+
+    // @ts-expect-error
+    const falsifyIsNever: IsNever<never> = false;
+    // @ts-expect-error
+    const falsifyIsAlsoNever: IsNever<string & never> = false;
+    // @ts-expect-error
+    const falsifyIsNotNever: IsNever<string> = true;
+    // @ts-expect-error
+    const falsifyIsAlsoNotNever: IsNever<string | never> = true;
+    // @ts-expect-error
+    const falsifyIsUndefined: ContainsUndefined<undefined> = false;
+    // @ts-expect-error
+    const falsifyIsNotUndefined: ContainsUndefined<string> = true;
+    // @ts-expect-error
+    const falsifyIsAlsoNotUndefined: ContainsUndefined<string | undefined> = false;
 }
 
 namespace ObjectFieldTest {
@@ -25,7 +46,7 @@ namespace ObjectFieldTest {
         type TestObjectSchema = DataModelSchemaType<typeof testObjectField>
 
         type IsNotNullable = TestObjectSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestObjectSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestObjectSchema["key"]>>;
 
         const verifyDataIsObject: TestObjectSchema = {key: {something: 3}}
         const verifyIsNotNullable: IsNotNullable = true;
@@ -40,7 +61,7 @@ namespace ObjectFieldTest {
         type TestObjectSchema = DataModelSchemaType<typeof testObjectField>
 
         type IsNullable = TestObjectSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestObjectSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestObjectSchema["key"]>>;
 
         const verifyDataIsObject: TestObjectSchema = {key: {}};
         const verifyDataIsNull: TestObjectSchema = {key: null};
@@ -56,10 +77,11 @@ namespace ObjectFieldTest {
         type TestObjectSchema = DataModelSchemaType<typeof testObjectField>
 
         type IsNotNullable = TestObjectSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestObjectSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestObjectSchema["key"]>>;
 
         const verifyDataIsObject: TestObjectSchema = {key: {exciting: []}};
-        const verifyDataIsNotRequired: TestObjectSchema = {key: undefined};
+        const verifyDataIsUndefined: TestObjectSchema = {key: undefined};
+        const verifyDataAbsent: TestObjectSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -74,7 +96,7 @@ namespace BooleanFieldTest {
         type TestBooleanSchema = DataModelSchemaType<typeof testBooleanField>
 
         type IsNotNullable = TestBooleanSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestBooleanSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestBooleanSchema["key"]>>;
 
         const verifyDataIsBoolean: TestBooleanSchema = {key: true}
         const verifyIsNotNullable: IsNotNullable = true;
@@ -89,7 +111,7 @@ namespace BooleanFieldTest {
         type TestBooleanSchema = DataModelSchemaType<typeof testBooleanField>
 
         type IsNullable = TestBooleanSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestBooleanSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestBooleanSchema["key"]>>;
 
         const verifyDataIsBoolean: TestBooleanSchema = {key: false};
         const verifyDataIsNull: TestBooleanSchema = {key: null};
@@ -105,10 +127,11 @@ namespace BooleanFieldTest {
         type TestBooleanSchema = DataModelSchemaType<typeof testBooleanField>
 
         type IsNotNullable = TestBooleanSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestBooleanSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestBooleanSchema["key"]>>;
 
         const verifyDataIsBoolean: TestBooleanSchema = {key: true};
-        const verifyDataIsNotRequired: TestBooleanSchema = {key: undefined};
+        const verifyDataIsUndefined: TestBooleanSchema = {key: undefined};
+        const verifyDataIsAbsent: TestBooleanSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -123,7 +146,7 @@ namespace StringFieldTest {
         type TestStringSchema = DataModelSchemaType<typeof testStringField>
 
         type IsNotNullable = TestStringSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestStringSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestStringSchema["key"]>>;
 
         const verifyDataIsString: TestStringSchema = {key: "testString"}
         const verifyIsNotNullable: IsNotNullable = true;
@@ -138,7 +161,7 @@ namespace StringFieldTest {
         type TestStringSchema = DataModelSchemaType<typeof testStringField>
 
         type IsNullable = TestStringSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestStringSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestStringSchema["key"]>>;
 
         const verifyDataIsString: TestStringSchema = {key: "testString"};
         const verifyDataIsNull: TestStringSchema = {key: null};
@@ -154,10 +177,11 @@ namespace StringFieldTest {
         type TestStringSchema = DataModelSchemaType<typeof testStringField>
 
         type IsNotNullable = TestStringSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestStringSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestStringSchema["key"]>>;
 
         const verifyDataIsString: TestStringSchema = {key: "testString"};
-        const verifyDataIsNotRequired: TestStringSchema = {key: undefined};
+        const verifyDataIsUndefined: TestStringSchema = {key: undefined};
+        const verifyDataIsAbsent: TestStringSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -172,7 +196,7 @@ namespace NumberFieldTest {
         type TestNumberSchema = DataModelSchemaType<typeof testNumberField>
 
         type IsNotNullable = TestNumberSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestNumberSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestNumberSchema["key"]>>;
 
         const verifyDataIsNumber: TestNumberSchema = {key: 333}
         const verifyIsNotNullable: IsNotNullable = true;
@@ -187,7 +211,7 @@ namespace NumberFieldTest {
         type TestNumberSchema = DataModelSchemaType<typeof testNumberField>
 
         type IsNullable = TestNumberSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestNumberSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestNumberSchema["key"]>>;
 
         const verifyDataIsNumber: TestNumberSchema = {key: -1};
         const verifyDataIsNull: TestNumberSchema = {key: null};
@@ -203,10 +227,11 @@ namespace NumberFieldTest {
         type TestNumberSchema = DataModelSchemaType<typeof testNumberField>
 
         type IsNotNullable = TestNumberSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestNumberSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestNumberSchema["key"]>>;
 
         const verifyDataIsNumber: TestNumberSchema = {key: 1.3};
-        const verifyDataIsNotRequired: TestNumberSchema = {key: undefined};
+        const verifyDataIsUndefined: TestNumberSchema = {key: undefined};
+        const verifyDataAbsent: TestNumberSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -221,7 +246,7 @@ namespace ArrayFieldTest {
         type TestArraySchema = DataModelSchemaType<typeof testArrayField>
 
         type IsNotNullable = TestArraySchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestArraySchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestArraySchema["key"]>>;
 
         const verifyDataIsArray: TestArraySchema = {key: ["Three", "Moons"]}
         const verifyIsNotNullable: IsNotNullable = true;
@@ -236,7 +261,7 @@ namespace ArrayFieldTest {
         type TestArraySchema = DataModelSchemaType<typeof testArrayField>
 
         type IsNullable = TestArraySchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestArraySchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestArraySchema["key"]>>;
 
         const verifyDataIsArray: TestArraySchema = {key: ["In", "the"]};
         const verifyDataIsNull: TestArraySchema = {key: null};
@@ -252,10 +277,11 @@ namespace ArrayFieldTest {
         type TestArraySchema = DataModelSchemaType<typeof testArrayField>
 
         type IsNotNullable = TestArraySchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestArraySchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestArraySchema["key"]>>;
 
         const verifyDataIsArray: TestArraySchema = {key: ["sky"]};
-        const verifyDataIsNotRequired: TestArraySchema = {key: undefined};
+        const verifyDataIsUndefined: TestArraySchema = {key: undefined};
+        const verifyDataIsAbsent: TestArraySchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -280,7 +306,7 @@ namespace EmbeddedDataFieldTest {
         type TestEmbeddedDataSchema = DataModelSchemaType<typeof testEmbeddedDataField>
 
         type IsNotNullable = TestEmbeddedDataSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestEmbeddedDataSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestEmbeddedDataSchema["key"]>>;
 
         const verifyDataIsEmbeddedData: TestEmbeddedDataSchema = {key: new TestDataModel({test: "string"})};
         const verifyIsNotNullable: IsNotNullable = true;
@@ -295,7 +321,7 @@ namespace EmbeddedDataFieldTest {
         type TestEmbeddedDataSchema = DataModelSchemaType<typeof testEmbeddedDataField>
 
         type IsNullable = TestEmbeddedDataSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestEmbeddedDataSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestEmbeddedDataSchema["key"]>>;
 
         const verifyDataIsEmbeddedData: TestEmbeddedDataSchema = {key: new TestDataModel({test: "string"})};
         const verifyDataIsNull: TestEmbeddedDataSchema = {key: null};
@@ -311,10 +337,11 @@ namespace EmbeddedDataFieldTest {
         type TestEmbeddedDataSchema = DataModelSchemaType<typeof testEmbeddedDataField>
 
         type IsNotNullable = TestEmbeddedDataSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestEmbeddedDataSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestEmbeddedDataSchema["key"]>>;
 
         const verifyDataIsEmbeddedData: TestEmbeddedDataSchema = {key: new TestDataModel({test: "string"})};
-        const verifyDataIsNotRequired: TestEmbeddedDataSchema = {key: undefined};
+        const verifyDataIsUndefined: TestEmbeddedDataSchema = {key: undefined};
+        const verifyDataIsAbsent: TestEmbeddedDataSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -334,7 +361,7 @@ namespace SchemaFieldTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNotNullable = TestSchemaSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]>>;
 
         const verifyDataIsSchema: TestSchemaSchema = {key: {strict: 3, nullable: null, optional: undefined}};
         const verifyIsNotNullable: IsNotNullable = true;
@@ -349,7 +376,7 @@ namespace SchemaFieldTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNullable = TestSchemaSchema["key"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]>>;
 
         const verifyDataIsSchema: TestSchemaSchema = {key: {strict: 3, nullable: true, optional: "yes"}};
         const verifyDataIsNull: TestSchemaSchema = {key: null};
@@ -365,10 +392,11 @@ namespace SchemaFieldTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNotNullable = TestSchemaSchema["key"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]>>;
 
         const verifyDataIsSchema: TestSchemaSchema = {key: {strict: 3, nullable: true, optional: "yes"}};
-        const verifyDataIsNotRequired: TestSchemaSchema = {key: undefined};
+        const verifyDataIsUndefined: TestSchemaSchema = {key: undefined};
+        const verifyDataIsAbsent: TestSchemaSchema = {};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -388,7 +416,7 @@ namespace SchemaRecursionTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNotNullable = TestSchemaSchema["key"]["strict"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]["strict"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]["strict"]>>;
 
         const verifyDataIsNumber: TestSchemaSchema["key"]["strict"] = 3
         const verifyIsNotNullable: IsNotNullable = true;
@@ -403,7 +431,7 @@ namespace SchemaRecursionTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNullable = TestSchemaSchema["key"]["nullable"] & null extends never ? false : true;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]["nullable"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]["nullable"]>>;
 
         const verifyDataIsBoolean: TestSchemaSchema["key"]["nullable"] = true;
         const verifyDataIsNull: TestSchemaSchema["key"]["nullable"] = null;
@@ -419,10 +447,11 @@ namespace SchemaRecursionTest {
         type TestSchemaSchema = DataModelSchemaType<typeof testSchemaField>
 
         type IsNotNullable = TestSchemaSchema["key"]["optional"] & null extends never ? true : false;
-        type IsRequired = Not<IsUndefined<TestSchemaSchema["key"]["optional"]>>;
+        type IsRequired = Not<ContainsUndefined<TestSchemaSchema["key"]["optional"]>>;
 
         const verifyDataIsString: TestSchemaSchema["key"]["optional"] = "yes";
         const verifyDataIsNotRequired: TestSchemaSchema["key"]["optional"] = undefined;
+        const verifyDataIsAbsent: TestSchemaSchema["key"] = {strict: 1, nullable: false};
         const verifyIsNullable: IsNotNullable = true;
         const verifyRequired: IsRequired = false;
     }
@@ -470,7 +499,7 @@ namespace ComplexScenarioTest {
 
         type TestSchema = DataModelSchemaType<typeof testField>;
 
-        const verifyEmbedded: TestSchema["key"]["data"] = new TestDataModel({test:"works"});
+        const verifyEmbedded: TestSchema["key"]["data"] = new TestDataModel({test: "works"});
     }
 }
 
