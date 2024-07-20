@@ -1,3 +1,9 @@
+/**
+ * All known and relevant members for the foundry.abstract.DataModel base class.
+ *
+ * @param T the {@link DataModelSchemaType} that this {@link DataModel} uses
+ * @param PARENT The encompassing {@link DataModel} of this data model. Useful for Embedded data fields
+ */
 type DataModel<T, PARENT> = {
     parent: PARENT extends never ? never : PARENT | null;
     toObject(): T,
@@ -5,14 +11,29 @@ type DataModel<T, PARENT> = {
     update(data: Partial<T>): void,
     updateSource(data: Partial<T>): void,
 }
-type DataModelType = new <T, PARENT extends DataModel<PARENT, any> | never>(data: T, ...args: any[]) => DataModel<T, PARENT>;
+type DataModelConstructor = new <T, PARENT extends DataModel<PARENT, any> | never>(data: T, ...args: any[]) => DataModel<T, PARENT>;
+/**technically Readonly<T> is already part of the {@link DataModel} type, but because of all the generics, we cannot add it there*/
+type SplittermondDataModelConstructor = new<T, PARENT extends DataModel<PARENT, any> | never = never>(data: T, ...args: any[]) => DataModel<T, PARENT> & Readonly<T>;
+
 //@ts-ignore
-const FoundryDataModel = foundry.abstract.DataModel as DataModelType;
+const FoundryDataModelConstructor = foundry.abstract.DataModel as DataModelConstructor;
+/**
+ * Base class for all {@link DataModel}s that are used in this system. Ensures that {@link DataModelSchemaType} used
+ * by the data model are members of the data model.
+ *
+ * @param T the {@link DataModelSchemaType} that this {@link DataModel} uses
+ * @param PARENT The encompassing {@link DataModel} of this data model. Useful for Embedded data fields
+ */
+const SplittermondDataModel =
+    class<T, PARENT extends DataModel<PARENT, any> | never = never> extends FoundryDataModelConstructor<T, PARENT> {
+} as SplittermondDataModelConstructor;
 
-const SplittermondDataModel = class<T, PARENT extends DataModel<PARENT, any> | never = never> extends FoundryDataModel<T, PARENT> {
-} as new<T, PARENT extends DataModel<PARENT, any> | never = never>(data: T, ...args: any[]) => DataModel<T, PARENT> & Readonly<T>;
 
 
+/**
+ * The generics in these definitions seem superfluous, but we need convert the value choices for DataFieldOptions in the defineSchema
+ * method into type information in order to correctly
+ */
 type DataFieldOption<T, REQ extends boolean, NULL extends boolean> = {
     required?: REQ;
     blank?: boolean;
@@ -20,6 +41,22 @@ type DataFieldOption<T, REQ extends boolean, NULL extends boolean> = {
     initial?: T;
     validate?: (x: T) => boolean;
 }
+
+/*
+ * All known Types whose constructors the foundry.abstract.fields namespace can contain. These are not the actual
+ * types (They don't interest us) but generic placeholders to trick Typescript's type system type narrow a "defineSchema"
+ * instruction that is not only distinguishable by Field Type, but also by Required and Nullable options.
+ *
+ * The __brand key that these objects carry facilitates this, because it ensures that the individual types do not extend
+ * one another.
+ */
+type ObjectField<REQ, NULL> = { __brand: "ObjectField" };
+type BooleanField<REQ, NULL> = { __brand: "BooleanField" };
+type StringField<REQ, NULL> = { __brand: "StringField" };
+type NumberField<REQ, NULL> = { __brand: "NumberField" };
+type ArrayField<A, REQ, NULL> = { __brand: "ArrayField" };
+type EmbeddedDataField<E, REQ, NULL> = { __brand: "EmbeddedDataField" };
+type SchemaField<S, REQ, NULL> = { __brand: "SchemaField" };
 type DataField<T = unknown, REQ extends boolean = true, NULL extends boolean = false> =
     ObjectField<REQ, NULL>
     | BooleanField<REQ, NULL>
@@ -28,14 +65,6 @@ type DataField<T = unknown, REQ extends boolean = true, NULL extends boolean = f
     | ArrayField<T, REQ, NULL>
     | EmbeddedDataField<T, REQ, NULL>
     | SchemaField<T, REQ, NULL>;
-type ObjectField<REQ, NULL> = { __brand: "ObjectField" };
-type BooleanField<REQ, NULL> = { __brand: "BooleanField" };
-type StringField<REQ, NULL> = { __brand: "StringField" };
-type NumberField<REQ, NULL> = { __brand: "NumberField" };
-type ArrayField<A, REQ, NULL> = { __brand: "ArrayField" };
-type EmbeddedDataField<E, REQ, NULL> = { __brand: "EmbeddedDataField" };
-type SchemaField<S, REQ, NULL> = { __brand: "SchemaField" };
-
 interface DataFields {
     ObjectField: new<REQ extends boolean, NULL extends boolean>(x: DataFieldOption<unknown, REQ, NULL>) => ObjectField<REQ, NULL>;
     BooleanField: new <REQ extends boolean, NULL extends boolean> (x: DataFieldOption<boolean, REQ, NULL>) => BooleanField<REQ, NULL>;
@@ -47,8 +76,14 @@ interface DataFields {
 }
 
 //@ts-ignore
-const fields: DataFields = foundry.data.fields;
+const fields: DataFields = foundry.data.fields;//Here we promise that this framework field will have the types that we have so meticulously crafted.
 
+
+/**
+ * This only works if your defineSchema methods only use compile-time resolvable properties. That is,
+ * you must type in literals, not variables.
+ * Algorithm overview: see commit
+ */
 type DefineSchemaType = () => any;
 type DataModelSchemaType<T extends DefineSchemaType> = MemberDefinitionContainerMapper<ReturnType<T>>;
 type MemberDefinitionContainerMapper<T> = MakeUndefinedOptional<{ [KEY in keyof T]: DataFieldMapper<T[KEY]> }>
@@ -61,7 +96,6 @@ type DataFieldMapper<T> =
                         T extends EmbeddedDataField<infer E, infer REQ, infer NULL> ? EmbeddedDataFieldMap<E, REQ, NULL> :
                             T extends SchemaField<infer S, infer REQ, infer NULL> ? SchemaFieldMap<S, REQ, NULL> :
                                 never;
-
 type ObjectFieldMap<REQ, NULL> = object | WithReq<REQ> | WithNull<NULL>;
 type BooleanFieldMap<REQ, NULL> = boolean | WithReq<REQ> | WithNull<NULL>;
 type StringFieldMap<REQ, NULL> = string | WithReq<REQ> | WithNull<NULL>;
@@ -74,11 +108,11 @@ type WithReq<REQ> = REQ extends true ? never : undefined;
 type WithNull<NULL> = NULL extends true ? null : never;
 
 type HasUndefined<T> = T extends undefined ? true : false
-type FilterUndefined<CONDITION, RETURN> = HasUndefined<CONDITION> extends false ? never : RETURN
-type DefinedOnly<CONDITON, RETURN> = HasUndefined<CONDITON> extends false ? RETURN : never
+type FilterOptional<CONDITION, RETURN> = HasUndefined<CONDITION> extends false ? never : RETURN
+type FilterRequired<CONDITON, RETURN> = HasUndefined<CONDITON> extends false ? RETURN : never
 type MakeUndefinedOptional<T> =
-    { [OPTIONAL in keyof T as FilterUndefined<T[OPTIONAL], OPTIONAL>]+?: Exclude<T[OPTIONAL], undefined> } &
-    { [REQUIRED in keyof T as DefinedOnly<T[REQUIRED], REQUIRED>]: T[REQUIRED] };
+    { [OPTIONAL in keyof T as FilterOptional<T[OPTIONAL], OPTIONAL>]+?: Exclude<T[OPTIONAL], undefined> } &
+    { [REQUIRED in keyof T as FilterRequired<T[REQUIRED], REQUIRED>]: T[REQUIRED] };
 
 export {SplittermondDataModel, fields};
 export type {DataModelSchemaType}

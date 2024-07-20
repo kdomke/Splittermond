@@ -24,9 +24,3 @@ function SplittermondChatCardModelSchema(){
     }
 }
 type SplittermondChatCardData = DataModelSchemaType<typeof SplittermondChatCardModelSchema>;
-//For testing only
-const c :SplittermondChatCardData = {
-    message: {}, speaker: {}, chatOptions:{type:3, mode: null, rolls:[],whisper:[3]}, messageId:""
-}
-const d = new SplittermondChatCardModel(c);
-d.chatOptions
