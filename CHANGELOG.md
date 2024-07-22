@@ -1,10 +1,15 @@
+## 0.12.2 HOTFIX##
+2024-07-22
+
+* fixed: NPC- und Item-Importer (Copy-and-Paste von PDF-Quellen) funktioniert wieder. Anmerkung: Der Importer funktioniert nur bei Nutzung des Adobe Acrobat PDF-Betrachters
+
 ## 0.12.1##
 2024-07-15
 
 * fixed: Genesis Import (Meisterschaften wurden falsch importiert)
 * fixed: Drag-n-drop von Zaubern auf das Sheet 
 * fixed: Magiepatzer-Dialog wurde nicht korrekt vorausgefüllt
-* fixed: Merkmale werden bei Schadenswürfen in Zaubern wieder berücksichtigts
+* fixed: Merkmale werden bei Schadenswürfen in Zaubern wieder berücksichtigt
 
 ## 0.12.0##
 2024-07-10
