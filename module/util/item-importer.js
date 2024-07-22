@@ -1,5 +1,5 @@
 import SplittermondCompendium from "./compendium.js";
-import {getSpellAvailabilityParser} from "../item/availabilityParser.js";
+import { getSpellAvailabilityParser } from "../item/availabilityParser.js";
 
 export default class ItemImporter {
 
@@ -86,25 +86,25 @@ export default class ItemImporter {
                     spellName = "";
                     continue;
                 }
-                    
+
                 if (spellToken.match(/(.*\s+\((?:Spruch|Ritus)\))/gm)) {
                     spellName = spellToken.match(/(.*?)\s+\((?:Spruch|Ritus)\)/m)[1];
                 }
             }
-            return;      
+            return;
         }
-        
+
         // Check Weapons
-        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
+        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/, "\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
         let test = rawData.match(new RegExp(weaponRegex, "gm"));
         if (test && test.length > 0) {
             let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
-            weaponRegex =`${skills}|${weaponRegex}`;
+            weaponRegex = `${skills}|${weaponRegex}`;
             test = rawData.match(new RegExp(weaponRegex, "gm"));
             if (test.length > 0) {
                 let folder = await this._folderDialog();
                 let skill = "";
-                
+
                 for (let k = 0; k < test.length; k++) {
                     const m = test[k].trim().replace(/\s{2,}/gm, " ").replace("(*)", "");
                     if (m.match(new RegExp(skills, "gm"))) {
@@ -114,7 +114,7 @@ export default class ItemImporter {
                     if (skill === "") {
                         skill = await this._skillDialog(CONFIG.splittermond.skillGroups.fighting);
                     }
-                    
+
                     this.importWeapon(m, skill, folder);
                 }
                 return;
@@ -209,7 +209,7 @@ export default class ItemImporter {
                     type: "mastery",
                     name: token[1].trim(),
                     folder: folder,
-                    data: {
+                    system: {
                         skill: skill,
                         availableIn: skill,
                         level: level,
@@ -224,7 +224,7 @@ export default class ItemImporter {
                 if (descriptionData === null) {
                     descriptionData = levelData[1].match(new RegExp(`${escapeStr} ([^]+)`));
                 }
-                itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+                itemData.system.description = descriptionData[1].replace("\n", "").replace("", "");
 
                 Item.create(itemData);
 
@@ -245,7 +245,7 @@ export default class ItemImporter {
                 type: "npcfeature",
                 name: token[1].trim(),
                 folder: folder,
-                data: {
+                system: {
                     modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
                 }
             }
@@ -255,7 +255,7 @@ export default class ItemImporter {
             if (descriptionData === null) {
                 descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
             }
-            itemData.data.description = descriptionData[1].replaceAll("\n", " ").replaceAll("", "").replaceAll("  ", " ");
+            itemData.system.description = descriptionData[1].replaceAll("\n", " ").replaceAll("", "").replaceAll("  ", " ");
 
             Item.create(itemData);
 
@@ -272,7 +272,7 @@ export default class ItemImporter {
                 type: "strength",
                 name: token[1].trim(),
                 folder: folder,
-                data: {
+                system: {
                     quantity: 1,
                     level: parseInt(token[2]),
                     onCreationOnly: token[3] === "*",
@@ -285,7 +285,7 @@ export default class ItemImporter {
             if (descriptionData === null) {
                 descriptionData = rawData.match(new RegExp(`${escapeStr} ([^]+)`));
             }
-            itemData.data.description = descriptionData[1].replace("\n", "").replace("", "");
+            itemData.system.description = descriptionData[1].replace("\n", "").replace("", "");
 
             Item.create(itemData);
 
@@ -303,35 +303,35 @@ export default class ItemImporter {
             name: tokens[1].trim(),
             folder: folder,
             img: CONFIG.splittermond.icons.shield[tokens[1].trim()] || CONFIG.splittermond.icons.shield.default,
-            data: {}
+            system: {}
         };
 
         switch (tokens[2].trim()) {
             case "Metropole":
-                itemData.data.availability = "metropolis";
+                itemData.system.availability = "metropolis";
                 break;
             case "Kleinstadt":
-                itemData.data.availability = "town";
+                itemData.system.availability = "town";
                 break;
             case "Großstadt":
-                itemData.data.availability = "city";
+                itemData.system.availability = "city";
                 break;
             case "Dorf":
             default:
-                itemData.data.availability = "village";
+                itemData.system.availability = "village";
                 break;
         }
 
-        itemData.data.price = tokens[3].trim();
+        itemData.system.price = tokens[3].trim();
 
-        itemData.data.weight = parseInt(tokens[4]);
-        itemData.data.hardness = parseInt(tokens[5]);
-        itemData.data.complexity = tokens[6].trim();
-        itemData.data.defenseBonus = tokens[7].trim();
-        itemData.data.handicap = parseInt(tokens[8]);
-        itemData.data.tickMalus = parseInt(tokens[9]);
-        itemData.data.minAttributes = tokens[10];
-        itemData.data.features = tokens[11];
+        itemData.system.weight = parseInt(tokens[4]);
+        itemData.system.hardness = parseInt(tokens[5]);
+        itemData.system.complexity = tokens[6].trim();
+        itemData.system.defenseBonus = tokens[7].trim();
+        itemData.system.handicap = parseInt(tokens[8]);
+        itemData.system.tickMalus = parseInt(tokens[9]);
+        itemData.system.minAttributes = tokens[10];
+        itemData.system.features = tokens[11];
 
         Item.create(itemData);
 
@@ -349,36 +349,36 @@ export default class ItemImporter {
             name: tokens[1].trim(),
             folder: folder,
             img: CONFIG.splittermond.icons.armor[tokens[1].trim()] || CONFIG.splittermond.icons.armor.default,
-            data: {}
+            system: {}
         };
 
         switch (tokens[2].trim()) {
             case "Metropole":
-                itemData.data.availability = "metropolis";
+                itemData.system.availability = "metropolis";
                 break;
             case "Kleinstadt":
-                itemData.data.availability = "town";
+                itemData.system.availability = "town";
                 break;
             case "Großstadt":
-                itemData.data.availability = "city";
+                itemData.system.availability = "city";
                 break;
             case "Dorf":
             default:
-                itemData.data.availability = "village";
+                itemData.system.availability = "village";
                 break;
         }
 
-        itemData.data.price = tokens[3].trim();
+        itemData.system.price = tokens[3].trim();
 
-        itemData.data.weight = parseInt(tokens[4]);
-        itemData.data.hardness = parseInt(tokens[5]);
-        itemData.data.complexity = tokens[6].trim();
-        itemData.data.defenseBonus = tokens[7].trim();
-        itemData.data.damageReduction = parseInt(tokens[8]);
-        itemData.data.handicap = parseInt(tokens[9]);
-        itemData.data.tickMalus = parseInt(tokens[10]);
-        itemData.data.minStr = parseInt(tokens[11]);
-        itemData.data.features = tokens[12].trim();
+        itemData.system.weight = parseInt(tokens[4]);
+        itemData.system.hardness = parseInt(tokens[5]);
+        itemData.system.complexity = tokens[6].trim();
+        itemData.system.defenseBonus = tokens[7].trim();
+        itemData.system.damageReduction = parseInt(tokens[8]);
+        itemData.system.handicap = parseInt(tokens[9]);
+        itemData.system.tickMalus = parseInt(tokens[10]);
+        itemData.system.minStr = parseInt(tokens[11]);
+        itemData.system.features = tokens[12].trim();
 
         Item.create(itemData);
 
@@ -399,36 +399,36 @@ export default class ItemImporter {
 
         let itemData = {
             type: "weapon",
-            name: tokens[1].trim().replace(/[0-9]/g,""),
+            name: tokens[1].trim().replace(/[0-9]/g, ""),
             img: CONFIG.splittermond.icons.weapon[tokens[1].trim()] || CONFIG.splittermond.icons.weapon.default,
             folder: folder,
-            data: {}
+            system: {}
         };
 
-        itemData.data.skill = skill;
+        itemData.system.skill = skill;
         switch (tokens[2].trim()) {
             case "Metropole":
-                itemData.data.availability = "metropolis";
+                itemData.system.availability = "metropolis";
                 break;
             case "Kleinstadt":
-                itemData.data.availability = "town";
+                itemData.system.availability = "town";
                 break;
             case "Großstadt":
-                itemData.data.availability = "city";
+                itemData.system.availability = "city";
                 break;
             case "Dorf":
             default:
-                itemData.data.availability = "village";
+                itemData.system.availability = "village";
                 break;
         }
 
-        itemData.data.price = tokens[3].trim();
+        itemData.system.price = tokens[3].trim();
 
-        itemData.data.weight = parseInt(tokens[4]);
-        itemData.data.hardness = parseInt(tokens[5]);
-        itemData.data.complexity = tokens[6].trim();
-        itemData.data.damage = tokens[7].trim();
-        itemData.data.weaponSpeed = parseInt(tokens[8]);
+        itemData.system.weight = parseInt(tokens[4]);
+        itemData.system.hardness = parseInt(tokens[5]);
+        itemData.system.complexity = tokens[6].trim();
+        itemData.system.damage = tokens[7].trim();
+        itemData.system.weaponSpeed = parseInt(tokens[8]);
         let attributes = tokens[9].split("+").map((i) => {
             switch (i) {
                 case "AUS":
@@ -451,20 +451,20 @@ export default class ItemImporter {
             throw new Error(`Consumed unknown attribute token ${i}`);
         });
 
-        itemData.data.attribute1 = attributes[0];
-        itemData.data.attribute2 = attributes[1];
+        itemData.system.attribute1 = attributes[0];
+        itemData.system.attribute2 = attributes[1];
 
-        itemData.data.minAttributes = tokens[10].trim();
+        itemData.system.minAttributes = tokens[10].trim();
 
         if (isRanged) {
             let temp = tokens[11].match(/(.+)\s+([0-9]+)/);
-            itemData.data.range = temp[2];
+            itemData.system.range = temp[2];
             tokens[11] = temp[1];
         } else {
-            itemData.data.range = 0;
+            itemData.system.range = 0;
         }
 
-        itemData.data.features = tokens[11].split(",").map((i) => {
+        itemData.system.features = tokens[11].split(",").map((i) => {
             let temp = i.match(/([^(]*)\s?\(?([0-9]*)\)?/);
             if (temp[2]) {
                 return temp[1] + " " + temp[2];
@@ -486,64 +486,64 @@ export default class ItemImporter {
             name: spellName,
             img: CONFIG.splittermond.icons.spell.default,
             folder: folder,
-            data: {}
+            system: {}
         };
-        
-        const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
-        let tokens = rawData.split( new RegExp(`(${sectionLabels.map(sl => sl+":").join("|")})`,"gm"));
 
-        for (let k = 0; k < tokens.length-1; k++) {
+        const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
+        let tokens = rawData.split(new RegExp(`(${sectionLabels.map(sl => sl + ":").join("|")})`, "gm"));
+
+        for (let k = 0; k < tokens.length - 1; k++) {
             const sectionHeading = tokens[k].trim();
-            const sectionData = tokens[k+1].trim();
-            switch(sectionHeading) { 
+            const sectionData = tokens[k + 1].trim();
+            switch (sectionHeading) {
                 case "Schulen:":
-                    spellData.data.availableIn = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic).toInternalRepresentation(sectionData);
+                    spellData.system.availableIn = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic).toInternalRepresentation(sectionData);
                     break;
                 case "Typus:":
-                    spellData.data.spellType = sectionData;
+                    spellData.system.spellType = sectionData;
                     break;
                 case "Schwierigkeit:":
-                    spellData.data.difficulty = sectionData;
-                    if (spellData.data.difficulty.search("Geistiger Widerstand") >= 0 ||
-                        spellData.data.difficulty.search("Geist") >= 0) {
-                        spellData.data.difficulty = "GW";
+                    spellData.system.difficulty = sectionData;
+                    if (spellData.system.difficulty.search("Geistiger Widerstand") >= 0 ||
+                        spellData.system.difficulty.search("Geist") >= 0) {
+                        spellData.system.difficulty = "GW";
                     }
 
-                    if (spellData.data.difficulty.search("Körperlicher Widerstand") >= 0 ||
-                        spellData.data.difficulty.search("Körper") >= 0) {
-                        spellData.data.difficulty = "KW";
+                    if (spellData.system.difficulty.search("Körperlicher Widerstand") >= 0 ||
+                        spellData.system.difficulty.search("Körper") >= 0) {
+                        spellData.system.difficulty = "KW";
                     }
 
-                    if (spellData.data.difficulty.search("Verteidigung") >= 0) {
-                        spellData.data.difficulty = "VTD";
+                    if (spellData.system.difficulty.search("Verteidigung") >= 0) {
+                        spellData.system.difficulty = "VTD";
                     }
                     break;
                 case "Kosten:":
-                    spellData.data.costs = sectionData;
+                    spellData.system.costs = sectionData;
                     break;
                 case "Zauberdauer:":
-                    spellData.data.castDuration = sectionData;
+                    spellData.system.castDuration = sectionData;
                     break;
                 case "Reichweite:":
-                    spellData.data.range = sectionData;
+                    spellData.system.range = sectionData;
                     break;
                 case "Wirkung:":
-                    spellData.data.description = sectionData;
-                    spellData.data.description = spellData.data.description.replace(/\n/g, " ");
-                    spellData.data.description = spellData.data.description.replace(/  /g, " ");
+                    spellData.system.description = sectionData;
+                    spellData.system.description = spellData.system.description.replace(/\n/g, " ");
+                    spellData.system.description = spellData.system.description.replace(/  /g, " ");
                     break;
                 case "Wirkungsdauer:":
-                    spellData.data.effectDuration = sectionData;
+                    spellData.system.effectDuration = sectionData;
                     break;
                 case "Wirkungsbereich:":
-                    spellData.data.effectArea = sectionData;
+                    spellData.system.effectArea = sectionData;
                     break;
                 case "Erfolgsgrade:":
                     let enhancementData = sectionData.match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-                    spellData.data.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
-                    spellData.data.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
-                    spellData.data.enhancementDescription = spellData.data.enhancementDescription.replace(/  /g, " ");
-                    spellData.data.degreeOfSuccessOptions = {
+                    spellData.system.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
+                    spellData.system.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
+                    spellData.system.enhancementDescription = spellData.system.enhancementDescription.replace(/  /g, " ");
+                    spellData.system.degreeOfSuccessOptions = {
                         castDuration: sectionData.search("Auslösezeit") >= 0,
                         consumedFocus: sectionData.search("Verzehrter") >= 0,
                         exhaustedFocus: sectionData.search("Erschöpfter") >= 0,
@@ -556,9 +556,9 @@ export default class ItemImporter {
             }
         }
 
-        let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.data.description);
+        let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.system.description);
         if (damage) {
-            spellData.data.damage = damage[0] || "";
+            spellData.system.damage = damage[0] || "";
         }
 
         Item.create(spellData);
@@ -572,12 +572,12 @@ export default class ItemImporter {
         let rawString = rawData.replace(/\r|\x02/g, "").replace(/\r\n/g, "\n");
         let tokenizedData = rawString.split(/(AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL|AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL\s+GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW|Fertigkeiten:|Monstergrad:|Zauber:|Meisterschaften:|Merkmale:|Beute:|Wichtige Attribute:|Wichtige abgeleitete Werte:|Waffen Wert Schaden WGS.*|Kampfweise:|Typus:|Übliche Anzahl:|Anmerkung:|Besonderheiten:)/);
         let temp = tokenizedData[0].match(/([^]+?)\n([^]*?)/g);
-        
-        let actorData ={
+
+        let actorData = {
             name: temp[0].trim(),
             type: "npc",
-            data: {
-                biography: "<p>"+(temp.slice(1)?.join(" ")?.replace(/\n/g,"") || "")+"</p>",
+            system: {
+                biography: "<p>" + (temp.slice(1)?.join(" ")?.replace(/\n/g, "") || "") + "</p>",
                 attributes: {
                     "charisma": {
                         "species": 0,
@@ -664,119 +664,119 @@ export default class ItemImporter {
             items: []
         };
 
-        actorData.data.biography = "<p>"+(temp.slice(1)?.join(" ")?.replace(/\n/g,"") || "")+"</p>";
+        actorData.system.biography = "<p>" + (temp.slice(1)?.join(" ")?.replace(/\n/g, "") || "") + "</p>";
 
         for (let i = 1; i < tokenizedData.length; i++) {
             try {
-                switch(true) {
+                switch (true) {
                     case /AUS\s+BEW\s+INT\s+KON\s+MYS\s+STÄ\s+VER\s+WIL/.test(tokenizedData[i]):
-                        let attributeData = tokenizedData[i+1].trim().split(/\s+/);
-                        actorData.data.attributes.charisma.value = parseInt(attributeData[0]);
-                        actorData.data.attributes.agility.value = parseInt(attributeData[1]);
-                        actorData.data.attributes.intuition.value = parseInt(attributeData[2]);
-                        actorData.data.attributes.constitution.value = parseInt(attributeData[3]);
-                        actorData.data.attributes.mystic.value = parseInt(attributeData[4]);
-                        actorData.data.attributes.strength.value = parseInt(attributeData[5]);
-                        actorData.data.attributes.mind.value = parseInt(attributeData[6]);
-                        actorData.data.attributes.willpower.value = parseInt(attributeData[7]);
+                        let attributeData = tokenizedData[i + 1].trim().split(/\s+/);
+                        actorData.system.attributes.charisma.value = parseInt(attributeData[0]);
+                        actorData.system.attributes.agility.value = parseInt(attributeData[1]);
+                        actorData.system.attributes.intuition.value = parseInt(attributeData[2]);
+                        actorData.system.attributes.constitution.value = parseInt(attributeData[3]);
+                        actorData.system.attributes.mystic.value = parseInt(attributeData[4]);
+                        actorData.system.attributes.strength.value = parseInt(attributeData[5]);
+                        actorData.system.attributes.mind.value = parseInt(attributeData[6]);
+                        actorData.system.attributes.willpower.value = parseInt(attributeData[7]);
                         if (attributeData.length === 8) break;
-                        tokenizedData[i+1] = attributeData.slice(8).join(" ");
+                        tokenizedData[i + 1] = attributeData.slice(8).join(" ");
                     case /GK\s+GSW\s+LP\s+FO\s+VTD\s+SR\s+KW\s+GW/.test(tokenizedData[i]):
-                        let derivedValueData = tokenizedData[i+1].trim().match(/([0-9]+(:?\s+\/\s+[0-9]+)*)/g);
-                        actorData.data.derivedAttributes.size.value = parseInt(derivedValueData[0]);
-                        actorData.data.derivedAttributes.speed.value = parseInt(derivedValueData[1]);
-                        actorData.data.derivedAttributes.healthpoints.value = parseInt(derivedValueData[2]);
-                        actorData.data.derivedAttributes.focuspoints.value = parseInt(derivedValueData[3]);
-                        actorData.data.derivedAttributes.defense.value = parseInt(derivedValueData[4]);
-                        actorData.data.damageReduction.value = parseInt(derivedValueData[5]);
-                        actorData.data.derivedAttributes.bodyresist.value = parseInt(derivedValueData[6]);
-                        actorData.data.derivedAttributes.mindresist.value = parseInt(derivedValueData[7]);
+                        let derivedValueData = tokenizedData[i + 1].trim().match(/([0-9]+(:?\s+\/\s+[0-9]+)*)/g);
+                        actorData.system.derivedAttributes.size.value = parseInt(derivedValueData[0]);
+                        actorData.system.derivedAttributes.speed.value = parseInt(derivedValueData[1]);
+                        actorData.system.derivedAttributes.healthpoints.value = parseInt(derivedValueData[2]);
+                        actorData.system.derivedAttributes.focuspoints.value = parseInt(derivedValueData[3]);
+                        actorData.system.derivedAttributes.defense.value = parseInt(derivedValueData[4]);
+                        actorData.system.damageReduction.value = parseInt(derivedValueData[5]);
+                        actorData.system.derivedAttributes.bodyresist.value = parseInt(derivedValueData[6]);
+                        actorData.system.derivedAttributes.mindresist.value = parseInt(derivedValueData[7]);
                         break;
                     case /Wichtige Attribute:/.test(tokenizedData[i]):
-                        tokenizedData[i+1].split(",").forEach((i) => {
+                        tokenizedData[i + 1].split(",").forEach((i) => {
                             let iData = i.trim().split(" ");
                             switch (iData[0]) {
                                 case "AUS":
-                                    actorData.data.attributes.charisma.value = parseInt(iData[1]);
+                                    actorData.system.attributes.charisma.value = parseInt(iData[1]);
                                     break;
                                 case "BEW":
-                                    actorData.data.attributes.agility.value = parseInt(iData[1]);
+                                    actorData.system.attributes.agility.value = parseInt(iData[1]);
                                     break;
                                 case "INT":
-                                    actorData.data.attributes.intuition.value = parseInt(iData[1]);
+                                    actorData.system.attributes.intuition.value = parseInt(iData[1]);
                                     break;
                                 case "KON":
-                                    actorData.data.attributes.constitution.value = parseInt(iData[1]);
+                                    actorData.system.attributes.constitution.value = parseInt(iData[1]);
                                     break;
                                 case "MYS":
-                                    actorData.data.attributes.mystic.value = parseInt(iData[1]);
+                                    actorData.system.attributes.mystic.value = parseInt(iData[1]);
                                     break;
                                 case "STÄ":
-                                    actorData.data.attributes.strength.value = parseInt(iData[1]);
+                                    actorData.system.attributes.strength.value = parseInt(iData[1]);
                                     break;
                                 case "VER":
-                                    actorData.data.attributes.mind.value = parseInt(iData[1]);
+                                    actorData.system.attributes.mind.value = parseInt(iData[1]);
                                     break;
                                 case "WILL":
                                 case "WIL":
-                                    actorData.data.attributes.willpower.value = parseInt(iData[1]);
+                                    actorData.system.attributes.willpower.value = parseInt(iData[1]);
                                     break;
                             }
                         });
                         break;
                     case /Wichtige abgeleitete Werte:/.test(tokenizedData[i]):
-                        tokenizedData[i+1].split(",").forEach((i) => {
+                        tokenizedData[i + 1].split(",").forEach((i) => {
                             let iData = i.trim().split(" ");
                             switch (iData[0]) {
                                 case "GK":
-                                    actorData.data.derivedAttributes.size.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.size.value = parseInt(iData[1]);
                                     break;
                                 case "GSW":
-                                    actorData.data.derivedAttributes.speed.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.speed.value = parseInt(iData[1]);
                                     break;
                                 case "LP":
-                                    actorData.data.derivedAttributes.healthpoints.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.healthpoints.value = parseInt(iData[1]);
                                     break;
                                 case "FO":
-                                    actorData.data.derivedAttributes.focuspoints.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.focuspoints.value = parseInt(iData[1]);
                                     break;
                                 case "VTD":
-                                    actorData.data.derivedAttributes.defense.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.defense.value = parseInt(iData[1]);
                                     break;
                                 case "SR":
-                                    actorData.data.damageReduction.value = parseInt(iData[1]);
+                                    actorData.system.damageReduction.value = parseInt(iData[1]);
                                     break;
                                 case "KW":
-                                    actorData.data.derivedAttributes.bodyresist.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.bodyresist.value = parseInt(iData[1]);
                                     break;
                                 case "GW":
-                                    actorData.data.derivedAttributes.mindresist.value = parseInt(iData[1]);
+                                    actorData.system.derivedAttributes.mindresist.value = parseInt(iData[1]);
                                     break;
                             }
                         });
                         break;
                     case /Fertigkeiten:/.test(tokenizedData[i]):
-                        tokenizedData[i+1].replace(/\n/g,"").split(",").forEach(skillStr => {
+                        tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").split(",").forEach(skillStr => {
                             let skillData = skillStr.trim().match(/(.*?)\s+([0-9]+)/);
-                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].toLowerCase());
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].trim().toLowerCase());
                             let skillValue = parseInt(skillData[2]) || 0;
-                            actorData.data.skills[skill] = {
+                            actorData.system.skills[skill] = {
                                 value: skillValue
                             };
                             if (CONFIG.splittermond.skillAttributes[skill]) {
-                                actorData.data.skills[skill].points = actorData.data.skills[skill].value;
-                                actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
-                                actorData.data.skills[skill].points -= parseInt(actorData.data.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
+                                actorData.system.skills[skill].points = actorData.system.skills[skill].value;
+                                actorData.system.skills[skill].points -= parseInt(actorData.system.attributes[CONFIG.splittermond.skillAttributes[skill][0]].value) || 0;
+                                actorData.system.skills[skill].points -= parseInt(actorData.system.attributes[CONFIG.splittermond.skillAttributes[skill][1]].value) || 0;
                                 if (skill === "stealth") {
-                                    actorData.data.skills[skill].points -= 5-parseInt(actorData.data.derivedAttributes.size.value);
+                                    actorData.system.skills[skill].points -= 5 - parseInt(actorData.system.derivedAttributes.size.value);
                                 }
                             }
                         });
                         break;
                     case /Waffen Wert Schaden WGS.*/.test(tokenizedData[i]):
-                        let weaponRegExpStr = `([\\s\\S]*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/,"\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)*[\r\n]*`;
-                        let weaponData = tokenizedData[i+1].trim().match(new RegExp(weaponRegExpStr,"g")).map(weaponStr => {
-                            weaponStr = weaponStr.trim().replace(/\s/g, " ").replace(/\s{2,}/g," ");
+                        let weaponRegExpStr = `([\\s\\S]*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/, "\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)*[\r\n]*`;
+                        let weaponData = tokenizedData[i + 1].trim().match(new RegExp(weaponRegExpStr, "g")).map(weaponStr => {
+                            weaponStr = weaponStr.trim().replace(/\s/g, " ").replace(/\s{2,}/g, " ");
                             let weaponMatch = weaponStr.match(new RegExp(`(.*?)\\s+([0-9]+)\\s+([0-9W+\\-]+)\\s+([0-9]+)(?:\\s+Tick[s]?)?\\s+([\\-–]+|[0-9]+|[0-9]+\\s*m)?\\s?([0-9]+)\\-1?W6\\s*(.*)`));
                             let weaponName = weaponMatch[1].trim();
                             return {
@@ -788,7 +788,7 @@ export default class ItemImporter {
                                 features: weaponMatch[7].trim(),
                             };
                         });
-                       
+
                         actorData.items.push(...await Promise.all(weaponData.map(async data => {
                             let weaponData = await SplittermondCompendium.findItem("weapon", data.name);
                             if (!weaponData) {
@@ -796,26 +796,26 @@ export default class ItemImporter {
                                     type: "npcattack",
                                     name: data.name,
                                     img: CONFIG.splittermond.icons.weapon[data.name] || CONFIG.splittermond.icons.weapon.default,
-                                    data: {}
+                                    system: {}
                                 };
                             } else {
                                 weaponData = weaponData.toObject();
                             }
-                            weaponData.data.damage = data.damage;
-                            weaponData.data.weaponSpeed =  data.weaponSpeed;
-                            weaponData.data.range =  data.range;
-                            weaponData.data.features =  data.features;
+                            weaponData.system.damage = data.damage;
+                            weaponData.system.weaponSpeed = data.weaponSpeed;
+                            weaponData.system.range = data.range;
+                            weaponData.system.features = data.features;
                             if (weaponData.type == "npcattack") {
-                                weaponData.data.skillValue = data.skillValue;
+                                weaponData.system.skillValue = data.skillValue;
                             } else {
                                 if (!weaponData.data.skill) {
-                                    weaponData.data.skill = "melee";
-                                    weaponData.data.attribute1 = "agility";
-                                    weaponData.data.attribute2 = "strength";
+                                    weaponData.system.skill = "melee";
+                                    weaponData.system.attribute1 = "agility";
+                                    weaponData.system.attribute2 = "strength";
                                 }
-                                actorData.data.skills[weaponData.data.skill] = {
+                                actorData.system.skills[weaponData.data.skill] = {
                                     value: data.skillValue,
-                                    points: data.skillValue - actorData.data.attributes[weaponData.data.attribute1].value - actorData.data.attributes[weaponData.data.attribute2].value
+                                    points: data.skillValue - actorData.system.attributes[weaponData.system.attribute1].value - actorData.system.attributes[weaponData.system.attribute2].value
                                 };
                             }
                             return weaponData;
@@ -823,9 +823,9 @@ export default class ItemImporter {
                         break;
                     case /Meisterschaften:/.test(tokenizedData[i]):
                         let masteries = [];
-                        tokenizedData[i+1].replace(/\n/g,"").match(/[^(]+ \([^)]+\),?/g)?.forEach((skillEntryStr) => {
-                            let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s+\(([^)]+)\)/);
-                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].toLowerCase());
+                        tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").match(/[^(]+\s*\([^)]+\),?/g)?.forEach((skillEntryStr) => {
+                            let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s*\(([^)]+)\)/);
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].trim().toLowerCase());
                             let level = 1;
                             masteryEntryData[2].split(/[,;:]/).forEach((masteryStr) => {
                                 masteryStr = masteryStr.trim();
@@ -842,7 +842,7 @@ export default class ItemImporter {
                                     masteries.push({
                                         type: "mastery",
                                         name: masteryName,
-                                        data: {
+                                        system: {
                                             skill: skill,
                                             level: level
                                         }
@@ -857,21 +857,21 @@ export default class ItemImporter {
                             if (masteryData) {
                                 masteryData = masteryData.toObject();
                                 delete masteryData._id;
-                                masteryData.data.skill = data.data.skill;
-                                masteryData.data.level = data.data.level;
+                                masteryData.system.skill = data.system.skill;
+                                masteryData.system.level = data.system.level;
                                 return masteryData
-                            } 
+                            }
                             return data;
                         })));
                         break;
                     case /Merkmale:/.test(tokenizedData[i]):
                         let features = [];
-                        tokenizedData[i+1].replace(/\n/g,"").match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach((f) => {
+                        tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").match(/[^,(]+(?:\([^)]+?\))?/gm)?.forEach((f) => {
                             if (f.trim()) {
                                 features.push({
                                     name: f.trim(),
                                     type: "npcfeature",
-                                    data: {}
+                                    system: {}
                                 });
                             }
                         });
@@ -886,21 +886,21 @@ export default class ItemImporter {
                                 delete featureData._id;
                                 featureData.name = data.name;
                                 return featureData
-                            } 
+                            }
                             return data;
                         })));
                         break;
                     case /Typus:/.test(tokenizedData[i]):
-                        actorData.data.type = tokenizedData[i+1].trim();
+                        actorData.system.type = tokenizedData[i + 1].trim();
                         break;
                     case /Monstergrad:/.test(tokenizedData[i]):
-                        actorData.data.level = tokenizedData[i+1].trim();
+                        actorData.system.level = tokenizedData[i + 1].trim();
                         break;
                     case /Zauber:/.test(tokenizedData[i]):
                         let spells = [];
                         let skill = "";
                         let level = 0;
-                        tokenizedData[i+1].replace(/\n/g,"").split(/[;,]/)?.forEach(skillEntryStr => {
+                        tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").split(/[;,]/)?.forEach(skillEntryStr => {
                             let spellEntryData = skillEntryStr.trim().match(/(:?([^ ]{3,})?\s*([0IV]+):)?\s*([^]+)/);
                             if (spellEntryData[2]) {
                                 let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[2].toLowerCase()));
@@ -908,7 +908,7 @@ export default class ItemImporter {
                                     skill = newSkill;
                                 }
                             }
-                            
+
                             switch (spellEntryData[3]) {
                                 case "0":
                                     level = 0;
@@ -935,7 +935,7 @@ export default class ItemImporter {
                                 spells.push({
                                     type: "spell",
                                     name: spellName,
-                                    data: {
+                                    system: {
                                         skill: skill,
                                         skillLevel: level
                                     }
@@ -949,15 +949,15 @@ export default class ItemImporter {
                                 spellData = spellData.toObject();
                                 delete spellData._id;
                                 spellData.name = data.name;
-                                spellData.data.skill = data.data.skill;
-                                spellData.data.skillLevel = data.data.level;
+                                spellData.system.skill = data.system.skill;
+                                spellData.system.skillLevel = data.system.level;
                                 return spellData;
-                            } 
+                            }
                             return data;
                         })));
                         break;
                     case /Beute:/.test(tokenizedData[i]):
-                        tokenizedData[i+1].match(/[^(,]+\([^)]+\)/g)?.forEach?.(lootEntryStr => {
+                        tokenizedData[i + 1].match(/[^(,]+\([^)]+\)/g)?.forEach?.(lootEntryStr => {
                             lootEntryStr = lootEntryStr.replace(/\n/, " ");
                             let lootEntryData = lootEntryStr.match(/([^(,]+)\(([^)]+)\)/);
                             let price = 0;
@@ -969,34 +969,34 @@ export default class ItemImporter {
                             actorData.items.push({
                                 type: "equipment",
                                 name: lootEntryData[1].trim(),
-                                data: {
+                                system: {
                                     description: description,
                                     price: price
                                 }
                             });
                         });
                     case /Besonderheiten:/.test(tokenizedData[i]):
-                        actorData.data.biography += `<h2>Besonderheiten</h2>`;
-                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        actorData.system.biography += `<h2>Besonderheiten</h2>`;
+                        actorData.system.biography += `<p>${tokenizedData[i + 1].trim()}</p>`;
                         break;
                     case /Kampfweise:/.test(tokenizedData[i]):
-                        actorData.data.biography += `<h2>Kampfweise</h2>`;
-                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        actorData.system.biography += `<h2>Kampfweise</h2>`;
+                        actorData.system.biography += `<p>${tokenizedData[i + 1].trim()}</p>`;
                         break;
                     case /Anmerkung:/.test(tokenizedData[i]):
-                        actorData.data.biography += `<h2>Anmerkung</h2>`;
-                        actorData.data.biography += `<p>${tokenizedData[i+1].trim()}</p>`;
+                        actorData.system.biography += `<h2>Anmerkung</h2>`;
+                        actorData.system.biography += `<p>${tokenizedData[i + 1].trim()}</p>`;
                         break;
                 }
             } catch (e) {
-                ui.notifications.error(game.i18n.format("splittermond.error.parseError",{section: tokenizedData[i]}));
-                console.log(game.i18n.format("splittermond.error.parseError",{section: tokenizedData[i]}) + tokenizedData[i+1]);
+                ui.notifications.error(game.i18n.format("splittermond.error.parseError", { section: tokenizedData[i] }));
+                console.log(game.i18n.format("splittermond.error.parseError", { section: tokenizedData[i] }) + tokenizedData[i + 1]);
             }
 
 
         }
 
-        Actor.create(actorData, {renderSheet: true});
+        Actor.create(actorData, { renderSheet: true });
 
     }
 }
