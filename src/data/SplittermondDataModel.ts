@@ -50,12 +50,19 @@ type DataFieldOption<T, REQ extends boolean, NULL extends boolean> = {
  * The __brand key that these objects carry facilitates this, because it ensures that the individual types do not extend
  * one another.
  */
+// @ts-ignore: unused-parameters
 type ObjectField<REQ, NULL> = { __brand: "ObjectField" };
+// @ts-ignore: unused-parameters
 type BooleanField<REQ, NULL> = { __brand: "BooleanField" };
+// @ts-ignore: unused-parameters
 type StringField<REQ, NULL> = { __brand: "StringField" };
+// @ts-ignore: unused-parameters
 type NumberField<REQ, NULL> = { __brand: "NumberField" };
+// @ts-ignore: unused-parameters
 type ArrayField<A, REQ, NULL> = { __brand: "ArrayField" };
+// @ts-ignore: unused-parameters
 type EmbeddedDataField<E, REQ, NULL> = { __brand: "EmbeddedDataField" };
+// @ts-ignore: unused-parameters
 type SchemaField<S, REQ, NULL> = { __brand: "SchemaField" };
 type DataField<T = unknown, REQ extends boolean = true, NULL extends boolean = false> =
     ObjectField<REQ, NULL>
