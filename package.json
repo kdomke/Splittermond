@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build" : "tsc && npm run test && npm run compileCss",
-    "test": "node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
+    "test": "npm run typecheck && node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
+    "typecheck": "tsc -p tsconfig.test.json",
     "compileCss": "gulp less"
   },
   "repository": {
