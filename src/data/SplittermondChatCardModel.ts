@@ -3,6 +3,7 @@ import {fields, SplittermondDataModel} from "./SplittermondDataModel.js";
 import type {DataModelSchemaType} from "./SplittermondDataModel";
 
 export class SplittermondChatCardModel extends SplittermondDataModel<SplittermondChatCardData> {
+
     static defineSchema() {
         return SplittermondChatCardModelSchema();
     }
@@ -20,10 +21,10 @@ function SplittermondChatCardModelSchema() {
             rolls: new fields.ArrayField(new fields.StringField({}), {required: true, nullable: false, initial: []}),
             blind: new fields.BooleanField({required:true, nullable:false}),
             whisper: new fields.ArrayField(new fields.StringField({}), {required: true, nullable: false, initial: []}),
-        }, {required: true, blank: false}),
-        messageId: new fields.StringField({required: true, blank: false}),
+        }, {required: true, blank: false, nullable: false}),
+        messageId: new fields.StringField({required: true, blank: false, nullable:true}),
         speaker: new fields.ObjectField({required: true, blank: false}),
-        message: new fields.ObjectField({required: true, blank: false}), //if not object then foundry does not store the derived object properties.
+        message: new fields.ObjectField({required: true, blank: false, nullable:false}), //if not object then foundry does not store the derived object properties.
     }
 }
 

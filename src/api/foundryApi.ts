@@ -26,8 +26,7 @@ export const foundryApi = new class FoundryApi {
         ui.notifications.info(this.localize(messageKey));
     }
 
-    // @ts-expect-error messages is used in a js file outside the compiler scope
-    private get messages(): { get: (id: string) => ChatMessage } {
+    get messages(): { get: (id: string) => ChatMessage } {
         //@ts-ignore
         return game.messages;
     }
