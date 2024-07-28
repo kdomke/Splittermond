@@ -24,7 +24,7 @@ function SplittermondChatCardModelSchema() {
         }, {required: true, blank: false, nullable: false}),
         messageId: new fields.StringField({required: true, blank: false, nullable:true}),
         speaker: new fields.ObjectField({required: true, blank: false}),
-        message: new fields.ObjectField({required: true, blank: false}), //if not object then foundry does not store the derived object properties.
+        message: new fields.ObjectField({required: true, blank: false, nullable:false}), //if not object then foundry does not store the derived object properties.
     }
 }
 
