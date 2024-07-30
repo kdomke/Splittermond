@@ -72,7 +72,6 @@ export class DamageRoll {
                     if (r.result < this._features["scharf"].value) {
                         this._features["scharf"].active = true;
                         scharfBonus += this._features["scharf"].value - r.result;
-                        //r.result = this._features["scharf"].value;
                     }
                 }
             });
@@ -92,7 +91,6 @@ export class DamageRoll {
                 if (r.active) {
                     if (r.result === roll.terms[0].faces) {
                         this._features["kritisch"].active = true;
-                        //r.result += this._features["kritisch"].value;
                         kritischBonus += this._features["kritisch"].value;
                     }
                 }
