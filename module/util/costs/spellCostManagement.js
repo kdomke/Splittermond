@@ -38,17 +38,22 @@ class SpellCostReductionManager {
         let labelParts = modifierLabel.split(".");
 
         if (labelParts.length >= 2) {
-            group = labelParts[1].trim();
+            group = labelParts[1].trim().toLowerCase();
         }
         if (labelParts.length >= 3) {
-            type = labelParts[2].trim();
+            type = labelParts[2].trim().toLowerCase();
         }
         if (labelParts.length >= 4) {
             console.warn("The label " + modifierLabel + " is not a valid cost modifier label. Extraneous parts will be ignored.")
         }
+        if (group == "${skill}"  && skill) {
+            group = skill;
+        }
+        /*
         if (group === null && skill) {
             group = skill;
         }
+        */
 
         this.modifiersMap.put(parseCostString(modifierValue).asModifier(), group, type);
     }
