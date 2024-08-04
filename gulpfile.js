@@ -4,7 +4,7 @@ import less from 'gulp-less';
 
 gulp.task('less', function (cb) {
     gulp
-        .src('less/splittermond.less')
+        .src('src/less/splittermond.less')
         .pipe(less())
         .pipe(
             gulp.dest("./")
@@ -15,7 +15,7 @@ gulp.task('less', function (cb) {
 gulp.task(
     'default',
     gulp.series('less', function (cb) {
-        gulp.watch('less/*.less', gulp.series('less'));
+        gulp.watch('src/less/*.less', gulp.series('less'));
         cb();
     })
 );

@@ -14,19 +14,12 @@
     "sourceMap": true,
     "baseUrl": "src",
     "rootDir": "src",
-    "outDir": "module/",
-    "paths": {
-      "js": ["../module/*"],
-      "templates": ["../templates/*"],
-      "config" : ["../config.js"]
-    },
+    "outDir": "dist/",
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": true
+    "checkJs": false
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": [
-    "./src/**/*.test.ts",
-    "./src/**/*.spec.ts"
-  ]
+  "include": ["./src/**/*"],
+  "ts-node": {
+  }
 }

@@ -2,11 +2,11 @@
   "name": "splittermond",
   "version": "1.0.0",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "main": "splittermond.js",
+  "main": "src/splittermond.js",
   "type": "module",
   "scripts": {
-    "build" : "tsc && npm run test && npm run compileCss",
-    "test": "npm run typecheck && node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
+    "build": "tsc -p tsconfig.build.json && npm run test && npm run compileCss",
+    "test": "npm run typecheck && npx mocha --require src/__tests__/unit/foundryMocks.js --require ts-node/register -ui bdd src/__tests__/unit/**/*.test.js",
     "typecheck": "tsc -p tsconfig.test.json",
     "compileCss": "gulp less"
   },
@@ -27,6 +27,7 @@
     "jsdom": "^23.2.0",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
   "dependencies": {
