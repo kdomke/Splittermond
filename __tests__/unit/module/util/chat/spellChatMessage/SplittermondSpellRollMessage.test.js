@@ -243,6 +243,7 @@ describe("SplittermondSpellRollMessage actions", () => {
     it("should disable damage degree of success options", async () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         sandbox.stub(spellMock, "damage").get(() => "1W6");
+        spellMock.system = {...spellMock,features : ""};
         sandbox.stub(foundryApi, "roll").returns({evaluate: () => ({total: 3, dice: [{total: 3}]})});
 
         await spellRollMessage.applyDamage();

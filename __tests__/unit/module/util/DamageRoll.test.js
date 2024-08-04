@@ -104,7 +104,7 @@ describe("DamageRoll evaluation", () => {
         expect(mock.firstCall.args[0]).to.equal("2d6kh1+0");
     });
 
-    it("Should increase the lowest dice for scharf feature", async () => {
+    it("Should not increase the lowest dice for scharf feature", async () => {
         const damageString = "2d6"
         const mock = sinon.stub(foundryApi, "roll").returns({
                 evaluate: () => (Promise.resolve({
@@ -124,11 +124,11 @@ describe("DamageRoll evaluation", () => {
         const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
 
         expect(roll._total).to.equal(4);
-        expect(roll.terms[0].results[0].result).to.equal(2);
-        expect(roll.terms[0].results[1].result).to.equal(2);
+        expect(roll.terms[0].results[0].result).to.equal(1);
+        expect(roll.terms[0].results[1].result).to.equal(1);
     });
 
-    it("Should increase the highest dice for kritisch feature", async () => {
+    it("Should not increase the highest dice for kritisch feature", async () => {
         const damageString = "2d6"
         const mock = sinon.stub(foundryApi, "roll").returns({
                 evaluate: () => (Promise.resolve({
@@ -149,7 +149,7 @@ describe("DamageRoll evaluation", () => {
         const roll = await DamageRoll.parse(damageString, "Kritisch 2").evaluate();
 
         expect(roll._total).to.equal(16);
-        expect(roll.terms[0].results[0].result).to.equal(8);
-        expect(roll.terms[0].results[1].result).to.equal(8);
+        expect(roll.terms[0].results[0].result).to.equal(6);
+        expect(roll.terms[0].results[1].result).to.equal(6);
     });
 });
