@@ -1,8 +1,8 @@
 import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
-import {AgentReference} from "../../src/module/data/references/AgentReference.js";
+import {AgentReference} from "../../module/data/references/AgentReference.js";
 import {foundryApi} from "../../module/api/foundryApi.js";
-import {ItemReference} from "../../src/module/data/references/ItemReference.js";
-import {OnAncestorReference} from "../../src/module/data/references/OnAncestorReference.js";
+import {ItemReference} from "../../module/data/references/ItemReference.js";
+import {OnAncestorReference} from "../../module/data/references/OnAncestorReference.js";
 
 export function dataModelTest(context) {
     const {describe, it, expect} = context;
