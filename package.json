@@ -5,9 +5,9 @@
   "main": "src/splittermond.js",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && npm run test && npm run compileCss",
-    "test": "npm run typecheck && npx mocha --require src/__tests__/unit/foundryMocks.js --require ts-node/register -ui bdd src/__tests__/unit/**/*.test.js",
-    "typecheck": "tsc -p tsconfig.test.json",
+    "build": "tsc -p config/tsconfig.build.json && npm run test && npm run compileCss",
+    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --require src/__tests__/unit/foundryMocks.js -ui bdd test/__tests__/unit/**/*.test.js",
+    "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
     "compileCss": "gulp less"
   },
   "repository": {

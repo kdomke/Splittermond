@@ -3,8 +3,9 @@
   "compilerOptions": {
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noEmit": true
+    "outDir": "../test"
+    //"noEmit": true
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["../src/**/*.ts","../src/**/*.js"],
   "exclude": []
 }
