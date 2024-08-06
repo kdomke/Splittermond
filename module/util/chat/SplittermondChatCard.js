@@ -48,13 +48,12 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
         const content = await this.render();
 
         const chatData = {
+            blind: this.chatOptions.blind,
             user: this.foundryApiWrapper.currentUser.id,
             speaker: this.speaker,
             rolls: this.chatOptions.rolls,
-            whisper : [],//this is provisional and makes rolls always public
+            whisper : this.chatOptions.whisper,
             type: this.chatOptions.type,
-            rollMode: this.chatOptions.mode,
-            //TODO: we need to check whether we need to fill whisper with appropriat user roles
             content: content,
             flags: {
                 splittermond: {

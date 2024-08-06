@@ -3,7 +3,7 @@ import {fields, SplittermondDataModel} from "./SplittermondDataModel.js";
 /**
  * @property {string} messageId
  * @property {object} speaker
- * @property {{type:number, mode: string}} chatOptions
+ * @property {{type:number, mode: string, rolls:string[], whisper:string[]}} chatOptions
  * @property {SplittermondChatMessage & SplittermondDataModel} message
  */
 export class SplittermondChatCardModel extends SplittermondDataModel {
@@ -13,6 +13,7 @@ export class SplittermondChatCardModel extends SplittermondDataModel {
                 type: new fields.NumberField({required: true, nullable: false}),
                 mode: new fields.StringField({required: false, blank: false, nullable: false}),
                 rolls: new fields.ArrayField(new fields.StringField(),{required:true, nullable:false, initial: []}),
+                blind: new fields.BooleanField({required:true, nullable:false}),
                 whisper: new fields.ArrayField(new fields.StringField(), {required:true, nullable:false, initial: []}),
             }, {required: true, blank: false}),
             messageId: new fields.StringField({required: false, blank: false}),
