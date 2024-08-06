@@ -107,7 +107,7 @@ export function chatActionFeatureTest(context) {
             };
             return SplittermondChatCard.create(
                 actor, SplittermondSpellRollMessage.createRollMessage(spell, checkReport),
-                {type: 5, mode: 'CHAT.RollPublic'}
+                {type: 5, blind:false, whisper:[]}
             );
         }
     });

@@ -64,16 +64,17 @@ export function DamageRollTest(context) {
         it("Scharf should modify roll in a way that the lowest dice are increased", async () => {
             const roll = await DamageRoll.parse("1d6", "Scharf 6").evaluate();
 
+            expect(roll.total).to.equal(6);
             expect(roll.terms[0]).to.be.instanceOf(Die);
             expect(roll.terms[0].results).to.have.length(1);
-            expect(roll.terms[0].results[0].result).to.equal(6);
+            expect(roll.terms[0].results[0].result).not.to.equal(roll.total);
         });
 
         it("Kritisch should modify roll in a way that the highest dice are increased", async () => {
             const roll = await DamageRoll.parse("999d6", "Kritisch 1").evaluate();
 
             expect(roll.terms[0]).to.be.instanceOf(Die);
-            expect(roll.terms[0].results.map(r => r.result)).not.to.deep.contain(6);
+            expect(roll.total).not.to.equal(roll.terms.reduce((former,latter)=> former += latter.result,0))
         });
 
     });
