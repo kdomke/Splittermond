@@ -1,5 +1,5 @@
 import {PrimaryCost} from "./PrimaryCost.js";
-import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.ts";
 
 /**
  * Represents a tax on an actor's health or focus pool.

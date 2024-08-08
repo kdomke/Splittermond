@@ -1,7 +1,7 @@
 import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessField.js";
 import {splittermond} from "../../../config.js";
 import {parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser.js";
-import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 
 /**

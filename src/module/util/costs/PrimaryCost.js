@@ -1,5 +1,5 @@
 import {parseCostString} from "./costParser.js";
-import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.ts";
 
 
 /**

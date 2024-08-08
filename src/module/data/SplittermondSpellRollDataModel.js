@@ -3,7 +3,7 @@ import {SpellMessageDegreesOfSuccessManager} from "../util/chat/spellChatMessage
 import {SpellMessageActionsManager} from "../util/chat/spellChatMessage/SpellMessageActionsManager.js";
 import {SplittermondSpellRollMessageRenderer} from "../util/chat/spellChatMessage/SpellRollMessageRenderer.js";
 import {ItemReference} from "./references/ItemReference.js";
-import {fields, SplittermondDataModel} from "./SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "./SplittermondDataModel.ts";
 
 
 /**

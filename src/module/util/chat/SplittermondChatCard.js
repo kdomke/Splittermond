@@ -1,6 +1,6 @@
-import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.js";
+import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.ts";
 import {getFromRegistry} from "./chatMessageRegistry.js";
-import {foundryApi} from "../../api/foundryApi.js";
+import {foundryApi} from "../../api/foundryApi.ts";
 
 /**
  * @typedef SplittermondChatMessage

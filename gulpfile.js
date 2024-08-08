@@ -7,7 +7,7 @@ gulp.task('less', function (cb) {
         .src('src/less/splittermond.less')
         .pipe(less())
         .pipe(
-            gulp.dest("./")
+            gulp.dest("./dist")
         );
     cb();
 });

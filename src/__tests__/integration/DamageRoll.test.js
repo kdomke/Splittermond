@@ -1,4 +1,4 @@
-import {foundryApi} from "../../module/api/foundryApi.js";
+import {foundryApi} from "../../module/api/foundryApi.ts";
 import {DamageRoll} from "../../module/util/damage/DamageRoll.js";
 
 export function DamageRollTest(context) {

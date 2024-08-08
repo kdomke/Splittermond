@@ -1,4 +1,4 @@
-import { foundryApi } from "../../api/foundryApi.js";
+import { foundryApi } from "../../api/foundryApi.ts";
 
 export class DamageRoll {
 

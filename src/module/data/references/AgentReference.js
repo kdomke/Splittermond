@@ -1,5 +1,5 @@
-import {foundryApi} from "../../api/foundryApi.js";
-import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
+import {foundryApi} from "../../api/foundryApi.ts";
+import {fields, SplittermondDataModel} from "../SplittermondDataModel.ts";
 
 
 /**

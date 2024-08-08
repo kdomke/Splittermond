@@ -1,5 +1,5 @@
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
-import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
 
 /**
  * @extends {SplittermondDataModel<SpellMessageDegreeOfSuccessField, SpellMessageDegreesOfSuccessManager>}

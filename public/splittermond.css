@@ -1,66 +1,66 @@
 @font-face {
   font-family: 'Vollkorn';
-  src: url('./fonts/Vollkorn-VariableFont_wght.ttf') format('truetype');
+  src: url('../fonts/Vollkorn-VariableFont_wght.ttf') format('truetype');
   font-style: normal;
   font-weight: 1 999;
 }
 @font-face {
   font-family: 'Vollkorn';
-  src: url('./fonts/Vollkorn-Italic-VariableFont_wght.ttf') format('truetype');
+  src: url('../fonts/Vollkorn-Italic-VariableFont_wght.ttf') format('truetype');
   font-style: italic;
   font-weight: 1 999;
 }
 @font-face {
   font-family: 'Vollkorn SC';
-  src: url('./fonts/VollkornSC-Regular.ttf') format('truetype');
+  src: url('../fonts/VollkornSC-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'Vollkorn SC';
-  src: url('./fonts/VollkornSC-SemiBold.ttf') format('truetype');
+  src: url('../fonts/VollkornSC-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
   font-family: 'Vollkorn SC';
-  src: url('./fonts/VollkornSC-Bold.ttf') format('truetype');
+  src: url('../fonts/VollkornSC-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
   font-family: 'Vollkorn SC';
-  src: url('./fonts/VollkornSC-Black.ttf') format('truetype');
+  src: url('../fonts/VollkornSC-Black.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
 }
 @font-face {
   font-family: 'Almendra';
-  src: url('./fonts/Almendra-Regular.ttf') format('truetype');
+  src: url('../fonts/Almendra-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'Almendra';
-  src: url('./fonts/Almendra-Italic.ttf') format('truetype');
+  src: url('../fonts/Almendra-Italic.ttf') format('truetype');
   font-weight: 400;
   font-style: italic;
 }
 @font-face {
   font-family: 'Almendra';
-  src: url('./fonts/Almendra-Bold.ttf') format('truetype');
+  src: url('../fonts/Almendra-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
   font-family: 'Almendra';
-  src: url('./fonts/Almendra-BoldItalic.ttf') format('truetype');
+  src: url('../fonts/Almendra-BoldItalic.ttf') format('truetype');
   font-weight: 700;
   font-style: italic;
 }
 @font-face {
   font-family: 'Almendra SC';
-  src: url('./fonts/AlmendraSC-Regular.ttf') format('truetype');
+  src: url('../fonts/AlmendraSC-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
@@ -75,7 +75,7 @@
 .chat-message.blind,
 .splittermond .list.masteries#splittermond-tooltip::before {
   border: 3px solid transparent;
-  border-image: var(--border-image-paper, url(../../systems/splittermond/images/border-paper-opt-2.png) 16 16);
+  border-image: var(--border-image-paper, url(../images/border-paper-opt-2.png) 16 16);
   border-image-width: 16px;
   border-image-outset: 3px;
   border-radius: 0;
@@ -89,7 +89,7 @@
 .splittermond.dialog-check .skill,
 #splittermond-tooltip {
   border: 2px solid transparent;
-  border-image: var(--border-image-paper-small, url(../../systems/splittermond/images/border-paper-small.png) 8 8);
+  border-image: var(--border-image-paper-small, url(../images/border-paper-small.png) 8 8);
   border-image-width: 8px;
   border-image-outset: 1px;
   border-radius: 0;
@@ -99,12 +99,12 @@
 .splittermond-tooltip::before,
 #splittermond-tooltip::before {
   border: 1px solid transparent;
-  border-image: var(--border-image-corner-1, url(../../systems/splittermond/images/border-corner-1.png) 16 16);
+  border-image: var(--border-image-corner-1, url(../images/border-corner-1.png) 16 16);
   border-image-width: 16px;
 }
 .border-corner-2 {
   border: 1px solid transparent;
-  border-image: var(--border-image-corner-2, url(../../systems/splittermond/images/border-small2.png) 8 8);
+  border-image: var(--border-image-corner-2, url(../images/border-small2.png) 8 8);
   border-image-width: 8px;
 }
 .border-wobbly-line,
@@ -148,7 +148,7 @@ ul.checkbox-list li label,
 .splittermond .sheet-navigation,
 .splittermond .subnav {
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -157,7 +157,7 @@ ul.checkbox-list li label,
 .bar,
 .splittermond .properties-editor h3 {
   border: 3px solid transparent;
-  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image: var(--border-image-wobbly-line-double, url(../images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -166,7 +166,7 @@ ul.checkbox-list li label,
 .window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) .window-content,
 .sheet.journal-entry .journal-entry-content .box-blue {
   border: 4px solid transparent;
-  border-image: var(--border-image-double-corner-1, url(../../systems/splittermond/images/double-border-corner-1.png) 21 21);
+  border-image: var(--border-image-double-corner-1, url(../images/double-border-corner-1.png) 21 21);
   border-image-width: 21px;
   border-image-outset: 1px;
 }
@@ -176,7 +176,7 @@ ul.checkbox-list li label,
 .tabs:not(#sidebar-tabs):not(.sidebar .tabs),
 .splittermond .sheet-navigation,
 .splittermond .subnav {
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   background-blend-mode: multiply;
 }
 .button-style,
@@ -191,7 +191,7 @@ input[type="checkbox"],
 .splittermond .subnav .item,
 .splittermond .subnav-item {
   border: 3px solid transparent;
-  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image: var(--border-image-wobbly-line-double, url(../images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -202,7 +202,7 @@ input[type="checkbox"],
   padding-top: 2px;
   padding-bottom: 2px;
   background-origin: border-box;
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   background-clip: padding-box, padding-box, border-box, border-box;
   background-blend-mode: normal, multiply, normal, normal, normal;
   text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
@@ -321,10 +321,10 @@ input[type="checkbox"]:disabled::before,
   --color-shiny-border-light: hsla(202, 10%, 90%, 0.8);
   --color-shiny-border-dark: hsla(202, 10%, 60%, 0.8);
   --background-parchment: url(../../ui/parchment.jpg) repeat;
-  --background-parchment-splittermond: url(../../systems/splittermond/images/background_bw6r.jpg) top right no-repeat;
+  --background-parchment-splittermond: url(../images/background_bw6r.jpg) top right no-repeat;
   --background-parchment-splittermond-blend-mode: multiply;
   --background-denim: url(../../ui/denim075.png) repeat;
-  --background-denim-splittermond: url(../../systems/splittermond/images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
+  --background-denim-splittermond: url(../images/background_alpha_blueish_opt.png) bottom left / 400px no-repeat;
   --background-denim-splittermond-blend-mode: normal;
   --color-border-highlight-alt: var(--color-primary);
   --color-border-highlight: var(--color-primary);
@@ -333,7 +333,7 @@ input[type="checkbox"]:disabled::before,
   --color-text-hyperlink: var(--color-primary);
 }
 .system-splittermond[data-theme="dark"] {
-  --background-parchment: url(../../systems/splittermond/images/parchment_dark.jpg) repeat;
+  --background-parchment: url(../images/parchment_dark.jpg) repeat;
   --color-shiny-border-light: hsla(202, 10%, 70%, 0.8);
   --color-shiny-border-dark: hsla(202, 10%, 40%, 0.8);
   --color-text: #f0f0e0;
@@ -356,8 +356,8 @@ input[type="checkbox"]:disabled::before,
   --color-fail_rgb: 204, 48, 0;
 }
 .system-splittermond[data-theme="splittermond-blue"] {
-  --background-parchment: url(../../systems/splittermond/images/parchment.jpg) repeat;
-  --background-parchment-splittermond: url(../../systems/splittermond/images/background7.jpg) top right no-repeat;
+  --background-parchment: url(../images/parchment.jpg) repeat;
+  --background-parchment-splittermond: url(../images/background7.jpg) top right no-repeat;
   --color-text: #ebf0f5;
   --color-text_rgb: 235, 240, 245;
   --color-text-secondary: #303336;
@@ -372,7 +372,7 @@ form button,
 .dialog .dialog-buttons button,
 .dialog .dialog-buttons button.default {
   border: 3px solid transparent;
-  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image: var(--border-image-wobbly-line-double, url(../images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -383,7 +383,7 @@ form button,
   padding-top: 2px;
   padding-bottom: 2px;
   background-origin: border-box;
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   background-clip: padding-box, padding-box, border-box, border-box;
   background-blend-mode: normal, multiply, normal, normal, normal;
   text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
@@ -437,7 +437,7 @@ button.capture-position {
     height: 28px;
     */
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -579,7 +579,7 @@ img {
 .chat-message.emote,
 .chat-message.whisper,
 .chat-message.blind {
-  background: url(../../systems/splittermond/images/grunge_alpha.png);
+  background: url(../images/grunge_alpha.png);
 }
 .chat-message.emote {
   background-color: var(--background-color-emote, #f3edde);
@@ -604,7 +604,7 @@ img {
 .splittermond .subnav .item,
 .splittermond .subnav-item {
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -647,7 +647,7 @@ img {
 .splittermond .sheet-navigation-item.active,
 .splittermond .subnav .item.active,
 .splittermond .subnav-item.active {
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-primary), var(--color-primary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), linear-gradient(var(--color-primary), var(--color-primary)), url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   box-shadow: none;
 }
 .tabs-style .item.active:after,
@@ -767,7 +767,7 @@ input[type="time"],
 .directory .directory-header .header-search input {
   padding: 1px 3px;
   border-width: 4px;
-  background: url(../../systems/splittermond/images/noise6.png);
+  background: url(../images/noise6.png);
   background-position: center center;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: transparent;
@@ -801,7 +801,7 @@ input[type="time"]:focus,
 .directory .directory-header .header-search input:hover,
 .directory .directory-header .header-search input:active,
 .directory .directory-header .header-search input:focus {
-  background: url(../../systems/splittermond/images/noise6.png);
+  background: url(../images/noise6.png);
   background-color: transparent;
   box-shadow: none;
   border-radius: 0;
@@ -837,7 +837,7 @@ input[type="time"].autoexpand,
 .dark input[type="date"],
 .dark input[type="time"],
 .dark .directory .directory-header .header-search input {
-  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+  background: url(../images/noise6.png) center center, var(--background-parchment);
 }
 .dark input[type="text"]:hover,
 .dark input[type="number"]:hover,
@@ -851,12 +851,12 @@ input[type="time"].autoexpand,
 .dark input[type="time"]:focus,
 .dark .directory .directory-header .header-search input:hover,
 .dark .directory .directory-header .header-search input:focus {
-  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+  background: url(../images/noise6.png) center center, var(--background-parchment);
 }
 select,
 #chat-controls .roll-type-select {
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -939,11 +939,11 @@ form h3.form-header {
   line-height: unset;
 }
 .directory .directory-header .header-search input {
-  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+  background: url(../images/noise6.png) center center, var(--background-parchment);
 }
 .directory .directory-header .header-search input:hover,
 .directory .directory-header .header-search input:focus {
-  background: url(../../systems/splittermond/images/noise6.png) center center, var(--background-parchment);
+  background: url(../images/noise6.png) center center, var(--background-parchment);
 }
 .directory .directory-list .directory-item.context,
 .directory .directory-list .directory-item.active {
@@ -973,10 +973,10 @@ form .hint {
   /* border-radius: 3px; */
   background: #782e22;
   border: 1px solid #ff6400;
-  background: url(../../systems/splittermond/images/noise6.png), url(../../systems/splittermond/images/grunge_alpha.png), var(--background-parchment);
+  background: url(../images/noise6.png), url(../images/grunge_alpha.png), var(--background-parchment);
   background-blend-mode: overlay;
   border: 2px solid transparent;
-  border-image: url(../../systems/splittermond/images/double-border_small.png) 2 2;
+  border-image: url(../images/double-border_small.png) 2 2;
   border-image-width: 2px;
   border-image-outset: 0px;
   border-image-repeat: repeat;
@@ -1014,7 +1014,7 @@ a.pdflink i {
 }
 .system-splittermond .filepicker .current-dir button {
   border: 3px solid transparent;
-  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image: var(--border-image-wobbly-line-double, url(../images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   color: var(--color-text);
   font-family: "Almendra";
@@ -1023,7 +1023,7 @@ a.pdflink i {
   padding-top: 2px;
   padding-bottom: 2px;
   background-origin: border-box;
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   background-clip: padding-box, padding-box, border-box, border-box;
   background-blend-mode: normal, multiply, normal, normal, normal;
   text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
@@ -1031,7 +1031,7 @@ a.pdflink i {
   box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
   position: relative;
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -1061,7 +1061,7 @@ a.pdflink i {
 .system-splittermond .prosemirror menu .pm-dropdown,
 .system-splittermond .prosemirror menu button {
   border: 3px solid transparent;
-  border-image: var(--border-image-wobbly-line-double, url(../../systems/splittermond/images/double-border_small_2.png) 6 6);
+  border-image: var(--border-image-wobbly-line-double, url(../images/double-border_small_2.png) 6 6);
   border-image-width: 6px;
   color: var(--color-text);
   font-family: "Almendra";
@@ -1070,7 +1070,7 @@ a.pdflink i {
   padding-top: 2px;
   padding-bottom: 2px;
   background-origin: border-box;
-  background-image: url(../../systems/splittermond/images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/grunge_alpha.png), linear-gradient(var(--color-secondary), var(--color-secondary)), url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   background-clip: padding-box, padding-box, border-box, border-box;
   background-blend-mode: normal, multiply, normal, normal, normal;
   text-shadow: 0 0 3px #000000, 0px -1px 0px #000000, 0px 1px 0px #ffffff;
@@ -1078,7 +1078,7 @@ a.pdflink i {
   box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
   position: relative;
   border: 1px solid transparent;
-  border-image: var(--border-image-wobbly-line, url(../../systems/splittermond/images/double-border_small_2.png) 3 3);
+  border-image: var(--border-image-wobbly-line, url(../images/double-border_small_2.png) 3 3);
   border-image-width: 3px;
   border-image-outset: 1px;
   border-image-repeat: repeat;
@@ -1293,7 +1293,7 @@ a.pdflink i {
 }
 .bar {
   border-width: 4px;
-  background-image: url(../../systems/splittermond/images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
+  background-image: url(../images/noise6.png), repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
   width: 100%;
   height: 10px;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
@@ -1305,7 +1305,7 @@ a.pdflink i {
 .bar > div {
   width: 0%;
   height: 100%;
-  background: url(../../systems/splittermond/images/noise6.png), url(../../systems/splittermond/images/grunge_alpha.png);
+  background: url(../images/noise6.png), url(../images/grunge_alpha.png);
   background-color: var(--color-primary);
 }
 .bar > .channeled {
@@ -1350,7 +1350,7 @@ a.pdflink i {
   color: white;
   left: 12.5%;
   z-index: 2;
-  background: url(../../systems/splittermond/images/noise6.png), url(../../systems/splittermond/images/grunge_alpha.png);
+  background: url(../images/noise6.png), url(../images/grunge_alpha.png);
   background-blend-mode: normal;
   background-color: var(--color-primary);
 }
@@ -1678,7 +1678,7 @@ a.pdflink i {
   position: sticky;
   top: 0px;
   z-index: 10;
-  background: var(--background-parchment), url(../../systems/splittermond/images/noise6.png);
+  background: var(--background-parchment), url(../images/noise6.png);
   background-blend-mode: multiply;
 }
 .splittermond .list-header *:not(:first-child) {
@@ -1718,7 +1718,7 @@ a.pdflink i {
 }
 .splittermond .list-item:hover,
 .splittermond .list-item.hover {
-  background: linear-gradient(to right, transparent, rgba(var(--color-primary_rgb), 0.1), transparent), url(../../systems/splittermond/images/noise6.png);
+  background: linear-gradient(to right, transparent, rgba(var(--color-primary_rgb), 0.1), transparent), url(../images/noise6.png);
   background-blend-mode: multiply;
 }
 .splittermond .list-item input {

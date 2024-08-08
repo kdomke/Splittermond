@@ -1,8 +1,8 @@
 import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
-import {foundryApi} from "../../../api/foundryApi.js";
+import {foundryApi} from "../../../api/foundryApi.ts";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";
-import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
 import {parseCostString} from "../../costs/costParser.js";

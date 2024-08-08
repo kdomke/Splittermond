@@ -1,5 +1,5 @@
 import {TooltipFormula} from "../tooltip.js";
-import {foundryApi} from "../../api/foundryApi.js";
+import {foundryApi} from "../../api/foundryApi.ts";
 
 
 export class RollResultRenderer {

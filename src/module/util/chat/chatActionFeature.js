@@ -1,5 +1,5 @@
 import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard.js";
-import {foundryApi} from "../../api/foundryApi.js";
+import {foundryApi} from "../../api/foundryApi.ts";
 import {canEditMessageOf} from "../chat.js";
 
 const socketEvent = "system.splittermond";

@@ -3,7 +3,7 @@ import {describe, it, afterEach} from "mocha";
 import {expect} from "chai";
 import sinon from "sinon";
 import {referencesUtils} from "../../../../../module/data/references/referencesUtils.js";
-import {foundryApi} from "../../../../../module/api/foundryApi.js";
+import {foundryApi} from "../../../../../module/api/foundryApi.ts";
 
 describe('getBestActor', () => {
     afterEach(()=> sinon.restore());

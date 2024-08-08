@@ -30,7 +30,7 @@ import SplittermondEquipmentItem from "./module/item/equipment.js";
 import SplittermondNPCAttackItem from "./module/item/npcattack.js";
 import SplittermondMastery from "./module/item/mastery.js";
 import {referencesUtils} from "./module/data/references/referencesUtils.js";
-import {foundryApi} from "./module/api/foundryApi.js";
+import {foundryApi} from "./module/api/foundryApi.ts";
 import {canEditMessageOf} from "./module/util/chat.js";
 
 

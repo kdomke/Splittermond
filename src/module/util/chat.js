@@ -1,5 +1,5 @@
 import * as Tooltip from './tooltip.js';
-import {foundryApi} from "../api/foundryApi.js";
+import {foundryApi} from "../api/foundryApi.ts";
 
 /**
  * @param {string|null} userId

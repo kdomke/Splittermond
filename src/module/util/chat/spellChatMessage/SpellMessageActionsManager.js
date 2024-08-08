@@ -4,10 +4,10 @@ import { AgentReference } from "../../../data/references/AgentReference.js";
 import { DamageRoll } from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
 import { ItemReference } from "../../../data/references/ItemReference.js";
-import { fields, SplittermondDataModel } from "../../../data/SplittermondDataModel.js";
+import { fields, SplittermondDataModel } from "../../../data/SplittermondDataModel.ts";
 import { OnAncestorReference } from "../../../data/references/OnAncestorReference.js";
 import { referencesUtils } from "../../../data/references/referencesUtils.js";
-import { foundryApi } from "../../../api/foundryApi.js";
+import { foundryApi } from "../../../api/foundryApi.ts";
 
 /**
  * @extends {SplittermondDataModel<SpellMessageActionsManager,never>}

@@ -1,4 +1,4 @@
-import {fields, SplittermondDataModel} from "../SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "../SplittermondDataModel.ts";
 
 
 /**

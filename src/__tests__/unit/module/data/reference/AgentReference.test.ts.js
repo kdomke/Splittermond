@@ -2,7 +2,7 @@ import "../../../foundryMocks.js";
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import {AgentReference} from "../../../../../module/data/references/AgentReference.js";
-import {foundryApi} from "../../../../../module/api/foundryApi.js";
+import {foundryApi} from "../../../../../module/api/foundryApi.ts";
 import sinon from "sinon";
 
 

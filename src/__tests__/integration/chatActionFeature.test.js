@@ -1,6 +1,6 @@
 import {getActor, getActorWithItemOfType} from "./fixtures.js"
 import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.js";
-import {foundryApi} from "../../module/api/foundryApi.js";
+import {foundryApi} from "../../module/api/foundryApi.ts";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
 import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
 
