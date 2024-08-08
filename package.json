@@ -5,8 +5,8 @@
   "main": "src/splittermond.js",
   "type": "module",
   "scripts": {
-    "build": "tsc -p config/tsconfig.build.json && npm run test && npm run compileCss && vite build",
-    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --require src/__tests__/unit/foundryMocks.js -ui bdd test/__tests__/unit/**/*.test.js",
+    "build": "tsc -p config/tsconfig.build.json && npm run test && npm run compileCss && vite build --config config/vite.config.mts",
+    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
     "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
     "compileCss": "gulp less"
   },
@@ -28,6 +28,7 @@
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.17.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.0"
   },

@@ -1,9 +1,9 @@
 import "../../../../foundryMocks.js";
 import SplittermondSpellItem from "../../../../../../module/item/spell.js";
 import sinon from "sinon";
-import {foundryApi} from "../../../../../../module/api/foundryApi.js";
+import {foundryApi} from "../../../../../../module/api/foundryApi.ts";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
-import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
+import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.ts";
 
 /**
  * @param {SinonSandbox} sandbox

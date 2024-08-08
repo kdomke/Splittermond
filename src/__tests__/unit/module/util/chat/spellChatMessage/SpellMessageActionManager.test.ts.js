@@ -2,7 +2,7 @@ import "../../../../foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {AgentReference} from "../../../../../../src/module/data/references/AgentReference.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
 import sinon from "sinon";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import {
@@ -15,6 +15,7 @@ import {
     setUpMockSpellSelfReference,
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper.js";
+import {parseCostString} from "../../../../../../module/util/costs/costParser.js";
 
 describe("SpellActionManager", () => {
     let sandbox;
@@ -116,13 +117,14 @@ describe("SpellActionManager", () => {
 
 
     describe("Focus", () => {
+        const modifier= parseCostString("1V1").asModifier();
         it("should pass adjusted focus to the actor", () => {
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
             actionManager.focus.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(9, 3, 0).asPrimaryCost());
             actionManager.focus.spellReference.getItem().name = "spell";
 
-            actionManager.focus.subtractCost("1V1");
+            actionManager.focus.subtractCost(modifier);
             actionManager.consumeFocus();
 
             expect(actionManager.focus.casterReference.getAgent().consumeCost.lastCall.args[1]).to.contain("11V2")
@@ -131,7 +133,7 @@ describe("SpellActionManager", () => {
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
 
-            actionManager.focus.addCost("1V1")
+            actionManager.focus.addCost(modifier)
 
 
             expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 2, false, true).asModifier());
@@ -141,17 +143,18 @@ describe("SpellActionManager", () => {
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 2, false, true).asModifier();
 
-            actionManager.focus.subtractCost("1V1")
+            actionManager.focus.subtractCost(modifier)
 
 
             expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 1, false, true).asModifier());
         });
 
         it("should apply strict costs", () => {
+            const channeledModifier= parseCostString("K1V1").asModifier();
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
 
-            actionManager.focus.addCost("K1V1")
+            actionManager.focus.addCost(channeledModifier)
 
             expect(actionManager.focus.adjusted).to.deep.equal({
                 _consumed: 1,
@@ -175,7 +178,7 @@ describe("SpellActionManager", () => {
             actionManager.focus.used = true
             actionManager.focus.adjusted = new Cost(0, 3, false, true).asModifier();
 
-            actionManager.focus.addCost("1")
+            actionManager.focus.addCost({nonConsumed:1,consumed:0,channeled:1,channeled_consumed:0})
 
             expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 3, false, true).asModifier());
         });
@@ -185,7 +188,7 @@ describe("SpellActionManager", () => {
             actionManager.focus.used = true
             actionManager.focus.adjusted = "3";
 
-            actionManager.focus.subtractCost("1");
+            actionManager.focus.subtractCost({nonConsumed:1,consumed:0,channeled:1,channeled_consumed:0});
 
             expect(actionManager.focus.adjusted).to.equal("3")
         });
