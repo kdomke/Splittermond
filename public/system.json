@@ -13,7 +13,7 @@
   ],
   "scripts": [],
   "esmodules": [
-    "dist/splittermond.js"
+    "splittermond.js"
   ],
   "styles": [
     "splittermond.css"

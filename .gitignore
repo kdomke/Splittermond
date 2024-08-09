@@ -1,9 +1,7 @@
 .vscode/
 node_modules/
-images/source/
+public/images/source/
 *.lock
 
-module/
+
 dist/
-test/
-splittermond.js

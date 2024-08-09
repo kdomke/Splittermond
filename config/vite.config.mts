@@ -9,6 +9,8 @@ export default defineConfig( {
         port: 30001,
         open: true,
         proxy: {
+            //We have not yet integrated the less compilation into vite, so we need to serve the compiled css here.
+            '/systems/splittermond/splittermond.css': 'http://localhost:30000',
             '^(?!/systems/splittermond)': 'http://localhost:30000/',
             '/socket.io': {
                 target: 'ws://localhost:30000',

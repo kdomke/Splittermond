@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "compileCss": "gulp less",
+    "dev": "vite serve --config config/vite.config.mts",
     "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
     "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
     "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts && npm run compileCss"
