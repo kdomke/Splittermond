@@ -8,7 +8,7 @@ import fs from "fs";
  * @returns {string}
  */
 export function createHtml(templateFilePath, context) {
-    const template= Handlebars.compile(fs.readFileSync(templateFilePath).toString("utf-8"));
+    const template= Handlebars.compile(fs.readFileSync(`public/${templateFilePath}`).toString("utf-8"));
     Handlebars.registerHelper("localize", localizeMock);
     Handlebars.registerHelper("selectOptions", selectOptionsMock);
     Handlebars.registerHelper("eq", equals);

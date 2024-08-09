@@ -12,6 +12,7 @@ import {SplittermondDataModel} from "../../../../../../module/data/SplittermondD
 export function setUpMockActor(sandbox) {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
     sandbox.stub(foundryApi, "getActor").returns(actorMock);
+    actorMock.system={}
     actorMock.documentName = "Actor";
     actorMock.id = "1";
     return actorMock;
@@ -23,6 +24,7 @@ export function setUpMockActor(sandbox) {
  */
 export function setUpMockSpellSelfReference(sandbox) {
     const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
+    spellMock.system = {};
     sandbox.stub(foundryApi, "getItem").returns(spellMock);
     spellMock.getItem = function () {
         return this;

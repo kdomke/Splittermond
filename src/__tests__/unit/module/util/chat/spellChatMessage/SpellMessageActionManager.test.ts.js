@@ -117,7 +117,7 @@ describe("SpellActionManager", () => {
 
 
     describe("Focus", () => {
-        const modifier= parseCostString("1V1").asModifier();
+        const modifier= parseCostString("1V1", true).asModifier();
         it("should pass adjusted focus to the actor", () => {
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
@@ -150,7 +150,7 @@ describe("SpellActionManager", () => {
         });
 
         it("should apply strict costs", () => {
-            const channeledModifier= parseCostString("K1V1").asModifier();
+            const channeledModifier= parseCostString("K1V1", true).asModifier();
             const actionManager = createSpellActionManager(sandbox);
             actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
 
@@ -206,6 +206,8 @@ describe("SpellActionManager", () => {
     it("should pass fumbles to the actor", () => {
         const actionManager = createSpellActionManager(sandbox);
         actionManager.magicFumble.checkReportReference.get().skill = {name: "skillName"};
+        actionManager.focus.spellReference.getItem().system.skill = "skillName"
+        actionManager.focus.spellReference.getItem().actor.system.spellCostReduction ={getCostModifiers:()=>[]}
 
         actionManager.rollMagicFumble();
 
