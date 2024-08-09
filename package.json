@@ -5,10 +5,10 @@
   "main": "src/splittermond.js",
   "type": "module",
   "scripts": {
-    "build": "tsc -p config/tsconfig.build.json && npm run test && npm run compileCss && vite build --config config/vite.config.mts",
-    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
+    "compileCss": "gulp less",
     "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
-    "compileCss": "gulp less"
+    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
+    "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts && npm run compileCss"
   },
   "repository": {
     "type": "git",
