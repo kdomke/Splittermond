@@ -228,7 +228,7 @@ export function chatActionFeatureTest(context) {
         it("should deliver a template renderer", async () => {
             const content = "Rhaaaaagaahh"
             const renderedHtml = await foundryApi.renderer(
-                "systems/splittermond/__tests__/integration/resources/testTemplate.hbs", {title: content});
+                "systems/splittermond/templates/__tests__/integration/resources/testTemplate.hbs", {title: content});
             expect(renderedHtml, "renderedHtml is a string").to.be.a("string");
             expect(renderedHtml, "renderedHtml contains the content").to.contain(content);
         });

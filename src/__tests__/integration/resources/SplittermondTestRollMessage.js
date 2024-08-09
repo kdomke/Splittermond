@@ -14,7 +14,7 @@ export class SplittermondTestRollMessage extends foundry.abstract.DataModel {
 
 
     get template(){
-        return "systems/splittermond/__tests__/integration/resources/testTemplate.hbs";
+        return "systems/splittermond/templates/__tests__/integration/resources/testTemplate.hbs";
     }
 
     getData(){
