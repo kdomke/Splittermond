@@ -33,6 +33,8 @@ import {referencesUtils} from "./module/data/references/referencesUtils.js";
 import {foundryApi} from "./module/api/foundryApi.ts";
 import {canEditMessageOf} from "./module/util/chat.js";
 
+import './less/splittermond.less';
+
 
 $.fn.closestData = function (dataName, defaultValue = "") {
     let value = this.closest(`[data-${dataName}]`)?.data(dataName);

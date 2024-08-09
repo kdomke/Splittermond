@@ -9,7 +9,7 @@
     "dev": "vite serve --config config/vite.config.mts",
     "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
     "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
-    "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts && npm run compileCss"
+    "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts"
   },
   "repository": {
     "type": "git",
@@ -28,11 +28,10 @@
     "@types/mocha": "^10.0.7",
     "@types/sinon": "^17.0.3",
     "chai": "^5.0.0",
-    "gulp": "^4.0.2",
-    "gulp-less": "^4.0.1",
     "handlebars": "^4.7.8",
     "jquery": "^3.7.1",
     "jsdom": "^23.2.0",
+    "less": "^4.2.0",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
     "tsx": "^4.17.0",
