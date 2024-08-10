@@ -7,7 +7,7 @@ describe("Parses costs correctly", () => {
     describe("Unparseable strings", () => {
         ["-", "", undefined, null, "Alle meine Entchen", [], 0].forEach((unparseableString) => {
             it(`the invalid string '${unparseableString}' returns a zero cost object`, () => {
-                expect(parseCostString(unparseableString)).to.deep.equal(new Cost(0, 0, false));
+                expect(parseCostString(unparseableString as any)).to.deep.equal(new Cost(0, 0, false));
             });
         });
 
@@ -37,19 +37,19 @@ describe("Parses costs correctly", () => {
     });
     describe("Negative costs", () => {
         const validCosts = {
-            "-K2": new Cost(-2, 0, true),
-            "-K2V1": new Cost(-1, -1, true),
-            "-K2V2": new Cost(-0, -2, true),
-            "-20V10": new Cost(-10, -10, false),
-            "-5000V100": new Cost(-4900, -100, false),
-            "-K1000V300": new Cost(-700, -300, true),
-            "-1V1": new Cost(-0, -1, false),
-            "-1": new Cost(-1, 0, false),
+            "-K2": new Cost(-2, 0, true).asModifier(),
+            "-K2V1": new Cost(-1, -1, true).asModifier(),
+            "-K2V2": new Cost(-0, -2, true).asModifier(),
+            "-20V10": new Cost(-10, -10, false).asModifier(),
+            "-5000V100": new Cost(-4900, -100, false).asModifier(),
+            "-K1000V300": new Cost(-700, -300, true).asModifier(),
+            "-1V1": new Cost(-0, -1, false).asModifier(),
+            "-1": new Cost(-1, 0, false).asModifier(),
         };
         Object.entries(validCosts).forEach(([costString, costObject]) => {
             it(`Parses ${costString} correctly`, () => {
                 //JS apparently has problems comparing -0 and 0 when inside an object
-                const actual = parseCostString(costString);
+                const actual = parseCostString(costString).asModifier();
                 expect(actual.channeled, "channeled").to.equal(costObject.channeled);
                 expect(actual.exhausted, "exhausted").to.equal(costObject.exhausted);
                 expect(actual.consumed, "consumed").to.equal(costObject.consumed);
@@ -66,7 +66,7 @@ describe("Parses costs correctly", () => {
     });
 });
 describe("Parses degrees of success correctly", () => {
-    [
+    ([
         ["20 EG", 20],
         ["4EG", 4],
         ["1 EG/K4V1", 1],
@@ -76,7 +76,7 @@ describe("Parses degrees of success correctly", () => {
         ["3 Eg/+K4V1", 3],
         ["K4V1", 0],
         ["", 0]
-    ].forEach(([costString, expectedDegreesOfSuccess]) => {
+    ]as const).forEach(([costString, expectedDegreesOfSuccess]) => {
         it(`Parses ${costString} as ${expectedDegreesOfSuccess}`, () => {
             expect(parseSpellEnhancementDegreesOfSuccess(costString)).to.equal(expectedDegreesOfSuccess);
         });

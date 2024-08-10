@@ -34,7 +34,7 @@ describe("Cost object edge cases", () => {
     });
 
     it("should ignore garbage input", () => {
-        const costs = new Cost("a", true, "kanalisiert");
+        const costs = new Cost("a" as any, true as any, "kanalisiert" as any);
         expect(costs).to.deep.equal(new Cost(0, 0, true));
     });
 });
@@ -65,7 +65,7 @@ describe("Cost object operation", () => {
             });
         });
 
-    [
+    ([
         [new Cost(4, 2, false), new Cost(3, 1, false), {
             _exhausted: 1,
             _consumed: 1,
@@ -120,7 +120,7 @@ describe("Cost object operation", () => {
             _channeled: 5,
             _channeledConsumed: 6
         }],
-    ].forEach(
+    ]as const).forEach(
         ([costs1, costs2, expected]) => {
             const actual1 = costs1.asModifier();
             const actual2 = costs2.asModifier();
@@ -129,20 +129,21 @@ describe("Cost object operation", () => {
                 expect(result).to.deep.equal(expected);
             });
         });
-    [
+    ([
         [new Cost(4, 2, false), {_exhausted: -4, _consumed: -2, _channeled: -4, _channeledConsumed: -2}],
         [new Cost(0, 5, true), {_exhausted: -0, _consumed: -5, _channeled: -0, _channeledConsumed: -5}],
-    ].forEach(([costs, expected]) => it(`should negate ${costs} correctly`, () => {
-        const result = costs.asModifier().negate();
-        expect(result).to.deep.equal(expected);
-    }));
+    ]as const).forEach(
+        ([costs, expected]) => it(`should negate ${costs} correctly`, () => {
+            const result = costs.asModifier().negate();
+            expect(result).to.deep.equal(expected);
+        }));
 
-    [
+    ([
         [new Cost(1, 0, false), 1, new Cost(1, 0, false)],
         [new Cost(2, 0, false), 2, new Cost(4, 0, false)],
         [new Cost(0, 3, true), 4, new Cost(0, 12, false)],
         [new Cost(1, 1, true), -2, new Cost(-2, -2, false)]
-    ].forEach(
+    ]as const).forEach(
         ([costs, multiplier, expected]) => {
             it(`should multiply ${costs} correctly`, () => {
                 expect(costs.asModifier().multiply(multiplier)).to.deep.equal(expected.asModifier());
@@ -151,7 +152,7 @@ describe("Cost object operation", () => {
 });
 
 describe("Cost object rendering", () => {
-    [
+    ([
         [new Cost(0, 0, false), "0"],
         [new Cost(0, 0, true), "0"],
         [new Cost(0, 3, false), "3V3"],
@@ -162,7 +163,7 @@ describe("Cost object rendering", () => {
         [new Cost(-4, -4, true), "-K8V4"],
         [new Cost(-4, 0, true), "-K4"],
         [new Cost(-4, 0, false), "-4"]
-    ].forEach(
+    ]as const).forEach(
         ([costs, expected]) => it(`should stringify ${costs} as ${expected}`, () => {
             const result = costs.toString();
             expect(result).to.equal(expected);
