@@ -13,10 +13,7 @@ export class DamageRoll {
     }
 
     /**
-     * @param {number} nDice
-     * @param {number} nFaces
-     * @param {number} damageModifier
-     * @param {Record<string, {name:string, value:number, active:boolean}>} features
+     * @param {{nDice:number, nFaces:number, damageModifier:number, features: Record<string, {name:string, value:number, active:boolean}>}}
      */
     constructor({ nDice, nFaces, damageModifier, features }) {
         this._nDice = nDice;
