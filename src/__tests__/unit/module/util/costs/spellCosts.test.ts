@@ -3,9 +3,9 @@ import {expect} from "chai";
 import {
     calculateReducedEnhancementCosts,
     calculateReducedSpellCosts
-} from "../../../../../module/util/costs/spellCosts.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
-import {initializeSpellCostManagement} from "../../../../../module/util/costs/spellCostManagement.js";
+} from "module/util/costs/spellCosts.js";
+import {Cost} from "module/util/costs/Cost.js";
+import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement.js";
 
 const mockReductionManager = <T>(...cost:T[]) => ({getCostModifiers: () => cost});
 describe("Spell cost calculation basics", () => {

@@ -1,7 +1,7 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../../../module/util/costs/costParser.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "module/util/costs/costParser.js";
+import {Cost} from "module/util/costs/Cost.js";
 
 describe("Parses costs correctly", () => {
     describe("Unparseable strings", () => {

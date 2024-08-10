@@ -1,9 +1,9 @@
 import "../../../foundryMocks.js"
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {PrimaryCost} from "../../../../../module/util/costs/PrimaryCost.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
-import {parseCostString} from "../../../../../module/util/costs/costParser.js";
+import {PrimaryCost} from "module/util/costs/PrimaryCost.js";
+import {Cost} from "module/util/costs/Cost.js";
+import {parseCostString} from "module/util/costs/costParser.js";
 
 describe("BaseCost object edge cases", () => {
     it("isZero should return true for a zero cost object", () => {

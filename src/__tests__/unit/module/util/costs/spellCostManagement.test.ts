@@ -1,7 +1,7 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {initializeSpellCostManagement} from "../../../../../module/util/costs/spellCostManagement.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
+import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement.js";
+import {Cost} from "module/util/costs/Cost.js";
 
 describe("Spell cost Management initialization", () => {
     const management = initializeSpellCostManagement({});

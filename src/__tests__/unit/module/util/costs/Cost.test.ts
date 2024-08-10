@@ -1,7 +1,7 @@
 import "../../../foundryMocks.js"
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
+import {Cost} from "module/util/costs/Cost.js";
 
 describe("Cost object edge cases", () => {
     it("should return zero costs when adding two zero cost objects", () => {
