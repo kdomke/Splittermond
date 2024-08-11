@@ -6,7 +6,7 @@ import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
 import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
-import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.ts";
 import {splittermond} from "../config.js";
 import {PrimaryCost} from "../util/costs/PrimaryCost.js";
 import {Cost} from "../util/costs/Cost.js";

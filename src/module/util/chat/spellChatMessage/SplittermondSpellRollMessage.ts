@@ -1,27 +1,42 @@
-import {SplittermondSpellRollDataModel} from "../../../data/SplittermondSpellRollDataModel.js";
 import {addToRegistry} from "../chatMessageRegistry.js";
 import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference.js";
-import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
+import {OnAncestorReference} from "module/data/references/OnAncestorReference.js";
 import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
 import {parseCostString} from "../../costs/costParser.js";
+import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel.js";
+import type {DataModelSchemaType} from "module/data/SplittermondDataModel";
+import SplittermondSpellItem from "../../../item/spell";
+import {CheckReport} from "../../../actor/CheckReport";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
-/**
- * @extends {SplittermondSpellRollDataModel}
- */
-export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel {
+function SplittermondSpellRollSchema() {
+    return {
+        spellReference: new fields.EmbeddedDataField(ItemReference, {required: true, blank: false, nullable: false}),
+        checkReport: new fields.ObjectField({required: true, nullable: false}),
+        constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
+        renderer: new fields.EmbeddedDataField(SplittermondSpellRollMessageRenderer, {required: true, nullable: false}),
+        degreeOfSuccessManager: new fields.EmbeddedDataField(SpellMessageDegreesOfSuccessManager, {
+            required: true,
+            nullable: false
+        }),
+        actionManager: new fields.EmbeddedDataField(SpellMessageActionsManager, {required: true, nullable: false}),
+    }
+}
 
-    /**
-     * @param {SplittermondSpellItem} spell
-     * @param {CheckReport} checkReport
-     * @return {SplittermondSpellRollMessage}
-     */
-    static createRollMessage(spell, checkReport) {
+type SpellRollMessageSchema = Omit<DataModelSchemaType<typeof SplittermondSpellRollSchema>,"checkReport"> & { checkReport: CheckReport };
+
+export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRollMessageSchema> {
+
+    static defineSchema() {
+        return SplittermondSpellRollSchema();
+    }
+
+    static createRollMessage(spell: SplittermondSpellItem, checkReport: CheckReport) {
         const reportReference = OnAncestorReference
             .for(SplittermondSpellRollMessage).identifiedBy("constructorKey", constructorRegistryKey)
             .references("checkReport");
@@ -31,8 +46,7 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
             spellReference: spellReference.toObject(),
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spellReference, reportReference).toObject(),
             renderer: new SplittermondSpellRollMessageRenderer({
-                messageTitle: spell.name,
-                spellDescription: spell.description,
+                //@ts-expect-error renderer was not migrated yet so TS probably can not properly infer the components.
                 spellReference: spellReference,
                 checkReportReference: reportReference
             }).toObject(),
@@ -41,109 +55,101 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         });
     }
 
-    /** @param {{multiplicity:number}}data*/
-    castDurationUpdate(data) {
+    castDurationUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         if (this.degreeOfSuccessManager.isChecked("castDuration", multiplicity)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.ticks.add(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.ticks.subtract(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         }
         this.#alterCheckState("castDuration", multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    exhaustedFocusUpdate(data) {
+    exhaustedFocusUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction, multiplicity);
         if (this.degreeOfSuccessManager.isChecked("exhaustedFocus", multiplicity)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
-        this.#alterCheckState("exhaustedFocus",multiplicity);
+        this.#alterCheckState("exhaustedFocus", multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    channelizedFocusUpdate(data) {
+    channelizedFocusUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.channelizedFocus.focusCostReduction, multiplicity);
         if (this.degreeOfSuccessManager.isChecked("channelizedFocus", data.multiplicity)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
         this.#alterCheckState("channelizedFocus", multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    consumedFocusUpdate(data) {
+    consumedFocusUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         const focusCosts = parseCostString(splittermond.spellEnhancement.consumedFocus.focusCostReduction)
             .asModifier()
             .multiply(multiplicity);
         if (this.degreeOfSuccessManager.isChecked("consumedFocus", multiplicity)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
         this.#alterCheckState("consumedFocus", multiplicity)
     }
 
-    /** @param {{multiplicity:number}}data*/
-    damageUpdate(data) {
+    damageUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         if (this.degreeOfSuccessManager.isChecked("damage", multiplicity)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.damage.subtractDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.damage.addDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         }
         this.#alterCheckState("damage", multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    rangeUpdate(data) {
+    rangeUpdate(data: { multiplicity: number }) {
         this.#alterCheckState("range", data.multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    effectAreaUpdate(data) {
+    effectAreaUpdate(data: { multiplicity: number }) {
         this.#alterCheckState("effectArea", data.multiplicity);
     }
 
-    /** @param {{multiplicity:number}}data*/
-    effectDurationUpdate(data) {
-        this.#alterCheckState("effectDuration", data.multiplicity);
+    effectDurationUpdate(data: { multiplicity: number }) {
+        this.#alterCheckState("effectduration", data.multiplicity);
     }
 
-    /** @param {object}data*/
-    spellEnhancementUpdate(data) {
+    spellEnhancementUpdate() {
         const focusCosts = this.#toCostModifier(this.spellReference.getItem().enhancementCosts, 1);
-        if (this.degreeOfSuccessManager.isChecked("spellEnhancement", "")) {
+        if (this.degreeOfSuccessManager.isChecked("spellEnhancement", "" as any)) {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts);
         } else {
+            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts);
         }
-        this.#alterCheckState("spellEnhancement","");
+        this.#alterCheckState("spellEnhancement", "" as any);
     }
 
 
-
-    /**
-     * @param {ManagedSpellOptions} key
-     * @param {number} multiplicity
-     */
-    #alterCheckState(key, multiplicity) {
+    #alterCheckState(key: string, multiplicity: number) {
         this.degreeOfSuccessManager.alterCheckState(key, multiplicity);
     }
 
-    /**
-     *
-     * @param {string} cost
-     * @param {number} multiplicity
-     * @return {CostModifier}
-     */
-    #toCostModifier(cost, multiplicity){
+    #toCostModifier(cost: string, multiplicity: number) {
         return parseCostString(cost, true).asModifier().multiply(multiplicity);
     }
 
@@ -170,8 +176,8 @@ export class SplittermondSpellRollMessage extends SplittermondSpellRollDataModel
         const splinterPointBonus = this.actionManager.useSplinterPoint();
         const checkReport = this.checkReport;
         checkReport.roll.total += splinterPointBonus;
-        const updatedReport = await evaluateCheck(checkReport.roll, checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
-        const newCheckReport = /**@type CheckReport */{...checkReport, ...updatedReport};
+        const updatedReport = await evaluateCheck(Promise.resolve(checkReport.roll), checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
+        const newCheckReport: CheckReport = {...checkReport, ...updatedReport, roll:{...updatedReport.roll, tooltip:checkReport.roll.tooltip}};
         this.updateSource({checkReport: newCheckReport});
     }
 

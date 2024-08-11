@@ -18,8 +18,10 @@ export class OnAncestorReference extends SplittermondDataModel {
     }
 
     /**
-     * @template {SplittermondDataModel<A>} A
-     * @param {A} self
+     * @template DM
+     * @template {SplittermondDataModel<DM, any>} A
+     * @param {function(new:A, ...args: any[]):A}  self
+     * & {defineSchema():object}}
      */
     static for(self) {
         return createReferenceFor(self)
@@ -43,8 +45,8 @@ export class OnAncestorReference extends SplittermondDataModel {
 }
 
 /**
- * @template {SplittermondDataModel<T>} T
- * @param {typeof T} type*/
+ * @template {SplittermondDataModel<U,any>} U
+ * @param {typeof U} type*/
 function createReferenceFor(type) {
     /**@type {string} */ let ancestorId= null;
     /**@type {string} */ let ancestorIdKey = null;

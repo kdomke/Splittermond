@@ -4,7 +4,7 @@ import {expect} from "chai";
 import {splittermond} from "../../../../../../module/config.js";
 import {
     SplittermondSpellRollMessage
-} from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+} from "../../../../../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.ts";
 import {
     injectParent,
     setUpMockActor,

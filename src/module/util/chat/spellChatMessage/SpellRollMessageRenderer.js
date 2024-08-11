@@ -1,4 +1,4 @@
-import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.js";
+import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.ts";
 import {foundryApi} from "../../../api/foundryApi.ts";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";

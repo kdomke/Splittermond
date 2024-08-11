@@ -36,6 +36,7 @@ const SplittermondDataModel =
  */
 type DataFieldOption<T, REQ extends boolean, NULL extends boolean> = {
     required?: REQ;
+    trim?: boolean;
     blank?: boolean;
     nullable?: NULL;
     initial?: T;
