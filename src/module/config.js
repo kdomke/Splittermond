@@ -6,6 +6,7 @@ import SplittermondArmorItem from "./item/armor.js";
 import SplittermondEquipmentItem from "./item/equipment.js";
 import SplittermondNPCAttackItem from "./item/npcattack.js";
 import SplittermondMastery from "./item/mastery.js";
+import {rollType} from "./config/RollType.js";
 
 export const splittermond = {};
 
@@ -186,33 +187,7 @@ splittermond.skillAttributes = {
     "watermagic": ["mystic", "intuition"],
     "windmagic": ["mystic", "mind"]
 };
-/**@typedef {"standard", "standardGrandmaster", "risk", "riskGrandmaster", "safety", "safetyGrandmaster"} RollType*/
-splittermond.rollType = {
-    standard: {
-        label: "splittermond.rollType.standard",
-        rollFormula: "2d10"
-    },
-    risk: {
-        label: "splittermond.rollType.risk",
-        rollFormula: "4d10ri"
-    },
-    safety: {
-        label: "splittermond.rollType.safety",
-        rollFormula: "2d10kh1"
-    },
-    standardGrandmaster: {
-        label: "splittermond.rollType.standardGrandmaster",
-        rollFormula: "3d10ri"
-    },
-    riskGrandmaster: {
-        label: "splittermond.rollType.riskGrandmaster",
-        rollFormula: "5d10ri"
-    },
-    safetyGrandmaster: {
-        label: "splittermond.rollType.safetyGrandmaster",
-        rollFormula: "3d10kh1"
-    }
-};
+splittermond.rollType = rollType;
 
 splittermond.complexityOptions = {
     U: "splittermond.complexityOptions.untrained",
