@@ -7,6 +7,7 @@ import SplittermondEquipmentItem from "./item/equipment.js";
 import SplittermondNPCAttackItem from "./item/npcattack.js";
 import SplittermondMastery from "./item/mastery.js";
 import {rollType} from "./config/RollType.js";
+import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements.js";
 
 export const splittermond = {};
 
@@ -1229,71 +1230,7 @@ splittermond.weaponFeatures = [ "Ablenkend",
                                 "Zerbrechlich",
                                 "Zweihändig"
                             ];
-
-
-/**
- * @typedef {{degreesOfSuccess:number, textTemplate:string, focusCostReduction:string, castDurationReduction:number, damageIncrease:string}} SplittermondSpellEnhancement
- * @typedef {Record<SpellDegreesOfSuccessOptions, SplittermondSpellEnhancement>} SplittermondSpellEnhancements
- */
-/** @type SplittermondSpellEnhancements */
-splittermond.spellEnhancement = {
-    castDuration: {
-        degreesOfSuccess: 3,
-        textTemplate: "splittermond.degreeOfSuccessOptions.castDuration",
-        focusCostReduction: "0",
-        castDurationReduction: 1, //TODO: check
-        damageIncrease: 0,
-    },
-    exhaustedFocus: {
-        degreesOfSuccess: 1,
-        textTemplate: "splittermond.degreeOfSuccessOptions.exhaustedFocus",
-        focusCostReduction: "1",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    },
-    channelizedFocus: {
-        degreesOfSuccess: 2,
-        textTemplate: "splittermond.degreeOfSuccessOptions.channelizedFocus",
-        focusCostReduction: "K1",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    },
-    consumedFocus: {
-        degreesOfSuccess: 3,
-        textTemplate: "splittermond.degreeOfSuccessOptions.consumedFocus",
-        focusCostReduction: "1V1",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    },
-    range: {
-        degreesOfSuccess: 1,
-        textTemplate: "splittermond.degreeOfSuccessOptions.range",
-        focusCostReduction: "0",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    },
-    damage: {
-        degreesOfSuccess: 1,
-        textTemplate: "splittermond.degreeOfSuccessOptions.damage",
-        focusCostReduction: "0",
-        castDurationReduction: 0,
-        damageIncrease: 1,
-    },
-    effectArea: {
-        degreesOfSuccess: 3,
-        textTemplate: "splittermond.degreeOfSuccessOptions.effectArea",
-        focusCostReduction: "0",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    },
-    effectDuration: {
-        degreesOfSuccess: 2,
-        textTemplate: "splittermond.degreeOfSuccessOptions.effectDuration",
-        focusCostReduction: "0",
-        castDurationReduction: 0,
-        damageIncrease: 0,
-    }
-};
+splittermond.spellEnhancement = splittermondSpellEnhancement;
 splittermond.degreeOfSuccessThresholds = {
     critical : 5
 }
