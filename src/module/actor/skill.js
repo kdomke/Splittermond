@@ -113,12 +113,7 @@ export default class Skill extends Modifiable {
 
         let rollResult = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
         let skillAttributes = this.attributeValues;
-        /**
-         * @typedef {Omit<GenericRollEvaluation, "roll">} CheckReport
-         * @property {{id:string, attributes:Record<string,number>, points:number}} skill
-         * @property {{total:number, dice: [{total:number}], tooltip: string}} roll
-         * @property {string[]} modifierElements
-         */
+
         if (options.type === "spell") {
             return {
                 rollOptions: ChatMessage.applyRollMode({
