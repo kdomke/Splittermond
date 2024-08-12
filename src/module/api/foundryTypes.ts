@@ -49,3 +49,18 @@ export interface Roll {
     readonly total: number
     terms: (Die | OperatorTerm | NumericTerm)[]
 }
+
+export interface Actor extends Document{
+}
+
+export interface TokenDocument extends Document{
+    /** this is at least true for all the purposes for which we use {@link TokenDocument}*/
+    readonly parent: Document;
+    actor: Actor;
+}
+
+export interface Document {
+    readonly id:string
+    readonly documentName:string
+    readonly parent?: Document
+}

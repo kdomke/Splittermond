@@ -2,7 +2,7 @@ import "../../../../foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.ts";
 import sinon from "sinon";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import {

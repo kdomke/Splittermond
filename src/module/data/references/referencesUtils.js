@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi.ts";
-import {AgentReference} from "./AgentReference.js";
+import {AgentReference} from "./AgentReference.ts";
 
 export const referencesUtils ={
     /**@type {() => AgentReference}*/findBestUserActor,

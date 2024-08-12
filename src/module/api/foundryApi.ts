@@ -1,4 +1,4 @@
-import type {ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, User} from "./foundryTypes";
+import type {Actor, ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, TokenDocument, User} from "./foundryTypes";
 
 export const foundryApi = new class FoundryApi {
 
@@ -102,18 +102,12 @@ export const foundryApi = new class FoundryApi {
         return game.items.get(itemId);
     }
 
-    /**
-     * @return {SplittermondActor|undefined}
-     */
-    getActor(actorId: string) {
+    getActor(actorId: string): Actor | undefined {
         //@ts-ignore
         return game.actors.get(actorId);
     }
 
-    /**
-     * @returns {TokenDocument|undefined}
-     */
-    getToken(sceneId: string, tokenId: string) {
+    getToken(sceneId: string, tokenId: string):TokenDocument|undefined {
         //@ts-ignore
         return game.scenes.get(sceneId)?.tokens.get(tokenId);
     }

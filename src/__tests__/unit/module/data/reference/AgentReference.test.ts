@@ -1,8 +1,8 @@
 import "../../../foundryMocks.js";
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {AgentReference} from "../../../../../module/data/references/AgentReference.js";
-import {foundryApi} from "../../../../../module/api/foundryApi.ts";
+import {AgentReference} from "module/data/references/AgentReference";
+import {foundryApi} from "module/api/foundryApi";
 import sinon from "sinon";
 
 
@@ -39,7 +39,7 @@ describe("AgentReference", () => {
     it("should handle no tokens to reference", () => {
         sinon.stub(foundryApi, "getToken").returns(undefined);
 
-        const underTest = new AgentReference({id: "1234", scene: "3456", type: "token"});
+        const underTest = new AgentReference({id: "1234", sceneId: "3456", type: "token"});
 
         expect(() => underTest.getAgent()).to.throw(Error);
     });
@@ -47,7 +47,7 @@ describe("AgentReference", () => {
     it("should handle no actors to reference", () => {
         sinon.stub(foundryApi, "getActor").returns(undefined);
 
-        const underTest = new AgentReference({id: "1234", scene: null, type: "actor"});
+        const underTest = new AgentReference({id: "1234", sceneId: null, type: "actor"});
 
         expect(() => underTest.getAgent()).to.throw(Error);
     });

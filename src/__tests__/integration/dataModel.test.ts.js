@@ -1,5 +1,5 @@
 import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
-import {AgentReference} from "../../module/data/references/AgentReference.js";
+import {AgentReference} from "../../module/data/references/AgentReference.ts";
 import {foundryApi} from "../../module/api/foundryApi.ts";
 import {ItemReference} from "../../module/data/references/ItemReference.js";
 import {OnAncestorReference} from "../../module/data/references/OnAncestorReference.js";

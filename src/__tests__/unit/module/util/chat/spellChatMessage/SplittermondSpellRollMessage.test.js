@@ -12,7 +12,7 @@ import {
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper.js";
 import sinon from "sinon";
-import {AgentReference} from "../../../../../../module/data/references/AgentReference.js";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference.ts";
 import {identity} from "../../../../foundryMocks.js";
 import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";

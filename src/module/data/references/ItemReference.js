@@ -1,4 +1,4 @@
-import {AgentReference} from "./AgentReference.js";
+import {AgentReference} from "./AgentReference.ts";
 import {foundryApi} from "../../api/foundryApi.ts";
 import {fields, SplittermondDataModel} from "../SplittermondDataModel.ts";
 
