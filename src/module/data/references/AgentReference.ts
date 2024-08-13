@@ -1,11 +1,12 @@
 import {foundryApi} from "module/api/foundryApi";
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../SplittermondDataModel";
 import {Actor, TokenDocument} from "../../api/foundryTypes";
+import SplittermondActor from "../../actor/actor";
 
 /**
  * A reference to a Token object, which is used to represent a specific Token within a ChatMessage.
  */
-export class AgentReference<A extends Actor> extends SplittermondDataModel<DataModelSchemaType<typeof AgentReference.defineSchema>> {
+export class AgentReference extends SplittermondDataModel<DataModelSchemaType<typeof AgentReference.defineSchema>> {
     static defineSchema() {
         return {
             id: new fields.StringField({required: true, blank: false, nullable: false}),
@@ -14,7 +15,7 @@ export class AgentReference<A extends Actor> extends SplittermondDataModel<DataM
         }
     }
 
-    static initialize<A extends Actor>(agent: Actor | TokenDocument): AgentReference<A> {
+    static initialize(agent: Actor | TokenDocument): AgentReference {
         if (agentIsActor(agent)) {
             return !agentIsTokenActor(agent) ?
                 new AgentReference({id: agent.id, sceneId: null, type: "actor"}) :
@@ -26,19 +27,19 @@ export class AgentReference<A extends Actor> extends SplittermondDataModel<DataM
         }
     }
 
-    getAgent():A {
+    getAgent(): SplittermondActor {
         const agent = this.#getActor()
         if (!agent) {
             throw new Error("AgentReference could not resolve the agent")
         }
-        return agent;
+        return returnValidSplittermondActor(agent);
     }
 
-    #getActor():A|undefined {
+    #getActor():Actor|undefined {
         if (this.type === "actor") {
-            return foundryApi.getActor(this.id) as A |undefined;
+            return foundryApi.getActor(this.id);
         } else if (this.sceneId) {
-            return foundryApi.getToken(this.sceneId, this.id)?.actor as A |undefined;
+            return foundryApi.getToken(this.sceneId, this.id)?.actor;
         } else {
             throw new Error("No scene given when attempting to reference a token. This should not happen.")
         }
@@ -57,4 +58,12 @@ function agentIsToken(agent: Actor | TokenDocument): agent is TokenDocument {
 
 function agentIsActor(agent: Actor | TokenDocument): agent is TokenDocument {
     return agent.documentName === "Actor"
+}
+
+function returnValidSplittermondActor(actor:Actor){
+   if (actor instanceof SplittermondActor){
+      return actor;
+   } else{
+       throw new Error("Agent Reference returned an Actor that is not from Splittermond. This should not happen.")
+   }
 }
