@@ -1,5 +1,5 @@
 import "../../../foundryMocks.js";
-import {SplittermondDataModel} from "../../../../../module/data/SplittermondDataModel.js";
+import {SplittermondDataModel} from "../../../../../module/data/SplittermondDataModel.ts";
 import {OnAncestorReference} from "../../../../../module/data/references/OnAncestorReference.js";
 import {describe,it} from "mocha";
 import {expect} from "chai";

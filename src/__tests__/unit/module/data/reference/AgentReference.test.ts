@@ -4,11 +4,13 @@ import {expect} from "chai";
 import {AgentReference} from "module/data/references/AgentReference";
 import {foundryApi} from "module/api/foundryApi";
 import sinon from "sinon";
+import SplittermondActor from "../../../../../module/actor/actor";
 
 
 describe("AgentReference", () => {
     it("should initialize a token as token", () => {
-        const probe = AgentReference.initialize({documentName: "Token", id: "1", parent: {documentName: "Scene", id: "2"}});
+        const mockActor = sinon.createStubInstance(SplittermondActor);
+        const probe = AgentReference.initialize({documentName: "Token", id: "1", parent: {documentName: "Scene", id: "2"}, actor:mockActor});
 
         expect(probe.id).to.equal("1");
         expect(probe.sceneId).to.equal("2");
@@ -17,7 +19,10 @@ describe("AgentReference", () => {
     });
 
     it("should initialize an actor as actor", () => {
-        const probe = AgentReference.initialize({documentName: "Actor", id: "1"});
+        const mockActor = sinon.createStubInstance(SplittermondActor);
+        Object.defineProperty(mockActor, "documentName", {value:"Actor"})
+        Object.defineProperty(mockActor, "id", {value:"1"})
+        const probe = AgentReference.initialize(mockActor);
 
         expect(probe.id).to.equal("1");
         expect(probe.sceneId).to.be.null;
@@ -25,11 +30,11 @@ describe("AgentReference", () => {
     });
 
     it("should initialize an dependent actor as token", () => {
-        const probe = AgentReference.initialize({
-            documentName: "Actor",
-            parent: {documentName: "Token", id: "2", parent: {documentName: "Scene", id: "1"}},
-            id: "3"
-        });
+        const mockActor = sinon.createStubInstance(SplittermondActor);
+        Object.defineProperty(mockActor, "documentName", {value:"Actor"})
+        Object.defineProperty(mockActor, "id", {value:"3"})
+        Object.defineProperty(mockActor, "parent", {value:{documentName: "Token", id: "2", parent: {documentName: "Scene", id: "1"}}});
+        const probe = AgentReference.initialize(mockActor);
 
         expect(probe.id).to.equal("2");
         expect(probe.sceneId).to.equal("1");

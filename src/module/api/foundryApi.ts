@@ -1,4 +1,4 @@
-import type {Actor, ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, TokenDocument, User} from "./foundryTypes";
+import type {ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, User} from "./foundryTypes";
 
 export const foundryApi = new class FoundryApi {
 

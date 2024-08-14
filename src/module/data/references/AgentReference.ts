@@ -1,6 +1,5 @@
 import {foundryApi} from "module/api/foundryApi";
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../SplittermondDataModel";
-import {Actor, TokenDocument} from "../../api/foundryTypes";
 import SplittermondActor from "../../actor/actor";
 
 /**
@@ -35,7 +34,7 @@ export class AgentReference extends SplittermondDataModel<DataModelSchemaType<ty
         return returnValidSplittermondActor(agent);
     }
 
-    #getActor():Actor|undefined {
+    #getActor(): Actor | undefined {
         if (this.type === "actor") {
             return foundryApi.getActor(this.id);
         } else if (this.sceneId) {
@@ -52,18 +51,18 @@ function agentIsTokenActor(agent: Actor): agent is TokenActor {
     return !!agent.parent && agentIsToken(agent.parent);
 }
 
-function agentIsToken(agent: Actor | TokenDocument): agent is TokenDocument {
+function agentIsToken(agent: Document): agent is TokenDocument {
     return agent.documentName === "Token"
 }
 
-function agentIsActor(agent: Actor | TokenDocument): agent is TokenDocument {
+function agentIsActor(agent: Actor | TokenDocument): agent is Actor{
     return agent.documentName === "Actor"
 }
 
-function returnValidSplittermondActor(actor:Actor){
-   if (actor instanceof SplittermondActor){
-      return actor;
-   } else{
-       throw new Error("Agent Reference returned an Actor that is not from Splittermond. This should not happen.")
-   }
+function returnValidSplittermondActor(actor: Actor) {
+    if (actor instanceof SplittermondActor) {
+        return actor;
+    } else {
+        throw new Error("Agent Reference returned an Actor that is not from Splittermond. This should not happen.")
+    }
 }

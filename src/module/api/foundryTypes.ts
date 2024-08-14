@@ -50,17 +50,27 @@ export interface Roll {
     terms: (Die | OperatorTerm | NumericTerm)[]
 }
 
-export interface Actor extends Document{
-}
+declare global {
+    type Collection<T> = ReadonlyMap<string, T>
 
-export interface TokenDocument extends Document{
-    /** this is at least true for all the purposes for which we use {@link TokenDocument}*/
-    readonly parent: Document;
-    actor: Actor;
-}
+    class Actor extends Document {
+        items: Collection<Item>
+    }
 
-export interface Document {
-    readonly id:string
-    readonly documentName:string
-    readonly parent?: Document
+    class Item extends Document {
+        readonly actor: Actor
+    }
+
+    class TokenDocument extends Document {
+        /** this is at least true for all the purposes for which we use {@link TokenDocument}*/
+        readonly parent: Document;
+        actor: Actor;
+    }
+
+    class Document {
+        constructor(data:Object, options?:Record<string, any>);
+        readonly id: string
+        readonly documentName: string
+        readonly parent?: Document
+    }
 }
