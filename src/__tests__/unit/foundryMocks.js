@@ -89,6 +89,10 @@ global.foundry = {
                 }
             }
 
+            update(data, context) {
+                this.updateSource(data, context)
+            }
+
             /**
              * @return {object}
              */
