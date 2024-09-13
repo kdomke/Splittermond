@@ -3,10 +3,10 @@ import { Cost, CostModifier } from "../../costs/Cost.js";
 import { AgentReference } from "../../../data/references/AgentReference.ts";
 import { DamageRoll } from "../../damage/DamageRoll.js";
 import * as Dice from "../../dice.js";
-import { ItemReference } from "../../../data/references/ItemReference.js";
+import { ItemReference } from "../../../data/references/ItemReference.ts";
 import { fields, SplittermondDataModel } from "../../../data/SplittermondDataModel.ts";
-import { OnAncestorReference } from "../../../data/references/OnAncestorReference.js";
-import { referencesUtils } from "../../../data/references/referencesUtils.js";
+import { OnAncestorReference } from "../../../data/references/OnAncestorReference.ts";
+import { referencesUtils } from "../../../data/references/referencesUtils.ts";
 import { foundryApi } from "../../../api/foundryApi.ts";
 
 /**

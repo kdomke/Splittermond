@@ -3,7 +3,7 @@ import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSucces
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
-import {ItemReference} from "../../../data/references/ItemReference.js";
+import {ItemReference} from "../../../data/references/ItemReference";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference.js";
 import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
 import {parseCostString} from "../../costs/costParser.js";
@@ -16,7 +16,7 @@ const constructorRegistryKey = "SplittermondSpellRollMessage";
 
 function SplittermondSpellRollSchema() {
     return {
-        spellReference: new fields.EmbeddedDataField(ItemReference, {required: true, blank: false, nullable: false}),
+        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {required: true, blank: false, nullable: false}),
         checkReport: new fields.ObjectField({required: true, nullable: false}),
         constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
         renderer: new fields.EmbeddedDataField(SplittermondSpellRollMessageRenderer, {required: true, nullable: false}),
@@ -38,6 +38,7 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
 
     static createRollMessage(spell: SplittermondSpellItem, checkReport: CheckReport) {
         const reportReference = OnAncestorReference
+            //FIX we should not need to declare a generic parameter
             .for(SplittermondSpellRollMessage).identifiedBy("constructorKey", constructorRegistryKey)
             .references("checkReport");
         const spellReference = ItemReference.initialize(spell);
@@ -129,7 +130,7 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
     }
 
     effectDurationUpdate(data: { multiplicity: number }) {
-        this.#alterCheckState("effectduration", data.multiplicity);
+        this.#alterCheckState("effectDuration", data.multiplicity);
     }
 
     spellEnhancementUpdate() {

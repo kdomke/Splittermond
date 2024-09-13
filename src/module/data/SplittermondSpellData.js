@@ -1,5 +1,5 @@
 import {splittermond} from "../config.js";
-import {fields, SplittermondDataModel} from "./SplittermondDataModel";
+import {fields, SplittermondDataModel} from "./SplittermondDataModel.ts";
 
 const fields = foundry.data.fields;
 

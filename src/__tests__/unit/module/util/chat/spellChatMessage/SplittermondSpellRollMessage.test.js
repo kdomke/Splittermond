@@ -17,8 +17,8 @@ import {identity} from "../../../../foundryMocks.js";
 import {foundryApi} from "../../../../../../module/api/foundryApi.js";
 import {Cost} from "../../../../../../module/util/costs/Cost.js";
 import SplittermondActor from "../../../../../../module/actor/actor.js";
-import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.js";
-import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.js";
+import {SplittermondDataModel} from "../../../../../../module/data/SplittermondDataModel.ts";
+import {referencesUtils} from "../../../../../../module/data/references/referencesUtils.ts";
 
 
 [...Object.keys(splittermond.spellEnhancement)].forEach(key => {
