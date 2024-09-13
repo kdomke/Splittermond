@@ -2,7 +2,7 @@ import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessFie
 import {splittermond} from "../../../config.js";
 import {parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
-import {OnAncestorReference} from "../../../data/references/OnAncestorReference.js";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 
 /**
  * @typedef {1|2|4|8} Multiplicity

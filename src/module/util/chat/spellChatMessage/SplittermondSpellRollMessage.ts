@@ -4,7 +4,7 @@ import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference";
-import {OnAncestorReference} from "module/data/references/OnAncestorReference.js";
+import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
 import {parseCostString} from "../../costs/costParser.js";
 import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel.js";

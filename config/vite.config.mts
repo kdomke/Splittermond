@@ -26,6 +26,11 @@ export default defineConfig({
             }
         }
     },
+    resolve:{
+        alias:{
+            'module': path.resolve(__dirname, '../src/module')
+        }
+    },
     build: {
         outDir: path.resolve(__dirname, '../dist'),
         emptyOutDir: true,

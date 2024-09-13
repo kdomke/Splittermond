@@ -6,8 +6,8 @@ import SplittermondArmorItem from "./item/armor.js";
 import SplittermondEquipmentItem from "./item/equipment.js";
 import SplittermondNPCAttackItem from "./item/npcattack.js";
 import SplittermondMastery from "./item/mastery.js";
-import {rollType} from "./config/RollType.js";
-import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements.js";
+import {rollType} from "./config/RollType";
+import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements";
 
 export const splittermond = {};
 
