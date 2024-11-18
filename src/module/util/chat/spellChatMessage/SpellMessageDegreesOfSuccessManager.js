@@ -1,4 +1,4 @@
-import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessField.js";
+import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessField.ts";
 import {splittermond} from "../../../config.js";
 import {parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser.js";
 import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
@@ -23,12 +23,6 @@ const multiplicities = [1, 2, 4, 8] ;
 /**
  * @typedef MultipliedOptions
  * @type {`${SpellDegreesOfSuccessOptions}${Multiplicity}`}
- */
-
-/**
- * @extends {SplittermondDataModel<SpellMessageDegreesOfSuccessManager>}
- * @extends {Record<MultipliedOptions, SpellMessageDegreeOfSuccessField>}
- * @extends {{spellEnhancement: SpellMessageDegreeOfSuccessField}}
  */
 export class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel {
     /**

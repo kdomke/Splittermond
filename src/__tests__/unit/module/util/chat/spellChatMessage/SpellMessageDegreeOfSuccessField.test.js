@@ -3,7 +3,7 @@ import {describe, it} from "mocha";
 import {expect} from "chai";
 import {
     SpellMessageDegreeOfSuccessField
-} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreeOfSuccessField.js";
+} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreeOfSuccessField.ts";
 import {
     SpellMessageDegreesOfSuccessManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
