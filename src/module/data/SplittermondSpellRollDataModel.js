@@ -1,6 +1,6 @@
 import {splittermond} from "../config.js";
 import {SpellMessageDegreesOfSuccessManager} from "../util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
-import {SpellMessageActionsManager} from "../util/chat/spellChatMessage/SpellMessageActionsManager.js";
+import {SpellMessageActionsManager} from "../util/chat/spellChatMessage/SpellMessageActionsManager.ts";
 import {SplittermondSpellRollMessageRenderer} from "../util/chat/spellChatMessage/SpellRollMessageRenderer.js";
 import {ItemReference} from "./references/ItemReference.js";
 import {fields, SplittermondDataModel} from "./SplittermondDataModel.ts";

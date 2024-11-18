@@ -1,13 +1,10 @@
-import "../../../../foundryMocks.js"
+import "__tests__/unit/foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {AgentReference} from "../../../../../../module/data/references/AgentReference.ts";
-import sinon from "sinon";
-import {Cost} from "../../../../../../module/util/costs/Cost.js";
-import {
-    SpellMessageActionsManager
-} from "../../../../../../module/util/chat/spellChatMessage/SpellMessageActionsManager.js";
+import sinon, {SinonStubbedInstance} from "sinon";
+import {Cost} from "module/util/costs/Cost";
+import {SpellMessageActionsManager} from "module/util/chat/spellChatMessage/SpellMessageActionsManager";
 import {
     injectParent,
     setUpCheckReportSelfReference,
@@ -15,19 +12,23 @@ import {
     setUpMockSpellSelfReference,
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper.js";
-import {parseCostString} from "../../../../../../module/util/costs/costParser.js";
+import {parseCostString} from "module/util/costs/costParser.js";
+import SplittermondItem from "module/item/item";
+import {AgentReference} from "module/data/references/AgentReference";
+import SplittermondActor from "module/actor/actor";
+import {ItemReference} from "module/data/references/ItemReference";
 
 describe("SpellActionManager", () => {
-    let sandbox;
+    let sandbox: sinon.SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
     });
     afterEach(() => sandbox.restore());
     describe("Ticks", () => {
         it("should subtract from the adjusted value", () => {
-            const actionManager = createSpellActionManager(sandbox)
-            actionManager.ticks.adjusted = 3;
-            actionManager.ticks.used = false;
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.ticks.update({adjusted: 3});
+            actionManager.ticks.update({used: false});
 
             actionManager.ticks.subtract(3);
 
@@ -35,9 +36,9 @@ describe("SpellActionManager", () => {
         });
 
         it("should add to the adjusted value", () => {
-            const actionManager = createSpellActionManager(sandbox)
-            actionManager.ticks.adjusted = 3;
-            actionManager.ticks.used = false;
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.ticks.update({adjusted: 3});
+            actionManager.ticks.update({used: false});
 
             actionManager.ticks.add(3);
 
@@ -45,9 +46,9 @@ describe("SpellActionManager", () => {
         });
 
         it("subtraction should be barred from alteration after usage", () => {
-            const actionManager = createSpellActionManager(sandbox)
-            actionManager.ticks.adjusted = 3;
-            actionManager.ticks.used = true;
+            const actionManager = createSpellActionManager(sandbox);
+            actionManager.ticks.update({adjusted: 3});
+            actionManager.ticks.update({used: true});
 
             actionManager.ticks.subtract(3);
 
@@ -56,17 +57,17 @@ describe("SpellActionManager", () => {
 
         it("add should be barred from alteration after usage", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.adjusted = 3;
-            actionManager.ticks.used = true;
+            actionManager.ticks.update({adjusted: 3});
+            actionManager.ticks.update({used: true});
 
             actionManager.ticks.add(3);
 
             expect(actionManager.ticks.adjusted).to.equal(3);
         });
 
-        it("should return a cost minmum of 1", () => {
+        it("should return a cost minimum of 1", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.adjusted = 0;
+            actionManager.ticks.update({adjusted: 0});
 
             expect(actionManager.ticks.cost).to.equal("1");
         });
@@ -75,7 +76,7 @@ describe("SpellActionManager", () => {
     describe("Damage", () => {
         it("should add Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.adjusted = 0;
+            actionManager.damage.update({adjusted: 0});
             sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
 
@@ -86,7 +87,7 @@ describe("SpellActionManager", () => {
 
         it("should subtract Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.adjusted = 2;
+            actionManager.damage.update({adjusted: 2});
             sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
             actionManager.damage.subtractDamage(1)
@@ -96,8 +97,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow addition if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.used = true
-            actionManager.damage.adjusted = 3;
+            actionManager.damage.update({used: true});
+            actionManager.damage.update({adjusted: 3});
 
             actionManager.damage.addDamage(1)
 
@@ -106,8 +107,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow subtraction if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.used = true;
-            actionManager.damage.adjusted = 3;
+            actionManager.damage.update({used: true});
+            actionManager.damage.update({adjusted: 3});
 
             actionManager.damage.subtractDamage(1);
 
@@ -117,11 +118,12 @@ describe("SpellActionManager", () => {
 
 
     describe("Focus", () => {
-        const modifier= parseCostString("1V1", true).asModifier();
+        const modifier = parseCostString("1V1", true).asModifier();
         it("should pass adjusted focus to the actor", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.adjusted = new Cost(0, 0, false).asModifier();
-            actionManager.focus.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(9, 3, 0).asPrimaryCost());
+            actionManager.focus.update({adjusted: new Cost(0, 0, false).asModifier()});
+            actionManager.focus.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
+            //@ts-expect-error name exists but its not typed yet
             actionManager.focus.spellReference.getItem().name = "spell";
 
             actionManager.focus.subtractCost(modifier);
@@ -131,7 +133,7 @@ describe("SpellActionManager", () => {
         });
         it("should add Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
+            actionManager.focus.update({adjusted: new Cost(0, 1, false, true).asModifier()});
 
             actionManager.focus.addCost(modifier)
 
@@ -141,7 +143,7 @@ describe("SpellActionManager", () => {
 
         it("should subtract Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.adjusted = new Cost(0, 2, false, true).asModifier();
+            actionManager.focus.update({adjusted: new Cost(0, 2, false, true).asModifier()});
 
             actionManager.focus.subtractCost(modifier)
 
@@ -150,9 +152,9 @@ describe("SpellActionManager", () => {
         });
 
         it("should apply strict costs", () => {
-            const channeledModifier= parseCostString("K1V1", true).asModifier();
+            const channeledModifier = parseCostString("K1V1", true).asModifier();
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.adjusted = new Cost(0, 1, false, true).asModifier();
+            actionManager.focus.update({adjusted: new Cost(0, 1, false, true).asModifier()});
 
             actionManager.focus.addCost(channeledModifier)
 
@@ -166,31 +168,31 @@ describe("SpellActionManager", () => {
 
         it("should render a minimum cost of 1", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.adjusted = new Cost(0, -3, false, true).asModifier();
+            actionManager.focus.update({adjusted: new Cost(0, -3, false, true).asModifier()});
             actionManager.focus.spellReference.getItem()
-                .getCostsForFinishedRoll.returns(new Cost(0, 2, 0).asPrimaryCost());
+                .getCostsForFinishedRoll.returns(new Cost(0, 2, false).asPrimaryCost());
 
             expect(actionManager.focus.cost).to.equal("1");
         });
 
         it("should not allow addition if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.used = true
-            actionManager.focus.adjusted = new Cost(0, 3, false, true).asModifier();
+            actionManager.focus.update({used: true});
+            actionManager.focus.update({adjusted: new Cost(0, 3, false, true).asModifier()});
 
-            actionManager.focus.addCost({nonConsumed:1,consumed:0,channeled:1,channeled_consumed:0})
+            actionManager.focus.addCost(new Cost(1, 0, false).asModifier())
 
             expect(actionManager.focus.adjusted).to.deep.equal(new Cost(0, 3, false, true).asModifier());
         });
 
         it("should not allow subtraction if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.used = true
-            actionManager.focus.adjusted = "3";
+            actionManager.focus.update({used: true});
+            actionManager.focus.update({adjusted: new Cost(0, 3, false, true).asModifier()});
 
-            actionManager.focus.subtractCost({nonConsumed:1,consumed:0,channeled:1,channeled_consumed:0});
+            actionManager.focus.subtractCost(new Cost(1, 0, false).asModifier());
 
-            expect(actionManager.focus.adjusted).to.equal("3")
+            expect(new Cost(0, 0, false).asPrimaryCost().add(actionManager.focus.adjusted).render()).to.equal("3V3")
         });
 
     });
@@ -205,9 +207,12 @@ describe("SpellActionManager", () => {
 
     it("should pass fumbles to the actor", () => {
         const actionManager = createSpellActionManager(sandbox);
+        //@ts-expect-error name exists but its not typed yet
         actionManager.magicFumble.checkReportReference.get().skill = {name: "skillName"};
+        //@ts-expect-error system exists but its not typed yet
         actionManager.focus.spellReference.getItem().system.skill = "skillName"
-        actionManager.focus.spellReference.getItem().actor.system.spellCostReduction ={getCostModifiers:()=>[]}
+        //@ts-expect-error system exists but its not typed yet
+        actionManager.focus.spellReference.getItem().actor.system.spellCostReduction = {getCostModifiers: () => []}
 
         actionManager.rollMagicFumble();
 
@@ -217,7 +222,8 @@ describe("SpellActionManager", () => {
     it("should spend splinterpoint on actor", () => {
         const actionManager = createSpellActionManager(sandbox);
         const getBonusFunction = sandbox.mock().returns(3);
-        actionManager.splinterPoint.actorReference.getAgent().spendSplinterpoint.returns({getBonus: getBonusFunction})
+        actionManager.splinterPoint.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus: getBonusFunction})
+        //@ts-expect-error name exists on skill but its not typed yet
         actionManager.splinterPoint.checkReportReference.get().skill = {name: "skillName"};
 
         actionManager.useSplinterPoint();
@@ -227,21 +233,24 @@ describe("SpellActionManager", () => {
     });
 });
 
-export function createSpellActionManager(sandbox) {
+type WithMockedRefs<T> = {[K in keyof T]: T[K] extends AgentReference|ItemReference<any>? MockRefs<T[K]>: keyof T[K] extends never ? T[K] : WithMockedRefs<T[K]>}
+type MockRefs<T> = T extends AgentReference? MockActorRef<T>: T extends ItemReference<any>? MockItemRef<T>: never;
+type MockActorRef<T extends AgentReference> = Omit<T, "getAgent"> & {getAgent(): SinonStubbedInstance<SplittermondActor>};
+type MockItemRef<T extends ItemReference<any>> = T extends ItemReference<infer I>? ItemReference<SinonStubbedInstance<I>>: never;
+
+export function createSpellActionManager(sandbox: sinon.SinonSandbox): WithMockedRefs<SpellMessageActionsManager>{
     const spellReference = setUpMockSpellSelfReference(sandbox);
     const actorMock = setUpMockActor(sandbox);
 
-    actorMock.items = {get: () => spellReference};
+    actorMock.items = {get: () => spellReference} as unknown as Collection<SplittermondItem> //Its not a collection, but good enough for the test;
     spellReference.getItem().actor = actorMock;
 
     const checkReportReference = setUpCheckReportSelfReference();
 
     return withToObjectReturnsSelf(() => {
-        const casterReference = new AgentReference({type: "actor"});
-
         const actionManager = SpellMessageActionsManager.initialize(spellReference, checkReportReference);
 
         injectParent(actionManager);
-        return actionManager;
+        return actionManager as unknown as WithMockedRefs<SpellMessageActionsManager>; //TS cannot know that we dumped mocks into the init function.
     });
 }

@@ -27,7 +27,7 @@ export default class SplittermondActor extends Actor {
     Prepare Base Data Model
     */
     prepareBaseData() {
-        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
 

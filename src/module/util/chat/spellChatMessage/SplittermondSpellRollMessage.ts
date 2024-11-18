@@ -59,10 +59,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
     castDurationUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         if (this.degreeOfSuccessManager.isChecked("castDuration", multiplicity)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.ticks.add(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.ticks.subtract(multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction)
         }
         this.#alterCheckState("castDuration", multiplicity);
@@ -72,10 +70,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
         const multiplicity = data.multiplicity;
         const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.exhaustedFocus.focusCostReduction, multiplicity);
         if (this.degreeOfSuccessManager.isChecked("exhaustedFocus", multiplicity)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
         this.#alterCheckState("exhaustedFocus", multiplicity);
@@ -85,10 +81,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
         const multiplicity = data.multiplicity;
         const focusCosts = this.#toCostModifier(splittermond.spellEnhancement.channelizedFocus.focusCostReduction, multiplicity);
         if (this.degreeOfSuccessManager.isChecked("channelizedFocus", data.multiplicity)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
         this.#alterCheckState("channelizedFocus", multiplicity);
@@ -100,10 +94,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
             .asModifier()
             .multiply(multiplicity);
         if (this.degreeOfSuccessManager.isChecked("consumedFocus", multiplicity)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts)
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts)
         }
         this.#alterCheckState("consumedFocus", multiplicity)
@@ -112,10 +104,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
     damageUpdate(data: { multiplicity: number }) {
         const multiplicity = data.multiplicity;
         if (this.degreeOfSuccessManager.isChecked("damage", multiplicity)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.damage.subtractDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.damage.addDamage(multiplicity * splittermond.spellEnhancement.damage.damageIncrease)
         }
         this.#alterCheckState("damage", multiplicity);
@@ -136,10 +126,8 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
     spellEnhancementUpdate() {
         const focusCosts = this.#toCostModifier(this.spellReference.getItem().enhancementCosts, 1);
         if (this.degreeOfSuccessManager.isChecked("spellEnhancement", "" as any)) {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.subtractCost(focusCosts);
         } else {
-            //@ts-expect-error not migrated yet
             this.actionManager.focus.addCost(focusCosts);
         }
         this.#alterCheckState("spellEnhancement", "" as any);
