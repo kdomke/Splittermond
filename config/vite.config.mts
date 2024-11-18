@@ -46,6 +46,9 @@ export default defineConfig({
                 assetFileNames: (chunkInfo) => {
                     if (chunkInfo.name === 'style.css')
                         return 'splittermond.css'
+                    else {
+                        return chunkInfo.name ?? ""
+                    }
                 }
             }
         }
