@@ -2,7 +2,7 @@ import "__tests__/unit/foundryMocks.js"
 
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import sinon, {SinonStubbedInstance} from "sinon";
+import sinon from "sinon";
 import {Cost} from "module/util/costs/Cost";
 import {SpellMessageActionsManager} from "module/util/chat/spellChatMessage/SpellMessageActionsManager";
 import {
@@ -10,13 +10,11 @@ import {
     setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
+    WithMockedRefs,
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper.js";
 import {parseCostString} from "module/util/costs/costParser.js";
 import SplittermondItem from "module/item/item";
-import {AgentReference} from "module/data/references/AgentReference";
-import SplittermondActor from "module/actor/actor";
-import {ItemReference} from "module/data/references/ItemReference";
 
 describe("SpellActionManager", () => {
     let sandbox: sinon.SinonSandbox;
@@ -233,17 +231,12 @@ describe("SpellActionManager", () => {
     });
 });
 
-type WithMockedRefs<T> = {[K in keyof T]: T[K] extends AgentReference|ItemReference<any>? MockRefs<T[K]>: keyof T[K] extends never ? T[K] : WithMockedRefs<T[K]>}
-type MockRefs<T> = T extends AgentReference? MockActorRef<T>: T extends ItemReference<any>? MockItemRef<T>: never;
-type MockActorRef<T extends AgentReference> = Omit<T, "getAgent"> & {getAgent(): SinonStubbedInstance<SplittermondActor>};
-type MockItemRef<T extends ItemReference<any>> = T extends ItemReference<infer I>? ItemReference<SinonStubbedInstance<I>>: never;
-
 export function createSpellActionManager(sandbox: sinon.SinonSandbox): WithMockedRefs<SpellMessageActionsManager>{
     const spellReference = setUpMockSpellSelfReference(sandbox);
     const actorMock = setUpMockActor(sandbox);
 
     actorMock.items = {get: () => spellReference} as unknown as Collection<SplittermondItem> //Its not a collection, but good enough for the test;
-    spellReference.getItem().actor = actorMock;
+    Object.defineProperty(spellReference, "actor", {value: actorMock, enumerable:true});
 
     const checkReportReference = setUpCheckReportSelfReference();
 

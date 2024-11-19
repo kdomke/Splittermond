@@ -1,10 +1,10 @@
-import {DataModelSchemaType, SplittermondDataModel} from "../../../data/SplittermondDataModel";
+import {SplittermondDataModel} from "../../../data/SplittermondDataModel";
 import {CheckReport} from "../../../actor/CheckReport";
 import {ItemReference} from "../../../data/references/ItemReference";
 import SplittermondSpellItem from "../../../item/spell";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 
-declare class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel<DataModelSchemaType<SpellMessageDegreesOfSuccessManager.defineSchema>> {
+declare class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel<SpellMessageDegreeOfSuccessManagerDataType> {
     static fromRoll(spellReference: ItemReference<SplittermondSpellItem>, checkReportReference: OnAncestorReference<CheckReport>): SpellMessageDegreesOfSuccessManager;
     static defineSchema(): SpellMessageDegreeOfSuccessManagerDataType;
     get totalDegreesOfSuccess(): number;
@@ -16,8 +16,6 @@ declare class SpellMessageDegreesOfSuccessManager extends SplittermondDataModel<
     isUsed(key: ManagedSpellOptions): boolean;
     use(key: ManagedSpellOptions): void;
     alterCheckState(key: ManagedSpellOptions, multiplicity: number): void;
-    #onCheck(key: ManagedSpellOptions): void;
-    #onUncheck(key: ManagedSpellOptions): void;
 }
 
 //This is temporary, because we don't want to touch the JS impl yet.

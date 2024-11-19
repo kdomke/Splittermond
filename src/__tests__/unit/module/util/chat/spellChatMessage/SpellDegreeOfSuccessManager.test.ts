@@ -48,7 +48,7 @@ describe("SpellDegreeOfSuccessManager", () => {
 
     it("should delegate availability checks to the field", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
-        underTest.update({testField1: sinon.spy(underTest.testField1)});
+        underTest.testField1 = sinon.spy(underTest.testField1); //This works becasue testField1 is not part of the dataModel
 
         underTest.isAvailable("testField", 1);
 
@@ -95,7 +95,11 @@ function createSpellDegreeOfSuccessManager(sandbox: sinon.SinonSandbox): SpellMe
     checkReportReference.degreeOfSuccess = 3;
 
     const manager = SpellMessageDegreesOfSuccessManager.fromRoll(spellReference, checkReportReference);
-    Object.defineProperty(manager, "testField1", {value: createSpellDegreeOfSuccessField(),  writable:true,enumerable:true});
+    Object.defineProperty(manager, "testField1", {
+        value: createSpellDegreeOfSuccessField(),
+        writable: true,
+        enumerable: true
+    });
     injectParent(manager);
     return manager as SpellMessageDegreesOfSuccessManager & { testField1: SpellMessageDegreeOfSuccessField };
 }

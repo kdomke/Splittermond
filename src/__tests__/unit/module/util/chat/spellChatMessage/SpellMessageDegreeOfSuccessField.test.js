@@ -7,7 +7,7 @@ import {
 import {
     SpellMessageDegreesOfSuccessManager
 } from "../../../../../../module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.js";
-import {setUpCheckReportSelfReference} from "./spellRollMessageTestHelper.js";
+import {setUpCheckReportSelfReference} from "./spellRollMessageTestHelper.ts";
 
 describe("SpellMessageDegreeOfSuccessField", () => {
     it("should throw an error if no parent present", () => {
