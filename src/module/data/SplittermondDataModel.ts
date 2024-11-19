@@ -12,9 +12,9 @@ type DataModel<T, PARENT> = {
     updateSource(data: Partial<T>): void,
 }
 type DataModelConstructorInput<T> = {[K in keyof T]: T[K] extends DataModel<infer U, any>? DataModelConstructorInput<U>:T[K]};
-type DataModelConstructor = new <T, PARENT extends DataModel<PARENT, any> | never>(data: DataModelConstructorInput<T>, ...args: any[]) => DataModel<T, PARENT>;
+type DataModelConstructor = new <T, PARENT extends DataModel<any, any> | never>(data: DataModelConstructorInput<T>, ...args: any[]) => DataModel<T, PARENT>;
 /**technically Readonly<T> is already part of the {@link DataModel} type, but because of all the generics, we cannot add it there*/
-type SplittermondDataModelConstructor = new<T, PARENT extends DataModel<PARENT, any> | never = never>(data: DataModelConstructorInput<T>, ...args: any[]) => DataModel<T, PARENT> & Readonly<T>;
+type SplittermondDataModelConstructor = new<T, PARENT extends DataModel<any, any> | never = never>(data: DataModelConstructorInput<T>, ...args: any[]) => DataModel<T, PARENT> & Readonly<T>;
 
 //@ts-ignore
 const FoundryDataModelConstructor = foundry.abstract.DataModel as DataModelConstructor;
@@ -26,7 +26,7 @@ const FoundryDataModelConstructor = foundry.abstract.DataModel as DataModelConst
  * @param PARENT The encompassing {@link DataModel} of this data model. Useful for Embedded data fields
  */
 const SplittermondDataModel =
-    class<T, PARENT extends DataModel<PARENT, any> | never = never> extends FoundryDataModelConstructor<T, PARENT> {
+    class<T, PARENT extends DataModel<any, any> | never = never> extends FoundryDataModelConstructor<T, PARENT> {
 } as SplittermondDataModelConstructor;
 
 
