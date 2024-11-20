@@ -1,4 +1,3 @@
-import {splittermond} from "../config.js";
 import {SpellMessageDegreesOfSuccessManager} from "../util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager.ts";
 import {SpellMessageActionsManager} from "../util/chat/spellChatMessage/SpellMessageActionsManager.ts";
 import {SplittermondSpellRollMessageRenderer} from "../util/chat/spellChatMessage/SpellRollMessageRenderer.ts";
