@@ -1,71 +1,87 @@
-import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage.ts";
-import {foundryApi} from "../../../api/foundryApi.ts";
+import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage";
+import {foundryApi} from "module/api/foundryApi";
 import {splittermond} from "../../../config.js";
 import {RollResultRenderer} from "../RollResultRenderer.js";
-import {fields, SplittermondDataModel} from "../../../data/SplittermondDataModel.ts";
-import {OnAncestorReference} from "../../../data/references/OnAncestorReference.ts";
-import {ItemReference} from "../../../data/references/ItemReference.ts";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "module/data/SplittermondDataModel";
+import {OnAncestorReference} from "module/data/references/OnAncestorReference";
+import {ItemReference} from "module/data/references/ItemReference";
 import {parseCostString} from "../../costs/costParser.js";
+import {CheckReport} from "../../../actor/CheckReport";
+import SplittermondSpellItem from "../../../item/spell";
+import {SpellMessageDegreeOfSuccessField} from "./SpellMessageDegreeOfSuccessField";
+import {ManagedSpellOptions} from "./SpellMessageDegreesOfSuccessManager";
+import {SpellDegreesOfSuccessOptions} from "../../../../../public/template";
 
 /**
  * @extends {SplittermondDataModel<SplittermondSpellRollMessageRenderer, SplittermondSpellRollMessage>}
  * @property {OnAncestorReference<CheckReport>} checkReportReference
  * @property {ItemReference<SplittermondSpellItem>} spellReference
  */
-export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel {
+interface SpellDegreesOfSuccessRenderedData {
+    id: string;
+    text: string;
+    action: string;
+    checked: boolean;
+    disabled: boolean;
+    multiplicity: number;
+}
 
-    static defineSchema() {
-        return {
-            checkReportReference: new fields.EmbeddedDataField(OnAncestorReference, {
-                required: true,
-                blank: false,
-                nullable: false
-            }),
-            spellReference: new fields.EmbeddedDataField(ItemReference, {
-                required: true,
-                blank: false,
-                nullable: false
-            }),
-            checkReport: new fields.ObjectField({required: true, blank: false, nullable: false}),
-        }
+interface SplittermondSpellRollMessageRenderedData {
+    header: {
+        title: string;
+        rollTypeMessage: string;
+        difficulty: string;
+        hideDifficulty: boolean;
     }
+    rollResultClass: string;
+    rollResult: {
+        rollTotal: number;
+        skillAndModifierTooltip: { type: string; classes: string; value: string; description: string; }[];
+        rollTooltip: string;
+        actionDescription: string;
+    };
+    degreeOfSuccessDisplay: {
+        degreeOfSuccessMessage: string;
+        totalDegreesOfSuccess: number;
+        usedDegreesOfSuccess: number;
+        openDegreesOfSuccess: number;
+    };
+    degreeOfSuccessOptions: SpellDegreesOfSuccessRenderedData[] | null;
+    actions: object;
+}
+
+function SplittermondSpellRollMessageSchema() {
+    return {
+        checkReportReference: new fields.EmbeddedDataField(OnAncestorReference<CheckReport>, {
+            required: true,
+            blank: false,
+            nullable: false
+        }),
+        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {
+            required: true,
+            blank: false,
+            nullable: false
+        }),
+    }
+}
+
+type SplittermondSpellRollMessageType = DataModelSchemaType<typeof SplittermondSpellRollMessageSchema>
+
+export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel<SplittermondSpellRollMessageType, SplittermondSpellRollMessage> {
+
+    static defineSchema = SplittermondSpellRollMessageSchema;
 
     get template() {
         return "systems/splittermond/templates/chat/spell-chat-card.hbs";
     }
 
-
-    /**
-     * @typedef SpellDegreessOfSuccessRenderedData
-     * @type object
-     * @property {string} id
-     * @property {string} text
-     * @property {string} action
-     * @property {string} checked
-     * @property {string} disabled
-     * @property {string} multiplicity
-     */
-
-    /**
-     * @typedef SplittermondSpellRollMessageRenderedData
-     * @type object
-     * @property {string} title
-     * @property {string} rollResultClass
-     * @property {number} totalDegreesOfSuccess
-     * @property {number} usedDegreesOfSuccess
-     * @property {number} openDegreesOfSuccess
-     * @property {SpellDegreessOfSuccessRenderedData[]} degreeOfSuccessOptions
-     * @property {object} actions
-     */
-    /**
-     * @return {SplittermondSpellRollMessageRenderedData}
-     */
-    renderData() {
+    renderData(): SplittermondSpellRollMessageRenderedData {
         const checkReport = this.checkReportReference.get();
         const spell = this.spellReference.getItem();
         return {
             rollResultClass: getRollResultClass(checkReport),
             header: {
+                // @ts-expect-error spell is not typed yet
                 title: spell.name,
                 rollTypeMessage: foundryApi.localize(`splittermond.rollType.${checkReport.rollType}`),
                 difficulty: this.createDifficulty(),
@@ -74,12 +90,12 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel 
             rollResult: new RollResultRenderer(spell.description, checkReport).render(),
             degreeOfSuccessDisplay: {
                 degreeOfSuccessMessage: getDegreeOfSuccessMessage(checkReport.degreeOfSuccess, checkReport.succeeded),
-                totalDegreesOfSuccess: this.parent.degreeOfSuccessManager.totalDegreesOfSuccess,
-                usedDegreesOfSuccess: this.parent.degreeOfSuccessManager.usedDegreesOfSuccess,
-                openDegreesOfSuccess: this.parent.degreeOfSuccessManager.openDegreesOfSuccess,
+                totalDegreesOfSuccess: this.getParent().degreeOfSuccessManager.totalDegreesOfSuccess,
+                usedDegreesOfSuccess: this.getParent().degreeOfSuccessManager.usedDegreesOfSuccess,
+                openDegreesOfSuccess: this.getParent().degreeOfSuccessManager.openDegreesOfSuccess,
             },
-            degreeOfSuccessOptions: this.badlyPostfixRenderedOptions(renderDegreeOfSuccessOptions(this.parent)),
-            actions: renderActions(this.parent),
+            degreeOfSuccessOptions: this.badlyPostfixRenderedOptions(renderDegreeOfSuccessOptions(this.getParent())),
+            actions: renderActions(this.getParent()),
         }
     }
 
@@ -98,10 +114,8 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel 
      * postfix the available degree of success option to what makes sense at the given point in time.
      * bad Impl. Ideally, the degreeOfSuccessFields should be adapted and manage their multiplicities and respective
      * availablities
-     *  @param {SpellDegreessOfSuccessRenderedData[]|null}spellDegreesOfSuccessRenderedData
-     * @return {SpellDegreessOfSuccessRenderedData[]}
      */
-    badlyPostfixRenderedOptions(spellDegreesOfSuccessRenderedData) {
+    badlyPostfixRenderedOptions(spellDegreesOfSuccessRenderedData: SpellDegreesOfSuccessRenderedData[] | null): SpellDegreesOfSuccessRenderedData[] | null {
         if (!spellDegreesOfSuccessRenderedData) {
             return null;
         }
@@ -114,11 +128,11 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel 
                 if (renderedData.multiplicity > 2) {
                     spellDegreesOfSuccessRenderedData.splice(i, 1)
                     i--;
-                } else if (this.parent.actionManager.ticks.cost <= renderedData.multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction) {
+                } else if (Number.parseInt(this.getParent().actionManager.ticks.cost) <= renderedData.multiplicity * splittermond.spellEnhancement.castDuration.castDurationReduction) {
                     spellDegreesOfSuccessRenderedData.splice(i, 1);
                     i--;
                 }
-            } else if (renderedData.action.includes("channelizedFocus") === 0) {
+            } else if (renderedData.action.includes("channelizedFocus")) {
                 if (renderedData.multiplicity > 4) {
                     spellDegreesOfSuccessRenderedData.splice(i, 1);
                     i--;
@@ -144,37 +158,35 @@ export class SplittermondSpellRollMessageRenderer extends SplittermondDataModel 
         return spellDegreesOfSuccessRenderedData.length === 0 ? null : spellDegreesOfSuccessRenderedData;
     }
 
-    #getSubstractedCost(costString, multiplicity) {
-        const adjustedCost = parseCostString(this.parent.actionManager.focus.cost).asPrimaryCost();
-        const modifier = this.#calcFocusCostReduction(splittermond.spellEnhancement[costString].focusCostReduction, multiplicity)
+    #getSubstractedCost(enhancementType: keyof typeof splittermond.spellEnhancement, multiplicity: number) {
+        const adjustedCost = parseCostString(this.getParent().actionManager.focus.cost).asPrimaryCost();
+        const modifier = this.#calcFocusCostReduction(splittermond.spellEnhancement[enhancementType].focusCostReduction, multiplicity)
             .subtract(parseCostString("2V1", false).asModifier())
         return adjustedCost.subtract(modifier);
 
 
     }
 
-    #calcFocusCostReduction(costString, multiplicity) {
+    #calcFocusCostReduction(costString: string, multiplicity: number) {
         return parseCostString(costString).asModifier().multiply(multiplicity);
+    }
+
+    private getParent() {
+        if (this.parent === null) {
+            throw new Error("SplittermondSpellRollMessageRenderer needs to be accessed as embedded data, because it needs a parent");
+        }
+        return this.parent;
     }
 
 }
 
-/**
- * @param {number} degreeOfSuccess
- * @param {boolean} succeeded
- * @return {string}
- */
-function getDegreeOfSuccessMessage(degreeOfSuccess, succeeded) {
+function getDegreeOfSuccessMessage(degreeOfSuccess: number, succeeded: boolean): string {
     const messageType = `${succeeded ? "success" : "fail"}Message`;
     const messageExtremity = Math.min(Math.abs(degreeOfSuccess), 5);
     return foundryApi.localize(`splittermond.${messageType}.${messageExtremity}`);
 }
 
-/**
- * @param {CheckReport} checkReport
- * @returns {"success"|""|"critical"|"fumble"}
- */
-function getRollResultClass(checkReport) {
+function getRollResultClass(checkReport: CheckReport): string {
     const resultClasses = [];
     if (checkReport.isCrit) {
         resultClasses.push("critical");
@@ -188,16 +200,12 @@ function getRollResultClass(checkReport) {
     return resultClasses.join(" ")
 }
 
-/**
- * @param {SplittermondSpellRollMessage} spellRollMessage
- * @return {SpellDegreessOfSuccessRenderedData[]}
- */
-function renderDegreeOfSuccessOptions(spellRollMessage) {
+function renderDegreeOfSuccessOptions(spellRollMessage: SplittermondSpellRollMessage): SpellDegreesOfSuccessRenderedData[] | null {
     const renderedOptions = [];
     for (const key in splittermond.spellEnhancement) {
         const fieldsForKey = spellRollMessage.degreeOfSuccessManager.getMultiplicities(key);
         for (const field of fieldsForKey) {
-            const renderedOption = renderDegreeOfSuccessOption(field, key);
+            const renderedOption = renderDegreeOfSuccessOption(field, key as keyof typeof splittermond.spellEnhancement);
             if (renderedOption && hasAction(spellRollMessage, renderedOption.action)) {
                 renderedOptions.push(renderedOption);
             }
@@ -215,11 +223,8 @@ function renderDegreeOfSuccessOptions(spellRollMessage) {
 }
 
 
-/**
- * @param {SplittermondSpellRollMessage} spellRollMessage
- * @param {Exclude<ManagedSpellOptions, SpellDegreesOfSuccessOptions>} key
- */
-function renderSpellEnhancementOption(spellRollMessage, key) {
+function renderSpellEnhancementOption(spellRollMessage: SplittermondSpellRollMessage, key: Exclude<ManagedSpellOptions, SpellDegreesOfSuccessOptions>) {
+    //@ts-expect-error SpellMessage degree of success manager is not fully typed yet
     const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage.degreeOfSuccessManager[key], key);
     if (!commonConfig) {
         return null;
@@ -230,11 +235,7 @@ function renderSpellEnhancementOption(spellRollMessage, key) {
     };
 }
 
-/**
- * @param {SpellMessageDegreeOfSuccessField} field
- * @param {SpellDegreesOfSuccessOptions} key
- */
-function renderDegreeOfSuccessOption(field, key) {
+function renderDegreeOfSuccessOption(field: SpellMessageDegreeOfSuccessField, key: keyof typeof splittermond.spellEnhancement) {
     const commonConfig = commonRenderDegreeOfSuccessOptions(field, key)
     if (!commonConfig) {
         return null;
@@ -242,15 +243,11 @@ function renderDegreeOfSuccessOption(field, key) {
     const degreeOfSuccessOptionConfig = splittermond.spellEnhancement[key];
     return {
         ...commonConfig,
-        text: `${field.degreeOfSuccessCosts} EG ${field.multiplicity > 1 ? field.multiplicity:""} ${foundryApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
+        text: `${field.degreeOfSuccessCosts} EG ${field.multiplicity > 1 ? field.multiplicity : ""} ${foundryApi.localize(degreeOfSuccessOptionConfig.textTemplate)}`,
     };
 }
 
-/**
- * @param {SpellMessageDegreeOfSuccessField} degreeOfSuccessField
- * @param {ManagedSpellOptions} key
- */
-function commonRenderDegreeOfSuccessOptions(degreeOfSuccessField, key) {
+function commonRenderDegreeOfSuccessOptions(degreeOfSuccessField: SpellMessageDegreeOfSuccessField, key: ManagedSpellOptions) {
     const actionName = `${key}Update`
     if (!degreeOfSuccessField.isAvailable()) {
         return null;
@@ -265,18 +262,13 @@ function commonRenderDegreeOfSuccessOptions(degreeOfSuccessField, key) {
 }
 
 
-/**
- * @param {object} object
- * @param {string} action
- * @return {boolean}
- */
-function hasAction(object, action) {
-    return (action in object || action in Object.getPrototypeOf(object)) && typeof object[action] === "function";
+function hasAction(obj: Object, action: string): boolean {
+    return (action in obj || action in Object.getPrototypeOf(obj))
+        && typeof obj[action as keyof typeof obj/*We have just proven that action is a key*/] === "function";
 }
 
-/** @param {SplittermondSpellRollMessage} spellRollMessage */
-function renderActions(spellRollMessage) {
-    const renderedOptions = {};
+function renderActions(spellRollMessage: SplittermondSpellRollMessage) {
+    const renderedOptions: Record<string, object> = {};
     const applyDamageRender = renderApplyDamage(spellRollMessage);
     const advanceTokenRender = renderAdvanceToken(spellRollMessage);
     const consumeCostsRender = renderConsumeCosts(spellRollMessage);
@@ -304,8 +296,7 @@ function renderActions(spellRollMessage) {
     return renderedOptions;
 }
 
-/** @param {SplittermondSpellRollMessage} spellRollMessage */
-function renderApplyDamage(spellRollMessage) {
+function renderApplyDamage(spellRollMessage: SplittermondSpellRollMessage) {
     if (!spellRollMessage.actionManager.damage.available) {
         return null;
     }
@@ -315,21 +306,21 @@ function renderApplyDamage(spellRollMessage) {
     };
 }
 
-function renderAdvanceToken(spellRollMessage) {
+function renderAdvanceToken(spellRollMessage: SplittermondSpellRollMessage) {
     return {
         value: spellRollMessage.actionManager.ticks.cost,
         disabled: spellRollMessage.actionManager.ticks.used,
     }
 }
 
-function renderConsumeCosts(spellRollMessage) {
+function renderConsumeCosts(spellRollMessage: SplittermondSpellRollMessage) {
     return {
         value: spellRollMessage.actionManager.focus.cost,
         disabled: spellRollMessage.actionManager.focus.used,
     }
 }
 
-function renderUseSplinterpoint(spellRollMessage) {
+function renderUseSplinterpoint(spellRollMessage: SplittermondSpellRollMessage) {
     if (!spellRollMessage.actionManager.splinterPoint.available) {
         return null;
     }
@@ -338,7 +329,7 @@ function renderUseSplinterpoint(spellRollMessage) {
     }
 }
 
-function renderRollFumble(spellRollMessage) {
+function renderRollFumble(spellRollMessage: SplittermondSpellRollMessage) {
     if (!spellRollMessage.actionManager.magicFumble.available) {
         return null;
     }
@@ -347,7 +338,7 @@ function renderRollFumble(spellRollMessage) {
     };
 }
 
-function renderActiveDefense(spellRollMessage) {
+function renderActiveDefense(spellRollMessage: SplittermondSpellRollMessage) {
     if (!spellRollMessage.actionManager.activeDefense.available) {
         return null;
     }

@@ -13,4 +13,5 @@ export interface CheckReport extends Omit<GenericRollEvaluation, "roll"> {
         tooltip: string;
     };
     modifierElements: string[];
+    hideDifficulty: boolean;
 }

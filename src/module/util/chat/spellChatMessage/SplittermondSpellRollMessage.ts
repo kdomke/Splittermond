@@ -47,7 +47,6 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
             spellReference: spellReference.toObject(),
             degreeOfSuccessManager: SpellMessageDegreesOfSuccessManager.fromRoll(spellReference, reportReference).toObject(),
             renderer: new SplittermondSpellRollMessageRenderer({
-                //@ts-expect-error renderer was not migrated yet so TS probably can not properly infer the components.
                 spellReference: spellReference,
                 checkReportReference: reportReference
             }).toObject(),

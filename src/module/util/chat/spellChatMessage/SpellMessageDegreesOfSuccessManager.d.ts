@@ -25,4 +25,5 @@ type SpellMessageDegreeOfSuccessManagerDataType = {
     usedDegreesOfSuccess: number;
 }
 
-export {SpellMessageDegreesOfSuccessManager};
+type ManagedSpellOptions = SpellDegreesOfSuccessOptions | "spellEnhancement";
+export {SpellMessageDegreesOfSuccessManager, ManagedSpellOptions};
