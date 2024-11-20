@@ -42,6 +42,7 @@ import {
 
         it(`should delegate to the degree of success manager for ${key}`, () => {
             const {spellRollMessage} = createTestRollMessage(sandbox);
+            //@ts-expect-error TS somehow wants private methods to be represented in an interface.
             spellRollMessage.updateSource({degreeOfSuccessManager: sinon.spy(spellRollMessage.degreeOfSuccessManager)});
             spellRollMessage[method]({multiplicity: 1});
 
@@ -130,7 +131,6 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
 
     it("should increase focus costs on spell enhancement selection", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
         spellRollMessage.degreeOfSuccessManager.spellEnhancement.updateSource({checked : false});
         spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, true, true).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());

@@ -203,7 +203,7 @@ function getRollResultClass(checkReport: CheckReport): string {
 function renderDegreeOfSuccessOptions(spellRollMessage: SplittermondSpellRollMessage): SpellDegreesOfSuccessRenderedData[] | null {
     const renderedOptions = [];
     for (const key in splittermond.spellEnhancement) {
-        const fieldsForKey = spellRollMessage.degreeOfSuccessManager.getMultiplicities(key);
+        const fieldsForKey = spellRollMessage.degreeOfSuccessManager.getMultiplicities(key as keyof typeof splittermond.spellEnhancement);
         for (const field of fieldsForKey) {
             const renderedOption = renderDegreeOfSuccessOption(field, key as keyof typeof splittermond.spellEnhancement);
             if (renderedOption && hasAction(spellRollMessage, renderedOption.action)) {
@@ -224,7 +224,6 @@ function renderDegreeOfSuccessOptions(spellRollMessage: SplittermondSpellRollMes
 
 
 function renderSpellEnhancementOption(spellRollMessage: SplittermondSpellRollMessage, key: Exclude<ManagedSpellOptions, SpellDegreesOfSuccessOptions>) {
-    //@ts-expect-error SpellMessage degree of success manager is not fully typed yet
     const commonConfig = commonRenderDegreeOfSuccessOptions(spellRollMessage.degreeOfSuccessManager[key], key);
     if (!commonConfig) {
         return null;

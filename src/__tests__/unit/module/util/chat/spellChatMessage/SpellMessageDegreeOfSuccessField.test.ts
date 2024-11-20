@@ -7,11 +7,9 @@ import {
 import {
     SpellMessageDegreesOfSuccessManager
 } from "module/util/chat/spellChatMessage/SpellMessageDegreesOfSuccessManager";
-import {setUpCheckReportSelfReference, setUpMockSpellSelfReference} from "./spellRollMessageTestHelper";
-import sinon from "sinon";
+import {setUpCheckReportSelfReference} from "./spellRollMessageTestHelper";
 
 describe("SpellMessageDegreeOfSuccessField", () => {
-    afterEach(() => { sinon.restore(); });
     it("should throw an error if no parent present", () => {
         const probe = new SpellMessageDegreeOfSuccessField({
             isDegreeOfSuccessOption: true,
@@ -124,9 +122,8 @@ function defaultSpellDegreeOfSuccessField(): SpellMessageDegreeOfSuccessField {
 function mockManager(): SpellMessageDegreesOfSuccessManager {
     const degreeOfSuccessManager = new SpellMessageDegreesOfSuccessManager({
         checkReportReference: setUpCheckReportSelfReference(),
-        spellReference: setUpMockSpellSelfReference(sinon),
         usedDegreesOfSuccess: 0,
-    });
+    }as any/*we don't want to initialize all fields here*/);
     degreeOfSuccessManager.updateSource({checkReportReference: setUpCheckReportSelfReference()});
     degreeOfSuccessManager.checkReportReference.get().degreeOfSuccess = 3;
 

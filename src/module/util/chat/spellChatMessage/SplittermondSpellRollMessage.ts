@@ -1,13 +1,13 @@
 import {addToRegistry} from "../chatMessageRegistry.js";
-import {SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager.js";
-import {SpellMessageActionsManager} from "./SpellMessageActionsManager.js";
+import {keyIsManagedSpellOptions, SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager";
+import {SpellMessageActionsManager} from "./SpellMessageActionsManager";
 import {splittermond} from "../../../config.js";
 import {evaluateCheck} from "../../dice.js";
 import {ItemReference} from "../../../data/references/ItemReference";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference";
-import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer.js";
+import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer";
 import {parseCostString} from "../../costs/costParser.js";
-import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel.js";
+import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel";
 import type {DataModelSchemaType} from "module/data/SplittermondDataModel";
 import SplittermondSpellItem from "../../../item/spell";
 import {CheckReport} from "../../../actor/CheckReport";
@@ -16,7 +16,11 @@ const constructorRegistryKey = "SplittermondSpellRollMessage";
 
 function SplittermondSpellRollSchema() {
     return {
-        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {required: true, blank: false, nullable: false}),
+        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {
+            required: true,
+            blank: false,
+            nullable: false
+        }),
         checkReport: new fields.ObjectField({required: true, nullable: false}),
         constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
         renderer: new fields.EmbeddedDataField(SplittermondSpellRollMessageRenderer, {required: true, nullable: false}),
@@ -28,7 +32,9 @@ function SplittermondSpellRollSchema() {
     }
 }
 
-type SpellRollMessageSchema = Omit<DataModelSchemaType<typeof SplittermondSpellRollSchema>,"checkReport"> & { checkReport: CheckReport };
+type SpellRollMessageSchema = Omit<DataModelSchemaType<typeof SplittermondSpellRollSchema>, "checkReport"> & {
+    checkReport: CheckReport
+};
 
 export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRollMessageSchema> {
 
@@ -134,7 +140,11 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
 
 
     #alterCheckState(key: string, multiplicity: number) {
-        this.degreeOfSuccessManager.alterCheckState(key, multiplicity);
+        if (keyIsManagedSpellOptions(key)) {
+            this.degreeOfSuccessManager.alterCheckState(key, multiplicity);
+        } else {
+            throw new Error("Unknown key " + key);
+        }
     }
 
     #toCostModifier(cost: string, multiplicity: number) {
@@ -165,7 +175,10 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
         const checkReport = this.checkReport;
         checkReport.roll.total += splinterPointBonus;
         const updatedReport = await evaluateCheck(Promise.resolve(checkReport.roll), checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
-        const newCheckReport: CheckReport = {...checkReport, ...updatedReport, roll:{...updatedReport.roll, tooltip:checkReport.roll.tooltip}};
+        const newCheckReport: CheckReport = {
+            ...checkReport, ...updatedReport,
+            roll: {...updatedReport.roll, tooltip: checkReport.roll.tooltip}
+        };
         this.updateSource({checkReport: newCheckReport});
     }
 

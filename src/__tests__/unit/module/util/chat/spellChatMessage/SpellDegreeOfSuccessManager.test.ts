@@ -27,6 +27,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         underTest.testField1.updateSource({degreeOfSuccessCosts: 3});
         underTest.testField1.updateSource({checked: false});
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.alterCheckState("testField", 1);
 
         expect(underTest.openDegreesOfSuccess).to.equal(0);
@@ -40,6 +41,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         underTest.testField1.updateSource({degreeOfSuccessCosts: 3});
         underTest.testField1.updateSource({checked: true});
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.alterCheckState("testField", 1);
 
         expect(underTest.openDegreesOfSuccess).to.equal(6);
@@ -50,6 +52,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField1 = sinon.spy(underTest.testField1); //This works becasue testField1 is not part of the dataModel
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.isAvailable("testField", 1);
 
         expect((underTest.testField1.isAvailable as any).called).to.be.true;
@@ -59,6 +62,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField1 = sinon.spy(underTest.testField1);
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.isCheckable("testField", 1);
 
         expect((underTest.testField1.isCheckable as any).called).to.be.true;
@@ -68,6 +72,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField1.updateSource({checked: "horrendous test value" as any});
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.isChecked("testField", 1);
 
         expect(underTest.testField1.checked).to.equal("horrendous test value");
@@ -77,6 +82,7 @@ describe("SpellDegreeOfSuccessManager", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.testField1.updateSource({used: "horrendous test value" as any});
 
+        //@ts-expect-error we have a test field, but of course its not in the type definition for the input
         underTest.isUsed("testField");
 
         expect(underTest.testField1.used).to.equal("horrendous test value");
