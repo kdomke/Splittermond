@@ -81,6 +81,14 @@ global.foundry = {
                         configurable: true
                     });
                 }
+                if("parent" in context){
+                    Object.defineProperty(this, "parent", {
+                        value: context.parent,
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    });
+                }
             }
 
             updateSource(data, context) {
