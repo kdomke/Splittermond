@@ -42,7 +42,7 @@ import {
 
         it(`should delegate to the degree of success manager for ${key}`, () => {
             const {spellRollMessage} = createTestRollMessage(sandbox);
-            spellRollMessage.update({degreeOfSuccessManager: sinon.spy(spellRollMessage.degreeOfSuccessManager)});
+            spellRollMessage.updateSource({degreeOfSuccessManager: sinon.spy(spellRollMessage.degreeOfSuccessManager)});
             spellRollMessage[method]({multiplicity: 1});
 
             expect((spellRollMessage.degreeOfSuccessManager as SinonStubbedInstance<WithMockedRefs<SpellMessageDegreesOfSuccessManager>>/*stubbed two lines above*/).alterCheckState.called).to.be.true;
@@ -59,8 +59,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should reduce exhausted focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.update({checked : false});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, 0, false).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.updateSource({checked : false});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, false).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.exhaustedFocusUpdate({multiplicity: 1});
@@ -71,8 +71,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should increase exhausted focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.update({checked : true});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(-1, 0, false, true).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.updateSource({checked : true});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(-1, 0, false, true).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.exhaustedFocusUpdate({multiplicity: 1});
@@ -83,8 +83,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should reduce consumed focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.update({checked : false});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, 0, false).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.updateSource({checked : false});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, false).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.consumedFocusUpdate({multiplicity: 1});
@@ -95,8 +95,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should increase consumed focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.consumedFocus1.update({checked : true});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, -1, false, true).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.consumedFocus1.updateSource({checked : true});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, -1, false, true).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
 
         spellRollMessage.consumedFocusUpdate({multiplicity: 1});
@@ -107,8 +107,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should reduce channeled focus on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.update({checked : false});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, 0, false).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.exhaustedFocus1.updateSource({checked : false});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, false).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
         spellRollMessage.channelizedFocusUpdate({multiplicity: 1});
@@ -119,8 +119,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should increase channeled focus on uncheck", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.channelizedFocus1.update({checked : true});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(-1, 0, true, true).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.channelizedFocus1.updateSource({checked : true});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(-1, 0, true, true).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, true).asPrimaryCost());
 
         spellRollMessage.channelizedFocusUpdate({multiplicity: 1});
@@ -131,8 +131,8 @@ describe("SplittermondSpellRollMessage enacts focus changes correctly", () => {
     it("should increase focus costs on spell enhancement selection", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.spellEnhancement.update({checked : false});
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, 0, true, true).asModifier()});
+        spellRollMessage.degreeOfSuccessManager.spellEnhancement.updateSource({checked : false});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, true, true).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
         sinon.stub(spellMock, "enhancementCosts").get(() => "2EG/+3V1")
 
@@ -151,8 +151,8 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
     it("should increase damage on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of succcess manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.damage1.update({checked : false});
-        spellRollMessage.actionManager.damage.update({adjusted : 0});
+        spellRollMessage.degreeOfSuccessManager.damage1.updateSource({checked : false});
+        spellRollMessage.actionManager.damage.updateSource({adjusted : 0});
         sinon.stub(spellMock, "damage").get(() => "1W6");
 
         spellRollMessage.damageUpdate({multiplicity: 1});
@@ -163,8 +163,8 @@ describe("SplittermondSpellRollMessage enacts damage increases correctly", () =>
     it("should increase damage on check", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of success manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.damage1.update({checked : true});
-        spellRollMessage.actionManager.damage.update({adjusted : 1});
+        spellRollMessage.degreeOfSuccessManager.damage1.updateSource({checked : true});
+        spellRollMessage.actionManager.damage.updateSource({adjusted : 1});
         sinon.stub(spellMock, "damage").get(() => "1W6");
 
         spellRollMessage.damageUpdate({multiplicity: 1});
@@ -182,8 +182,8 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     it("should reduce ticks on check", () => {
         const {spellRollMessage} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of success manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.castDuration1.update({checked : false});
-        spellRollMessage.actionManager.ticks.update({adjusted : 3});
+        spellRollMessage.degreeOfSuccessManager.castDuration1.updateSource({checked : false});
+        spellRollMessage.actionManager.ticks.updateSource({adjusted : 3});
 
         spellRollMessage.castDurationUpdate({multiplicity: 1});
 
@@ -193,8 +193,8 @@ describe("SplittermondSpellRollMessage enacts tick reduction correctly", () => {
     it("should increase ticks on uncheck", () => {
         const {spellRollMessage} = createTestRollMessage(sandbox);
         //@ts-expect-error  SpellDegrees of success manager is not fully typed yet
-        spellRollMessage.degreeOfSuccessManager.castDuration1.update({checked : true});
-        spellRollMessage.actionManager.ticks.update({adjusted : 1});
+        spellRollMessage.degreeOfSuccessManager.castDuration1.updateSource({checked : true});
+        spellRollMessage.actionManager.ticks.updateSource({adjusted : 1});
 
         spellRollMessage.castDurationUpdate({multiplicity: 1});
 
@@ -228,7 +228,7 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should call actor consume focus", () => {
         const {spellRollMessage, spellMock, actorMock} = createTestRollMessage(sandbox);
-        spellRollMessage.actionManager.focus.update({adjusted : new Cost(0, 0, false).asModifier()});
+        spellRollMessage.actionManager.focus.updateSource({adjusted : new Cost(0, 0, false).asModifier()});
         spellMock.getCostsForFinishedRoll.returns(new Cost(1, 1, true).asPrimaryCost());
 
         spellRollMessage.consumeCosts();
@@ -239,7 +239,7 @@ describe("SplittermondSpellRollMessage actions", () => {
 
     it("should disable focus degree of success options", () => {
         const {spellRollMessage, spellMock} = createTestRollMessage(sandbox);
-        spellRollMessage.actionManager.focus.update({casterReference : new AgentReference({
+        spellRollMessage.actionManager.focus.updateSource({casterReference : new AgentReference({
             id: "2",
             sceneId: "1",
             type: "actor"
@@ -274,7 +274,7 @@ describe("SplittermondSpellRollMessage actions", () => {
         const {spellRollMessage, actorMock} = createTestRollMessage(sandbox);
         /*const addTicksMock = sinon.stub().withArgs(4);
         actorMock.addTicks.withArgs(4) */
-        spellRollMessage.actionManager.ticks.update({adjusted : 4});
+        spellRollMessage.actionManager.ticks.updateSource({adjusted : 4});
 
         spellRollMessage.advanceToken();
 

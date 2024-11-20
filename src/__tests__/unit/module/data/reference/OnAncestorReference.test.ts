@@ -8,8 +8,8 @@ import sinon from "sinon";
 describe("OnParentReference", () => {
     it("should return the value on the parent", () => {
         const model = createModel();
-        model.update({identifier: "1"});
-        model.update({target: "I want to read this"});
+        model.updateSource({identifier: "1"});
+        model.updateSource({target: "I want to read this"});
         const reference = OnAncestorReference.for(Parent)
             .identifiedBy("identifier", "1")
             .references("target");
@@ -19,15 +19,15 @@ describe("OnParentReference", () => {
 
     it("should return the value on the parent", () => {
         const model = createModel();
-        model.update({identifier: "1"});
-        model.update({target: "I want to read this"});
+        model.updateSource({identifier: "1"});
+        model.updateSource({target: "I want to read this"});
         const reference = OnAncestorReference.for(Parent)
             .identifiedBy("identifier", "1")
             .references("target");
         reference.parent = model.firstChild.child;
         const grandchild = Object.defineProperty(model.firstChild.child, "reference", {value: reference});
         reference.parent = grandchild;
-        model.firstChild.update({child: grandchild });
+        model.firstChild.updateSource({child: grandchild });
 
 
         const result = reference.get();
@@ -37,14 +37,14 @@ describe("OnParentReference", () => {
 
     it("should throw an error if the parent does not exist", () => {
         const model = createModel();
-        model.update({identifier: "1"});
-        model.update({target: "I want to read this"});
+        model.updateSource({identifier: "1"});
+        model.updateSource({target: "I want to read this"});
         const reference = OnAncestorReference.for(Parent)
             .identifiedBy("identifier", model.identifier)
             .references("target");
         const grandchild = Object.defineProperty(model.firstChild.child, "reference", {value: reference}) as
             Grandchild & {reference: OnAncestorReference<string>};
-        model.firstChild.update({child: grandchild });
+        model.firstChild.updateSource({child: grandchild });
         model.firstChild.child.parent = null;
 
         expect(() => grandchild.reference.get()).to.throw("No ancestor with id 1 found");
@@ -52,7 +52,7 @@ describe("OnParentReference", () => {
 
     it("should throw an error if id is not defined during setup", () => {
         const model = createModel();
-        model.update({target: "I want to read this"});
+        model.updateSource({target: "I want to read this"});
         //@ts-expect-error we try to fail on purpose here.
         expect(() => OnAncestorReference.for(Parent).identifiedBy("id")
             .references("target")).to.throw(Error);

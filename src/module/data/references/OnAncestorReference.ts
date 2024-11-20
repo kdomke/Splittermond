@@ -16,7 +16,6 @@ export class OnAncestorReference<T> extends SplittermondDataModel<DataModelSchem
     static for = createReferenceFor;
 
 
-
     get(): T {
         let ancestor = this.parent
         while (ancestor) {

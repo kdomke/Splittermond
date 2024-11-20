@@ -25,8 +25,8 @@ describe("SpellActionManager", () => {
     describe("Ticks", () => {
         it("should subtract from the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.update({adjusted: 3});
-            actionManager.ticks.update({used: false});
+            actionManager.ticks.updateSource({adjusted: 3});
+            actionManager.ticks.updateSource({used: false});
 
             actionManager.ticks.subtract(3);
 
@@ -35,8 +35,8 @@ describe("SpellActionManager", () => {
 
         it("should add to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.update({adjusted: 3});
-            actionManager.ticks.update({used: false});
+            actionManager.ticks.updateSource({adjusted: 3});
+            actionManager.ticks.updateSource({used: false});
 
             actionManager.ticks.add(3);
 
@@ -45,8 +45,8 @@ describe("SpellActionManager", () => {
 
         it("subtraction should be barred from alteration after usage", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.update({adjusted: 3});
-            actionManager.ticks.update({used: true});
+            actionManager.ticks.updateSource({adjusted: 3});
+            actionManager.ticks.updateSource({used: true});
 
             actionManager.ticks.subtract(3);
 
@@ -55,8 +55,8 @@ describe("SpellActionManager", () => {
 
         it("add should be barred from alteration after usage", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.update({adjusted: 3});
-            actionManager.ticks.update({used: true});
+            actionManager.ticks.updateSource({adjusted: 3});
+            actionManager.ticks.updateSource({used: true});
 
             actionManager.ticks.add(3);
 
@@ -65,7 +65,7 @@ describe("SpellActionManager", () => {
 
         it("should return a cost minimum of 1", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.ticks.update({adjusted: 0});
+            actionManager.ticks.updateSource({adjusted: 0});
 
             expect(actionManager.ticks.cost).to.equal("1");
         });
@@ -74,7 +74,7 @@ describe("SpellActionManager", () => {
     describe("Damage", () => {
         it("should add Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.update({adjusted: 0});
+            actionManager.damage.updateSource({adjusted: 0});
             sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
 
@@ -85,7 +85,7 @@ describe("SpellActionManager", () => {
 
         it("should subtract Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.update({adjusted: 2});
+            actionManager.damage.updateSource({adjusted: 2});
             sandbox.stub(actionManager.damage.itemReference.getItem(), "damage").get(() => "1W6+1");
 
             actionManager.damage.subtractDamage(1)
@@ -95,8 +95,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow addition if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.update({used: true});
-            actionManager.damage.update({adjusted: 3});
+            actionManager.damage.updateSource({used: true});
+            actionManager.damage.updateSource({adjusted: 3});
 
             actionManager.damage.addDamage(1)
 
@@ -105,8 +105,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow subtraction if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.damage.update({used: true});
-            actionManager.damage.update({adjusted: 3});
+            actionManager.damage.updateSource({used: true});
+            actionManager.damage.updateSource({adjusted: 3});
 
             actionManager.damage.subtractDamage(1);
 
@@ -119,7 +119,7 @@ describe("SpellActionManager", () => {
         const modifier = parseCostString("1V1", true).asModifier();
         it("should pass adjusted focus to the actor", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({adjusted: new Cost(0, 0, false).asModifier()});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 0, false).asModifier()});
             actionManager.focus.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(9, 3, false).asPrimaryCost());
             //@ts-expect-error name exists but its not typed yet
             actionManager.focus.spellReference.getItem().name = "spell";
@@ -131,7 +131,7 @@ describe("SpellActionManager", () => {
         });
         it("should add Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({adjusted: new Cost(0, 1, false, true).asModifier()});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 1, false, true).asModifier()});
 
             actionManager.focus.addCost(modifier)
 
@@ -141,7 +141,7 @@ describe("SpellActionManager", () => {
 
         it("should subtract Costs to the adjusted value", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({adjusted: new Cost(0, 2, false, true).asModifier()});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 2, false, true).asModifier()});
 
             actionManager.focus.subtractCost(modifier)
 
@@ -152,7 +152,7 @@ describe("SpellActionManager", () => {
         it("should apply strict costs", () => {
             const channeledModifier = parseCostString("K1V1", true).asModifier();
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({adjusted: new Cost(0, 1, false, true).asModifier()});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 1, false, true).asModifier()});
 
             actionManager.focus.addCost(channeledModifier)
 
@@ -166,7 +166,7 @@ describe("SpellActionManager", () => {
 
         it("should render a minimum cost of 1", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({adjusted: new Cost(0, -3, false, true).asModifier()});
+            actionManager.focus.updateSource({adjusted: new Cost(0, -3, false, true).asModifier()});
             actionManager.focus.spellReference.getItem()
                 .getCostsForFinishedRoll.returns(new Cost(0, 2, false).asPrimaryCost());
 
@@ -175,8 +175,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow addition if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({used: true});
-            actionManager.focus.update({adjusted: new Cost(0, 3, false, true).asModifier()});
+            actionManager.focus.updateSource({used: true});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 3, false, true).asModifier()});
 
             actionManager.focus.addCost(new Cost(1, 0, false).asModifier())
 
@@ -185,8 +185,8 @@ describe("SpellActionManager", () => {
 
         it("should not allow subtraction if action was used", () => {
             const actionManager = createSpellActionManager(sandbox);
-            actionManager.focus.update({used: true});
-            actionManager.focus.update({adjusted: new Cost(0, 3, false, true).asModifier()});
+            actionManager.focus.updateSource({used: true});
+            actionManager.focus.updateSource({adjusted: new Cost(0, 3, false, true).asModifier()});
 
             actionManager.focus.subtractCost(new Cost(1, 0, false).asModifier());
 

@@ -8,7 +8,6 @@ type DataModel<T, PARENT> = {
     parent: PARENT extends never ? never : PARENT | null;
     toObject(): T
     getFlag(scope: string, key: string): unknown,
-    update(data: Partial<T>): void,
     updateSource(data: Partial<T>): void,
 }
 type DataModelConstructorInput<T> = {[K in keyof T]: T[K] extends DataModel<infer U, any>? DataModelConstructorInput<U>:T[K]};

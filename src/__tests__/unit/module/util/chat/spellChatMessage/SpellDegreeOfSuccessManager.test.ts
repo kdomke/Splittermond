@@ -23,9 +23,9 @@ describe("SpellDegreeOfSuccessManager", () => {
     it("should reduce the total degrees of success as a field is checked", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.checkReportReference.get().degreeOfSuccess = 3;
-        underTest.update({usedDegreesOfSuccess: 0});
-        underTest.testField1.update({degreeOfSuccessCosts: 3});
-        underTest.testField1.update({checked: false});
+        underTest.updateSource({usedDegreesOfSuccess: 0});
+        underTest.testField1.updateSource({degreeOfSuccessCosts: 3});
+        underTest.testField1.updateSource({checked: false});
 
         underTest.alterCheckState("testField", 1);
 
@@ -36,9 +36,9 @@ describe("SpellDegreeOfSuccessManager", () => {
     it("should increase the total degrees of success as a field is unchecked", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
         underTest.checkReportReference.get().degreeOfSuccess = 3;
-        underTest.update({usedDegreesOfSuccess: 0});
-        underTest.testField1.update({degreeOfSuccessCosts: 3});
-        underTest.testField1.update({checked: true});
+        underTest.updateSource({usedDegreesOfSuccess: 0});
+        underTest.testField1.updateSource({degreeOfSuccessCosts: 3});
+        underTest.testField1.updateSource({checked: true});
 
         underTest.alterCheckState("testField", 1);
 
@@ -66,7 +66,7 @@ describe("SpellDegreeOfSuccessManager", () => {
 
     it("should delegate check state queries to the field", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
-        underTest.testField1.update({checked: "horrendous test value" as any});
+        underTest.testField1.updateSource({checked: "horrendous test value" as any});
 
         underTest.isChecked("testField", 1);
 
@@ -75,7 +75,7 @@ describe("SpellDegreeOfSuccessManager", () => {
 
     it("should delegate used state queries to the field", () => {
         const underTest = createSpellDegreeOfSuccessManager(sandbox);
-        underTest.testField1.update({used: "horrendous test value" as any});
+        underTest.testField1.updateSource({used: "horrendous test value" as any});
 
         underTest.isUsed("testField");
 
