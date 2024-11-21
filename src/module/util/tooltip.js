@@ -46,6 +46,9 @@ export class TooltipFormula {
         this.addPart(value, description, "bonus");
     }
 
+    /**
+     * @returns {{classes: string, description: string, type: string, value: string}[]}
+     */
     getData() {
         return this.parts.map(p => (
             {

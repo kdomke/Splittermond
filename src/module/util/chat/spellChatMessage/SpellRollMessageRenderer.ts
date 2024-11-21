@@ -1,7 +1,7 @@
 import {SplittermondSpellRollMessage} from "./SplittermondSpellRollMessage";
 import {foundryApi} from "module/api/foundryApi";
 import {splittermond} from "../../../config.js";
-import {RollResultRenderer} from "../RollResultRenderer.js";
+import {RollResultRenderer} from "../RollResultRenderer";
 import {DataModelSchemaType, fields, SplittermondDataModel} from "module/data/SplittermondDataModel";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {ItemReference} from "module/data/references/ItemReference";
