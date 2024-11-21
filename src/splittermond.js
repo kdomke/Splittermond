@@ -21,7 +21,7 @@ import TickBarHud from "./module/apps/tick-bar-hud.js";
 import TokenActionBar from "./module/apps/token-action-bar.js";
 
 import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
-import {chatActionFeature} from "./module/util/chat/chatActionFeature.js";
+import {chatActionFeature} from "./module/util/chat/chatActionFeature.ts";
 import SplittermondWeaponItem from "./module/item/weapon.js";
 import SplittermondShieldItem from "./module/item/shield.js";
 import SplittermondArmorItem from "./module/item/armor.js";

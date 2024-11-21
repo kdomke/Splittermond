@@ -51,7 +51,7 @@ function agentIsTokenActor(agent: Actor): agent is TokenActor {
     return !!agent.parent && agentIsToken(agent.parent);
 }
 
-function agentIsToken(agent: Document): agent is TokenDocument {
+function agentIsToken(agent: FoundryDocument): agent is TokenDocument {
     return agent.documentName === "Token"
 }
 

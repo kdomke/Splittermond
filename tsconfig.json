@@ -17,7 +17,8 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "lib": ["es2020", "dom"],
   },
   "include": ["src/**/*"],
 }

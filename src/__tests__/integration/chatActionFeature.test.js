@@ -250,6 +250,33 @@ export function chatActionFeatureTest(context) {
             expect(types.OTHER, "chatMessageTypes has an other").to.be.a("number");
         });
 
+        it("passes application, html, and data to callback", async () => {
+            let storedApp;
+            let storedHtml;
+            let storedData;
+            let callbackId
+            const callbackPromise = new Promise(resolve => {
+                callbackId = Hooks.on("renderChatMessage", (app, html, data) => {
+                    storedApp = app;
+                    storedHtml = html;
+                    storedData = data;
+                    resolve();
+                });
+            });
+            const sampleMessageContent = {
+                user: foundryApi.currentUser.id,
+                speaker: foundryApi.getSpeaker({actor:getActor(this)}),
+                content: "Random text content",
+            };
+            const message = await foundryApi.createChatMessage(sampleMessageContent)
+            await callbackPromise;
+            expect(storedApp, "app is a chat message app").to.be.instanceOf(ChatMessage)
+            expect(storedHtml, "html is a JQuery object").to.be.instanceOf(jQuery)
+            expect(storedData, "data is the data of the chat message app").is.not.undefined
+            ChatMessage.deleteDocuments([message.id]);
+            Hooks.off("renderChatMessage", callbackId);
+        });
+
         function isUser(object) {
             return typeof object === "object" &&
                 object && "isGM" in object && "id" in object && "active" in object;

@@ -25,8 +25,8 @@ export interface Socket {
 }
 
 export interface Hooks {
-    once: (key: string, callback: () => void) => void;
-    on: (key: string, callback: () => void) => void;
+    once: (key: string, callback: (...args:any[]) => void) => void;
+    on: ((key: string, callback: (...args:any[]) => void) => void);
 }
 
 export interface Die {
@@ -53,24 +53,24 @@ export interface Roll {
 declare global {
     type Collection<T> = ReadonlyMap<string, T>
 
-    class Actor extends Document {
+    class Actor extends FoundryDocument {
         items: Collection<Item>
     }
 
-    class Item extends Document {
+    class Item extends FoundryDocument {
         readonly actor: Actor
     }
 
-    class TokenDocument extends Document {
+    class TokenDocument extends FoundryDocument {
         /** this is at least true for all the purposes for which we use {@link TokenDocument}*/
-        readonly parent: Document;
+        readonly parent: FoundryDocument;
         actor: Actor;
     }
 
-    class Document {
+    class FoundryDocument {
         constructor(data:Object, options?:Record<string, any>);
         readonly id: string
         readonly documentName: string
-        readonly parent?: Document
+        readonly parent?: FoundryDocument
     }
 }
