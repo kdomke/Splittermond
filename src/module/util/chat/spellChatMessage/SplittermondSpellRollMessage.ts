@@ -1,4 +1,4 @@
-import {addToRegistry} from "../chatMessageRegistry.js";
+import {addToRegistry} from "../chatMessageRegistry";
 import {keyIsManagedSpellOptions, SpellMessageDegreesOfSuccessManager} from "./SpellMessageDegreesOfSuccessManager";
 import {SpellMessageActionsManager} from "./SpellMessageActionsManager";
 import {splittermond} from "../../../config.js";

@@ -1,5 +1,5 @@
 import {SplittermondChatCardModel} from "../../data/SplittermondChatCardModel.ts";
-import {getFromRegistry} from "./chatMessageRegistry.js";
+import {getFromRegistry} from "./chatMessageRegistry.ts";
 import {foundryApi} from "../../api/foundryApi.ts";
 
 /**

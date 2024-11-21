@@ -1,4 +1,4 @@
-import {addToRegistry} from "../../../module/util/chat/chatMessageRegistry.js";
+import {addToRegistry} from "../../../module/util/chat/chatMessageRegistry.ts";
 
 const constructorRegistryKey = "SplittermondTestRollMessage";
 export class SplittermondTestRollMessage extends foundry.abstract.DataModel {
