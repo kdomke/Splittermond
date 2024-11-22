@@ -1,4 +1,4 @@
-import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard.js";
+import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard";
 import {foundryApi} from "../../api/foundryApi";
 import {canEditMessageOf} from "../chat.js";
 import {ChatMessage} from "../../api/foundryTypes";
@@ -38,12 +38,13 @@ function chatListeners(html:JQuery) {
     html.on("click", ".splittermond-chat-action[data-localAction]", onLocalChatCardAction)
 }
 
-async function onChatCardAction(event: any) {
+async function onChatCardAction(event: Event) {
     event.preventDefault();
 
-    const button = event.currentTarget;
+    const button = event.currentTarget as HTMLElement /*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;;
     const dataAttributes = button.dataset;
-    const messageId = button.closest(".message").dataset.messageId;
+    const messageElement = button.closest(".message")as HTMLElement/*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
+    const messageId = messageElement.dataset.messageId;
 
     if (!foundryApi.currentUser.isGM) {
         if (!foundryApi.users.filter((u) => u.isGM && u.active).length) {
@@ -57,16 +58,21 @@ async function onChatCardAction(event: any) {
             userId: foundryApi.currentUser.id,
         });
     }
-
+    if(messageId === undefined) {
+        return foundryApi.warnUser("splittermond.chatCard.messageIdNotFound");
+    }
     return await handleChatAction(dataAttributes, messageId);
 }
 
-function onLocalChatCardAction(event:Event) {
+async function onLocalChatCardAction(event:Event) {
     const button = event.currentTarget as HTMLElement /*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
     const action = button?.dataset.localaction;
     const messageElement = button.closest(".message") as HTMLElement/*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
     const messageId = messageElement.dataset.messageId;
-    return handleLocalChatAction({...button.dataset, action}, messageId);
+    if(messageId === undefined) {
+        return foundryApi.warnUser("splittermond.chatCard.messageIdNotFound");
+    }
+    return await handleLocalChatAction({...button.dataset, action}, messageId);
 }
 
 /**
