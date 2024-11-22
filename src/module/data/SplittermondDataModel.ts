@@ -6,7 +6,7 @@
  */
 type DataModel<T, PARENT> = {
     parent: PARENT extends never ? never : PARENT | null;
-    toObject(): T
+    toObject(source?:boolean): T
     getFlag(scope: string, key: string): unknown,
     updateSource(data: Partial<T>): void,
 }
@@ -39,7 +39,7 @@ type DataFieldOption<T, REQ extends boolean, NULL extends boolean> = {
     trim?: boolean;
     blank?: boolean;
     nullable?: NULL;
-    initial?: T;
+    initial?: NULL extends false ? T: T|null;
     validate?: (x: T) => boolean;
 }
 
