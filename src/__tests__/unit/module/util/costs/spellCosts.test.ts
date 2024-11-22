@@ -5,9 +5,12 @@ import {
     calculateReducedSpellCosts
 } from "module/util/costs/spellCosts.js";
 import {Cost} from "module/util/costs/Cost.js";
-import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement.js";
+import {initializeSpellCostManagement, SpellCostReductionManager} from "module/util/costs/spellCostManagement.js";
 
-const mockReductionManager = <T>(...cost:T[]) => ({getCostModifiers: () => cost});
+function mockReductionManager<T>(...cost:T[]){
+ //This is a mock and therefore incomplete. For the purpose of the test this is a SpellCostReductionManager.
+ return {getCostModifiers: () => cost} as unknown as SpellCostReductionManager
+}
 describe("Spell cost calculation basics", () => {
     const noReductionSpellCostManager = mockReductionManager();
     const baseSpellData = {
@@ -33,12 +36,12 @@ describe("Spell cost calculation basics", () => {
 
     ["", null, undefined, [], 1, "0"].forEach((costs) => {
         it(`should handle a spell with invalid cost ${costs}`, () => {
-            const spellData = {...baseSpellData, costs};
+            const spellData = {...baseSpellData, costs: costs as any/*we're simulationg invalid input here*/};
             const reducedCosts = calculateReducedSpellCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal("1");
         });
         it(`should handle a spell with invalid enhancement cost ${costs}`, () => {
-            const spellData = {...baseSpellData, enhancementCosts: costs};
+            const spellData = {...baseSpellData, enhancementCosts: costs as any/*we're simulationg invalid input here*/};
             const reducedCosts = calculateReducedEnhancementCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal("0");
         });
@@ -46,24 +49,24 @@ describe("Spell cost calculation basics", () => {
 
     ["", null, undefined].forEach((value) => {
         it(`should handle a spell with invalid type ${value}`, () => {
-            const spellData = {...baseSpellData, spellType: value};
+            const spellData = {...baseSpellData, spellType: value as any /*we're simulating invalid input*/};
             const reducedCosts = calculateReducedSpellCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal(spellData.costs);
         });
         it(`enhancement should handle a spell with invalid type ${value}`, () => {
-            const spellData = {...baseSpellData, spellType: value};
+            const spellData = {...baseSpellData, spellType: value as any /*we're simulating invalid input*/};
             const reducedCosts = calculateReducedEnhancementCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal(spellData.costs);
         });
 
         it(`should handle a spell with invalid skill ${value}`, () => {
-            const spellData = {...baseSpellData, skill: value};
+            const spellData = {...baseSpellData, skill: value as any /*we're simulating invalid input*/};
             const reducedCosts = calculateReducedSpellCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal(spellData.costs);
         });
 
         it(`enhancement should handle a spell with invalid skill ${value}`, () => {
-            const spellData = {...baseSpellData, skill: value};
+            const spellData = {...baseSpellData, skill: value as any /*we're simulating invalid input*/};
             const reducedCosts = calculateReducedEnhancementCosts(spellData, noReductionSpellCostManager);
             expect(reducedCosts).to.equal(spellData.costs);
         });

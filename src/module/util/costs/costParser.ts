@@ -1,11 +1,6 @@
-import { Cost } from "./Cost.js";
+import { Cost } from "./Cost";
 
-/**
- * @param {string} cost
- * @param {boolean} asStrict
- * @return {Cost}
- */
-export function parseCostString(cost,asStrict=false) {
+export function parseCostString(cost:string,asStrict=false):Cost {
     const costString = formatCostInput(cost);
     if (!costString || typeof costString !== "string") {
         return new Cost(0, 0, false, asStrict);
@@ -15,8 +10,8 @@ export function parseCostString(cost,asStrict=false) {
     if (!costDataRaw) {
         return new Cost(0,0, false, asStrict);
     }
-    const rawConsumed = parseInt(costDataRaw[4] || 0);
-    const rawNonConsumed = parseInt(costDataRaw[3] || 0);
+    const rawConsumed = parseInt(costDataRaw[4]) || 0;
+    const rawNonConsumed = parseInt(costDataRaw[3]) || 0;
     if (rawConsumed > rawNonConsumed) {
         return new Cost(0,0, false, asStrict);
     }
@@ -30,8 +25,7 @@ export function parseCostString(cost,asStrict=false) {
         asStrict);
 }
 
-/** @return {string} */
-function formatCostInput(str) {
+function formatCostInput(str:string) {
     if (!str || typeof str !== "string") {
         return "";
     }
@@ -43,11 +37,7 @@ function formatCostInput(str) {
     }
 }
 
-/**
- * @param {string} costString
- * @return {number} the degrees of success
- */
-export function parseSpellEnhancementDegreesOfSuccess(costString){
+export function parseSpellEnhancementDegreesOfSuccess(costString:string):number {
     const enhancementCostString = /([1-9][0-9]*)*\s*[Ee][Gg]/.exec(costString);
     if (enhancementCostString) {
         return parseInt(enhancementCostString[1]);

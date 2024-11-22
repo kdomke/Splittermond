@@ -9,8 +9,8 @@ import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
-import { parseCostString } from "../util/costs/costParser.js";
-import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.js";
+import { parseCostString } from "../util/costs/costParser.ts";
+import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.ts";
 
 /**
  * @property {SplittermondSpellData} system

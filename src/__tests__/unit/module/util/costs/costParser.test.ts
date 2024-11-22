@@ -48,11 +48,8 @@ describe("Parses costs correctly", () => {
         };
         Object.entries(validCosts).forEach(([costString, costObject]) => {
             it(`Parses ${costString} correctly`, () => {
-                //JS apparently has problems comparing -0 and 0 when inside an object
                 const actual = parseCostString(costString).asModifier();
-                expect(actual.channeled, "channeled").to.equal(costObject.channeled);
-                expect(actual.exhausted, "exhausted").to.equal(costObject.exhausted);
-                expect(actual.consumed, "consumed").to.equal(costObject.consumed);
+                expect(actual).to.deep.equal(costObject);
             });
         });
     });

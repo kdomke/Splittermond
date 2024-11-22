@@ -3,8 +3,8 @@ import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "../../../../module/item/availabilityParser.js";
 import {describe} from "mocha";
-import {initializeSpellCostManagement} from "../../../../module/util/costs/spellCostManagement.js";
-import {Cost} from "../../../../module/util/costs/Cost.js";
+import {initializeSpellCostManagement} from "../../../../module/util/costs/spellCostManagement.ts";
+import {Cost} from "../../../../module/util/costs/Cost.ts";
 import sinon from "sinon";
 
 describe("Spell item availability display", () => {

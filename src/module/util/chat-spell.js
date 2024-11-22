@@ -17,7 +17,7 @@
  *         }} CheckMessageData
  */
 
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "./costs/costParser.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "./costs/costParser.ts";
 
 /**
  * @param {CheckMessageData} data

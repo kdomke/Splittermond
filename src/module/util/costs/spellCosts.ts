@@ -1,36 +1,25 @@
-import {parseCostString} from "./costParser.js";
-import {Cost} from "./Cost.js";
-import {PrimaryCost} from "./PrimaryCost.js";
+import {parseCostString} from "./costParser";
+import {Cost, CostModifier} from "./Cost";
+import type {SplittermondSpellType} from "../../data/SplittermondSpellData";
+import {SpellCostReductionManager} from "./spellCostManagement";
+import {PrimaryCost} from "./PrimaryCost";
 
-/**
- * @param {SplittermondSpellData} spellData
- * @param {SpellCostReductionManager} spellCostReductionManager
- * @return {string}
- */
-export function calculateReducedSpellCosts(spellData, spellCostReductionManager) {
+type SpellCostCalculationInput = Pick<SplittermondSpellType, "skill" | "spellType" | "costs" | "enhancementCosts">;
+
+export function calculateReducedSpellCosts(spellData:SpellCostCalculationInput, spellCostReductionManager:SpellCostReductionManager):string {
     const reductions = getApplicableReductions(spellData, spellCostReductionManager);
     const parsedCosts = (parseCostString(spellData.costs)).asPrimaryCost();
     const reducedCosts = applyReductions(parsedCosts, reductions);
     return ensureMinimumCosts(reducedCosts).render();
 }
 
-/**
- * @param {SplittermondSpellData} spellData
- * @param {SpellCostReductionManager} spellCostReductionManager
- * @return {string}
- */
-export function calculateReducedEnhancementCosts(spellData, spellCostReductionManager) {
+export function calculateReducedEnhancementCosts(spellData:SpellCostCalculationInput, spellCostReductionManager:SpellCostReductionManager) {
     const reductions = getApplicableReductions(spellData, spellCostReductionManager);
     const parsedCosts = parseCostString(spellData.enhancementCosts).asPrimaryCost();
     return applyReductions(parsedCosts, reductions).render()
 }
 
-/**
- * @param {SplittermondSpellData} spellData
- * @param {SpellCostReductionManager}spellCostReductionManager
- * @return {CostModifier[]}
- */
-function getApplicableReductions(spellData, spellCostReductionManager) {
+function getApplicableReductions(spellData:SpellCostCalculationInput, spellCostReductionManager:SpellCostReductionManager) {
     let skillId = spellData.skill?.trim().toLowerCase() ?? null;
     let spellType = spellData.spellType?.toLowerCase().split(",").map(st => st.trim()) ?? [null];
     return spellType
@@ -38,22 +27,13 @@ function getApplicableReductions(spellData, spellCostReductionManager) {
         .flatMap(red => red)
 }
 
-/**
- * @param {PrimaryCost} costs
- * @param {CostModifier[]} reductions
- * @return {PrimaryCost}
- */
-function applyReductions(costs, reductions) {
+function applyReductions(costs:PrimaryCost, reductions:CostModifier[]):PrimaryCost {
     const initial = new Cost(0,0,false).asModifier();
     const consolidatedReductions = reductions.reduce(
         (costs,reduction) => costs.add(reduction), initial);
     return costs.subtract(consolidatedReductions)
 }
 
-/**
- * @param {PrimaryCost} cost
- * @return {PrimaryCost}
- */
-function ensureMinimumCosts(cost) {
+function ensureMinimumCosts(cost:PrimaryCost):PrimaryCost {
     return cost.isZero() ? cost.add(new Cost(1, 0, false).asModifier()) : cost;
 }

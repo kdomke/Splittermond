@@ -1,5 +1,5 @@
 import {PrimaryCost} from "./PrimaryCost.js";
-import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.ts";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 
 /**
  * Represents a tax on an actor's health or focus pool.
@@ -9,19 +9,21 @@ import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.ts
 export class Cost {
     /**
      * Accepts the split portions of a Splittermond cost string. The numeric components must have an equal sign
-     * @param {number} nonConsumed  the non-consumed portion (that is exhausted or channeled minus consumed) of the costs
-     * @param {number} consumed the exclusive consumed portion of the costs
-     * @param {boolean} isChanneled whether these costs represent channeled costs
-     * @param {boolean} strict flag to enforce that this cost only applies to costs with the same channeled flag
+     * @param  nonConsumed  the non-consumed portion (that is exhausted or channeled minus consumed) of the costs
+     * @param  consumed the exclusive consumed portion of the costs
+     * @param  isChanneled whether these costs represent channeled costs
+     * @param  strict flag to enforce that this cost only applies to costs with the same channeled flag
      */
-    constructor(nonConsumed, consumed, isChanneled, strict = false) {
+    private readonly nonConsumed:number;
+    private readonly _consumed:number;
+    constructor(nonConsumed:number, consumed:number, private readonly isChanneled:boolean, private readonly strict = false) {
         const rawNonConsumed = Number.isFinite(nonConsumed) && nonConsumed !== 0 ? nonConsumed : 0;
         const rawConsumed = Number.isFinite(consumed) && consumed !== 0 ? consumed : 0;
         const sameSign = rawNonConsumed <= 0 && rawConsumed <= 0 || rawNonConsumed >= 0 && rawConsumed >= 0;
         this.nonConsumed = sameSign ? rawNonConsumed : 0; //the exclusive non consumed costs
         this._consumed = sameSign ? rawConsumed : 0; //the exclusive consumed costs
-        this.isChanneled = !!isChanneled;
-        this.strict = !!strict;
+        this.isChanneled = !!isChanneled; //JS stupidity protection through type enforcement
+        this.strict = !!strict; //JS stupidity protection through type enforcement
     }
 
     asPrimaryCost() {
@@ -37,10 +39,10 @@ export class Cost {
 
     asModifier() {
         return new CostModifier({
-            /**@type number*/ _channeled: (this.isChanneled || !this.strict) ? this.nonConsumed : 0,
-            /**@type number*/ _channeledConsumed: (this.isChanneled || !this.strict) ? this._consumed : 0,
-            /**@type number*/ _exhausted: (!this.isChanneled || !this.strict) ? this.nonConsumed : 0,
-            /**@type number*/ _consumed: (!this.isChanneled || !this.strict) ? this._consumed : 0,
+             _channeled: (this.isChanneled || !this.strict) ? this.nonConsumed : 0,
+             _channeledConsumed: (this.isChanneled || !this.strict) ? this._consumed : 0,
+             _exhausted: (!this.isChanneled || !this.strict) ? this.nonConsumed : 0,
+             _consumed: (!this.isChanneled || !this.strict) ? this._consumed : 0,
         });
     }
 
@@ -48,9 +50,8 @@ export class Cost {
      * Give a faithful string representation of the costs, as in it will display zero costs and negative costs
      * Use the render method if you want to display costs to the user.
      * @override
-     * @return {string}
      */
-    toString() {
+    toString():string {
         const totalCost = this._consumed + this.nonConsumed;
         const channeledModifier = this.isChanneled && totalCost !== 0 ? "K" : "";
         const consumedModifier = this._consumed !== 0 ? `V${Math.abs(this._consumed)}` : "";
@@ -58,26 +59,25 @@ export class Cost {
     }
 }
 
-export class CostModifier extends SplittermondDataModel{
-    static defineSchema() {
-        return {
-            _channeled: new foundry.data.fields.NumberField({required: true, nullable: false}),
-            _channeledConsumed: new foundry.data.fields.NumberField({required: true, nullable: false}),
-            _exhausted: new foundry.data.fields.NumberField({required: true, nullable: false}),
-            _consumed: new foundry.data.fields.NumberField({required: true, nullable: false}),
-        }
+function CostModifierSchema() {
+    return {
+        _channeled: new fields.NumberField({required: true, nullable: false}),
+        _channeledConsumed: new fields.NumberField({required: true, nullable: false}),
+        _exhausted: new fields.NumberField({required: true, nullable: false}),
+        _consumed: new fields.NumberField({required: true, nullable: false}),
     }
+}
+type CostModifierType = DataModelSchemaType<typeof CostModifierSchema>
 
-    /**
-     * @param {CostModifier} costs
-     * @return {CostModifier}
-     */
-    add(costs) {
+export class CostModifier extends SplittermondDataModel<CostModifierType>{
+    static defineSchema  = CostModifierSchema;
+
+    add(costs:CostModifier):CostModifier {
         const newChanneled = this._channeled + costs._channeled;
         const newChanneledConsumed = this._channeledConsumed + costs._channeledConsumed;
         const newExhausted = this._exhausted + costs._exhausted;
         const newConsumed = this._consumed + costs._consumed;
-        return new this.constructor({
+        return new (this.constructor as typeof CostModifier)({
                 _channeled: newChanneled,
                 _channeledConsumed: newChanneledConsumed,
                 _exhausted: newExhausted,
@@ -86,12 +86,8 @@ export class CostModifier extends SplittermondDataModel{
         );
     }
 
-    /**
-     * @param {number} factor
-     * @return {CostModifier}
-     */
-    multiply(factor) {
-       return new this.constructor({
+    multiply(factor:number):CostModifier {
+       return new (this.constructor as typeof CostModifier)({
            _channeled: factor * this._channeled,
            _channeledConsumed: factor * this._channeledConsumed,
            _exhausted: factor * this._exhausted,
@@ -99,30 +95,19 @@ export class CostModifier extends SplittermondDataModel{
        })
     }
 
-    /**
-     * @param {CostModifier} cost
-     */
-    subtract(cost) {
+    subtract(cost:CostModifier):CostModifier {
         return this.add(cost.negate());
     }
 
-    negate() {
+    negate():CostModifier{
         return this.multiply(-1);
     }
 
-    /**
-     * @param {PrimaryCost} primaryCost
-     * @returns {number}
-     */
-    getConsumed(primaryCost) {
+    getConsumed(primaryCost:PrimaryCost):number {
         return primaryCost.isChanneled ? this._channeledConsumed : this._consumed;
     }
 
-    /**
-     * @param {PrimaryCost} primaryCost
-     * @returns {number}
-     */
-    getNonConsumed(primaryCost) {
+    getNonConsumed(primaryCost:PrimaryCost):number {
         return primaryCost.isChanneled ? this._channeled : this._exhausted;
     }
 }
