@@ -43,5 +43,5 @@ function createDegreesOfSuccessOptions() {
     for (const key in splittermond.spellEnhancement) {
         schema[key as SplittermondSpellEnhancementType] = new fields.BooleanField({required: true, blank: false, initial: false,nullable:false});
     }
-    return schema;
+    return schema as Required<typeof schema>;
 }

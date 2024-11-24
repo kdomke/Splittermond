@@ -24,4 +24,4 @@ export const rollType = {
         rollFormula: "3d10kh1"
     }
 }as const ;
-export type RollType = typeof rollType;
+export type RollType = keyof typeof rollType;
