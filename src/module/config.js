@@ -1234,4 +1234,3 @@ splittermond.spellEnhancement = splittermondSpellEnhancement;
 splittermond.degreeOfSuccessThresholds = {
     critical : 5
 }
-
