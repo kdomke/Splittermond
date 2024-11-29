@@ -115,7 +115,6 @@ function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem
 }
 
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
-    sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => sandbox.stub().returns(true))
     sandbox.stub(spellMock, "enhancementCosts").get(() => "1EG/+1V1");
     sandbox.stub(spellMock, "castDuration").get(() => 3);
     sandbox.stub(spellMock, "description").get(() => "description");

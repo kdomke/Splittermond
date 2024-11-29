@@ -19,15 +19,15 @@ function FocusDegreeOfSuccessOptionFieldSchema() {
     }
 }
 
-type DegreeOfSuccessOptionFieldType = DataModelSchemaType<typeof FocusDegreeOfSuccessOptionFieldSchema>;
+type FocusDegreeOfSuccessOptionFieldType = DataModelSchemaType<typeof FocusDegreeOfSuccessOptionFieldSchema>;
 
 
-export class DegreeOfSuccessOptionField extends SplittermondDataModel<DegreeOfSuccessOptionFieldType> {
+export class FocusDegreeOfSuccessOptionField extends SplittermondDataModel<FocusDegreeOfSuccessOptionFieldType> {
 
     static defineSchema = FocusDegreeOfSuccessOptionFieldSchema;
 
-    static initialize(isOption: boolean, cost: number, effect: CostModifier, text: string): DegreeOfSuccessOptionField {
-        return new DegreeOfSuccessOptionField({
+    static initialize(isOption: boolean, cost: number, effect: CostModifier, text: string): FocusDegreeOfSuccessOptionField {
+        return new FocusDegreeOfSuccessOptionField({
             isOption,
             cost,
             effect: effect.toObject(),

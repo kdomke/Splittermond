@@ -14,6 +14,7 @@ import {AgentReference} from "../../../data/references/AgentReference";
 import {addToRegistry} from "../chatMessageRegistry";
 import {ActionHandler, isAvailableAction, SpellRollMessageRenderedData} from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
+import {TickCostActionHandler} from "./TickCostActionHandler";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -27,6 +28,7 @@ function SpellRollMessageSchema() {
         openDegreesOfSuccess: new fields.NumberField({required: true, nullable: false}),
         constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
         focusCostHandler: new fields.EmbeddedDataField(FocusCostHandler, {required: true, nullable: false}),
+        tickCostHandler: new fields.EmbeddedDataField(TickCostActionHandler, {required: true, nullable: false}),
     };
 }
 
@@ -49,6 +51,7 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             spellReference: spellReference,
             constructorKey: constructorRegistryKey,
             focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference),
+            tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3),
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
         });
     }

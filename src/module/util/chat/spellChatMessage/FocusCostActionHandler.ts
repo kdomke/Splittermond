@@ -13,7 +13,7 @@ import {CheckReport} from "../../../actor/CheckReport";
 import {ItemReference} from "../../../data/references/ItemReference";
 import SplittermondSpellItem from "../../../item/spell";
 import {splittermond} from "../../../config";
-import {DegreeOfSuccessOptionField} from "./DegreeOfSuccessOptionField";
+import {FocusDegreeOfSuccessOptionField} from "./FocusDegreeOfSuccessOptionField";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser";
 import {PrimaryCost} from "../../costs/PrimaryCost";
 
@@ -34,9 +34,9 @@ function FocusCostHandlerSchema() {
             nullable: false
         }),
         adjusted: new fields.EmbeddedDataField(CostModifier, {required: true, nullable: false}),
-        consumed: new fields.EmbeddedDataField(DegreeOfSuccessOptionField, {required: true, nullable: false}),
-        exhausted: new fields.EmbeddedDataField(DegreeOfSuccessOptionField, {required: true, nullable: false}),
-        channeled: new fields.EmbeddedDataField(DegreeOfSuccessOptionField, {required: true, nullable: false}),
+        consumed: new fields.EmbeddedDataField(FocusDegreeOfSuccessOptionField, {required: true, nullable: false}),
+        exhausted: new fields.EmbeddedDataField(FocusDegreeOfSuccessOptionField, {required: true, nullable: false}),
+        channeled: new fields.EmbeddedDataField(FocusDegreeOfSuccessOptionField, {required: true, nullable: false}),
         spellEnhancement: new fields.SchemaField({
             checked: new fields.BooleanField({required: true, nullable: false, initial: false}),
             cost: new fields.NumberField({required: true, nullable: false}),
@@ -63,19 +63,19 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             checkReportReference: checkReportReference.toObject(),
             spellReference: spellReference.toObject(),
             adjusted: new Cost(0, 0, false, false).asModifier().toObject(),
-            consumed: DegreeOfSuccessOptionField.initialize(
+            consumed: FocusDegreeOfSuccessOptionField.initialize(
                 focusOptions.consumedFocus,
                 consumedFocusConfig.degreesOfSuccess,
                 parseCostString(consumedFocusConfig.focusCostReduction).asModifier(),
                 consumedFocusConfig.textTemplate
             ).toObject(),
-            channeled: DegreeOfSuccessOptionField.initialize(
+            channeled: FocusDegreeOfSuccessOptionField.initialize(
                 focusOptions.channelizedFocus,
                 channeledFocusConfig.degreesOfSuccess,
                 parseCostString(channeledFocusConfig.focusCostReduction).asModifier(),
                 channeledFocusConfig.textTemplate
             ).toObject(),
-            exhausted: DegreeOfSuccessOptionField.initialize(
+            exhausted: FocusDegreeOfSuccessOptionField.initialize(
                 focusOptions.exhaustedFocus,
                 exhaustedFocusConfig.degreesOfSuccess,
                 parseCostString(exhaustedFocusConfig.focusCostReduction).asModifier(),
@@ -107,7 +107,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             .forEach(([affectedFocusPortion, option]) => option
                 .getMultiplicities()
                 .map(m => option.forMultiplicity(m))
-                .filter(m => !this.reducesCostPastMinimum(m.effect, affectedFocusPortion))
+                .filter(m => m.isChecked() || !this.reducesCostPastMinimum(m.effect, affectedFocusPortion))
                 .map(m => ({
                     render: {
                         ...m.render(),
@@ -157,7 +157,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             return Promise.resolve();
         }
         if (!this.actionHandledByUs(actionData.action)){
-            console.warn("Data has no member 'action'");
+            console.warn(`action ${actionData.action} is not handled by this handler`);
             return Promise.resolve();
         }
         this.updateSource({used: true});
