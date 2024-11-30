@@ -4,8 +4,8 @@ import {foundryApi} from "../../../api/foundryApi";
 
 function FocusDegreeOfSuccessOptionFieldSchema() {
     return {
-        /**the amount fo degrees of success one has to spend to get the effect */
         isOption: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        /**the amount of degrees of success one has to spend to get the effect */
         cost: new fields.NumberField({required: true, nullable: false}),
         effect: new fields.EmbeddedDataField(CostModifier, {required: true, blank: false, nullable: false}),
         textTemplate: new fields.StringField({required: true, blank: false, nullable: false}),
