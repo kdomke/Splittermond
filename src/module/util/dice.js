@@ -1,5 +1,12 @@
 import {DamageRoll} from "./damage/DamageRoll.js";
 
+export const Dice = {
+    check,
+    evaluateCheck,
+    damage,
+    riskModifier
+};
+
 /**
  * @param skill
  * @param {RollDifficultyString} difficulty
