@@ -5,8 +5,8 @@ import {
     setUpMockSpellSelfReference,
     WithMockedRefs,
     withToObjectReturnsSelf
-} from "./spellRollMessageTestHelper";
-import {TickCostActionHandler} from "module/util/chat/spellChatMessage/TickCostActionHandler";
+} from "../spellRollMessageTestHelper";
+import {TickCostActionHandler} from "module/util/chat/spellChatMessage/handlers/TickCostActionHandler";
 import {AgentReference} from "module/data/references/AgentReference";
 import {expect} from "chai";
 import {splittermond} from "module/config";
@@ -26,7 +26,7 @@ describe("TickCostActionHandler", () => {
     });
 
     describe("options", ()=>{
-        it("should deliver tick reduction options",()=>{
+        it("should deliver damage addition options",()=>{
             const underTest = setUpTickActionHandler(sandbox);
 
             const options = underTest.renderDegreeOfSuccessOptions()
@@ -34,18 +34,7 @@ describe("TickCostActionHandler", () => {
             expect(options).to.have.length(2);
         });
 
-        it("should not reduce options below the minimum tick cost", () =>{
-            const underTest = setUpTickActionHandler(sandbox);
-            underTest.updateSource({baseTickCost: 2})
-
-            const options = underTest.renderDegreeOfSuccessOptions()
-
-            expect(options).to.have.length(1);
-            expect(options[0].cost).to.equal(splittermond.spellEnhancement.castDuration.degreesOfSuccess);
-            expect(options[0].render.multiplicity).to.equal("1");
-        })
-
-        it("active options should reduce tick usage", () =>{
+        it("active options should increase usage", () =>{
             const underTest = setUpTickActionHandler(sandbox);
 
             underTest.useDegreeOfSuccessOption({action:"castDurationUpdate", multiplicity: "2"}).action();
@@ -73,7 +62,7 @@ describe("TickCostActionHandler", () => {
 
         it("should not render options if they are not an option",() =>{
             const underTest = setUpTickActionHandler(sandbox);
-            underTest.options.updateSource({isOption: false});
+            underTest.updateSource({isOption: false});
 
             const options = underTest.renderDegreeOfSuccessOptions();
             expect(options).to.have.length(0);
@@ -83,7 +72,7 @@ describe("TickCostActionHandler", () => {
     describe("Consuming ticks", ()=>{
         it("should not render action if its not an option", ()=>{
             const underTest = setUpTickActionHandler(sandbox);
-            underTest.options.updateSource({isOption: false});
+            underTest.updateSource({isOption: false});
 
             const actions = underTest.renderActions();
 
@@ -140,7 +129,7 @@ function setUpTickActionHandler(sandbox:SinonSandbox):WithMockedRefs<TickCostAct
     linkSpellAndActor(spellReference, actor);
     return withToObjectReturnsSelf(()=>{
         return TickCostActionHandler.initialize(AgentReference.initialize(actor),spellReference,3)
-    })as unknown as WithMockedRefs<TickCostActionHandler>
+    })as unknown as WithMockedRefs<TickCostActionHandler>/*TS cannot know tha we're injecting mocks*/
 }
 function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {
     actorMock.items = {get: () => spellMock} as unknown as Collection<SplittermondItem> //Our pseudo collection is supposed to return the spellMock regrardless of id entered.

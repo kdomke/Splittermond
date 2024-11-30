@@ -3,8 +3,7 @@ import {foundryApi} from "../../../api/foundryApi";
 
 function NumberDegreeOfSuccessOptionFieldSchema() {
     return {
-        /**the amount fo degrees of success one has to spend to get the effect */
-        isOption: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        /**the amount of degrees of success one has to spend to get the effect */
         cost: new fields.NumberField({required: true, nullable: false}),
         effect: new fields.NumberField({required: true, blank: false, nullable: false}),
         textTemplate: new fields.StringField({required: true, blank: false, nullable: false}),
@@ -25,9 +24,8 @@ export class NumberDegreeOfSuccessOptionField extends SplittermondDataModel<Degr
 
     static defineSchema = NumberDegreeOfSuccessOptionFieldSchema;
 
-    static initialize(isOption: boolean, cost: number, effect: number, text: string): NumberDegreeOfSuccessOptionField {
+    static initialize(cost: number, effect: number, text: string): NumberDegreeOfSuccessOptionField {
         return new NumberDegreeOfSuccessOptionField({
-            isOption,
             cost,
             effect,
             textTemplate: text,

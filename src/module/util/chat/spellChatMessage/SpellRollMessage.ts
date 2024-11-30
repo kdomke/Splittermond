@@ -6,7 +6,7 @@ import {
 } from "../../../data/SplittermondDataModel";
 import {CheckReport} from "../../../actor/CheckReport";
 import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
-import {FocusCostHandler} from "./FocusCostActionHandler";
+import {FocusCostHandler} from "./handlers/FocusCostActionHandler";
 import SplittermondSpellItem from "../../../item/spell";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {ItemReference} from "../../../data/references/ItemReference";
@@ -14,7 +14,8 @@ import {AgentReference} from "../../../data/references/AgentReference";
 import {addToRegistry} from "../chatMessageRegistry";
 import {ActionHandler, isAvailableAction, SpellRollMessageRenderedData} from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
-import {TickCostActionHandler} from "./TickCostActionHandler";
+import {TickCostActionHandler} from "./handlers/TickCostActionHandler";
+import {DamageActionHandler} from "./handlers/DamageActionHandler";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -29,6 +30,7 @@ function SpellRollMessageSchema() {
         constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
         focusCostHandler: new fields.EmbeddedDataField(FocusCostHandler, {required: true, nullable: false}),
         tickCostHandler: new fields.EmbeddedDataField(TickCostActionHandler, {required: true, nullable: false}),
+        damageHandler:new fields.EmbeddedDataField(DamageActionHandler, {required:true, nullable:false}),
     };
 }
 
@@ -52,6 +54,10 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             constructorKey: constructorRegistryKey,
             focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference),
             tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3),
+            damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference),
+            //splinterPointHandler
+            //rangeHandler
+            //durationHandler
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
         });
     }
@@ -63,6 +69,8 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
     constructor(data: DataModelConstructorInput<SpellRollMessageType>, ...args: any[]) {
         super(data, ...args);
         this.handlers.push(this.focusCostHandler);
+        this.handlers.push(this.tickCostHandler);
+        this.handlers.push(this.damageHandler)
         this.handlers.forEach(handler => this.registerHandler(handler));
     }
 

@@ -1,21 +1,21 @@
-import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
 import {
     ActionHandler,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     isDegreeOfSuccessOptionData,
     ValuedAction
-} from "./interfaces";
-import {Cost, CostModifier} from "../../costs/Cost";
-import {AgentReference} from "../../../data/references/AgentReference";
-import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
-import {CheckReport} from "../../../actor/CheckReport";
-import {ItemReference} from "../../../data/references/ItemReference";
-import SplittermondSpellItem from "../../../item/spell";
-import {splittermond} from "../../../config";
-import {FocusDegreeOfSuccessOptionField} from "./FocusDegreeOfSuccessOptionField";
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser";
-import {PrimaryCost} from "../../costs/PrimaryCost";
+} from "../interfaces";
+import {Cost, CostModifier} from "../../../costs/Cost";
+import {AgentReference} from "../../../../data/references/AgentReference";
+import {OnAncestorReference} from "../../../../data/references/OnAncestorReference";
+import {CheckReport} from "../../../../actor/CheckReport";
+import {ItemReference} from "../../../../data/references/ItemReference";
+import SplittermondSpellItem from "../../../../item/spell";
+import {splittermond} from "../../../../config";
+import {FocusDegreeOfSuccessOptionField} from "../FocusDegreeOfSuccessOptionField";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../costs/costParser";
+import {PrimaryCost} from "../../../costs/PrimaryCost";
 
 const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
 const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
@@ -137,14 +137,18 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
 
     renderActions(): ValuedAction[] {
-        return [
-            {
-                type: "consumeCosts",
-                value: this.cost.render(),
-                disabled: this.used,
-                isLocal: false
-            }
-        ]
+        if(this.consumed.isOption || this.channeled.isOption || this.exhausted.isOption) {
+            return [
+                {
+                    type: "consumeCosts",
+                    value: this.cost.render(),
+                    disabled: this.used,
+                    isLocal: false
+                }
+            ]
+        }else{
+            return [];
+        }
     }
 
     useAction(actionData:any): Promise<void> {

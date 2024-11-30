@@ -1,22 +1,23 @@
-import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
 import {
     ActionHandler,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
-    isDegreeOfSuccessOptionData,
     ValuedAction
-} from "./interfaces";
-import {NumberDegreeOfSuccessOptionField} from "./NumberDegreeOfSuccessOptionField";
-import {AgentReference} from "../../../data/references/AgentReference";
-import {splittermond} from "../../../config";
-import {ItemReference} from "../../../data/references/ItemReference";
-import SplittermondSpellItem from "../../../item/spell";
+} from "../interfaces";
+import {NumberDegreeOfSuccessOptionField} from "../NumberDegreeOfSuccessOptionField";
+import {AgentReference} from "../../../../data/references/AgentReference";
+import {splittermond} from "../../../../config";
+import {ItemReference} from "../../../../data/references/ItemReference";
+import SplittermondSpellItem from "../../../../item/spell";
+import {configureUseOption} from "./defaultUseOptionAlgorithm";
 
 const castDurationConfig = splittermond.spellEnhancement.castDuration;
 
 function TickCostActionHandlerSchema() {
     return {
         used: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        isOption: new fields.BooleanField({required: true, nullable: false, initial: false}),
         tickReduction: new fields.NumberField({required: true, nullable: false, initial: 0}),
         actorReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
         baseTickCost: new fields.NumberField({required: true, nullable: false}),
@@ -33,11 +34,11 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     static initialize(actorReference: AgentReference, spellReference: ItemReference<SplittermondSpellItem>, baseTickCost: number): TickCostActionHandler {
         return new TickCostActionHandler({
             used: false,
+            isOption: spellReference.getItem().degreeOfSuccessOptions.castDuration,
             tickReduction: 0,
             actorReference: actorReference,
             baseTickCost,
             options: NumberDegreeOfSuccessOptionField.initialize(
-                spellReference.getItem().degreeOfSuccessOptions.castDuration,
                 castDurationConfig.degreesOfSuccess,
                 castDurationConfig.castDurationReduction,
                 castDurationConfig.textTemplate)
@@ -47,35 +48,24 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     public readonly handlesDegreeOfSuccessOptions = ["castDurationUpdate"]
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
-        const noAction = {
-            usedDegreesOfSuccess: 0, action: () => {
-            }
-        };
-        if (this.used) {
-            console.warn("Attempt to alter a used cost action");
-            return noAction;
-        }
-        if (!isDegreeOfSuccessOptionData(degreeOfSuccessOptionData)) {
-            console.warn("Data passed from HTML object is not a valid degree of success option data");
-            return noAction;
-        }
-        if (!this.optionHandledByUs(degreeOfSuccessOptionData.action)) {
-            console.warn("Attempt to perform an action that is not handled by this handler");
-            return noAction;
-        }
-        const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
-        const option = this.options.forMultiplicity(multiplicity);
-        return {
-            usedDegreesOfSuccess: option.cost,
-            action: () => {
-                option.check()
-                if (option.isChecked()) {
-                    this.updateSource({tickReduction: this.tickReduction + option.effect});
-                } else {
-                    this.updateSource({tickReduction: this.tickReduction - option.effect});
+        return configureUseOption()
+            .withUsed(() => this.used)
+            .withHandlesOptions((action: string) => this.optionHandledByUs(action))
+            .whenAllChecksPassed((degreeOfSuccessOptionData) => {
+                const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
+                const option = this.options.forMultiplicity(multiplicity);
+                return {
+                    usedDegreesOfSuccess: option.cost,
+                    action: () => {
+                        option.check()
+                        if (option.isChecked()) {
+                            this.updateSource({tickReduction: this.tickReduction + option.effect});
+                        } else {
+                            this.updateSource({tickReduction: this.tickReduction - option.effect});
+                        }
+                    }
                 }
-            }
-        }
+            }).useOption(degreeOfSuccessOptionData);
     }
 
     private optionHandledByUs(option: string): option is typeof this.handlesDegreeOfSuccessOptions[number] {
@@ -83,7 +73,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     }
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
-        if (!this.options.isOption) {
+        if (!this.isOption) {
             return [];
         }
         return this.options.getMultiplicities()
@@ -127,7 +117,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     }
 
     renderActions(): ValuedAction[] {
-        if(!this.options.isOption){
+        if(!this.isOption){
             return [];
         }
         return [
