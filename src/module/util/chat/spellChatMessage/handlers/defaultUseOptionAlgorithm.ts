@@ -1,45 +1,71 @@
-import {DegreeOfSuccessAction, DegreeOfSuccessOptionData, isDegreeOfSuccessOptionData} from "../interfaces";
+import { DegreeOfSuccessAction, DegreeOfSuccessOptionData, isDegreeOfSuccessOptionData } from "../interfaces";
 
 export const noOptionToUse = {
     usedDegreesOfSuccess: 0,
-    action: () => {}
-} as const
-type OptionConsumer = (degreeOfSuccessOptionData:any) => DegreeOfSuccessAction;
-export function configureUseOption(){
-    let usedEvaluator:() => boolean = () => false;
-    let optionOnCorrectHandlerEvaluator:(action:string) => boolean = () => true;
+    action: () => { }
+} as const;
 
-    function withUsed(used:() => boolean){
-        usedEvaluator = used;
-        return {withHandlesOptions,whenAllChecksPassed}
+type TypedDoSData<T extends string> = DegreeOfSuccessOptionData & {action:T};
+
+export function configureUseOption<T extends string=never>(
+    usedEvaluator: () => boolean = () => false,
+    isOptionEvaluator: () => boolean = ()=>true,
+    optionsOnHandler: Readonly<T[]> = []
+) {
+    function withUsed(used: () => boolean) {
+        return configureUseOption(used,isOptionEvaluator, optionsOnHandler);
     }
-    function withHandlesOptions(optionHandledByUs:(action:string) => boolean){
-        optionOnCorrectHandlerEvaluator = optionHandledByUs;
-        return {withUsed,whenAllChecksPassed}
+
+    function withHandlesOptions<U extends string>(optionsHandled: Readonly<U[]>) {
+        const newOptionsHandled = [...optionsOnHandler, ...optionsHandled];
+        return configureUseOption<T|U>(usedEvaluator, isOptionEvaluator, newOptionsHandled);
     }
-    function whenAllChecksPassed(optionConsumer:(degreeOfSuccessOptionData:DegreeOfSuccessOptionData) => DegreeOfSuccessAction){
+
+    function withIsOption(isOption: () =>boolean){
+        return configureUseOption(usedEvaluator, isOption, optionsOnHandler);
+    }
+
+    function whenAllChecksPassed(
+        optionConsumer: (degreeOfSuccessOptionData: TypedDoSData<T>) => DegreeOfSuccessAction
+    ) {
         return {
-            useOption:(degreeOfSuccessOptionData:DegreeOfSuccessOptionData)=>useOption(optionConsumer, degreeOfSuccessOptionData)
+            useOption: (degreeOfSuccessOptionData: TypedDoSData<T>) =>
+                useOption(optionConsumer, degreeOfSuccessOptionData)
         };
     }
 
-    function useOption(optionConsumer:OptionConsumer,degreeOfSuccessOptionData:DegreeOfSuccessOptionData):DegreeOfSuccessAction{
-        if (usedEvaluator()) {
-            console.warn("Attempt to alter a used cost action");
-            return noOptionToUse;
-        }
+    function useOption(
+        optionConsumer: (degreeOfSuccessOptionData: TypedDoSData<T> ) => DegreeOfSuccessAction,
+        degreeOfSuccessOptionData: DegreeOfSuccessOptionData
+    ): DegreeOfSuccessAction {
         if (!isDegreeOfSuccessOptionData(degreeOfSuccessOptionData)) {
             console.warn("Data passed from HTML object is not a valid degree of success option data");
             return noOptionToUse;
         }
-        if (!optionOnCorrectHandlerEvaluator(degreeOfSuccessOptionData.action)) {
+        const action = degreeOfSuccessOptionData.action;
+        if (!inputOnCorrectHandler(action)) {
             console.warn("Attempt to perform an action that is not handled by this handler");
             return noOptionToUse;
         }
-        return optionConsumer(degreeOfSuccessOptionData);
+        if(!isOptionEvaluator()){
+            console.warn("Attempt to use an option that should not have been provided to the user");
+            return noOptionToUse;
+        }
+        if (usedEvaluator()) {
+            console.warn("Attempt to alter a used cost action");
+            return noOptionToUse;
+        }
+        return optionConsumer({ ...degreeOfSuccessOptionData, action });
     }
 
-    return {withUsed, withHandlesOptions, whenAllChecksPassed}
+    function inputOnCorrectHandler(action: string): action is T {
+        return (optionsOnHandler as readonly string[]).includes(action);
+    }
 
-
+    return {
+        withUsed,
+        withHandlesOptions,
+        withIsOption,
+        whenAllChecksPassed,
+    };
 }

@@ -46,12 +46,13 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
         });
     }
 
-    public readonly handlesDegreeOfSuccessOptions = ["castDurationUpdate"]
+    public readonly handlesDegreeOfSuccessOptions = ["castDurationUpdate"] as const
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
         return configureUseOption()
             .withUsed(() => this.used)
-            .withHandlesOptions((action: string) => this.optionHandledByUs(action))
+            .withIsOption(()=> this.isOption)
+            .withHandlesOptions(this.handlesDegreeOfSuccessOptions)
             .whenAllChecksPassed((degreeOfSuccessOptionData) => {
                 const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
                 const option = this.options.forMultiplicity(multiplicity);
@@ -67,10 +68,6 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
                     }
                 }
             }).useOption(degreeOfSuccessOptionData);
-    }
-
-    private optionHandledByUs(option: string): option is typeof this.handlesDegreeOfSuccessOptions[number] {
-        return this.handlesDegreeOfSuccessOptions.includes(option);
     }
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
@@ -99,6 +96,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     useAction(actionData:any): Promise<void> {
         return configureUseAction()
             .withUsed(()=>this.used)
+            .withIsOptionEvaluator(()=>this.isOption)
             .withHandlesActions((action)=> this.actionHandledByUs(action))
             .whenAllChecksPassed(() => {
                 this.updateSource({used: true});

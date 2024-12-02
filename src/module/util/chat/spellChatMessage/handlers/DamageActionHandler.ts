@@ -55,9 +55,8 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
         return configureUseOption()
             .withUsed(()=> this.used)
-            .withHandlesOptions((action:string) => this.optionHandledByUs(action))
+            .withHandlesOptions(this.handlesDegreeOfSuccessOptions)
             .whenAllChecksPassed((degreeOfSuccessOptionData)=> {
-
                 const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
                 const option = this.options.forMultiplicity(multiplicity);
                 return {
@@ -72,10 +71,6 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                     }
                 }
             }).useOption(degreeOfSuccessOptionData);
-    }
-
-    private optionHandledByUs(option: string): option is typeof this.handlesDegreeOfSuccessOptions[number] {
-        return this.handlesDegreeOfSuccessOptions.includes(option);
     }
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
