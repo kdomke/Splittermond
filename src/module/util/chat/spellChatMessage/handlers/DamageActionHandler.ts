@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
 import {
-    ActionHandler,
+    ActionHandler, ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     ValuedAction
@@ -15,6 +15,7 @@ import {Dice} from "../../../dice";
 import {OnAncestorReference} from "../../../../data/references/OnAncestorReference";
 import {CheckReport} from "../../../../actor/CheckReport";
 import {configureUseOption} from "./defaultUseOptionAlgorithm";
+import {configureUseAction} from "./defaultUseActionAlgorithm";
 
 const damageAdditionConfig = splittermond.spellEnhancement.damage;
 
@@ -95,22 +96,17 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
     public readonly handlesActions = ["applyDamage"];
 
-    useAction(actionData:any): Promise<void> {
-        if (this.used) {
-            console.warn("Attempt to use a used cost action");
-            return Promise.resolve();
-        }
-        if(!("action" in actionData)){
-            console.warn("Data has no member 'action'");
-            return Promise.resolve();
-        }
-        if (!this.actionHandledByUs(actionData.action)){
-            console.warn(`action ${actionData.action} is not handled by this handler`);
-            return Promise.resolve();
-        }
-        this.updateSource({used: true});
-        //@ts-expect-error name and system exist, but we haven't typed this yet
-        return Dice.damage(this.totalDamage.getDamageFormula(), this.spellReference.getItem().system.features, this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
+    useAction(actionData:ActionInput): Promise<void> {
+        return configureUseAction()
+            .withUsed(() => this.used)
+            .withIsOptionEvaluator(() => this.isOption())
+            .withHandlesActions((action)=> this.actionHandledByUs(action))
+            .whenAllChecksPassed(()=> {
+                this.updateSource({used: true});
+                //@ts-expect-error name and system exist, but we haven't typed this yet
+                return Dice.damage(this.totalDamage.getDamageFormula(), this.spellReference.getItem().system.features, this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
+                }
+            ).useAction(actionData);
     }
 
     private actionHandledByUs(action: string): action is typeof this.handlesActions[number] {

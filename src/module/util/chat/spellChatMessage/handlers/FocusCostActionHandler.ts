@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
 import {
-    ActionHandler,
+    ActionHandler, ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     isDegreeOfSuccessOptionData,
@@ -151,13 +151,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         }
     }
 
-    useAction(actionData:any): Promise<void> {
+    useAction(actionData:ActionInput): Promise<void> {
         if (this.used) {
             console.warn("Attempt to use a used cost action");
-            return Promise.resolve();
-        }
-        if(!("action" in actionData)){
-            console.warn("Data has no member 'action'");
             return Promise.resolve();
         }
         if (!this.actionHandledByUs(actionData.action)){

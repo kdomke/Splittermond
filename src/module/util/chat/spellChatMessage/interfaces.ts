@@ -47,6 +47,7 @@ export interface DegreeOfSuccessAction {
     usedDegreesOfSuccess: number
     action: ()=>void
 }
+export type DegreeOfSuccessOptionInput = Record<string,unknown> & {action:string};
 
 export interface DegreeOfSuccessOptionSuggestion{
     render: DegreeOfSuccessOption;
@@ -56,14 +57,15 @@ export interface DegreeOfSuccessOptionSuggestion{
      */
     cost:number;
 }
+export type ActionInput = Record<string,unknown> & {action:AvailableActions}
 export interface ActionHandler {
     renderDegreeOfSuccessOptions():DegreeOfSuccessOptionSuggestion[]
     renderActions():(ValuedAction|UnvaluedAction)[]
     readonly handlesActions: readonly string[]
     readonly handlesDegreeOfSuccessOptions: readonly string[]
 
-    useAction(actionData:any):Promise<void>
-    useDegreeOfSuccessOption(degreeOfSucccessOptionData:any): DegreeOfSuccessAction
+    useAction(actionData:ActionInput):Promise<void>
+    useDegreeOfSuccessOption(degreeOfSucccessOptionData:DegreeOfSuccessOptionInput): DegreeOfSuccessAction
 }
 
 export interface SpellRollMessageRenderedData {

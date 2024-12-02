@@ -23,7 +23,7 @@ export function configureUseOption(){
         };
     }
 
-    function useOption(optionConsumer:OptionConsumer, degreeOfSuccessOptionData:DegreeOfSuccessOptionData):DegreeOfSuccessAction{
+    function useOption(optionConsumer:OptionConsumer,degreeOfSuccessOptionData:DegreeOfSuccessOptionData):DegreeOfSuccessAction{
         if (usedEvaluator()) {
             console.warn("Attempt to alter a used cost action");
             return noOptionToUse;

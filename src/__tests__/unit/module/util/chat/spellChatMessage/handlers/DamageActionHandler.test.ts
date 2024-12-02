@@ -92,6 +92,7 @@ describe("DamageActionHandler", () => {
         it("should invoke Dice module on damage application", () =>{
             const underTest = setUpDamageActionHandler(sandbox);
             const diceModuleStub = sandbox.stub(Dice, "damage");
+            underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 
             underTest.useAction({action:"applyDamage"});
@@ -114,6 +115,7 @@ describe("DamageActionHandler", () => {
         it("should not allow using actions multiple times", ()=>{
             const underTest = setUpDamageActionHandler(sandbox);
             const diceModuleStub = sandbox.stub(Dice, "damage");
+            underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 
             underTest.useDegreeOfSuccessOption({action:"damageUpdate", multiplicity: "2"}).action();
