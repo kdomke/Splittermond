@@ -15,7 +15,6 @@ import SplittermondSpellItem from "../../../../item/spell";
 import {splittermond} from "../../../../config";
 import {FocusDegreeOfSuccessOptionField} from "../FocusDegreeOfSuccessOptionField";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../costs/costParser";
-import {PrimaryCost} from "../../../costs/PrimaryCost";
 
 const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
 const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
@@ -49,7 +48,7 @@ type FocusCostHandlerType = DataModelSchemaType<typeof FocusCostHandlerSchema>
 
 export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType> implements ActionHandler {
     public readonly handlesActions = ["consumeCosts"] as const;
-    public readonly handlesDegreeOfSuccessOptions = ["channeledFocusUpdate", "consumedFocusUpdate", "exhaustedFocusUpdate", "spellEnhancement"] as const;
+    public readonly handlesDegreeOfSuccessOptions = ["channeledFocusUpdate", "consumedFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate"] as const;
     static defineSchema = FocusCostHandlerSchema;
 
     static initialize(
@@ -102,42 +101,55 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
         const options: DegreeOfSuccessOptionSuggestion[] = [];
-        ([["consumed", this.consumed], ["channeled", this.channeled], ["exhausted", this.exhausted]] as const)
-            .filter(([__, option]) => (option.isOption))
-            .forEach(([affectedFocusPortion, option]) => option
-                .getMultiplicities()
-                .map(m => option.forMultiplicity(m))
-                .filter(m => m.isChecked() || !this.reducesCostPastMinimum(m.effect, affectedFocusPortion))
-                .map(m => ({
-                    render: {
-                        ...m.render(),
-                        disabled: this.used,
-                        action: this.mapFocusPortionToOption(affectedFocusPortion)
-                    },
-                    //If an option is already checked then the cost of the action (unchecking) is negative, as it frees DoS
-                    cost: m.isChecked() ? -1 * m.cost:m.cost,
-                }))
-                .forEach(m => options.push(m)));
+        if (this.consumed.isOption) {
+            this.consumed.getMultiplicities()
+                .map(m => this.consumed.forMultiplicity(m))
+                .filter(m => m.isChecked() || !(this.cost.consumed < m.effect.getConsumed(this.cost)))
+                .map(m => this.createRender(m, "consumedFocusUpdate"))
+                .forEach(m=>options.push(m))
+        }
+        if (this.channeled.isOption) {
+            this.channeled.getMultiplicities()
+                .map(m => this.channeled.forMultiplicity(m))
+                .filter(m => m.isChecked() || !(this.cost.channeled <= m.effect.getNonConsumed(this.cost)))
+                .map(m => this.createRender(m, "channeledFocusUpdate"))
+                .forEach(m=>options.push(m))
+        }
+        if (this.exhausted.isOption) {
+            this.exhausted.getMultiplicities()
+                .map(m => this.exhausted.forMultiplicity(m))
+                .filter(m => m.isChecked() || !(this.cost.exhausted<= m.effect.getNonConsumed(this.cost)))
+                .map(m => this.createRender(m, "exhaustedFocusUpdate"))
+                .forEach(m=>options.push(m))
+        }
+
+        options.push({
+            render: {
+                checked: this.spellEnhancement.checked,
+                disabled: this.used,
+                action: "spellEnhancementUpdate",
+                multiplicity: "1",
+                text: `${this.spellReference.getItem().enhancementCosts} ${this.spellReference.getItem().enhancementDescription}`
+            },
+            cost: this.spellEnhancement.cost
+        })
         return options;
     }
 
-    private mapFocusPortionToOption(portion: "consumed" | "channeled" | "exhausted"): typeof this.handlesDegreeOfSuccessOptions[number] {
-        switch (portion) {
-            case "consumed":
-                return "consumedFocusUpdate";
-            case "channeled":
-                return "channeledFocusUpdate";
-            case "exhausted":
-                return "exhaustedFocusUpdate";
+    private createRender(m:ReturnType<FocusDegreeOfSuccessOptionField["forMultiplicity"]>, action:string){
+        return {
+            render: {
+            ...m.render(),
+                    disabled: this.used,
+                    action,
+            },
+            //If an option is already checked then the cost of the action (unchecking) is negative, as it frees DoS
+            cost: m.isChecked() ? -1 * m.cost : m.cost,
         }
     }
 
-    private reducesCostPastMinimum(effect: CostModifier, costType: keyof PrimaryCost): boolean {
-        return (this.cost.subtract(effect))[costType] === 0;
-    }
-
     renderActions(): ValuedAction[] {
-        if(this.consumed.isOption || this.channeled.isOption || this.exhausted.isOption) {
+        if (this.consumed.isOption || this.channeled.isOption || this.exhausted.isOption) {
             return [
                 {
                     type: "consumeCosts",
@@ -146,17 +158,17 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                     isLocal: false
                 }
             ]
-        }else{
+        } else {
             return [];
         }
     }
 
-    useAction(actionData:ActionInput): Promise<void> {
+    useAction(actionData: ActionInput): Promise<void> {
         if (this.used) {
             console.warn("Attempt to use a used cost action");
             return Promise.resolve();
         }
-        if (!this.actionHandledByUs(actionData.action)){
+        if (!this.actionHandledByUs(actionData.action)) {
             console.warn(`action ${actionData.action} is not handled by this handler`);
             return Promise.resolve();
         }
@@ -169,6 +181,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     private actionHandledByUs(action: string): action is typeof this.handlesActions[number] {
         return (this.handlesActions as readonly string[]).includes(action);
     }
+
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
         const noAction = {
             usedDegreesOfSuccess: 0, action: () => {
@@ -194,7 +207,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                 return this.updateFocus("consumed", multiplicity)
             case "exhaustedFocusUpdate":
                 return this.updateFocus("exhausted", multiplicity);
-            case "spellEnhancement":
+            case "spellEnhancementUpdate":
                 return this.updateSpellEnhancement();
         }
     }
@@ -227,9 +240,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                     }
                 });
                 if (this.spellEnhancement.checked) {
-                    this.subtractCost(this.spellEnhancement.effect)
-                } else {
                     this.addCost(this.spellEnhancement.effect)
+                } else {
+                    this.subtractCost(this.spellEnhancement.effect)
                 }
             }
         };
