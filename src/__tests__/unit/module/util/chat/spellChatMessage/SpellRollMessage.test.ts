@@ -5,7 +5,7 @@ import sinon, {SinonSandbox, SinonStubbedInstance} from "sinon";
 import {
     injectParent,
     setUpMockActor,
-    setUpMockSpellSelfReference,
+    setUpMockSpellSelfReference, WithMockedRefs,
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper";
 import {expect} from "chai";
@@ -15,6 +15,7 @@ import SplittermondItem from "module/item/item";
 import {Cost} from "module/util/costs/Cost";
 import {splittermond} from "module/config";
 import {foundryApi} from "module/api/foundryApi";
+import {CheckReport} from "../../../../../../module/actor/CheckReport";
 
 
 describe("SpellRollMessage", () => {
@@ -83,6 +84,61 @@ describe("SpellRollMessage", () => {
            });
        });
     });
+
+    describe("Splinterpoint usage",()=>{
+        it("should increase degrees of success by three", async ()=>{
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.updateSource({checkReport: fullCheckReport()});
+
+            await underTest.handleGenericAction({action:"useSplinterpoint"});
+
+            expect(underTest.checkReport.degreeOfSuccess).to.equal(3);
+        });
+
+        it("should only be usable once",async ()=>{
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.updateSource({checkReport: fullCheckReport()});
+
+            await underTest.handleGenericAction({action:"useSplinterpoint"});
+            await underTest.handleGenericAction({action:"useSplinterpoint"});
+
+            expect(underTest.checkReport.degreeOfSuccess).to.equal(3);
+        });
+
+        it("should convert a failure into a success",async ()=>{
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.updateSource({checkReport: fullCheckReport()});
+            underTest.checkReport.roll.total = underTest.checkReport.difficulty -1
+            underTest.checkReport.degreeOfSuccess=0;
+            underTest.checkReport.succeeded = false;
+
+            await underTest.handleGenericAction({action:"useSplinterpoint"});
+
+            expect(underTest.checkReport.degreeOfSuccess).to.equal(0);
+            expect(underTest.checkReport.succeeded).to.be.true
+        });
+        it("should not be applicable for fumbles",()=>{
+
+        });
+        function fullCheckReport():CheckReport{
+            return {
+                succeeded: false,
+                degreeOfSuccess: 2,
+                degreeOfSuccessMessage: "",
+                difficulty: 9,
+                hideDifficulty: false,
+                isCrit: false,
+                isFumble: false,
+                modifierElements: [],
+                roll: {dice: [{total:5}], tooltip: "", total: 15},
+                rollType: "standard",
+                skill: {attributes: {"mystic":1, "mind":2}, id: "windmagic", points: 7},
+            }
+        }
+    })
 });
 
 function createSpellRollMessage(sandbox:SinonSandbox){
@@ -106,7 +162,7 @@ function createSpellRollMessage(sandbox:SinonSandbox){
         });
     });
     injectParent(spellRollMessage);
-    return spellRollMessage;
+    return spellRollMessage as unknown as WithMockedRefs<SpellRollMessage>; //TS cannot know that we injected mocks
 }
 
 function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {

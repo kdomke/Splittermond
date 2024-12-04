@@ -12,20 +12,27 @@ import {OnAncestorReference} from "../../../data/references/OnAncestorReference"
 import {ItemReference} from "../../../data/references/ItemReference";
 import {AgentReference} from "../../../data/references/AgentReference";
 import {addToRegistry} from "../chatMessageRegistry";
-import {ActionHandler, isAvailableAction, SpellRollMessageRenderedData} from "./interfaces";
+import {
+    ActionHandler,
+    isAvailableAction,
+    SpellRollMessageRenderedData,
+} from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
 import {TickCostActionHandler} from "./handlers/TickCostActionHandler";
 import {DamageActionHandler} from "./handlers/DamageActionHandler";
+import {evaluateCheck} from "../../dice";
 
 const constructorRegistryKey = "SpellRollMessage";
 
 function SpellRollMessageSchema() {
     return {
         checkReport: new fields.ObjectField({required: true, nullable: false}),
+        actorReference: new fields.EmbeddedDataField(AgentReference,{required:true, nullable:false}),
         spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {
             required: true,
             nullable: false
         }),
+        splinterPointUsed: new fields.BooleanField({required:true, nullable:false}),
         openDegreesOfSuccess: new fields.NumberField({required: true, nullable: false}),
         constructorKey: new fields.StringField({required: true, trim: true, blank: false, nullable: false}),
         focusCostHandler: new fields.EmbeddedDataField(FocusCostHandler, {required: true, nullable: false}),
@@ -50,12 +57,13 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
         const actorReference = AgentReference.initialize(spell.actor);
         return new SpellRollMessage({
             checkReport: checkReport,
+            actorReference,
             spellReference: spellReference,
             constructorKey: constructorRegistryKey,
+            splinterPointUsed:false,
             focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference),
             tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3),
             damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference),
-            //splinterPointHandler
             //rangeHandler
             //durationHandler
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
@@ -72,6 +80,21 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
         this.handlers.push(this.tickCostHandler);
         this.handlers.push(this.damageHandler)
         this.handlers.forEach(handler => this.registerHandler(handler));
+        //we handle in this class, because we house the check report.
+        this.registerHandler({
+            handlesActions: ["useSplinterpoint"],
+            handlesDegreeOfSuccessOptions: [],
+            renderActions: ()=> this.checkReport.isFumble? []:[
+                    {
+                       type: "useSplinterpoint",
+                       disabled: this.splinterPointUsed,
+                       isLocal:false,
+                    }
+                ],
+            renderDegreeOfSuccessOptions:()=>[],
+            useAction: ()=> this.splinterPointUsed ? Promise.resolve() : this.useSplinterpoint(),
+            useDegreeOfSuccessOption:()=>({usedDegreesOfSuccess:0, action(){}})
+        });
     }
 
     private registerHandler(handler: ActionHandler) {
@@ -132,6 +155,18 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
                 }
             }
         }
+    }
+
+    private async useSplinterpoint(){
+        const splinterPointBonus = this.actorReference.getAgent().spendSplinterpoint().getBonus(this.checkReport.skill.id);
+        const checkReport = this.checkReport;
+        checkReport.roll.total += splinterPointBonus;
+        const updatedReport = await evaluateCheck(Promise.resolve(checkReport.roll), checkReport.skill.points, checkReport.difficulty, checkReport.rollType);
+        const newCheckReport: CheckReport = {
+            ...checkReport, ...updatedReport,
+            roll: {...updatedReport.roll, tooltip: checkReport.roll.tooltip}
+        };
+        this.updateSource({checkReport: newCheckReport, splinterPointUsed:true});
     }
 
     private async handleActions(action: ActionHandler, actionData:Record<string, unknown> & {action:string}){
