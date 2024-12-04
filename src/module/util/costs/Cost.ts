@@ -103,10 +103,18 @@ export class CostModifier extends SplittermondDataModel<CostModifierType>{
         return this.multiply(-1);
     }
 
+    /**
+     * Consumed portion of a modifier can only be evaluated relative to a primary cost,
+     * because knowledge about whether the primary cost is channeled or not is required
+     */
     getConsumed(primaryCost:PrimaryCost):number {
         return primaryCost.isChanneled ? this._channeledConsumed : this._consumed;
     }
 
+    /**
+     * Non-Consumed portion of a modifier can only be evaluated relative to a primary cost,
+     * because knowledge about whether the primary cost is channeled or not is required
+     */
     getNonConsumed(primaryCost:PrimaryCost):number {
         return primaryCost.isChanneled ? this._channeled : this._exhausted;
     }
