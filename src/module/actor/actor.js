@@ -898,7 +898,7 @@ export default class SplittermondActor extends Actor {
         return super.importFromJSON(json);
     }
 
-    /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
+    /** @returns {{pointSpent:boolean, getBonus(skillName:SplittermondSkill): number}} splinterpoints spent */
     spendSplinterpoint() {
         if (this.splinterpoints.value > 0) {
             this.update({
@@ -911,7 +911,7 @@ export default class SplittermondActor extends Actor {
 
     /**
      * This is a stub
-     * @param {string} skillName
+     * @param {SplittermondSkill} skillName
      * @return {number}
      */
     #getSplinterpointBonus(skillName) {
