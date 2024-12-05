@@ -6,7 +6,7 @@ import {
 } from "../../../data/SplittermondDataModel";
 import {CheckReport} from "../../../actor/CheckReport";
 import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
-import {FocusCostHandler} from "./handlers/FocusCostActionHandler";
+import {FocusCostHandler} from "./handlers/FocusCostHandler";
 import SplittermondSpellItem from "../../../item/spell";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {ItemReference} from "../../../data/references/ItemReference";

@@ -12,7 +12,7 @@ import {
     WithMockedRefs,
     withToObjectReturnsSelf
 } from "../spellRollMessageTestHelper";
-import {FocusCostHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/FocusCostActionHandler";
+import {FocusCostHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/FocusCostHandler";
 import {AgentReference} from "../../../../../../../module/data/references/AgentReference";
 import SplittermondSpellItem from "../../../../../../../module/item/spell";
 import SplittermondActor from "../../../../../../../module/actor/actor";

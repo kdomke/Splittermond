@@ -3,7 +3,6 @@ import {
     ActionHandler, ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
-    isDegreeOfSuccessOptionData,
     ValuedAction
 } from "../interfaces";
 import {Cost, CostModifier} from "../../../costs/Cost";
@@ -15,6 +14,7 @@ import SplittermondSpellItem from "../../../../item/spell";
 import {splittermond} from "../../../../config";
 import {FocusDegreeOfSuccessOptionField} from "../FocusDegreeOfSuccessOptionField";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../costs/costParser";
+import {configureUseOption} from "./defaultUseOptionAlgorithm";
 
 const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
 const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
@@ -183,41 +183,29 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
-        const noAction = {
-            usedDegreesOfSuccess: 0, action: () => {
-            }
-        };
-        if (this.used) {
-            console.warn("Attempt to alter a used cost action");
-            return noAction;
-        }
-        if (!isDegreeOfSuccessOptionData(degreeOfSuccessOptionData)) {
-            console.warn("Data passed from HTML object is not a valid degree of success option data");
-            return noAction;
-        }
-        if (!this.optionHandledByUs(degreeOfSuccessOptionData.action)) {
-            console.warn("Attempt to perform an action that is not handled by this handler");
-            return noAction;
-        }
-        const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
-        switch (degreeOfSuccessOptionData.action) {
-            case "channeledFocusUpdate":
-                return this.updateFocus("channeled", multiplicity)
-            case "consumedFocusUpdate":
-                return this.updateFocus("consumed", multiplicity)
-            case "exhaustedFocusUpdate":
-                return this.updateFocus("exhausted", multiplicity);
-            case "spellEnhancementUpdate":
-                return this.updateSpellEnhancement();
-        }
-    }
-
-
-    private optionHandledByUs(option: string): option is typeof this.handlesDegreeOfSuccessOptions[number] {
-        return (this.handlesDegreeOfSuccessOptions as readonly string[]).includes(option);
+        return configureUseOption()
+            .withUsed(()=> this.used)
+            .withHandlesOptions(this.handlesDegreeOfSuccessOptions)
+            .whenAllChecksPassed((degreeOfSuccessOptionData) =>{
+                const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
+                switch (degreeOfSuccessOptionData.action) {
+                    case "channeledFocusUpdate":
+                        return this.updateFocus("channeled", multiplicity)
+                    case "consumedFocusUpdate":
+                        return this.updateFocus("consumed", multiplicity)
+                    case "exhaustedFocusUpdate":
+                        return this.updateFocus("exhausted", multiplicity);
+                    case "spellEnhancementUpdate":
+                        return this.updateSpellEnhancement();
+                }
+            }).useOption(degreeOfSuccessOptionData);
     }
 
     private updateFocus(type: "consumed" | "exhausted" | "channeled", multiplicity: number) {
+        if(! this[type].isOption){
+           console.warn(`Attempt to update option ${type}, when it should not be available`);
+           return {usedDegreesOfSuccess: 0, action(){}}
+        }
         const option = this[type].forMultiplicity(multiplicity);
         return {
             usedDegreesOfSuccess: option.cost,
