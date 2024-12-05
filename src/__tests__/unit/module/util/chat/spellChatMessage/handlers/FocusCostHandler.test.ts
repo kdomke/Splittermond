@@ -26,7 +26,7 @@ describe("FocusCostActionHandler", () => {
     let sandbox: SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
-        sandbox.stub(foundryApi, "localize").callsFake((messageKey:string)=>messageKey)
+        sandbox.stub(foundryApi, "localize").callsFake((messageKey: string) => messageKey)
     })
     afterEach(() => sandbox.restore())
 
@@ -47,7 +47,7 @@ describe("FocusCostActionHandler", () => {
             underTest.consumed.updateSource({isOption: true})
             underTest.channeled.updateSource({isOption: false})
             underTest.exhausted.updateSource({isOption: true})
-           return underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(6,2,false).asPrimaryCost())
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(6, 2, false).asPrimaryCost())
 
             const options = underTest.renderDegreeOfSuccessOptions();
 
@@ -65,7 +65,7 @@ describe("FocusCostActionHandler", () => {
             underTest.consumed.updateSource({isOption: true})
             underTest.channeled.updateSource({isOption: true})
             underTest.exhausted.updateSource({isOption: false})
-            return underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(6,2,true).asPrimaryCost())
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(6, 2, true).asPrimaryCost())
 
             const options = underTest.renderDegreeOfSuccessOptions();
 
@@ -123,7 +123,12 @@ describe("FocusCostActionHandler", () => {
             // The consumed focus option should now be checked
             expect(underTest.consumed.isChecked(1)).to.be.true;
 
-            expect(underTest.adjusted).to.deep.equal({_exhausted:0, _channeled:0, _consumed:-1, _channeledConsumed:-1});
+            expect(underTest.adjusted).to.deep.equal({
+                _exhausted: 0,
+                _channeled: 0,
+                _consumed: -1,
+                _channeledConsumed: -1
+            });
         });
 
         it("should update the channeled focus option when useDegreeOfSuccessOption is called", () => {
@@ -151,7 +156,12 @@ describe("FocusCostActionHandler", () => {
             expect(underTest.channeled.isChecked(1)).to.be.true;
 
             // The adjusted cost should have been modified accordingly
-            expect(underTest.adjusted).to.deep.equal({_consumed:0, _channeled:-1, _channeledConsumed:0, _exhausted:-1})
+            expect(underTest.adjusted).to.deep.equal({
+                _consumed: 0,
+                _channeled: -1,
+                _channeledConsumed: 0,
+                _exhausted: -1
+            })
         });
 
         it("should update the exhausted focus option when useDegreeOfSuccessOption is called", () => {
@@ -173,7 +183,12 @@ describe("FocusCostActionHandler", () => {
             expect(underTest.exhausted.isChecked(1)).to.be.true;
 
             // The adjusted cost should have been modified accordingly
-            expect(underTest.adjusted).to.deep.equal({_consumed:0, _channeled:-1, _channeledConsumed:0, _exhausted:-1})
+            expect(underTest.adjusted).to.deep.equal({
+                _consumed: 0,
+                _channeled: -1,
+                _channeledConsumed: 0,
+                _exhausted: -1
+            })
         });
 
         it("should update the spell enhancement option when useDegreeOfSuccessOption is called", () => {
@@ -195,7 +210,12 @@ describe("FocusCostActionHandler", () => {
             expect(underTest.spellEnhancement.checked).to.be.true;
 
             // The adjusted cost should have been modified accordingly
-            expect(underTest.adjusted).to.deep.equal({_consumed:1, _channeled:0, _channeledConsumed:1, _exhausted:0})
+            expect(underTest.adjusted).to.deep.equal({
+                _consumed: 1,
+                _channeled: 0,
+                _channeledConsumed: 1,
+                _exhausted: 0
+            })
         });
 
         it("should uncheck the option if already checked and recalculate adjusted cost", () => {
@@ -210,7 +230,12 @@ describe("FocusCostActionHandler", () => {
             underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData).action();
 
             expect(underTest.consumed.isChecked(1)).to.be.false;
-            expect(underTest.adjusted).to.deep.equal({_consumed:0, _channeled:0, _channeledConsumed:0, _exhausted:0})
+            expect(underTest.adjusted).to.deep.equal({
+                _consumed: 0,
+                _channeled: 0,
+                _channeledConsumed: 0,
+                _exhausted: 0
+            })
         });
 
         it("should properly handle multiple multiplicities", () => {
@@ -241,14 +266,19 @@ describe("FocusCostActionHandler", () => {
 
             // The adjusted cost should be equal to the  effect multiplied by the multiplicity, negated, because we
             // subtract consumed costs internally.
-            expect(underTest.adjusted).to.deep.equal({_channeled:0, _exhausted:0, _consumed:-2, _channeledConsumed:-2})
+            expect(underTest.adjusted).to.deep.equal({
+                _channeled: 0,
+                _exhausted: 0,
+                _consumed: -2,
+                _channeledConsumed: -2
+            })
         });
 
         it("should not allow degree of success options to be used if handler is already used", () => {
             const underTest = setUpFocusActionHandler(sandbox);
 
             // Mark the handler as used
-            underTest.updateSource({ used: true });
+            underTest.updateSource({used: true});
 
             // Prepare the degreeOfSuccessOptionData
             const degreeOfSuccessOptionData = {
@@ -261,7 +291,12 @@ describe("FocusCostActionHandler", () => {
 
             expect(underTest.consumed.isChecked(1)).to.be.false;
             //
-            expect(underTest.adjusted.multiply(1)).to.deep.equal({_consumed:0, _channeled:0, _exhausted:0, _channeledConsumed:0})
+            expect(underTest.adjusted.multiply(1)).to.deep.equal({
+                _consumed: 0,
+                _channeled: 0,
+                _exhausted: 0,
+                _channeledConsumed: 0
+            })
             expect(consoleWarnStub.calledWith("Attempt to alter a used cost action")).to.be.true;
         });
     });
@@ -269,7 +304,7 @@ describe("FocusCostActionHandler", () => {
     describe("useAction", () => {
         it("should consume cost and mark handler as used when useAction is called", async () => {
             const underTest = setUpFocusActionHandler(sandbox);
-            const actionData = { action: "consumeCosts" }as const;
+            const actionData = {action: "consumeCosts"} as const;
             const agent = underTest.casterReference.getAgent();
 
             await underTest.useAction(actionData);
@@ -280,7 +315,7 @@ describe("FocusCostActionHandler", () => {
             const expectedCost = underTest.cost;
             expect(agent.consumeCost.calledWith(
                 "focus",
-                sinon.match((actual:PrimaryCost)=> expectedCost.consumed === actual.consumed && expectedCost.exhausted === actual.exhausted),
+                sinon.match((actual: PrimaryCost) => expectedCost.consumed === actual.consumed && expectedCost.exhausted === actual.exhausted),
                 //@ts-expect-error spell reference is not typed yet
                 underTest.spellReference.getItem().name)
             ).to.be.true;
@@ -288,10 +323,10 @@ describe("FocusCostActionHandler", () => {
 
         it("should not allow useAction to be called if handler is already used", async () => {
             const underTest = setUpFocusActionHandler(sandbox);
-            const actionData = { action: "consumeCosts" }as const;
+            const actionData = {action: "consumeCosts"} as const;
 
             // Mark the handler as used
-            underTest.updateSource({ used: true });
+            underTest.updateSource({used: true});
 
             // Stub console.warn
             const consoleWarnStub = sandbox.stub(console, 'warn');
@@ -332,7 +367,7 @@ describe("FocusCostActionHandler", () => {
         it("should initialize correctly", () => {
             const isOption = true;
             const cost = 1;
-            const effect = new CostModifier({ _channeled: 0, _channeledConsumed: 0, _exhausted: -1, _consumed: -1 });
+            const effect = new CostModifier({_channeled: 0, _channeledConsumed: 0, _exhausted: -1, _consumed: -1});
             const text = "Some text";
 
             const field = FocusDegreeOfSuccessOptionField.initialize(isOption, cost, effect, text);
@@ -359,8 +394,8 @@ describe("FocusCostActionHandler", () => {
         });
 
         it("should calculate cost and effect correctly for multiplicities", () => {
-            const effect = new CostModifier({ _channeled: 0, _channeledConsumed: 0, _exhausted: -1, _consumed: -1 });
-            const field = withToObjectReturnsSelf(()=> FocusDegreeOfSuccessOptionField.initialize(true, 1, effect, "text"));
+            const effect = new CostModifier({_channeled: 0, _channeledConsumed: 0, _exhausted: -1, _consumed: -1});
+            const field = withToObjectReturnsSelf(() => FocusDegreeOfSuccessOptionField.initialize(true, 1, effect, "text"));
 
 
             const multiplicity = 2;
