@@ -60,11 +60,8 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
                     usedDegreesOfSuccess: option.cost,
                     action: () => {
                         option.check()
-                        if (option.isChecked()) {
-                            this.updateSource({tickReduction: this.tickReduction + option.effect});
-                        } else {
-                            this.updateSource({tickReduction: this.tickReduction - option.effect});
-                        }
+                        const tickReductionIncrement = option.isChecked() ? option.effect : -1 * option.effect;
+                        this.updateSource({tickReduction: this.tickReduction + tickReductionIncrement})
                     }
                 }
             }).useOption(degreeOfSuccessOptionData);

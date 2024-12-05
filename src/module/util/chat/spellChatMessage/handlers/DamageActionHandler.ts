@@ -63,11 +63,8 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                     usedDegreesOfSuccess: option.cost,
                     action: () => {
                         option.check()
-                        if (option.isChecked()) {
-                            this.updateSource({damageAddition: this.damageAddition + option.effect});
-                        } else {
-                            this.updateSource({damageAddition: this.damageAddition - option.effect});
-                        }
+                        const damageAdditionIncrement =  option.isChecked()? option.effect: -1 * option.effect;
+                        this.updateSource({damageAddition: this.damageAddition + damageAdditionIncrement});
                     }
                 }
             }).useOption(degreeOfSuccessOptionData);
