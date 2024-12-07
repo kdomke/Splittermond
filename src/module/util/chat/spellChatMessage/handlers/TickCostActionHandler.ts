@@ -88,21 +88,17 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
         return this.baseTickCost - effect < 1;
     }
 
-    public readonly handlesActions = ["advanceToken"];
+    public readonly handlesActions = ["advanceToken"] as const;
 
     useAction(actionData:any): Promise<void> {
         return configureUseAction()
             .withUsed(()=>this.used)
             .withIsOptionEvaluator(()=>this.isOption)
-            .withHandlesActions((action)=> this.actionHandledByUs(action))
+            .withHandlesActions(this.handlesActions)
             .whenAllChecksPassed(() => {
                 this.updateSource({used: true});
                 return this.actorReference.getAgent().addTicks(this.tickCost, "", false);
             }).useAction(actionData);
-    }
-
-    private actionHandledByUs(action: string): action is typeof this.handlesActions[number] {
-        return (this.handlesActions as readonly string[]).includes(action);
     }
 
     renderActions(): ValuedAction[] {

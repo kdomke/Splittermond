@@ -15,6 +15,7 @@ import {splittermond} from "../../../../config";
 import {FocusDegreeOfSuccessOptionField} from "../FocusDegreeOfSuccessOptionField";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../costs/costParser";
 import {configureUseOption} from "./defaultUseOptionAlgorithm";
+import {configureUseAction} from "./defaultUseActionAlgorithm";
 
 const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
 const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
@@ -164,22 +165,15 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
 
     useAction(actionData: ActionInput): Promise<void> {
-        if (this.used) {
-            console.warn("Attempt to use a used cost action");
-            return Promise.resolve();
-        }
-        if (!this.actionHandledByUs(actionData.action)) {
-            console.warn(`action ${actionData.action} is not handled by this handler`);
-            return Promise.resolve();
-        }
-        this.updateSource({used: true});
-        //@ts-expect-error name exists, but we haven't typed this yet
-        this.casterReference.getAgent().consumeCost("focus", this.cost, this.spellReference.getItem().name);
-        return Promise.resolve();
-    }
-
-    private actionHandledByUs(action: string): action is typeof this.handlesActions[number] {
-        return (this.handlesActions as readonly string[]).includes(action);
+        return configureUseAction()
+            .withUsed(()=> this.used)
+            .withHandlesActions(this.handlesActions)
+            .whenAllChecksPassed(()=>{
+                this.updateSource({used: true});
+                //@ts-expect-error name exists, but we haven't typed this yet
+                this.casterReference.getAgent().consumeCost("focus", this.cost, this.spellReference.getItem().name);
+                return Promise.resolve();
+            }).useAction(actionData)
     }
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {

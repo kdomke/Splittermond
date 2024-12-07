@@ -339,7 +339,7 @@ describe("FocusCostActionHandler", () => {
             expect(agent.consumeCost.called).to.be.false;
 
             // Console should have warned
-            expect(consoleWarnStub.calledWith("Attempt to use a used cost action")).to.be.true;
+            expect(consoleWarnStub.calledWith("Attempt to use a used action")).to.be.true;
         });
     });
 
