@@ -96,6 +96,45 @@ describe("FocusCostActionHandler", () => {
             expect(multiplicitiesRendered).to.include('1');
             expect(multiplicitiesRendered).to.not.include('2');
         });
+
+        it("should render the degree of success cost negatively for checked options",() =>{
+            const underTest = setUpFocusActionHandler(sandbox);
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(1, 1, false).asPrimaryCost())
+            underTest.consumed.updateSource({isOption: true})
+
+            underTest.useDegreeOfSuccessOption({action: "consumedFocusUpdate", multiplicity: "1"}).action();
+            const options = underTest.renderDegreeOfSuccessOptions();
+
+            const consumedOptions = options.filter(o => o.render.action === 'consumedFocusUpdate');
+            expect(consumedOptions).to.not.be.empty;
+
+            const multiplicity1 = consumedOptions.find(o => o.render.multiplicity === '1');
+            expect(multiplicity1?.cost).to.be.lessThan(0);
+        });
+
+        it(`should always offer checked option spellEnhancementUpdate`, () => {
+            const underTest = setUpFocusActionHandler(sandbox);
+            underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(0, 0, false).asPrimaryCost())
+
+            const options = underTest.renderDegreeOfSuccessOptions();
+
+            expect(options.find(o => o.render.multiplicity === "1")).to.not.be.undefined;
+        });
+
+        ["consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate"].forEach((option) => {
+            [1, 2, 4, 8].forEach((multiplicity) => {
+                it(`should always offer checked option ${option} with multiplicity ${multiplicity}`, () => {
+                    const underTest = setUpFocusActionHandler(sandbox);
+                    underTest.useDegreeOfSuccessOption({action: option, multiplicity}).action();
+                    underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(0, 0, false).asPrimaryCost())
+
+                    const options = underTest.renderDegreeOfSuccessOptions();
+
+                    expect(options.find(o => o.render.multiplicity === `${multiplicity}`)).to.not.be.undefined;
+                });
+            });
+        });
     });
 
     describe("useDegreeOfSuccessOption", () => {

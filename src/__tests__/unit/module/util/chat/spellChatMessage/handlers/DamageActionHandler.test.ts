@@ -62,6 +62,18 @@ describe("DamageActionHandler", () => {
             const options = underTest.renderDegreeOfSuccessOptions();
             expect(options).to.have.length(0);
         });
+
+        [1,2,4,8].forEach((multiplicity) => {
+            it(`should render degree of success costs negatively if the consumed ${multiplicity} is checked`, () => {
+                const underTest = setUpDamageActionHandler(sandbox);
+                underTest.checkReportReference.get().succeeded = true;
+
+                underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity}).action();
+                const options = underTest.renderDegreeOfSuccessOptions();
+
+                expect(options.find(o => o.render.multiplicity === `${multiplicity}`)?.cost).to.be.lessThan(0);
+            });
+        });
     });
 
     describe("Increasing damage", ()=>{
@@ -157,6 +169,7 @@ function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<
         range: true,
         effectArea: true,
     }as Record<keyof typeof splittermond.spellEnhancement, boolean>));
+    sandbox.stub(spellMock, "damage").get(()=> "1W6");
     //@ts-expect-error name is a property that is not typed yet.
     spellMock.name = "name";
 }
