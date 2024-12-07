@@ -1,4 +1,9 @@
-import { DegreeOfSuccessAction, DegreeOfSuccessOptionData, isDegreeOfSuccessOptionData } from "../interfaces";
+import {
+    DegreeOfSuccessAction,
+    DegreeOfSuccessOptionData,
+    DegreeOfSuccessOptionInput,
+    isDegreeOfSuccessOptionData
+} from "../interfaces";
 
 export const noOptionToUse = {
     usedDegreesOfSuccess: 0,
@@ -29,14 +34,14 @@ export function configureUseOption<T extends string=never>(
         optionConsumer: (degreeOfSuccessOptionData: TypedDoSData<T>) => DegreeOfSuccessAction
     ) {
         return {
-            useOption: (degreeOfSuccessOptionData: TypedDoSData<T>) =>
+            useOption: (degreeOfSuccessOptionData: DegreeOfSuccessOptionInput) =>
                 useOption(optionConsumer, degreeOfSuccessOptionData)
         };
     }
 
     function useOption(
         optionConsumer: (degreeOfSuccessOptionData: TypedDoSData<T> ) => DegreeOfSuccessAction,
-        degreeOfSuccessOptionData: DegreeOfSuccessOptionData
+        degreeOfSuccessOptionData: DegreeOfSuccessOptionInput
     ): DegreeOfSuccessAction {
         if (!isDegreeOfSuccessOptionData(degreeOfSuccessOptionData)) {
             console.warn("Data passed from HTML object is not a valid degree of success option data");

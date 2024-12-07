@@ -66,6 +66,9 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference),
             //rangeHandler
             //durationHandler
+            //effectAreaHandler
+            //activeDefenseHandler
+            //magicFumbleHandler
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
         });
     }

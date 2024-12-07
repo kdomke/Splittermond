@@ -89,6 +89,10 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.effectDuration;
     }
 
+    get effectArea() {
+        return this.system.effectArea;
+    }
+
     get description() {
         return this.system.description;
     }

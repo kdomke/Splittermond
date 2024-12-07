@@ -71,7 +71,15 @@ export function injectParent<T>(object:T) {
     }
 }
 
-export type WithMockedRefs<T> = { [K in keyof T]: T[K] extends AgentReference | ItemReference<any> ? MockRefs<T[K]> : keyof T[K] extends never ? T[K] : WithMockedRefs<T[K]> }
+export type WithMockedRefs<T> = {
+    [K in keyof T]: T[K] extends AgentReference | ItemReference<any>
+        ? MockRefs<T[K]>
+        : T[K] extends Function // Check if T[K] is a function
+            ? T[K]                  // If so, leave it unchanged. Because, if treated as objects, they will lose the call signature.
+            : T[K] extends object
+                ? WithMockedRefs<T[K]>
+                : T[K];
+};
 type MockRefs<T> = T extends AgentReference ? MockActorRef<T> : T extends ItemReference<any> ? MockItemRef<T> : never;
 type MockActorRef<T extends AgentReference> = Omit<T, "getAgent"> & {
     getAgent(): SinonStubbedInstance<SplittermondActor>
