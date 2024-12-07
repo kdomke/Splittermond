@@ -14,14 +14,14 @@ import {AgentReference} from "../../../data/references/AgentReference";
 import {addToRegistry} from "../chatMessageRegistry";
 import {
     ActionHandler,
-    isAvailableAction,
-    SpellRollMessageRenderedData,
+
 } from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
 import {TickCostActionHandler} from "./handlers/TickCostActionHandler";
 import {DamageActionHandler} from "./handlers/DamageActionHandler";
 import {evaluateCheck} from "../../dice";
 import {NoActionOptionsHandler} from "./handlers/NoActionOptionsHandler";
+import {isAvailableAction, SpellRollMessageRenderedData} from "./SpellRollTemplateInterfaces";
 
 const constructorRegistryKey = "SpellRollMessage";
 

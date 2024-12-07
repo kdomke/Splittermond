@@ -1,4 +1,5 @@
-import {ActionInput, AvailableActions} from "../interfaces";
+import {ActionInput} from "../interfaces";
+import {AvailableActions} from "../SpellRollTemplateInterfaces";
 
 
 export function configureUseAction(){
