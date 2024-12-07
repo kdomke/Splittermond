@@ -21,6 +21,7 @@ import {foundryApi} from "../../../api/foundryApi";
 import {TickCostActionHandler} from "./handlers/TickCostActionHandler";
 import {DamageActionHandler} from "./handlers/DamageActionHandler";
 import {evaluateCheck} from "../../dice";
+import {NoActionOptionsHandler} from "./handlers/NoActionOptionsHandler";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -38,6 +39,7 @@ function SpellRollMessageSchema() {
         focusCostHandler: new fields.EmbeddedDataField(FocusCostHandler, {required: true, nullable: false}),
         tickCostHandler: new fields.EmbeddedDataField(TickCostActionHandler, {required: true, nullable: false}),
         damageHandler:new fields.EmbeddedDataField(DamageActionHandler, {required:true, nullable:false}),
+        noActionOptionsHandler: new fields.EmbeddedDataField(NoActionOptionsHandler, {required:true, nullable:false}),
     };
 }
 
@@ -64,9 +66,7 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference),
             tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3),
             damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference),
-            //rangeHandler
-            //durationHandler
-            //effectAreaHandler
+            noActionOptionsHandler: NoActionOptionsHandler.initialize(spellReference),
             //activeDefenseHandler
             //magicFumbleHandler
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
@@ -82,6 +82,7 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
         this.handlers.push(this.focusCostHandler);
         this.handlers.push(this.tickCostHandler);
         this.handlers.push(this.damageHandler)
+        this.handlers.push(this.noActionOptionsHandler);
         this.handlers.forEach(handler => this.registerHandler(handler));
         //we handle in this class, because we house the check report.
         this.registerHandler({

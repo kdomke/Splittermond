@@ -5,7 +5,8 @@ import sinon, {SinonSandbox, SinonStubbedInstance} from "sinon";
 import {
     injectParent,
     setUpMockActor,
-    setUpMockSpellSelfReference, WithMockedRefs,
+    setUpMockSpellSelfReference,
+    WithMockedRefs,
     withToObjectReturnsSelf
 } from "./spellRollMessageTestHelper";
 import {expect} from "chai";
@@ -22,27 +23,29 @@ describe("SpellRollMessage", () => {
     let sandbox: sinon.SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
-        sandbox.stub(foundryApi, "localize").callsFake((key:string)=>key)
+        sandbox.stub(foundryApi, "localize").callsFake((key: string) => key)
     });
-    afterEach(() => {sandbox.restore()})
+    afterEach(() => {
+        sandbox.restore()
+    })
 
     it("should load", () => {
         const spellRollMessage = createSpellRollMessage(sandbox);
         expect(spellRollMessage?.getData()).to.not.be.undefined;
     });
 
-    it("should filter degree of success options that are too expensive on render", ()=>{
+    it("should filter degree of success options that are too expensive on render", () => {
         const spellRollMessage = createSpellRollMessage(sandbox);
-        spellRollMessage.updateSource({openDegreesOfSuccess:0});
+        spellRollMessage.updateSource({openDegreesOfSuccess: 0});
         expect(spellRollMessage.getData().degreeOfSuccessOptions).to.be.empty;
     });
 
-    it("should allow options that are checked, even if no degrees of success are left", ()=>{
+    it("should allow options that are checked, even if no degrees of success are left", () => {
         const spellRollMessage = createSpellRollMessage(sandbox);
-        spellRollMessage.updateSource({openDegreesOfSuccess:1000});
+        spellRollMessage.updateSource({openDegreesOfSuccess: 1000});
 
-        spellRollMessage.handleGenericAction({action:"consumedFocusUpdate", multiplicity: "1"});
-        spellRollMessage.updateSource({openDegreesOfSuccess:0});
+        spellRollMessage.handleGenericAction({action: "consumedFocusUpdate", multiplicity: "1"});
+        spellRollMessage.updateSource({openDegreesOfSuccess: 0});
 
         expect(spellRollMessage.getData().degreeOfSuccessOptions).to.have.length(1);
         expect(spellRollMessage.getData().degreeOfSuccessOptions[0]).to.deep.contain({
@@ -54,76 +57,128 @@ describe("SpellRollMessage", () => {
         });
     });
 
-    (["consumedFocusUpdate", "exhaustedFocusUpdate", "channeledFocusUpdate"]as const).forEach((action)=>{
-       function mapUpdateFunctionToSpellCostType(input: typeof action){
-           switch (input){
-                case "consumedFocusUpdate": return "consumed";
-                case "exhaustedFocusUpdate": return "exhausted";
-                case "channeledFocusUpdate": return "channeled";
-           }
-       }
-       [1,2,4,8].forEach((multiplicity)=> {
-           it(`should check ${action} degree of success option with multiplicity ${multiplicity}`, () => {
-               const spellRollMessage = createSpellRollMessage(sandbox);
-               spellRollMessage.updateSource({openDegreesOfSuccess: 100});
+    //we're ignoring channeled Focus here, because it takes a different kind of spell. But the logic of SpellRollMessage is
+    //rather generic
+    ["consumedFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate", "castDurationUpdate",
+        "effectAreaUpdate", "effectDurationUpdate", "rangeUpdate"
+    ].forEach((option) => {
+        it(`should handle option ${option}`, () => {
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.updateSource({openDegreesOfSuccess: 100});
 
-               spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
+            underTest.handleGenericAction({action: option, multiplicity: "1"});
+            const afterFirstUpdate = underTest.getData().degreeOfSuccessOptions
+                .filter(o => o.action === option)
+                .find(o => o.multiplicity === "1")
+            underTest.handleGenericAction({action: option, multiplicity: "1"});
+            const afterSecondUpdate = underTest.getData().degreeOfSuccessOptions
+                .filter(o => o.action === option)
+                .find(o => o.multiplicity === "1")
 
-               const spellCostType = mapUpdateFunctionToSpellCostType(action);
-               expect(spellRollMessage.focusCostHandler[spellCostType].isChecked(multiplicity)).to.be.true;
-           });
-
-           it(`should uncheck ${action} degree of success option with multliplicity ${multiplicity}`, () => {
-               const spellRollMessage = createSpellRollMessage(sandbox);
-               spellRollMessage.updateSource({openDegreesOfSuccess: 100});
-
-               spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
-               spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
-
-               expect(spellRollMessage.focusCostHandler.consumed.isChecked(multiplicity)).to.be.false;
-           });
-       });
+            expect(afterFirstUpdate?.checked).to.be.true;
+            expect(afterSecondUpdate?.checked).to.be.false;
+        });
     });
 
-    describe("Splinterpoint usage",()=>{
-        it("should increase degrees of success by three", async ()=>{
+    (["consumedFocusUpdate", "exhaustedFocusUpdate", "channeledFocusUpdate"] as const).forEach((action) => {
+        function mapUpdateFunctionToSpellCostType(input: typeof action) {
+            switch (input) {
+                case "consumedFocusUpdate":
+                    return "consumed";
+                case "exhaustedFocusUpdate":
+                    return "exhausted";
+                case "channeledFocusUpdate":
+                    return "channeled";
+            }
+        }
+
+        [1, 2, 4, 8].forEach((multiplicity) => {
+            it(`should check ${action} degree of success option with multiplicity ${multiplicity}`, () => {
+                const spellRollMessage = createSpellRollMessage(sandbox);
+                spellRollMessage.updateSource({openDegreesOfSuccess: 100});
+
+                spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
+
+                const spellCostType = mapUpdateFunctionToSpellCostType(action);
+                expect(spellRollMessage.focusCostHandler[spellCostType].isChecked(multiplicity)).to.be.true;
+            });
+
+            it(`should uncheck ${action} degree of success option with multliplicity ${multiplicity}`, () => {
+                const spellRollMessage = createSpellRollMessage(sandbox);
+                spellRollMessage.updateSource({openDegreesOfSuccess: 100});
+
+                spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
+                spellRollMessage.handleGenericAction({action, multiplicity: `${multiplicity}`});
+
+                expect(spellRollMessage.focusCostHandler.consumed.isChecked(multiplicity)).to.be.false;
+            });
+        });
+    });
+
+    //TODO: activate actions
+    [/*"activeDefense" ,*/ "applyDamage" , "consumeCosts" , "advanceToken" /*, "rollFumble"*/].forEach(action => {
+        it(`should handle action ${action}`, async () => {
             const underTest = createSpellRollMessage(sandbox);
-            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.checkReport.succeeded = true;
+            const warnUserStub = sandbox.stub(foundryApi, "warnUser");
+
+            await underTest.handleGenericAction({action});
+
+            expect(warnUserStub.called).to.be.false;
+        });
+    })
+    describe("Splinterpoint usage", () => {
+        it("should increase degrees of success by three", async () => {
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({
+                pointSpent: true, getBonus() {
+                    return 3;
+                }
+            })
             underTest.updateSource({checkReport: fullCheckReport()});
 
-            await underTest.handleGenericAction({action:"useSplinterpoint"});
+            await underTest.handleGenericAction({action: "useSplinterpoint"});
 
             expect(underTest.checkReport.degreeOfSuccess).to.equal(3);
         });
 
-        it("should only be usable once",async ()=>{
+        it("should only be usable once", async () => {
             const underTest = createSpellRollMessage(sandbox);
-            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({
+                pointSpent: true, getBonus() {
+                    return 3;
+                }
+            })
             underTest.updateSource({checkReport: fullCheckReport()});
 
-            await underTest.handleGenericAction({action:"useSplinterpoint"});
-            await underTest.handleGenericAction({action:"useSplinterpoint"});
+            await underTest.handleGenericAction({action: "useSplinterpoint"});
+            await underTest.handleGenericAction({action: "useSplinterpoint"});
 
             expect(underTest.checkReport.degreeOfSuccess).to.equal(3);
         });
 
-        it("should convert a failure into a success",async ()=>{
+        it("should convert a failure into a success", async () => {
             const underTest = createSpellRollMessage(sandbox);
-            underTest.actorReference.getAgent().spendSplinterpoint.returns({pointSpent:true, getBonus(){return 3;}})
+            underTest.actorReference.getAgent().spendSplinterpoint.returns({
+                pointSpent: true, getBonus() {
+                    return 3;
+                }
+            })
             underTest.updateSource({checkReport: fullCheckReport()});
-            underTest.checkReport.roll.total = underTest.checkReport.difficulty -1
-            underTest.checkReport.degreeOfSuccess=0;
+            underTest.checkReport.roll.total = underTest.checkReport.difficulty - 1
+            underTest.checkReport.degreeOfSuccess = 0;
             underTest.checkReport.succeeded = false;
 
-            await underTest.handleGenericAction({action:"useSplinterpoint"});
+            await underTest.handleGenericAction({action: "useSplinterpoint"});
 
             expect(underTest.checkReport.degreeOfSuccess).to.equal(0);
             expect(underTest.checkReport.succeeded).to.be.true
         });
-        it("should not be applicable for fumbles",()=>{
+        it("should not be applicable for fumbles", () => {
 
         });
-        function fullCheckReport():CheckReport{
+
+        function fullCheckReport(): CheckReport {
             return {
                 succeeded: false,
                 degreeOfSuccess: 2,
@@ -133,15 +188,15 @@ describe("SpellRollMessage", () => {
                 isCrit: false,
                 isFumble: false,
                 modifierElements: [],
-                roll: {dice: [{total:5}], tooltip: "", total: 15},
+                roll: {dice: [{total: 5}], tooltip: "", total: 15},
                 rollType: "standard",
-                skill: {attributes: {"mystic":1, "mind":2}, id: "windmagic", points: 7},
+                skill: {attributes: {"mystic": 1, "mind": 2}, id: "windmagic", points: 7},
             }
         }
     })
 });
 
-function createSpellRollMessage(sandbox:SinonSandbox){
+function createSpellRollMessage(sandbox: SinonSandbox) {
     const mockSpell = setUpMockSpellSelfReference(sandbox);
     setNecessaryDefaultsForSpellproperties(mockSpell, sandbox);
     const mockActor = setUpMockActor(sandbox);
@@ -174,17 +229,17 @@ function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<
     sandbox.stub(spellMock, "enhancementCosts").get(() => "1EG/+1V1");
     sandbox.stub(spellMock, "castDuration").get(() => 3);
     sandbox.stub(spellMock, "description").get(() => "description");
-    spellMock.getCostsForFinishedRoll.returns(new Cost(10,4,false).asPrimaryCost());
-    sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({
-        consumedFocus:true,
-        exhaustedFocus:true,
-        channelizedFocus:true,
+    spellMock.getCostsForFinishedRoll.returns(new Cost(10, 4, false).asPrimaryCost());
+    sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => ({
+        consumedFocus: true,
+        exhaustedFocus: true,
+        channelizedFocus: true,
         damage: true,
         castDuration: true,
         effectDuration: true,
         range: true,
         effectArea: true,
-    }as Record<keyof typeof splittermond.spellEnhancement, boolean>));
+    } as Record<keyof typeof splittermond.spellEnhancement, boolean>));
     //@ts-expect-error name is a property that is not typed yet.
     spellMock.name = "name";
 }
