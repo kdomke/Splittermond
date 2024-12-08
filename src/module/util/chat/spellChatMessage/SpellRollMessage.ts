@@ -23,6 +23,7 @@ import {evaluateCheck} from "../../dice";
 import {NoActionOptionsHandler} from "./handlers/NoActionOptionsHandler";
 import {isAvailableAction, SpellRollMessageRenderedData} from "./SpellRollTemplateInterfaces";
 import {NoOptionsActionHandler} from "./handlers/NoOptionsActionHandler";
+import {RollResultRenderer} from "../RollResultRenderer";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -109,11 +110,14 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
     }
 
     getData(): SpellRollMessageRenderedData {
+        const renderedActions: SpellRollMessageRenderedData["actions"] = {}
+        this.handlers.flatMap(handler => handler.renderActions())
+            .forEach(action => renderedActions[action.type]= action);
         return {
             header: {
                 difficulty: `${this.checkReport.difficulty}`,
                 hideDifficulty: this.checkReport.hideDifficulty,
-                rollTypeMessage: "",
+                rollTypeMessage: foundryApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
                 //@ts-expect-error We haven't typed spell yet
                 title: this.spellReference.getItem().name,
             },
@@ -123,20 +127,14 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
                 totalDegreesOfSuccess: this.checkReport.degreeOfSuccess,
                 usedDegreesOfSuccess: this.checkReport.degreeOfSuccess - this.openDegreesOfSuccess
             },
-            rollResult: {
-                actionDescription: "",
-                rollTooltip: "",
-                rollTotal: 0,
-                skillAndModifierTooltip: []
-            },
+            rollResult: new RollResultRenderer(this.spellReference.getItem().description, this.checkReport).render(),
             rollResultClass: getRollResultClass(this.checkReport),
             degreeOfSuccessOptions: this.handlers
                 .flatMap(handler => handler.renderDegreeOfSuccessOptions())
                 .filter(option => option.cost <= this.openDegreesOfSuccess)
                 .map(option => option.render)
                 .map(option => ({...option, id: `${option.action}-${option.multiplicity}-${new Date().getTime()}`})),
-            actions: this.handlers
-                .flatMap(handler => handler.renderActions())
+            actions: renderedActions
         }
     }
 

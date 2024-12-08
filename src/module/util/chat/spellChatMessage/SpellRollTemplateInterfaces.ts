@@ -34,7 +34,7 @@ export interface SpellRollMessageRenderedData {
         openDegreesOfSuccess: number;
     };
     degreeOfSuccessOptions: SpellDegreesOfSuccessRenderedData[];
-    actions: object;
+    actions: Partial<Record<AvailableActions,object>>;
 }
 
 interface SpellDegreesOfSuccessRenderedData {
