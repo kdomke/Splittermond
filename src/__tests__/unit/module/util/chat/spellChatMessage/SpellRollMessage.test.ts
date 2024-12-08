@@ -202,8 +202,17 @@ describe("SpellRollMessage", () => {
             expect(underTest.checkReport.degreeOfSuccess).to.equal(0);
             expect(underTest.checkReport.succeeded).to.be.true
         });
-        it("should not be applicable for fumbles", () => {
+        it("should be rendered if not a fumble", () => {
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.checkReport.isFumble = false;
 
+            expect(underTest.getData().actions.useSplinterpoint).not.to.be.undefined;
+        });
+        it("should not be applicable for fumbles", () => {
+            const underTest = createSpellRollMessage(sandbox);
+            underTest.checkReport.isFumble = true;
+
+            expect(underTest.getData().actions.useSplinterpoint).to.be.undefined;
         });
 
         function fullCheckReport(): CheckReport {

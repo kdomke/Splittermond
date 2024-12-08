@@ -111,7 +111,8 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
 
     getData(): SpellRollMessageRenderedData {
         const renderedActions: SpellRollMessageRenderedData["actions"] = {}
-        this.handlers.flatMap(handler => handler.renderActions())
+        Array.from(this.actionsHandlerMap.values())
+            .flatMap(handler => handler.renderActions())
             .forEach(action => renderedActions[action.type]= action);
         return {
             header: {
