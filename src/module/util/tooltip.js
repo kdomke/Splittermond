@@ -1,3 +1,5 @@
+import {foundryApi} from "../api/foundryApi.ts";
+
 export class TooltipFormula {
     constructor() {
         this.parts = [];
@@ -54,8 +56,8 @@ export class TooltipFormula {
             {
                 type: `${p.type}`,
                 classes: p.classes.join(" "),
-                value: p.value ? game.i18n.localize(`${p.value}`) : "",
-                description: p.description ? game.i18n.localize(`${p.description}`): ""
+                value: p.value ? foundryApi.localize(`${p.value}`) : "",
+                description: p.description ? foundryApi.localize(`${p.description}`): ""
 
             }));
     }
