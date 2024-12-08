@@ -95,30 +95,21 @@ describe("FocusCostActionHandler", () => {
             expect(multiplicitiesRendered).to.not.include('2');
         });
 
-        it("should render the degree of success cost negatively for checked options",() =>{
-            const underTest = setUpFocusActionHandler(sandbox);
-            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(1, 1, false).asPrimaryCost())
-            underTest.consumed.updateSource({isOption: true})
+        ["consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate"].forEach((option) => {
+            it(`should render the degree of success cost negatively for checked option ${option}`, () => {
+                const underTest = setUpFocusActionHandler(sandbox);
+                underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(1, 1, false).asPrimaryCost())
 
-            underTest.useDegreeOfSuccessOption({action: "consumedFocusUpdate", multiplicity: "1"}).action();
-            const options = underTest.renderDegreeOfSuccessOptions();
+                underTest.useDegreeOfSuccessOption({action: option, multiplicity: "1"}).action();
+                const options = underTest.renderDegreeOfSuccessOptions();
 
-            const consumedOptions = options.filter(o => o.render.action === 'consumedFocusUpdate');
-            expect(consumedOptions).to.not.be.empty;
-
-            const multiplicity1 = consumedOptions.find(o => o.render.multiplicity === '1');
-            expect(multiplicity1?.cost).to.be.lessThan(0);
+                const renderedOption =
+                    options.filter(o => o.render.action === `${option}`)
+                        .find(o => o.render.multiplicity === '1');
+                expect(renderedOption?.cost).to.be.lessThan(0);
+            });
         });
 
-        it(`should always offer checked option spellEnhancementUpdate`, () => {
-            const underTest = setUpFocusActionHandler(sandbox);
-            underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
-            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(0, 0, false).asPrimaryCost())
-
-            const options = underTest.renderDegreeOfSuccessOptions();
-
-            expect(options.find(o => o.render.multiplicity === "1")).to.not.be.undefined;
-        });
 
         ["consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate"].forEach((option) => {
             [1, 2, 4, 8].forEach((multiplicity) => {
@@ -255,27 +246,28 @@ describe("FocusCostActionHandler", () => {
             })
         });
 
-        it("should uncheck the option if already checked and recalculate adjusted cost", () => {
-            const degreeOfSuccessOptionData = {
-                action: "consumedFocusUpdate",
-                multiplicity: "1",
-            };
-            const underTest = setUpFocusActionHandler(sandbox);
-            underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData).action()
-            expect(underTest.consumed.isChecked(1)).to.be.true;
+        ["spellEnhancementUpdate", "consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate"].forEach((option) => {
+            it("should uncheck the option if already checked and recalculate adjusted cost", () => {
+                const degreeOfSuccessOptionData = {
+                    action: option,
+                    multiplicity: "1",
+                };
+                const underTest = setUpFocusActionHandler(sandbox);
 
-            const suggestion = underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData);
-            suggestion.action();
+                underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData).action()
+                const suggestion = underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData);
+                suggestion.action();
 
-            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
-            expect(underTest.consumed.isChecked(1)).to.be.false;
-            expect(underTest.adjusted).to.deep.equal({
-                _consumed: 0,
-                _channeled: 0,
-                _channeledConsumed: 0,
-                _exhausted: 0
-            })
+                expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
+                expect(underTest.adjusted).to.deep.equal({
+                    _consumed: 0,
+                    _channeled: 0,
+                    _channeledConsumed: 0,
+                    _exhausted: 0
+                })
+            });
         });
+
 
         it("should properly handle multiple multiplicities", () => {
             const underTest = setUpFocusActionHandler(sandbox);

@@ -107,21 +107,21 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                 .map(m => this.consumed.forMultiplicity(m))
                 .filter(m => m.isChecked() || !(this.cost.consumed < m.effect.getConsumed(this.cost)))
                 .map(m => this.createRender(m, "consumedFocusUpdate"))
-                .forEach(m=>options.push(m))
+                .forEach(m => options.push(m))
         }
         if (this.channeled.isOption) {
             this.channeled.getMultiplicities()
                 .map(m => this.channeled.forMultiplicity(m))
                 .filter(m => m.isChecked() || !(this.cost.channeled <= m.effect.getNonConsumed(this.cost)))
                 .map(m => this.createRender(m, "channeledFocusUpdate"))
-                .forEach(m=>options.push(m))
+                .forEach(m => options.push(m))
         }
         if (this.exhausted.isOption) {
             this.exhausted.getMultiplicities()
                 .map(m => this.exhausted.forMultiplicity(m))
-                .filter(m => m.isChecked() || !(this.cost.exhausted<= m.effect.getNonConsumed(this.cost)))
+                .filter(m => m.isChecked() || !(this.cost.exhausted <= m.effect.getNonConsumed(this.cost)))
                 .map(m => this.createRender(m, "exhaustedFocusUpdate"))
-                .forEach(m=>options.push(m))
+                .forEach(m => options.push(m))
         }
 
         options.push({
@@ -132,17 +132,17 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                 multiplicity: "1",
                 text: `${this.spellReference.getItem().enhancementCosts} ${this.spellReference.getItem().enhancementDescription}`
             },
-            cost: this.spellEnhancement.cost
+            cost: this.spellEnhancement.checked ? -1 * this.spellEnhancement.cost: this.spellEnhancement.cost
         })
         return options;
     }
 
-    private createRender(m:ReturnType<FocusDegreeOfSuccessOptionField["forMultiplicity"]>, action:string){
+    private createRender(m: ReturnType<FocusDegreeOfSuccessOptionField["forMultiplicity"]>, action: string) {
         return {
             render: {
-            ...m.render(),
-                    disabled: this.used,
-                    action,
+                ...m.render(),
+                disabled: this.used,
+                action,
             },
             //If an option is already checked then the cost of the action (unchecking) is negative, as it frees DoS
             cost: m.isChecked() ? -1 * m.cost : m.cost,
@@ -166,9 +166,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     useAction(actionData: ActionInput): Promise<void> {
         return configureUseAction()
-            .withUsed(()=> this.used)
+            .withUsed(() => this.used)
             .withHandlesActions(this.handlesActions)
-            .whenAllChecksPassed(()=>{
+            .whenAllChecksPassed(() => {
                 this.updateSource({used: true});
                 this.casterReference.getAgent().consumeCost("focus", this.cost.render(),
                     //@ts-expect-error name and system exist, but we haven't typed this yet
@@ -179,9 +179,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
         return configureUseOption()
-            .withUsed(()=> this.used)
+            .withUsed(() => this.used)
             .withHandlesOptions(this.handlesDegreeOfSuccessOptions)
-            .whenAllChecksPassed((degreeOfSuccessOptionData) =>{
+            .whenAllChecksPassed((degreeOfSuccessOptionData) => {
                 const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
                 switch (degreeOfSuccessOptionData.action) {
                     case "channeledFocusUpdate":
@@ -197,13 +197,16 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
 
     private updateFocus(type: "consumed" | "exhausted" | "channeled", multiplicity: number) {
-        if(! this[type].isOption){
-           console.warn(`Attempt to update option ${type}, when it should not be available`);
-           return {usedDegreesOfSuccess: 0, action(){}}
+        if (!this[type].isOption) {
+            console.warn(`Attempt to update option ${type}, when it should not be available`);
+            return {
+                usedDegreesOfSuccess: 0, action() {
+                }
+            }
         }
         const option = this[type].forMultiplicity(multiplicity);
         return {
-            usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost: option.cost,
+            usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost : option.cost,
             action: () => {
                 option.check();
                 const action = option.isChecked() ? this.subtractCost : this.addCost;
@@ -214,7 +217,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     private updateSpellEnhancement() {
         return {
-            usedDegreesOfSuccess: this.spellEnhancement.cost,
+            usedDegreesOfSuccess: this.spellEnhancement.checked ? -1 * this.spellEnhancement.cost : this.spellEnhancement.cost,
             action: () => {
                 this.updateSource({
                     spellEnhancement: {
