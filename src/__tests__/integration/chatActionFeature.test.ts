@@ -6,6 +6,13 @@ import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMess
 
 export function chatActionFeatureTest(context) {
     const {describe, it, expect} = context;
+    const splittermondMessageConfig = {
+        blind: false,
+        rolls: [],
+        whisper: [],
+        type: foundryApi.chatMessageTypes.OTHER,
+        mode: 'CHAT.RollPublic'
+    }
 
     describe("SplittermondChatCard", () => {
         it("should post a message in the chat", async () => {
@@ -106,8 +113,8 @@ export function chatActionFeatureTest(context) {
                 degreeOfSuccessMessage: "mega success",
             };
             return SplittermondChatCard.create(
-                actor, SplittermondSpellRollMessage.createRollMessage(spell, checkReport),
-                {type: 5, blind:false, whisper:[]}
+                actor, SpellRollMessage.initialize(spell, checkReport),
+                splittermondMessageConfig
             );
         }
     });
