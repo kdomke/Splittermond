@@ -5,7 +5,8 @@ import {afterEach} from "mocha";
 import {Cost, CostModifier} from "module/util/costs/Cost";
 import {FocusDegreeOfSuccessOptionField} from "module/util/chat/spellChatMessage/FocusDegreeOfSuccessOptionField";
 import {
-    injectParent, linkSpellAndActor,
+    injectParent,
+    linkSpellAndActor,
     setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
@@ -17,7 +18,6 @@ import {AgentReference} from "../../../../../../../module/data/references/AgentR
 import SplittermondSpellItem from "../../../../../../../module/item/spell";
 import {splittermond} from "../../../../../../../module/config";
 import {foundryApi} from "../../../../../../../module/api/foundryApi";
-import {PrimaryCost} from "../../../../../../../module/util/costs/PrimaryCost";
 import {parseCostString} from "../../../../../../../module/util/costs/costParser";
 
 describe("FocusCostActionHandler", () => {
@@ -352,7 +352,7 @@ describe("FocusCostActionHandler", () => {
             const expectedCost = underTest.cost;
             expect(agent.consumeCost.calledWith(
                 "focus",
-                sinon.match((actual: PrimaryCost) => expectedCost.consumed === actual.consumed && expectedCost.exhausted === actual.exhausted),
+                expectedCost.render(),
                 //@ts-expect-error spell reference is not typed yet
                 underTest.spellReference.getItem().name)
             ).to.be.true;

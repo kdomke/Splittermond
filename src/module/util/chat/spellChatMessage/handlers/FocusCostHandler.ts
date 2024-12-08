@@ -170,8 +170,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             .withHandlesActions(this.handlesActions)
             .whenAllChecksPassed(()=>{
                 this.updateSource({used: true});
-                //@ts-expect-error name exists, but we haven't typed this yet
-                this.casterReference.getAgent().consumeCost("focus", this.cost, this.spellReference.getItem().name);
+                this.casterReference.getAgent().consumeCost("focus", this.cost.render(),
+                    //@ts-expect-error name and system exist, but we haven't typed this yet
+                    this.spellReference.getItem().name);
                 return Promise.resolve();
             }).useAction(actionData)
     }
