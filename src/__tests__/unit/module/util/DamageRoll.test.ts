@@ -98,7 +98,10 @@ describe("DamageRoll evaluation", () => {
 
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
-        const rollMock: Roll = {_total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock)};
+        const rollMock: Roll = {
+            _total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock),
+            dice: [{faces: 6, results: [{active: true, result:1}]}]
+        };
         const mock = sinon.stub(foundryApi, "roll").returns(rollMock);
         await DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
@@ -116,7 +119,10 @@ describe("DamageRoll evaluation", () => {
                     {active: true, result: 1}],
             }
         ];
-        const rollMock: Roll = {_total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock)};
+        const rollMock: Roll = {
+            _total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock),
+            dice: [{faces: 6, results: [{active: true, result:1}]}]
+        };
         sinon.stub(foundryApi, "roll").returns(rollMock);
 
         const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
@@ -136,7 +142,10 @@ describe("DamageRoll evaluation", () => {
                     {active: true, result: 6}],
             }
         ];
-        const rollMock: Roll = {_total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock)};
+        const rollMock: Roll = {
+            _total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock),
+            dice: [{faces: 6, results: [{active: true, result:6}]}]
+        };
         sinon.stub(foundryApi, "roll").returns(rollMock);
 
         const roll = await DamageRoll.parse(damageString, "Kritisch 2").evaluate();

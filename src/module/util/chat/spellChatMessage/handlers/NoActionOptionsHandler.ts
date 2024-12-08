@@ -118,7 +118,7 @@ export class NoActionOptionsHandler extends SplittermondDataModel<NoActionOption
     private useOption(options: NumberDegreeOfSuccessOptionField, multiplicity:number): DegreeOfSuccessAction {
         const option = options.forMultiplicity(multiplicity);
         return {
-            usedDegreesOfSuccess: option.cost,
+            usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost: option.cost,
             action: () => {
                 option.check()
                 //no math needed, there is no action programmed for these options.

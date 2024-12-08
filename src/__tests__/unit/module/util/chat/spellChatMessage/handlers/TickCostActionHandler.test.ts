@@ -50,6 +50,15 @@ describe("TickCostActionHandler", () => {
             expect(underTest.tickReduction).to.equal(0);
         });
 
+        it("unchecking options come with negative cost", () =>{
+            const underTest = setUpTickActionHandler(sandbox);
+
+            underTest.useDegreeOfSuccessOption({action:"castDurationUpdate", multiplicity: "2"}).action();
+            const suggestion = underTest.useDegreeOfSuccessOption({action:"castDurationUpdate", multiplicity: "2"});
+
+            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
+        });
+
         it("should always offer options that are checked", () =>{
             const underTest = setUpTickActionHandler(sandbox);
             underTest.useDegreeOfSuccessOption({action:"castDurationUpdate", multiplicity: "2"});

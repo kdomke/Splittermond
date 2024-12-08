@@ -54,6 +54,16 @@ describe("DamageActionHandler", () => {
             expect(underTest.damageAddition).to.equal(0);
         });
 
+        it("unchecking options should come with negative costs", () =>{
+            const underTest = setUpDamageActionHandler(sandbox);
+
+            underTest.useDegreeOfSuccessOption({action:"damageUpdate", multiplicity: "2"}).action();
+            const uncheckCost = underTest.useDegreeOfSuccessOption({action:"damageUpdate", multiplicity: "2"})
+                .usedDegreesOfSuccess;
+
+            expect(uncheckCost).to.be.lessThan(0);
+        });
+
         it("should not render options if they are not an option",() =>{
             const underTest = setUpDamageActionHandler(sandbox);
             underTest.checkReportReference.get().succeeded = false;

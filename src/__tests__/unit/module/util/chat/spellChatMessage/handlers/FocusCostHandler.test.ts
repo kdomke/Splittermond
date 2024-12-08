@@ -264,8 +264,10 @@ describe("FocusCostActionHandler", () => {
             underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData).action()
             expect(underTest.consumed.isChecked(1)).to.be.true;
 
-            underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(degreeOfSuccessOptionData);
+            suggestion.action();
 
+            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
             expect(underTest.consumed.isChecked(1)).to.be.false;
             expect(underTest.adjusted).to.deep.equal({
                 _consumed: 0,

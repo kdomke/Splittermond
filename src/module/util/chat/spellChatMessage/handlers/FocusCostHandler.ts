@@ -203,7 +203,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         }
         const option = this[type].forMultiplicity(multiplicity);
         return {
-            usedDegreesOfSuccess: option.cost,
+            usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost: option.cost,
             action: () => {
                 option.check();
                 const action = option.isChecked() ? this.subtractCost : this.addCost;

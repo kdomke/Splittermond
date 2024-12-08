@@ -59,6 +59,19 @@ describe("SpellRollMessage", () => {
         });
     });
 
+    it("should allow to unchecked options that are checked, even if no degrees of success are left", () => {
+        const spellRollMessage = createSpellRollMessage(sandbox);
+        spellRollMessage.updateSource({openDegreesOfSuccess: 1000});
+
+        spellRollMessage.handleGenericAction({action: "consumedFocusUpdate", multiplicity: "1"});
+        spellRollMessage.updateSource({openDegreesOfSuccess: 0});
+        spellRollMessage.handleGenericAction({action: "consumedFocusUpdate", multiplicity: "1"});
+        spellRollMessage.updateSource({openDegreesOfSuccess: 1000});
+
+        expect(spellRollMessage.getData().degreeOfSuccessOptions.filter(dos => dos.checked))
+            .to.be.empty;
+    });
+
     //we're ignoring channeled Focus here, because it takes a different kind of spell. But the logic of SpellRollMessage is
     //rather generic
     ["consumedFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate", "castDurationUpdate",

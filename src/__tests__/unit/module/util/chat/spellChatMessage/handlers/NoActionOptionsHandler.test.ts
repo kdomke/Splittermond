@@ -40,35 +40,83 @@ describe("NoActionOptionsHandler", () => {
     });
 
     [1, 2, 4, 8].forEach((multiplicity) => {
+
+        const effectAreaOptionData = {action: "effectAreaUpdate", multiplicity: `${multiplicity}`};
+        const rangeUpdateOptionData = {action: "rangeUpdate", multiplicity: `${multiplicity}`};
+        const effectDurationOptionData = {action: "effectDurationUpdate", multiplicity: `${multiplicity}`};
+
         it(`should check range option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "rangeUpdate", multiplicity: `${multiplicity}`}).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(rangeUpdateOptionData);
+            suggestion.action();
 
+            expect(suggestion.usedDegreesOfSuccess).to.be.greaterThan(0);
             expect(underTest.range.options.isChecked(multiplicity)).to.be.true;
 
         });
+
         it(`should check effect duration option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "effectDurationUpdate", multiplicity: `${multiplicity}`}).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(effectDurationOptionData);
+            suggestion.action();
 
+            expect(suggestion.usedDegreesOfSuccess).to.be.greaterThan(0);
             expect(underTest.effectDuration.options.isChecked(multiplicity)).to.be.true;
         });
 
         it(`should check effect area option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "effectAreaUpdate", multiplicity: `${multiplicity}`}).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(effectAreaOptionData)
+            suggestion.action();
 
+            expect(suggestion.usedDegreesOfSuccess).to.be.greaterThan(0);
             expect(underTest.effectArea.options.isChecked(multiplicity)).to.be.true;
 
         });
 
+        it(`should uncheck range option for multiplicity ${multiplicity}`, () => {
+            const underTest = setUpNoActionsHandler(sandbox);
+
+            underTest.useDegreeOfSuccessOption(rangeUpdateOptionData).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(rangeUpdateOptionData);
+            suggestion.action();
+
+            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
+            expect(underTest.range.options.isChecked(multiplicity)).to.be.false;
+
+        });
+
+        it(`should uncheck effect duration option for multiplicity ${multiplicity}`, () => {
+            const underTest = setUpNoActionsHandler(sandbox);
+
+            underTest.useDegreeOfSuccessOption(effectDurationOptionData).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(effectDurationOptionData);
+            suggestion.action();
+
+            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
+            expect(underTest.effectDuration.options.isChecked(multiplicity)).to.be.false;
+        });
+
+        it(`should uncheck effect area option for multiplicity ${multiplicity}`, () => {
+            const underTest = setUpNoActionsHandler(sandbox);
+
+            underTest.useDegreeOfSuccessOption(effectAreaOptionData).action();
+            const suggestion = underTest.useDegreeOfSuccessOption(effectAreaOptionData)
+            suggestion.action();
+
+            expect(suggestion.usedDegreesOfSuccess).to.be.lessThan(0);
+            expect(underTest.effectArea.options.isChecked(multiplicity)).to.be.false;
+
+        });
+
+
         it(`should produce negative cost for checked range option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "rangeUpdate", multiplicity: `${multiplicity}`}).action();
+            underTest.useDegreeOfSuccessOption(rangeUpdateOptionData).action();
             const option = underTest.renderDegreeOfSuccessOptions()
                 .find(o=>o.render.multiplicity === `${multiplicity}` && o.render.action === "rangeUpdate")
 
@@ -79,7 +127,7 @@ describe("NoActionOptionsHandler", () => {
         it(`should produce negative cost for checked effect area option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "effectAreaUpdate", multiplicity: `${multiplicity}`}).action();
+            underTest.useDegreeOfSuccessOption(effectAreaOptionData).action();
             const option = underTest.renderDegreeOfSuccessOptions()
                 .find(o=>o.render.multiplicity === `${multiplicity}` && o.render.action === "effectAreaUpdate")
 
@@ -89,7 +137,7 @@ describe("NoActionOptionsHandler", () => {
         it(`should produce negative cost for checked effect duration option for multiplicity ${multiplicity}`, () => {
             const underTest = setUpNoActionsHandler(sandbox);
 
-            underTest.useDegreeOfSuccessOption({action: "effectDurationUpdate", multiplicity: `${multiplicity}`}).action();
+            underTest.useDegreeOfSuccessOption(effectDurationOptionData).action();
             const option = underTest.renderDegreeOfSuccessOptions()
                 .find(o=>o.render.multiplicity === `${multiplicity}` && o.render.action === "effectDurationUpdate")
 

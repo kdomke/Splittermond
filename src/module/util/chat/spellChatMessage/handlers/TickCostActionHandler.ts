@@ -56,7 +56,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
                 const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
                 const option = this.options.forMultiplicity(multiplicity);
                 return {
-                    usedDegreesOfSuccess: option.cost,
+                    usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost: option.cost,
                     action: () => {
                         option.check()
                         const tickReductionIncrement = option.isChecked() ? option.effect : -1 * option.effect;
