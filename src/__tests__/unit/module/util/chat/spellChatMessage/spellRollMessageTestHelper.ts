@@ -8,6 +8,7 @@ import {ItemReference} from "module/data/references/ItemReference";
 import {CheckReport} from "module/actor/CheckReport";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference";
+import SplittermondItem from "../../../../../../module/item/item";
 
 export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondActor> {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
@@ -35,6 +36,11 @@ export function setUpMockSpellSelfReference(sandbox: SinonSandbox): SinonStubbed
         }
     });
     return spellMock as SinonStubbedInstance<SplittermondSpellItem> & ItemReference<SinonStubbedInstance<SplittermondSpellItem>>;
+}
+
+export function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {
+    actorMock.items = {get: () => spellMock} as unknown as Collection<SplittermondItem> //Our pseudo collection is supposed to return the spellMock regrardless of id entered.
+    Object.defineProperty(spellMock, "actor", {value: actorMock, enumerable: true});
 }
 
 export function setUpCheckReportSelfReference():CheckReport & OnAncestorReference<CheckReport> {

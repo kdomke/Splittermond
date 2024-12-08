@@ -1,6 +1,7 @@
 import {describe} from "mocha";
 import sinon, {SinonSandbox, SinonStubbedInstance} from "sinon";
 import {
+    linkSpellAndActor,
     setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
@@ -11,8 +12,6 @@ import {AgentReference} from "module/data/references/AgentReference";
 import {expect} from "chai";
 import {splittermond} from "module/config";
 import SplittermondSpellItem from "module/item/spell";
-import SplittermondActor from "module/actor/actor";
-import SplittermondItem from "module/item/item";
 import {foundryApi} from "module/api/foundryApi";
 import {DamageActionHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/DamageActionHandler";
 import {Dice} from "../../../../../../../module/util/dice";
@@ -153,11 +152,6 @@ function setUpDamageActionHandler(sandbox:SinonSandbox):WithMockedRefs<DamageAct
             checkReportReference)
     })as unknown as WithMockedRefs<DamageActionHandler> /*TS cannot know that we're injecting mocks*/
 }
-function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {
-    actorMock.items = {get: () => spellMock} as unknown as Collection<SplittermondItem> //Our pseudo collection is supposed to return the spellMock regrardless of id entered.
-    Object.defineProperty(spellMock, "actor", {value: actorMock, enumerable: true});
-}
-
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
     sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({
         consumedFocus:true,

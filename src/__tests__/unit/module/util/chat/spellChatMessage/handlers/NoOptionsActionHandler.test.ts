@@ -1,6 +1,7 @@
-import sinon, {SinonSandbox, SinonStubbedInstance} from "sinon";
+import sinon, {SinonSandbox} from "sinon";
 import {
     injectParent,
+    linkSpellAndActor,
     setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
@@ -8,9 +9,7 @@ import {
     withToObjectReturnsSelf
 } from "../spellRollMessageTestHelper";
 import {NoOptionsActionHandler} from "module/util/chat/spellChatMessage/handlers/NoOptionsActionHandler";
-import SplittermondSpellItem from "module/item/spell";
 import SplittermondActor from "module/actor/actor";
-import SplittermondItem from "module/item/item";
 import {AgentReference} from "module/data/references/AgentReference";
 import {expect} from "chai";
 import {referencesUtils} from "../../../../../../../module/data/references/referencesUtils";
@@ -140,10 +139,5 @@ function setUpNoOptionsActionHandler(sandbox:SinonSandbox):WithMockedRefs<NoOpti
         return handler as unknown  as WithMockedRefs<NoOptionsActionHandler>; //TS cannot know we placed mocks inside this object.
     })
 
-}
-
-function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {
-    actorMock.items = {get: () => spellMock} as unknown as Collection<SplittermondItem> //Our pseudo collection is supposed to return the spellMock regrardless of id entered.
-    Object.defineProperty(spellMock, "actor", {value: actorMock, enumerable: true});
 }
 

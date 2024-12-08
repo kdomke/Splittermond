@@ -5,7 +5,7 @@ import {afterEach} from "mocha";
 import {Cost, CostModifier} from "module/util/costs/Cost";
 import {FocusDegreeOfSuccessOptionField} from "module/util/chat/spellChatMessage/FocusDegreeOfSuccessOptionField";
 import {
-    injectParent,
+    injectParent, linkSpellAndActor,
     setUpCheckReportSelfReference,
     setUpMockActor,
     setUpMockSpellSelfReference,
@@ -15,8 +15,6 @@ import {
 import {FocusCostHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/FocusCostHandler";
 import {AgentReference} from "../../../../../../../module/data/references/AgentReference";
 import SplittermondSpellItem from "../../../../../../../module/item/spell";
-import SplittermondActor from "../../../../../../../module/actor/actor";
-import SplittermondItem from "../../../../../../../module/item/item";
 import {splittermond} from "../../../../../../../module/config";
 import {foundryApi} from "../../../../../../../module/api/foundryApi";
 import {PrimaryCost} from "../../../../../../../module/util/costs/PrimaryCost";
@@ -469,11 +467,6 @@ function setUpFocusActionHandler(sandbox: SinonSandbox): WithMockedRefs<FocusCos
         injectParent(handler);
         return handler as unknown as WithMockedRefs<FocusCostHandler>;
     });
-}
-
-function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSpellItem>, actorMock: SinonStubbedInstance<SplittermondActor>): void {
-    actorMock.items = {get: () => spellMock} as unknown as Collection<SplittermondItem> //Our pseudo collection is supposed to return the spellMock regrardless of id entered.
-    Object.defineProperty(spellMock, "actor", {value: actorMock, enumerable: true});
 }
 
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
