@@ -22,6 +22,7 @@ import {DamageActionHandler} from "./handlers/DamageActionHandler";
 import {evaluateCheck} from "../../dice";
 import {NoActionOptionsHandler} from "./handlers/NoActionOptionsHandler";
 import {isAvailableAction, SpellRollMessageRenderedData} from "./SpellRollTemplateInterfaces";
+import {NoOptionsActionHandler} from "./handlers/NoOptionsActionHandler";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -40,6 +41,7 @@ function SpellRollMessageSchema() {
         tickCostHandler: new fields.EmbeddedDataField(TickCostActionHandler, {required: true, nullable: false}),
         damageHandler:new fields.EmbeddedDataField(DamageActionHandler, {required:true, nullable:false}),
         noActionOptionsHandler: new fields.EmbeddedDataField(NoActionOptionsHandler, {required:true, nullable:false}),
+        noOptionsActionHandler: new fields.EmbeddedDataField(NoOptionsActionHandler, {required:true, nullable:false}),
     };
 }
 
@@ -63,12 +65,11 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             spellReference: spellReference,
             constructorKey: constructorRegistryKey,
             splinterPointUsed:false,
-            focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference),
-            tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3),
-            damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference),
-            noActionOptionsHandler: NoActionOptionsHandler.initialize(spellReference),
-            //activeDefenseHandler
-            //magicFumbleHandler
+            focusCostHandler: FocusCostHandler.initialize(actorReference, reportReference, spellReference).toObject(),
+            tickCostHandler: TickCostActionHandler.initialize(actorReference, spellReference, 3).toObject(),
+            damageHandler: DamageActionHandler.initialize(actorReference,spellReference,reportReference).toObject(),
+            noActionOptionsHandler: NoActionOptionsHandler.initialize(spellReference).toObject(),
+            noOptionsActionHandler: NoOptionsActionHandler.initialize(reportReference, spellReference, actorReference).toObject(),
             openDegreesOfSuccess: checkReport.degreeOfSuccess,
         });
     }
@@ -83,8 +84,9 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
         this.handlers.push(this.tickCostHandler);
         this.handlers.push(this.damageHandler)
         this.handlers.push(this.noActionOptionsHandler);
+        this.handlers.push(this.noOptionsActionHandler);
         this.handlers.forEach(handler => this.registerHandler(handler));
-        //we handle in this class, because we house the check report.
+        //we handle splinterpoint usage in this class, because we house the check report.
         this.registerHandler({
             handlesActions: ["useSplinterpoint"],
             handlesDegreeOfSuccessOptions: [],

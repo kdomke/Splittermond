@@ -17,6 +17,8 @@ import {Cost} from "module/util/costs/Cost";
 import {splittermond} from "module/config";
 import {foundryApi} from "module/api/foundryApi";
 import {CheckReport} from "../../../../../../module/actor/CheckReport";
+import {referencesUtils} from "../../../../../../module/data/references/referencesUtils";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference";
 
 
 describe("SpellRollMessage", () => {
@@ -115,8 +117,8 @@ describe("SpellRollMessage", () => {
         });
     });
 
-    //TODO: activate actions
-    [/*"activeDefense" ,*/ "applyDamage" , "consumeCosts" , "advanceToken" /*, "rollFumble"*/].forEach(action => {
+    //produces a warning that apply damage should not have been used. This is ok, it means that the action reached the handler.
+    ["applyDamage" , "consumeCosts" , "advanceToken", "rollFumble"].forEach(action => {
         it(`should handle action ${action}`, async () => {
             const underTest = createSpellRollMessage(sandbox);
             underTest.checkReport.succeeded = true;
@@ -126,7 +128,20 @@ describe("SpellRollMessage", () => {
 
             expect(warnUserStub.called).to.be.false;
         });
-    })
+    });
+
+    it("should handle action activeDefense", async ()=>{
+        const underTest = createSpellRollMessage(sandbox);
+        underTest.checkReport.succeeded = true;
+        const actor = sandbox.createStubInstance(SplittermondActor);
+        Object.defineProperty(actor, "getAgent",{value:()=>actor}) //make actor a reference onto itself
+        sandbox.stub(referencesUtils,"findBestUserActor").returns(actor as  unknown as AgentReference);
+        const warnUserStub = sandbox.stub(foundryApi, "warnUser");
+
+        await underTest.handleGenericAction({action:"activeDefense"});
+
+        expect(warnUserStub.called).to.be.false;
+    });
     describe("Splinterpoint usage", () => {
         it("should increase degrees of success by three", async () => {
             const underTest = createSpellRollMessage(sandbox);
