@@ -13,8 +13,6 @@ import SplittermondSpellItem from "../../../../item/spell";
 import {configureUseOption} from "./defaultUseOptionAlgorithm";
 import {configureUseAction} from "./defaultUseActionAlgorithm";
 
-const castDurationConfig = splittermond.spellEnhancement.castDuration;
-
 function TickCostActionHandlerSchema() {
     return {
         used: new fields.BooleanField({required: true, nullable: false, initial: false}),
@@ -33,6 +31,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
     static defineSchema = TickCostActionHandlerSchema;
 
     static initialize(actorReference: AgentReference, spellReference: ItemReference<SplittermondSpellItem>, baseTickCost: number): TickCostActionHandler {
+        const castDurationConfig = splittermond.spellEnhancement.castDuration;
         return new TickCostActionHandler({
             used: false,
             isOption: spellReference.getItem().degreeOfSuccessOptions.castDuration,

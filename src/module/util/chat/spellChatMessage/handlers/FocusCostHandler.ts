@@ -17,9 +17,6 @@ import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../c
 import {configureUseOption} from "./defaultUseOptionAlgorithm";
 import {configureUseAction} from "./defaultUseActionAlgorithm";
 
-const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
-const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
-const exhaustedFocusConfig = splittermond.spellEnhancement.exhaustedFocus;
 
 function FocusCostHandlerSchema() {
     return {
@@ -56,6 +53,9 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         casterReference: AgentReference,
         checkReportReference: OnAncestorReference<CheckReport>,
         spellReference: ItemReference<SplittermondSpellItem>) {
+        const consumedFocusConfig = splittermond.spellEnhancement.consumedFocus;
+        const channeledFocusConfig = splittermond.spellEnhancement.channelizedFocus;
+        const exhaustedFocusConfig = splittermond.spellEnhancement.exhaustedFocus;
         const focusOptions = spellReference.getItem().degreeOfSuccessOptions;
         return new FocusCostHandler({
             used: false,

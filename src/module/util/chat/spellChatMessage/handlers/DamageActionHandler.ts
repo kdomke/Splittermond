@@ -17,8 +17,6 @@ import {CheckReport} from "../../../../actor/CheckReport";
 import {configureUseOption} from "./defaultUseOptionAlgorithm";
 import {configureUseAction} from "./defaultUseActionAlgorithm";
 
-const damageAdditionConfig = splittermond.spellEnhancement.damage;
-
 function DamageActionHandlerSchema() {
     return {
         used: new fields.BooleanField({required: true, nullable: false, initial: false}),
@@ -37,6 +35,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
     static defineSchema = DamageActionHandlerSchema;
 
     static initialize(actorReference: AgentReference, spellReference: ItemReference<SplittermondSpellItem>, checkReportReference:OnAncestorReference<CheckReport>): DamageActionHandler {
+        const damageAdditionConfig = splittermond.spellEnhancement.damage;
         return new DamageActionHandler({
             used: false,
             damageAddition: 0,
