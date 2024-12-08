@@ -34,7 +34,8 @@ interface SplittermondChatMessageBearer {
 
 export interface SplittermondChatMessage {
     template: string;
-    getData: () => object;
+    getData(): object;
+    handleGenericAction(data:{action:string}):Promise<void>
     readonly constructorKey: string;
 }
 export type SplittermondChatCardData = Omit<DataModelSchemaType<typeof SplittermondChatCardModelSchema>,"message"> & SplittermondChatMessageBearer;

@@ -7,10 +7,11 @@ import {ItemReference} from "../../../data/references/ItemReference";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {SplittermondSpellRollMessageRenderer} from "./SpellRollMessageRenderer";
 import {parseCostString} from "../../costs/costParser.js";
-import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel";
 import type {DataModelSchemaType} from "module/data/SplittermondDataModel";
+import {fields, SplittermondDataModel} from "module/data/SplittermondDataModel";
 import SplittermondSpellItem from "../../../item/spell";
 import {CheckReport} from "../../../actor/CheckReport";
+import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
 
 const constructorRegistryKey = "SplittermondSpellRollMessage";
 
@@ -36,7 +37,7 @@ type SpellRollMessageSchema = Omit<DataModelSchemaType<typeof SplittermondSpellR
     checkReport: CheckReport
 };
 
-export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRollMessageSchema> {
+export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRollMessageSchema> implements SplittermondChatMessage{
 
     static defineSchema() {
         return SplittermondSpellRollSchema();
@@ -197,6 +198,10 @@ export class SplittermondSpellRollMessage extends SplittermondDataModel<SpellRol
 
     getData() {
         return this.renderer.renderData();
+    }
+
+    handleGenericAction(): Promise<void> {
+        return Promise.reject("Method not implemented.");
     }
 }
 

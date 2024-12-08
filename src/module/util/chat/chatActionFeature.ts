@@ -66,13 +66,12 @@ async function onChatCardAction(event: Event) {
 
 async function onLocalChatCardAction(event:Event) {
     const button = event.currentTarget as HTMLElement /*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
-    const action = button?.dataset.localaction;
     const messageElement = button.closest(".message") as HTMLElement/*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
     const messageId = messageElement.dataset.messageId;
     if(messageId === undefined) {
         return foundryApi.warnUser("splittermond.chatCard.messageIdNotFound");
     }
-    return await handleLocalChatAction({...button.dataset, action}, messageId);
+    return await handleLocalChatAction(button.dataset, messageId);
 }
 
 /**
@@ -81,7 +80,7 @@ async function onLocalChatCardAction(event:Event) {
  */
 function prohibitActionOnChatCard(__:unknown, html:JQuery, data:unknown) {
     if(!dataHasRequiredAttributes(data)) {
-       throw new Error("data parameeter is expected to be an object with keys 'message' and 'author', but it was not.") ;
+       throw new Error("data parameter is expected to be an object with keys 'message' and 'author', but it was not.") ;
     }
     let actor = foundryApi.getSpeaker(data.message.speaker);
 

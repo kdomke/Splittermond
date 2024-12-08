@@ -16,14 +16,6 @@ interface ChatMessageConfig {
     rolls: string[];
 }
 
-
-/**
- * @typedef ChatOptions
- * @type {object}
- * @property {ChatMessageTypes} type
- * @property {?string} mode
- * @property {Roll[]|string[]} rolls evaluated roll instances for the chat message. If this is not a roll, use empty array.
- */
 export class SplittermondChatCard extends SplittermondChatCardModel {
 
     static create(actor: SplittermondActor, message: SplittermondChatMessage, chatOptions: ChatMessageConfig): SplittermondChatCard {
@@ -90,29 +82,35 @@ export class SplittermondChatCard extends SplittermondChatCardModel {
 }
 
 /**
- * @param {{action:string}} data the action invoked on the chat card
- * @param  messageId the chat card message id
+ * @param data the dataset that was on the invoked element. Should contain an action to execute.
+ * @param messageId the chat card message id
  */
-export async function handleChatAction(data: any, messageId: string): Promise<void> {
+export async function handleChatAction(data: unknown, messageId: string): Promise<void> {
     const chatCard = getChatCard(messageId);
+    const isObjectWithAction = data instanceof Object && "action" in data
 
-    if (hasAction(chatCard.message, data.action)) {
+    if (isObjectWithAction && hasAction(chatCard.message, data.action)) {
         await call(chatCard.message, data.action, data);
         await chatCard.updateMessage();
+    } else if(isObjectWithAction && canBeKey(data.action)) {
+        await chatCard.message.handleGenericAction({...data, action:data.action})
+            .catch(()=>throwNoActionError(chatCard, data, messageId ))
+        await chatCard.updateMessage();
     } else {
-        foundryApi.warnUser("splittermond.chatCard.actionNotFound");
-        throw new Error(`Action ${data.action} not found on chat card for message ${chatCard.message.constructorKey} with ${messageId}`);
+        throwNoActionError(chatCard, data, messageId);
     }
-
 }
 
-export async function handleLocalChatAction(data: any, messageId: string) {
+export async function handleLocalChatAction(data: unknown, messageId: string) {
     const chatCard = getChatCard(messageId);
-    if (hasAction(chatCard.message, data.action)) {
+    const isObjectWithAction = data instanceof Object && "action" in data
+    if (isObjectWithAction && hasAction(chatCard.message, data.action)) {
         await call(chatCard.message, data.action, data);
+    } else if(isObjectWithAction && canBeKey(data.action)) {
+        return chatCard.message.handleGenericAction({...data, action: data.action})
+            .catch(() => throwNoActionError(chatCard, data, messageId))
     } else {
-        foundryApi.warnUser("splittermond.chatCard.actionNotFound");
-        throw new Error(`Action ${data.action} not found on chat card for message ${chatCard.message.constructorKey} with ${messageId}`);
+        throwNoActionError(chatCard, data, messageId);
     }
 }
 
@@ -130,12 +128,15 @@ function getChatCard(messageId: string): SplittermondChatCard {
 }
 
 //We have to do these checks twice, because we cannot verify "keyof object" and "callable" at the same time.
-function hasAction<T extends object>(object: T, action: string | number | symbol): boolean {
-    return isKey(action, object)&& isCallable(object[action]);
+function hasAction<T extends object>(object: T, action: unknown): boolean {
+    return canBeKey(action) && isKey(action, object)&& isCallable(object[action]);
+}
+function canBeKey(input:unknown): input is string {
+    return typeof input === "string";
 }
 
-async function call<T extends object>(object: T, key: string | number | symbol, ...args: any[]) {
-    if (isKey(key, object)) {
+async function call<T extends object>(object: T, key:unknown, ...args: any[]) {
+    if (canBeKey(key) && isKey(key, object)) {
         const memberRef = object[key];
         if (isCallable(memberRef)) {
             //We need to use the call function here, because if we just do a function invocation, we don't get the `this` context.
@@ -153,5 +154,8 @@ function isCallable(ref: unknown): ref is (...args: any[]) => any {
     return typeof ref === "function";
 }
 
-
+function throwNoActionError(chatCard:SplittermondChatCard, data:any, messageId:string) {
+    foundryApi.warnUser("splittermond.chatCard.actionNotFound");
+    throw new Error(`Action ${data.action} not found on chat card for message ${chatCard.message.constructorKey} with ${messageId}`);
+}
 
