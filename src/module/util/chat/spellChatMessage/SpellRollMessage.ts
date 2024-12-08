@@ -6,7 +6,7 @@ import {
 } from "../../../data/SplittermondDataModel";
 import {CheckReport} from "../../../actor/CheckReport";
 import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
-import {FocusCostHandler} from "./handlers/FocusCostHandler";
+import {FocusCostHandler} from "./FocusCostHandler";
 import SplittermondSpellItem from "../../../item/spell";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {ItemReference} from "../../../data/references/ItemReference";
@@ -17,12 +17,12 @@ import {
 
 } from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
-import {TickCostActionHandler} from "./handlers/TickCostActionHandler";
-import {DamageActionHandler} from "./handlers/DamageActionHandler";
+import {TickCostActionHandler} from "./TickCostActionHandler";
+import {DamageActionHandler} from "./DamageActionHandler";
 import {evaluateCheck} from "../../dice";
-import {NoActionOptionsHandler} from "./handlers/NoActionOptionsHandler";
+import {NoActionOptionsHandler} from "./NoActionOptionsHandler";
 import {isAvailableAction, SpellRollMessageRenderedData} from "./SpellRollTemplateInterfaces";
-import {NoOptionsActionHandler} from "./handlers/NoOptionsActionHandler";
+import {NoOptionsActionHandler} from "./NoOptionsActionHandler";
 import {RollResultRenderer} from "../RollResultRenderer";
 
 const constructorRegistryKey = "SpellRollMessage";

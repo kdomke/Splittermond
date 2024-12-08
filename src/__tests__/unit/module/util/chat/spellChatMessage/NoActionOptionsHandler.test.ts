@@ -3,12 +3,12 @@ import {
     setUpMockSpellSelfReference,
     WithMockedRefs,
     withToObjectReturnsSelf
-} from "../spellRollMessageTestHelper";
+} from "./spellRollMessageTestHelper";
 import {
     NoActionOptionsHandler
-} from "../../../../../../../module/util/chat/spellChatMessage/handlers/NoActionOptionsHandler";
+} from "../../../../../../module/util/chat/spellChatMessage/NoActionOptionsHandler";
 import sinon, {SinonSandbox} from "sinon";
-import {foundryApi} from "../../../../../../../module/api/foundryApi";
+import {foundryApi} from "../../../../../../module/api/foundryApi";
 import {expect} from "chai";
 
 describe("NoActionOptionsHandler", () => {

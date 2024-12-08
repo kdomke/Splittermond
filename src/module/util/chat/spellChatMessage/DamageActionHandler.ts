@@ -1,21 +1,21 @@
-import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
 import {
     ActionHandler, ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     ValuedAction
-} from "../interfaces";
-import {NumberDegreeOfSuccessOptionField} from "../NumberDegreeOfSuccessOptionField";
-import {AgentReference} from "../../../../data/references/AgentReference";
-import {splittermond} from "../../../../config";
-import {ItemReference} from "../../../../data/references/ItemReference";
-import SplittermondSpellItem from "../../../../item/spell";
-import {DamageRoll} from "../../../damage/DamageRoll";
-import {Dice} from "../../../dice";
-import {OnAncestorReference} from "../../../../data/references/OnAncestorReference";
-import {CheckReport} from "../../../../actor/CheckReport";
-import {configureUseOption} from "./defaultUseOptionAlgorithm";
-import {configureUseAction} from "./defaultUseActionAlgorithm";
+} from "./interfaces";
+import {NumberDegreeOfSuccessOptionField} from "./optionFields/NumberDegreeOfSuccessOptionField";
+import {AgentReference} from "../../../data/references/AgentReference";
+import {splittermond} from "../../../config";
+import {ItemReference} from "../../../data/references/ItemReference";
+import SplittermondSpellItem from "../../../item/spell";
+import {DamageRoll} from "../../damage/DamageRoll";
+import {Dice} from "../../dice";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
+import {CheckReport} from "../../../actor/CheckReport";
+import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
+import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 
 function DamageActionHandlerSchema() {
     return {

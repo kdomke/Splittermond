@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import sinon, {SinonSandbox, SinonStubbedInstance} from 'sinon';
 import {afterEach} from "mocha";
 import {Cost, CostModifier} from "module/util/costs/Cost";
-import {FocusDegreeOfSuccessOptionField} from "module/util/chat/spellChatMessage/FocusDegreeOfSuccessOptionField";
+import {FocusDegreeOfSuccessOptionField} from "module/util/chat/spellChatMessage/optionFields/FocusDegreeOfSuccessOptionField";
 import {
     injectParent,
     linkSpellAndActor,
@@ -12,13 +12,13 @@ import {
     setUpMockSpellSelfReference,
     WithMockedRefs,
     withToObjectReturnsSelf
-} from "../spellRollMessageTestHelper";
-import {FocusCostHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/FocusCostHandler";
-import {AgentReference} from "../../../../../../../module/data/references/AgentReference";
-import SplittermondSpellItem from "../../../../../../../module/item/spell";
-import {splittermond} from "../../../../../../../module/config";
-import {foundryApi} from "../../../../../../../module/api/foundryApi";
-import {parseCostString} from "../../../../../../../module/util/costs/costParser";
+} from "./spellRollMessageTestHelper";
+import {FocusCostHandler} from "../../../../../../module/util/chat/spellChatMessage/FocusCostHandler";
+import {AgentReference} from "../../../../../../module/data/references/AgentReference";
+import SplittermondSpellItem from "../../../../../../module/item/spell";
+import {splittermond} from "../../../../../../module/config";
+import {foundryApi} from "../../../../../../module/api/foundryApi";
+import {parseCostString} from "../../../../../../module/util/costs/costParser";
 
 describe("FocusCostActionHandler", () => {
     let sandbox: SinonSandbox;

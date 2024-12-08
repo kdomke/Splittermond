@@ -7,14 +7,14 @@ import {
     setUpMockSpellSelfReference,
     WithMockedRefs,
     withToObjectReturnsSelf
-} from "../spellRollMessageTestHelper";
+} from "./spellRollMessageTestHelper";
 import {AgentReference} from "module/data/references/AgentReference";
 import {expect} from "chai";
 import {splittermond} from "module/config";
 import SplittermondSpellItem from "module/item/spell";
 import {foundryApi} from "module/api/foundryApi";
-import {DamageActionHandler} from "../../../../../../../module/util/chat/spellChatMessage/handlers/DamageActionHandler";
-import {Dice} from "../../../../../../../module/util/dice";
+import {DamageActionHandler} from "../../../../../../module/util/chat/spellChatMessage/DamageActionHandler";
+import {Dice} from "../../../../../../module/util/dice";
 
 describe("DamageActionHandler", () => {
     let sandbox: sinon.SinonSandbox;

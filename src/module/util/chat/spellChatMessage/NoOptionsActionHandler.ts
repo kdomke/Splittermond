@@ -1,13 +1,13 @@
-import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
-import {ActionHandler, ActionInput, UnvaluedAction, ValuedAction} from "../interfaces";
-import {OnAncestorReference} from "../../../../data/references/OnAncestorReference";
-import {CheckReport} from "../../../../actor/CheckReport";
-import {ItemReference} from "../../../../data/references/ItemReference";
-import SplittermondSpellItem from "../../../../item/spell";
-import {AgentReference} from "../../../../data/references/AgentReference";
-import {referencesUtils} from "../../../../data/references/referencesUtils";
-import {foundryApi} from "../../../../api/foundryApi";
-import {configureUseAction} from "./defaultUseActionAlgorithm";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
+import {ActionHandler, ActionInput, UnvaluedAction, ValuedAction} from "./interfaces";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
+import {CheckReport} from "../../../actor/CheckReport";
+import {ItemReference} from "../../../data/references/ItemReference";
+import SplittermondSpellItem from "../../../item/spell";
+import {AgentReference} from "../../../data/references/AgentReference";
+import {referencesUtils} from "../../../data/references/referencesUtils";
+import {foundryApi} from "../../../api/foundryApi";
+import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 
 
 function NoOptionsActionHandlerSchema() {

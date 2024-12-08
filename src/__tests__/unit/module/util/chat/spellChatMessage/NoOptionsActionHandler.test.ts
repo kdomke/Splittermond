@@ -7,12 +7,12 @@ import {
     setUpMockSpellSelfReference,
     WithMockedRefs,
     withToObjectReturnsSelf
-} from "../spellRollMessageTestHelper";
-import {NoOptionsActionHandler} from "module/util/chat/spellChatMessage/handlers/NoOptionsActionHandler";
+} from "./spellRollMessageTestHelper";
+import {NoOptionsActionHandler} from "module/util/chat/spellChatMessage/NoOptionsActionHandler";
 import SplittermondActor from "module/actor/actor";
 import {AgentReference} from "module/data/references/AgentReference";
 import {expect} from "chai";
-import {referencesUtils} from "../../../../../../../module/data/references/referencesUtils";
+import {referencesUtils} from "../../../../../../module/data/references/referencesUtils";
 
 
 describe("Roll Fumble", () => {

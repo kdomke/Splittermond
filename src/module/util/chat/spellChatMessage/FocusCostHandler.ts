@@ -1,21 +1,21 @@
-import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../../data/SplittermondDataModel";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
 import {
     ActionHandler, ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     ValuedAction
-} from "../interfaces";
-import {Cost, CostModifier} from "../../../costs/Cost";
-import {AgentReference} from "../../../../data/references/AgentReference";
-import {OnAncestorReference} from "../../../../data/references/OnAncestorReference";
-import {CheckReport} from "../../../../actor/CheckReport";
-import {ItemReference} from "../../../../data/references/ItemReference";
-import SplittermondSpellItem from "../../../../item/spell";
-import {splittermond} from "../../../../config";
-import {FocusDegreeOfSuccessOptionField} from "../FocusDegreeOfSuccessOptionField";
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../../costs/costParser";
-import {configureUseOption} from "./defaultUseOptionAlgorithm";
-import {configureUseAction} from "./defaultUseActionAlgorithm";
+} from "./interfaces";
+import {Cost, CostModifier} from "../../costs/Cost";
+import {AgentReference} from "../../../data/references/AgentReference";
+import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
+import {CheckReport} from "../../../actor/CheckReport";
+import {ItemReference} from "../../../data/references/ItemReference";
+import SplittermondSpellItem from "../../../item/spell";
+import {splittermond} from "../../../config";
+import {FocusDegreeOfSuccessOptionField} from "./optionFields/FocusDegreeOfSuccessOptionField";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser";
+import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
+import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 
 
 function FocusCostHandlerSchema() {
