@@ -40,21 +40,21 @@ export class NoActionOptionsHandler extends SplittermondDataModel<NoActionOption
                 isOption: spellReference.getItem().degreeOfSuccessOptions.effectArea,
                 options: NumberDegreeOfSuccessOptionField.initialize(
                     splittermondSpellEnhancement.effectArea.degreesOfSuccess,
-                    spellReference.getItem().effectArea,
+                    0, //We cannot do calculations on effect area, because the value is given as "5m" or similar
                     splittermondSpellEnhancement.effectArea.textTemplate)
             },
             effectDuration: {
                 isOption: spellReference.getItem().degreeOfSuccessOptions.effectDuration,
                 options: NumberDegreeOfSuccessOptionField.initialize(
                     splittermondSpellEnhancement.effectDuration.degreesOfSuccess,
-                    spellReference.getItem().effectDuration,
+                    0, //We cannot do calculations on effect duration, because the value can be given a string (e.g."K")
                     splittermondSpellEnhancement.effectDuration.textTemplate)
             },
             range: {
                 isOption: spellReference.getItem().degreeOfSuccessOptions.range,
                 options: NumberDegreeOfSuccessOptionField.initialize(
                     splittermondSpellEnhancement.range.degreesOfSuccess,
-                    spellReference.getItem().range,
+                    0, //We cannot do calculations on range, because the value can be given as "5m" or similar
                     splittermondSpellEnhancement.range.textTemplate)
             }
         });
