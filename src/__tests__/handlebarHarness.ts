@@ -1,13 +1,7 @@
 import Handlebars from "handlebars";
 import fs from "fs";
 
-/**
- *
- * @param {string} templateFilePath
- * @param {any} context
- * @returns {string}
- */
-export function createHtml(templateFilePath, context) {
+export function createHtml(templateFilePath:string, context:unknown):string {
     const template= Handlebars.compile(fs.readFileSync(`public/${templateFilePath}`).toString("utf-8"));
     Handlebars.registerHelper("localize", localizeMock);
     Handlebars.registerHelper("selectOptions", selectOptionsMock);
@@ -16,24 +10,17 @@ export function createHtml(templateFilePath, context) {
     return template(context);
 }
 
-/**
- * @param {string} key
- * @returns {string}
- */
-function localizeMock(key) {
+function localizeMock(key:string):string {
     return key.toString();
 }
 
 /**
- * returns a escaped string that gets inserted into the document
- * @param {string[]} choices
- * @param options
- * @returns {string}
+ * returns an escaped string that gets inserted into the document
  */
-function selectOptionsMock(choices = [], options = {}) {
+function selectOptionsMock(choices:Record<string,string> = {}, options:Record<string,unknown>= {}) {
     return Object.keys(choices).map(key => `<option value="${key}" ${options.selected === key ? "selected" : ""}>${localizeMock(choices[key])}</option>`).join("");
 }
 
-function equals(one, other){
+function equals(one:unknown, other:unknown){
     return one === other;
 }
