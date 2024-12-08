@@ -1,10 +1,20 @@
 import {getActor, getActorWithItemOfType} from "./fixtures.js"
-import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard.ts";
-import {foundryApi} from "../../module/api/foundryApi.ts";
+import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard";
+import {foundryApi} from "../../module/api/foundryApi";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
-import {SplittermondSpellRollMessage} from "../../module/util/chat/spellChatMessage/SplittermondSpellRollMessage.ts";
+import type {ChatMessage, Hooks} from "../../module/api/foundryTypes";
+import SplittermondActor from "../../module/actor/actor";
+import SplittermondSpellItem from "../../module/item/spell";
+import {CheckReport} from "../../module/actor/CheckReport";
+import SplittermondItem from "../../module/item/item";
+import {SpellRollMessage} from "../../module/util/chat/spellChatMessage/SpellRollMessage";
 
-export function chatActionFeatureTest(context) {
+declare const game: any;
+declare const ChatMessage: ChatMessage;
+declare const Hooks: Hooks;
+type QuenchContext = { describe: Mocha.SuiteFunction, it: Mocha.TestFunction, expect: Chai.ExpectStatic };
+
+export function chatActionFeatureTest(this:unknown, context: QuenchContext) {
     const {describe, it, expect} = context;
     const splittermondMessageConfig = {
         blind: false,
@@ -18,19 +28,20 @@ export function chatActionFeatureTest(context) {
         it("should post a message in the chat", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "a"});
-            const chatCard = SplittermondChatCard.create(actor, message, {type:5, mode:'CHAT.RollPublic'});
+            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
 
             await chatCard.sendToChat();
             const messageId = chatCard.messageId;
 
+            expect(messageId, "messageId is null").not.to.be.null;
             expect(game.messages.get(messageId), `Did not find message with id ${messageId}`).to.not.be.undefined;
-            ChatMessage.deleteDocuments([messageId]);
+            ChatMessage.deleteDocuments([messageId as string/*we asserted it is not null*/]);
         });
 
         it("should rerender the same chat card on update", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message,{type:5, mode:'CHAT.RollPublic'});
+            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
 
             await chatCard.sendToChat();
             const messagesBeforeUpdate = getCollectionLength(game.messages);
@@ -39,25 +50,26 @@ export function chatActionFeatureTest(context) {
             await chatCard.updateMessage();
 
 
-            expect(game.messages.get(messageId), `Did not find message with id ${messageId}`).to.not.be.undefined;
+            expect(game.messages.get(messageId), `Did not find message with id ${messageId}`).to.not.be.null;
             expect(game.messages.get(messageId).content, `Did not find message with id ${messageId}`).to.contain("Manchete");
             expect(getCollectionLength(game.messages), "Message count before and after update").to.equal(messagesBeforeUpdate);
 
-            ChatMessage.deleteDocuments([messageId]);
+            ChatMessage.deleteDocuments([messageId as string/*we asserted it is not null*/]);
         });
 
         it("should be able to reproduce a message from handled chat action", async () => {
             const actor = getActor(this);
             const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message,{type:5, mode:'CHAT.RollPublic'});
+            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
             await chatCard.sendToChat();
 
-            await handleChatAction({action: "alterTitle"}, chatCard.messageId);
-            expect(foundryApi.messages.get(chatCard.messageId).content, "title was updated").to.contain("title2");
-            ChatMessage.deleteDocuments([chatCard.messageId]);
+            const messageId = chatCard.messageId ?? "This should not happen";
+            await handleChatAction({action: "alterTitle"}, messageId);
+            expect(foundryApi.messages.get(messageId).content, "title was updated").to.contain("title2");
+            return ChatMessage.deleteDocuments([messageId]);
         });
 
-        function getCollectionLength(collection) {
+        function getCollectionLength<T>(collection: T[]) {
             return collection.map(() => 1).reduce((a, b) => a + b, 0)
         }
     });
@@ -65,31 +77,42 @@ export function chatActionFeatureTest(context) {
     describe("SpellRollMessage", () => {
         it("actor should consume enhanced spell", async () => {
             const actor = getActorWithItemOfType(this, "spell");
-            await actor.update({system:{focus:{channeled:{entries:[]}, exhausted:{value:0}, consumed: {value:0}}}});
-            const spell = actor.items.find(item => item.type === "spell");
+            await actor.update({
+                system: {
+                    focus: {
+                        channeled: {entries: []},
+                        exhausted: {value: 0},
+                        consumed: {value: 0}
+                    }
+                }
+            });
+            const spell = actor.items.find((item:SplittermondItem) => item.type === "spell");
             const chatMessage = createSampleChatMessage(actor, spell);
 
             await chatMessage.sendToChat()
-            const messageId = chatMessage.messageId;
-            await handleChatAction({action: "spellEnhancementUpdate", multiplicity: 1 }, messageId);
-            await handleChatAction({action: "consumeCosts", multiplicity: 1 }, messageId);
+            const messageId = chatMessage.messageId ?? "This is not a chat message";
+            await handleChatAction({action: "spellEnhancementUpdate", multiplicity: 1}, messageId);
+            await handleChatAction({action: "consumeCosts", multiplicity: 1}, messageId);
 
             expect(actor.system.focus.exhausted.value +
                 actor.system.focus.consumed.value +
                 actor.system.focus.channeled.value).to.be.greaterThan(0);
 
 
-            await actor.update({system:{focus:{channeled:{entries:[]}, exhausted:{value:0}, consumed: {value:0}}}});
-            ChatMessage.deleteDocuments([messageId]);
-        })
+            await actor.update({
+                system: {
+                    focus: {
+                        channeled: {entries: []},
+                        exhausted: {value: 0},
+                        consumed: {value: 0}
+                    }
+                }
+            });
+            return ChatMessage.deleteDocuments([messageId]);
+        });
 
-        /**
-         * @param {SplittermondActor} actor
-         * @param {SplittermondSpellItem} spell
-         * @return {SplittermondChatCard}
-         */
-        function createSampleChatMessage(actor, spell) {
-            /**@type {CheckReport}*/const checkReport = {
+        function createSampleChatMessage(actor:SplittermondActor, spell:SplittermondSpellItem):SplittermondChatCard {
+            const checkReport:CheckReport = {
                 roll: {
                     total: 35,
                     dice: [{total: 18}],
@@ -103,7 +126,8 @@ export function chatActionFeatureTest(context) {
                         [spell.skill.attribute2.id]: spell.skill.attribute2.value,
                     },
                 },
-                modifierElements: ["3"],
+                modifierElements: [{value: 0, description: "4"}],
+                hideDifficulty: false,
                 rollType: "standard",
                 succeeded: true,
                 degreeOfSuccess: 5,
@@ -147,7 +171,7 @@ export function chatActionFeatureTest(context) {
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
-                rolls:[JSON.stringify(await foundryApi.roll("1d6").evaluate())],
+                rolls: [JSON.stringify(await foundryApi.roll("1d6").evaluate())],
                 content: "Random text content",
                 flags: {
                     splittermond: {
@@ -158,7 +182,7 @@ export function chatActionFeatureTest(context) {
             const message = await foundryApi.createChatMessage(sampleMessageContent);
 
             expect(message.id, "messageId is a string").to.be.a("string");
-            ChatMessage.deleteDocuments([message.id]);
+            return ChatMessage.deleteDocuments([message.id]);
         });
 
         it("should post a message in the chat", async () => {
@@ -181,13 +205,13 @@ export function chatActionFeatureTest(context) {
             expect(retrievedMessage, "message was found").to.not.be.undefined;
             expect(retrievedMessage.getFlag("splittermond", "chatCard"))
                 .to.deep.equal(sampleMessageContent.flags.splittermond.chatCard);
-            ChatMessage.deleteDocuments([message.id]);
+            return ChatMessage.deleteDocuments([message.id]);
         });
 
-        it("should accept a roll as string",async () => {
+        it("should accept a roll as string", async () => {
             const actor = getActor(this);
             const speaker = foundryApi.getSpeaker({actor});
-            const roll =JSON.stringify(await foundryApi.roll("1d6").evaluate())
+            const roll = JSON.stringify(await foundryApi.roll("1d6").evaluate())
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
@@ -196,13 +220,13 @@ export function chatActionFeatureTest(context) {
             };
             const message = await foundryApi.createChatMessage(sampleMessageContent);
             expect(message.rolls[0]).to.be.instanceOf(foundryApi.roll("1d6").constructor);
-            ChatMessage.deleteDocuments([message.id]);
+            return ChatMessage.deleteDocuments([message.id]);
         });
 
-        it("should accept a roll as object ",async () => {
+        it("should accept a roll as object ", async () => {
             const actor = getActor(this);
             const speaker = foundryApi.getSpeaker({actor});
-            const roll =await foundryApi.roll("1d12").evaluate();
+            const roll = await foundryApi.roll("1d12").evaluate();
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
@@ -211,26 +235,32 @@ export function chatActionFeatureTest(context) {
             };
             const message = await foundryApi.createChatMessage(sampleMessageContent);
             expect(message.rolls[0].dice[0].faces).to.equal(12);
-            ChatMessage.deleteDocuments([message.id]);
+            return ChatMessage.deleteDocuments([message.id]);
         });
 
-        it("should accept a whisper property",async () => {
+        it("should accept a whisper property", async () => {
             const actor = getActor(this);
             const speaker = foundryApi.getSpeaker({actor});
-            const roll =JSON.stringify(await foundryApi.roll("1d19").evaluate())
+            const roll = JSON.stringify(await foundryApi.roll("1d19").evaluate())
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
                 speaker,
                 rolls: [roll],
-                rollMode: "whisper",//Don't ask me why this is necessary, but it
+                rollMode: "whisper", //Don't ask me why this is necessary, but it is
                 whisper: [foundryApi.currentUser],
                 content: "Random text content",
             };
             const message = await foundryApi.createChatMessage(sampleMessageContent);
             expect(message.whisper).to.deep.equal([foundryApi.currentUser.id]);
-            ChatMessage.deleteDocuments([message.id]);
+            return ChatMessage.deleteDocuments([message.id]);
         });
 
+        it("should delete documents", async () => {
+            const message = await foundryApi.createChatMessage({content:"Random text content"});
+            await ChatMessage.deleteDocuments([message.id]);
+
+            expect (foundryApi.messages.get(message.id), "message was not deleted").to.be.undefined;
+        });
 
         it("should deliver a template renderer", async () => {
             const content = "Rhaaaaagaahh"
@@ -242,13 +272,14 @@ export function chatActionFeatureTest(context) {
 
         it("transfer events via socket", () => {
             foundryApi.socket.on("system.splittermond.quench.test.event", (data) => {
-                expect(data.test).to.be.equal("test");
+                expect(data instanceof Object && "test" in data).to.be.true;
+                expect((data as {test:unknown}).test).to.be.equal("test");
             });
             foundryApi.socket.emit("system.splittermond.quench.test.event", {test: "test"});
         });
 
-        it("delivers the the correct chat message types", ()=> {
-            const types = foundryApi.chatMessageTypes;
+        it("delivers the the correct chat message types", () => {
+            const types= foundryApi.chatMessageTypes;
             expect(types, "chatMessageTypes is an object").to.be.an("object");
             expect(Object.keys(types).length).to.equal(4);
             expect(types.EMOTE, "chatMessageTypes has an emote").to.be.a("number");
@@ -261,9 +292,9 @@ export function chatActionFeatureTest(context) {
             let storedApp;
             let storedHtml;
             let storedData;
-            let callbackId
-            const callbackPromise = new Promise(resolve => {
-                callbackId = Hooks.on("renderChatMessage", (app, html, data) => {
+            let callbackId:number;
+            const callbackPromise = new Promise<void>(resolve => {
+                callbackId = Hooks.on("renderChatMessage", (app:any, html:any, data:any) => {
                     storedApp = app;
                     storedHtml = html;
                     storedData = data;
@@ -272,7 +303,7 @@ export function chatActionFeatureTest(context) {
             });
             const sampleMessageContent = {
                 user: foundryApi.currentUser.id,
-                speaker: foundryApi.getSpeaker({actor:getActor(this)}),
+                speaker: foundryApi.getSpeaker({actor: getActor(this)}),
                 content: "Random text content",
             };
             const message = await foundryApi.createChatMessage(sampleMessageContent)
@@ -280,11 +311,12 @@ export function chatActionFeatureTest(context) {
             expect(storedApp, "app is a chat message app").to.be.instanceOf(ChatMessage)
             expect(storedHtml, "html is a JQuery object").to.be.instanceOf(jQuery)
             expect(storedData, "data is the data of the chat message app").is.not.undefined
-            ChatMessage.deleteDocuments([message.id]);
-            Hooks.off("renderChatMessage", callbackId);
+            return ChatMessage.deleteDocuments([message.id]).then(() => {
+                Hooks.off("renderChatMessage", callbackId);
+            });
         });
 
-        function isUser(object) {
+        function isUser(object:unknown) {
             return typeof object === "object" &&
                 object && "isGM" in object && "id" in object && "active" in object;
         }

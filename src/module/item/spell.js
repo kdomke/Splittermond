@@ -6,10 +6,10 @@ import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.ts";
 import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.ts";
 import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.ts";
-import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.ts";
 import {splittermond} from "../config.js";
 import {PrimaryCost} from "../util/costs/PrimaryCost.ts";
 import {Cost} from "../util/costs/Cost.ts";
+import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage.ts";
 
 
 /**
@@ -150,16 +150,9 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         };
 
         return this.skill.roll(options)
-            .then(result =>
-                !result ?
-                    false :
-                    SplittermondChatCard.create(
-                        this.actor,
-                        SplittermondSpellRollMessage.createRollMessage(
-                            this,
-                            result.report,
-                        ), result.rollOptions)
-                        .sendToChat()
+            .then(result => !result ? false :SplittermondChatCard.create(this.actor,
+                SpellRollMessage.initialize(this, result.report), result.rollOptions)
+                .sendToChat()
             ).then((result) => result ?? true);
     }
 

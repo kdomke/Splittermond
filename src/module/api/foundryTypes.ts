@@ -1,9 +1,17 @@
 export interface ChatMessage {
     id: string,
+    /** The Ids of the users that are to be addressed by this message*/
+    whisper: string[],
+    /** the message content, an HTML string*/
+    content: string,
+
+    rolls: Roll[],
 
     update(data: object): Promise<ChatMessage>
 
     getFlag(scope: string, key: string): object
+
+    deleteDocuments(documentId:string[]):Promise<void>
 }
 
 export enum ChatMessageTypes {
@@ -20,13 +28,14 @@ export interface User {
 }
 
 export interface Socket {
-    on: (key: string, callback: () => void) => void;
+    on: (key: string, callback: (data:unknown) => void) => void;
     emit: (key: string, object: object) => void;
 }
 
 export interface Hooks {
-    once: (key: string, callback: (...args:any[]) => void) => void;
-    on: ((key: string, callback: (...args:any[]) => void) => void);
+    once: (key: string, callback: (...args:any[]) => void) => number;
+    on: ((key: string, callback: (...args:any[]) => void) => number);
+    off: (key:string, id:number) => void;
 }
 
 export interface Die {
@@ -47,6 +56,7 @@ export interface Roll {
     evaluate: () => Promise<Roll>;
     _total: number
     readonly total: number
+    dice: Die[]
     terms: (Die | OperatorTerm | NumericTerm)[]
 }
 

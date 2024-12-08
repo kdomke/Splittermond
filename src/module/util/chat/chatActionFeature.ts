@@ -11,9 +11,11 @@ export function chatActionFeature() {
     foundryApi.hooks.on("renderChatMessage", (_app:ChatMessage, html:JQuery, _data:unknown) => prohibitActionOnChatCard(_app, html, _data));
 
     foundryApi.hooks.once("init", () => {
-        //@ts-expect-error a
         foundryApi.socket.on(socketEvent, (data) => {
 
+            if(!(data instanceof Object && "type" in data && "messageId" in data && "userId" in data)) {
+                return Promise.resolve();
+            }
             if (data.type === "chatAction") {
                 if (!foundryApi.currentUser.isGM) {
                     return Promise.resolve();
@@ -41,7 +43,7 @@ function chatListeners(html:JQuery) {
 async function onChatCardAction(event: Event) {
     event.preventDefault();
 
-    const button = event.currentTarget as HTMLElement /*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;;
+    const button = event.currentTarget as HTMLElement /*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
     const dataAttributes = button.dataset;
     const messageElement = button.closest(".message")as HTMLElement/*We're working in an HTML Context here. that the target is an HTMLElement is a given*/;
     const messageId = messageElement.dataset.messageId;
