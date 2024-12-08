@@ -25,7 +25,7 @@ describe("Roll Fumble", () => {
 
         const actions = underTest.renderActions();
 
-        expect(actions.find(a => a.type === "rollFumble")).to.be.undefined
+        expect(actions.find(a => a.type === "rollMagicFumble")).to.be.undefined
     });
 
     it("should render the action if the roll is a fumble", () => {
@@ -34,13 +34,13 @@ describe("Roll Fumble", () => {
 
         const actions = underTest.renderActions();
 
-        expect(actions.find(a => a.type === "rollFumble")).not.to.be.undefined
+        expect(actions.find(a => a.type === "rollMagicFumble")).not.to.be.undefined
     });
     it("should not allow using the action if the roll is not a fumble",async ()=>{
         const underTest = setUpNoOptionsActionHandler(sandbox);
         underTest.checkReportReference.get().isFumble= false;
 
-        await underTest.useAction({action: "rollFumble"});
+        await underTest.useAction({action: "rollMagicFumble"});
 
         expect(underTest.casterReference.getAgent().rollMagicFumble.called).to.be.false
     });
@@ -54,7 +54,7 @@ describe("Roll Fumble", () => {
         sandbox.stub(underTest.spellReference.getItem(),"costs").get(()=> costs);
         underTest.checkReportReference.get().skill = {id : skill, points:1, attributes:{mystic:1, mind:2}};
 
-        await underTest.useAction({action: "rollFumble"});
+        await underTest.useAction({action: "rollMagicFumble"});
 
         expect(underTest.casterReference.getAgent().rollMagicFumble.calledWith(-eg, costs,skill)).to.be.true;
     });
@@ -65,8 +65,8 @@ describe("Roll Fumble", () => {
         sandbox.stub(underTest.spellReference.getItem(),"costs").get(()=> "8V2");
         underTest.checkReportReference.get().skill = {id : "deathmagic", points:1, attributes:{mystic:1, mind:2}};
 
-        await underTest.useAction({action: "rollFumble"});
-        await underTest.useAction({action: "rollFumble"});
+        await underTest.useAction({action: "rollMagicFumble"});
+        await underTest.useAction({action: "rollMagicFumble"});
 
         expect(underTest.casterReference.getAgent().rollMagicFumble.calledOnce).to.be.true;
     });

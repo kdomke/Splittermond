@@ -39,14 +39,14 @@ export class NoOptionsActionHandler extends SplittermondDataModel<NoOptionsActio
         });
     }
 
-    handlesActions = ["rollFumble", "activeDefense"] as const;
+    handlesActions = ["rollMagicFumble", "activeDefense"] as const;
 
     renderActions(): (ValuedAction | UnvaluedAction)[] {
         const actions: (ValuedAction | UnvaluedAction)[] = [];
         if (this.checkReportReference.get().isFumble) {
             actions.push(
                 {
-                    type: "rollFumble",
+                    type: "rollMagicFumble",
                     disabled: this.rollFumbleUsed,
                     isLocal: false,
                 })
@@ -71,7 +71,7 @@ export class NoOptionsActionHandler extends SplittermondDataModel<NoOptionsActio
     }
 
     useAction(actionData: ActionInput): Promise<void> {
-        if (actionData.action === "rollFumble") {
+        if (actionData.action === "rollMagicFumble") {
             return this.rollFumble(actionData);
         } else if (actionData.action === "activeDefense") {
             return this.defendActively()
@@ -83,7 +83,7 @@ export class NoOptionsActionHandler extends SplittermondDataModel<NoOptionsActio
     rollFumble(actionData: ActionInput) {
         return configureUseAction()
             .withUsed(() => this.rollFumbleUsed)
-            .withHandlesActions(["rollFumble"])
+            .withHandlesActions(["rollMagicFumble"])
             .withIsOptionEvaluator(() => this.checkReportReference.get().isFumble)
             .whenAllChecksPassed(() => {
                 this.updateSource({rollFumbleUsed: true});

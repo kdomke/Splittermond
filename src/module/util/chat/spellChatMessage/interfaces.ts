@@ -14,7 +14,7 @@ export interface ValuedAction extends Action {
 }
 
 export interface UnvaluedAction extends Action {
-   type: "useSplinterpoint"|"rollFumble";
+   type: "useSplinterpoint"|"rollMagicFumble";
 }
 
 

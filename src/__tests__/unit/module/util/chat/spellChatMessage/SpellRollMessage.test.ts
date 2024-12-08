@@ -131,7 +131,7 @@ describe("SpellRollMessage", () => {
     });
 
     //produces a warning that apply damage should not have been used. This is ok, it means that the action reached the handler.
-    ["applyDamage" , "consumeCosts" , "advanceToken", "rollFumble"].forEach(action => {
+    ["applyDamage" , "consumeCosts" , "advanceToken", "rollMagicFumble"].forEach(action => {
         it(`should handle action ${action}`, async () => {
             const underTest = createSpellRollMessage(sandbox);
             underTest.checkReport.succeeded = true;

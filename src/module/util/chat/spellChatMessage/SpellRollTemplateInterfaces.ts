@@ -6,7 +6,7 @@
 /**
  * Available actions as specified in spell-chat-card.hbs
  */
-const availableActions = ["activeDefense", "applyDamage", "consumeCosts", "advanceToken", "useSplinterpoint", "rollFumble"] as const;
+const availableActions = ["activeDefense", "applyDamage", "consumeCosts", "advanceToken", "useSplinterpoint", "rollMagicFumble"] as const;
 export type AvailableActions = typeof availableActions[number]
 
 export function isAvailableAction(action: string): action is AvailableActions {
