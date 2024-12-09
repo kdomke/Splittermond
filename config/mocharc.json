@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/mocharc.json",
+  "extension": ["js", "ts"],
+
+  "require": [
+    "src/__tests__/unit/foundryMocks.js",
+    "tsx"
+  ],
+  "ui": "bdd"
+}
