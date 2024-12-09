@@ -1,0 +1,29 @@
+name: Manual Build and Zip
+#Untested because we don't have github actions right now.
+on:
+  workflow_dispatch:
+    inputs:
+      outputName:
+        description: 'Version'
+        required: true
+
+jobs:
+  build-and-zip:
+    runs-on: ubuntu-latest
+    env:
+      outputName: splittermond-${github.event.inputs.Version}
+      outputFile: ${outputName}.zip
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Create zip
+        run: zip -r  ${outputFile} dist README.md screenshots
+      - name: Upload to GitHub
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${outputName}
+          path: ${outputFile}

@@ -2,13 +2,14 @@
   "name": "splittermond",
   "version": "1.0.0",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "main": "splittermond.js",
+  "main": "src/splittermond.js",
   "type": "module",
   "scripts": {
-    "build" : "tsc && npm run test && npm run compileCss",
-    "test": "npm run typecheck && node ./node_modules/mocha/bin/mocha.js -ui bdd __tests__/unit/**/*.test.js",
-    "typecheck": "tsc -p tsconfig.test.json",
-    "compileCss": "gulp less"
+    "compileCss": "gulp less",
+    "dev": "vite serve --config config/vite.config.mts",
+    "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
+    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
+    "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts"
   },
   "repository": {
     "type": "git",
@@ -19,17 +20,22 @@
   "homepage": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt#readme",
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
+    "@types/chai": "^4.3.17",
+    "@types/gulp": "^4.0.17",
+    "@types/gulp-less": "^0.0.36",
+    "@types/handlebars": "^4.0.40",
+    "@types/jquery": "^3.5.30",
+    "@types/mocha": "^10.0.7",
+    "@types/sinon": "^17.0.3",
     "chai": "^5.0.0",
-    "gulp": "^4.0.2",
-    "gulp-less": "^4.0.1",
     "handlebars": "^4.7.8",
     "jquery": "^3.7.1",
     "jsdom": "^23.2.0",
+    "less": "^4.2.0",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
-    "typescript": "^5.5.3"
-  },
-  "dependencies": {
-    "@types/sinon": "^17.0.3"
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.0"
   }
 }
