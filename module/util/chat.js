@@ -208,8 +208,6 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             classes: "use-splinterpoint"
         });
     }
-
-
     let checkMessageData = {
         user: game.user.id,
         speaker: ChatMessage.getSpeaker({actor: actor}),
@@ -217,7 +215,6 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
         content: await renderTemplate(template, templateContext),
         sound: CONFIG.sounds.dice,
         type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-        rollMode: rollMode,
         flags: {
             splittermond: {
                 check: flagsData
@@ -225,8 +222,9 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
         }
     };
 
-    return checkMessageData;
+    return ChatMessage.applyRollMode(checkMessageData, rollMode);
 }
+
 
 export async function prepareStatusEffectMessage(actor, data) {
     let template = "systems/splittermond/templates/chat/status-effect.hbs";

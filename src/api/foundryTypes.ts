@@ -1,0 +1,51 @@
+export interface ChatMessage {
+    id: string,
+
+    update(data: object): Promise<ChatMessage>
+
+    getFlag(scope: string, key: string): object
+}
+
+export enum ChatMessageTypes {
+    OTHER,
+    OOC,
+    IC,
+    EMOTE
+}
+
+export interface User {
+    isGM: boolean;
+    id: string;
+    active: boolean;
+}
+
+export interface Socket {
+    on: (key: string, callback: () => void) => void;
+    emit: (key: string, object: object) => void;
+}
+
+export interface Hooks {
+    once: (key: string, callback: () => void) => void;
+    on: (key: string, callback: () => void) => void;
+}
+
+export interface Die {
+    faces: number;
+    results: { active: true, result: number }[]
+}
+
+export interface OperatorTerm {
+    operator: string;
+
+}
+
+export interface NumericTerm {
+    number: number;
+}
+
+export interface Roll {
+    evaluate: () => Promise<Roll>;
+    _total: number
+    readonly total: number
+    terms: (Die | OperatorTerm | NumericTerm)[]
+}
