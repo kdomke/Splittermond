@@ -1,11 +1,12 @@
 import "../../foundryMocks.js";
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {TooltipFormula} from "../../../../module/util/tooltip.js";
+import {TooltipFormula} from "module/util/tooltip.js";
 import {identity} from "../../foundryMocks.js";
 
 describe("tooltip formatter", () => {
-    game.i18n = {localize: identity}
+    // @ts-expect-error Game is not defined for typescript.
+    global.game.i18n = {localize: identity}
     it("should convert all part input to string", () => {
         const underTest = new TooltipFormula();
 

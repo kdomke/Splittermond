@@ -6,7 +6,7 @@ import {fields, SplittermondDataModel} from "../../data/SplittermondDataModel.ts
  * Represents the initial tax on an actor's health or focus pool.
  * Must not be negative
  *
- * @extends {foundry.abstract.DataModel<PrimaryCost>}
+ * @extends {SplittermondDataModel<DataModelSchemaType<PrimaryCost.defineSchema>,never>}
  * @property {number} _nonConsumed  the non-consumed portion (that is exhausted or channeled minus consumed) of the costs
  * @property {number} _consumed the exclusive consumed portion of the costs
  * @property {boolean} _isChanneled whether these costs represent channeled costs

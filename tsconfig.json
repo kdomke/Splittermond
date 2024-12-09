@@ -12,14 +12,12 @@
     "strict": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "baseUrl": "../src",
-    "rootDir": "../src",
+    "baseUrl": "./src",
+    "rootDir": "./src",
     "noEmit": true,
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false
   },
-  "include": ["../src/**/*"],
-  "ts-node": {
-  }
+  "include": ["src/**/*"],
 }

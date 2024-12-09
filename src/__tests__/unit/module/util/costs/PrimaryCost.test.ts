@@ -1,9 +1,9 @@
 import "../../../foundryMocks.js"
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import {PrimaryCost} from "../../../../../module/util/costs/PrimaryCost.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
-import {parseCostString} from "../../../../../module/util/costs/costParser.js";
+import {PrimaryCost} from "module/util/costs/PrimaryCost.js";
+import {Cost} from "module/util/costs/Cost.js";
+import {parseCostString} from "module/util/costs/costParser.js";
 
 describe("BaseCost object edge cases", () => {
     it("isZero should return true for a zero cost object", () => {
@@ -41,7 +41,7 @@ describe("BaseCost object edge cases", () => {
 });
 
 describe("BaseCost object operation", () => {
-    [
+    ([
         [new PrimaryCost({
             _nonConsumed: 3,
             _consumed: 1,
@@ -82,13 +82,13 @@ describe("BaseCost object operation", () => {
             _consumed: 3000,
             _isChanneled: false
         }), new Cost(0, 1, true), new PrimaryCost({_nonConsumed: 100, _consumed: 3001, _isChanneled: false})],
-    ].forEach(
+    ]as const).forEach(
         ([costs1, costs2, expected]) => it(`should add ${costs1} and ${costs2} to ${expected}`, () => {
             const result = costs1.add(costs2.asModifier());
             expect(result).to.deep.equal(expected);
         }));
 
-    [
+    ([
         [new PrimaryCost({
             _nonConsumed: 4,
             _consumed: 2,
@@ -119,7 +119,7 @@ describe("BaseCost object operation", () => {
             _consumed: 3,
             _isChanneled: false
         }), new Cost(0, 3, true), new PrimaryCost({_nonConsumed: 5, _consumed: 0, _isChanneled: false})],
-    ].forEach(
+    ]as const).forEach(
         ([costs1, costs2, expected]) => it(`substracting ${costs2} from ${costs1} yields ${expected}`, () => {
             const result = costs1.subtract(costs2.asModifier());
             expect(result).to.deep.equal(expected);
@@ -147,14 +147,14 @@ describe("BaseCost object operation", () => {
 });
 
 describe("BaseCost object rendering", () => {
-    [
+    ([
         [new PrimaryCost({_nonConsumed: 0, _consumed: 0, _isChanneled: false}), "0"],
         [new PrimaryCost({_nonConsumed: 0, _consumed: 0, _isChanneled: true}), "0"],
         [new PrimaryCost({_nonConsumed: 0, _consumed: 3, _isChanneled: false}), "3V3"],
         [new PrimaryCost({_nonConsumed: 4, _consumed: 3, _isChanneled: true}), "K7V3"],
         [new PrimaryCost({_nonConsumed: 4, _consumed: 3, _isChanneled: false}), "7V3"],
         [new PrimaryCost({_nonConsumed: 4, _consumed: 0, _isChanneled: true}), "K4"],
-    ].forEach(
+    ]as const).forEach(
         ([costs, expected]) => it(`should render ${costs} as ${expected}`, () => {
             const result = costs.render();
             expect(result).to.equal(expected);

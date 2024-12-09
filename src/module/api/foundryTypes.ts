@@ -31,7 +31,7 @@ export interface Hooks {
 
 export interface Die {
     faces: number;
-    results: { active: true, result: number }[]
+    results: { active: boolean, result: number }[]
 }
 
 export interface OperatorTerm {

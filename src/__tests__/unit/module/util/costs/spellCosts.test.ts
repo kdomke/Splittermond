@@ -3,11 +3,11 @@ import {expect} from "chai";
 import {
     calculateReducedEnhancementCosts,
     calculateReducedSpellCosts
-} from "../../../../../module/util/costs/spellCosts.js";
-import {Cost} from "../../../../../module/util/costs/Cost.js";
-import {initializeSpellCostManagement} from "../../../../../module/util/costs/spellCostManagement.js";
+} from "module/util/costs/spellCosts.js";
+import {Cost} from "module/util/costs/Cost.js";
+import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement.js";
 
-const mockReductionManager = (...cost) => ({getCostModifiers: () => cost});
+const mockReductionManager = <T>(...cost:T[]) => ({getCostModifiers: () => cost});
 describe("Spell cost calculation basics", () => {
     const noReductionSpellCostManager = mockReductionManager();
     const baseSpellData = {
@@ -87,14 +87,12 @@ describe("Spell cost calculation with reductions", () => {
 
     it ("should apply reductions if spell type is not set", () => {
         const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
-        const spellData = {...baseSpellData, spellType: ""};
         const reducedCosts = calculateReducedSpellCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     });
 
     it ("should apply reductions if skill is not set", () => {
         const reductionSpellCostManager = mockReductionManager(new Cost(1, 1, true).asModifier());
-        const spellData = {...baseSpellData, skill: ""};
         const reducedCosts = calculateReducedSpellCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     });
@@ -105,7 +103,7 @@ describe("Spell cost calculation with reductions", () => {
         const reducedCosts = calculateReducedEnhancementCosts(baseSpellData, reductionSpellCostManager);
         expect(reducedCosts).to.equal("K1V1");
     });
-    [["cost reduction", calculateReducedEnhancementCosts], ["enhancement reduction", calculateReducedSpellCosts]].forEach(
+    ([["cost reduction", calculateReducedEnhancementCosts], ["enhancement reduction", calculateReducedSpellCosts]] as const).forEach(
         ([title, calculationFunction]) => {
             it(`${title} should allow increasing costs`, () => {
                 const reductionSpellCostManager = mockReductionManager(new Cost(-1, -1, false).asModifier());
@@ -129,7 +127,7 @@ describe("Spell cost calculation with reductions", () => {
 describe('Spell cost calculation reduction selection', () => {
     const reductionManagement = initializeSpellCostManagement({});
     const spellData = {
-        skill: null,
+        skill: "",
         spellType: "conjuration, corporal",
         costs: "K20V5",
         enhancementCosts: "5EG/+K20V5",
