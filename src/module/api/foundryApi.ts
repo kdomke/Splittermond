@@ -51,24 +51,15 @@ export const foundryApi = new class FoundryApi {
     }
 
     /**
-     * @param {string} messageKey
-     * @return {string} the localized string or the key if no localization is found
+     * @param  messageKey
+     * @return the localized string or the key if no localization is found
      */
     localize(messageKey: string): string {
         //@ts-ignore
         return game.i18n.localize(messageKey);
     }
 
-    /**
-     * @typedef ChatMessageTypes
-     * @type {object}
-     * @property EMOTE: 3
-     * @property IC: 2
-     * @property OOC: 1
-     * @property OTHER: 0
-     */
-
-    get chatMessageTypes(): ChatMessageTypes {
+    get chatMessageTypes(): typeof ChatMessageTypes {
         //@ts-ignore
         return CONST.CHAT_MESSAGE_TYPES;
     }
@@ -102,18 +93,12 @@ export const foundryApi = new class FoundryApi {
         return game.items.get(itemId);
     }
 
-    /**
-     * @return {SplittermondActor|undefined}
-     */
-    getActor(actorId: string) {
+    getActor(actorId: string): Actor | undefined {
         //@ts-ignore
         return game.actors.get(actorId);
     }
 
-    /**
-     * @returns {TokenDocument|undefined}
-     */
-    getToken(sceneId: string, tokenId: string) {
+    getToken(sceneId: string, tokenId: string):TokenDocument|undefined {
         //@ts-ignore
         return game.scenes.get(sceneId)?.tokens.get(tokenId);
     }

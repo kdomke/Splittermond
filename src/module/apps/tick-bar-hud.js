@@ -378,7 +378,7 @@ export default class TickBarHud extends Application {
             // Control and pan to Token object
             if ( token.object ) {
               token.object?.control({releaseOthers: true});
-              return canvas.animatePan({x: token.data.x, y: token.data.y});
+              return canvas.animatePan({x: token.x, y: token.y});
             }
 
         })

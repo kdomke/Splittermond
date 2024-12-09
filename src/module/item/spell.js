@@ -3,18 +3,18 @@ import AttackableItem from "./attackable-item.js";
 
 import {getSpellAvailabilityParser} from "./availabilityParser.js";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.js";
-import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.js";
-import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.js";
-import {SplittermondSpellRollMessage} from "../util/chat/spellChatMessage/SplittermondSpellRollMessage.js";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.ts";
+import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.ts";
+import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.ts";
 import {splittermond} from "../config.js";
-import {PrimaryCost} from "../util/costs/PrimaryCost.js";
-import {Cost} from "../util/costs/Cost.js";
+import {PrimaryCost} from "../util/costs/PrimaryCost.ts";
+import {Cost} from "../util/costs/Cost.ts";
+import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage.ts";
 
 
 /**
  * @extends SplittermondItem
- * @property {SplittermondSpellData} system
+ * @property {SplittermondSpellType} system
  * @property {SplittermondActor} actor
  */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
@@ -89,6 +89,10 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.system.effectDuration;
     }
 
+    get effectArea() {
+        return this.system.effectArea;
+    }
+
     get description() {
         return this.system.description;
     }
@@ -146,16 +150,9 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         };
 
         return this.skill.roll(options)
-            .then(result =>
-                !result ?
-                    false :
-                    SplittermondChatCard.create(
-                        this.actor,
-                        SplittermondSpellRollMessage.createRollMessage(
-                            this,
-                            result.report,
-                        ), result.rollOptions)
-                        .sendToChat()
+            .then(result => !result ? false :SplittermondChatCard.create(this.actor,
+                SpellRollMessage.initialize(this, result.report), result.rollOptions)
+                .sendToChat()
             ).then((result) => result ?? true);
     }
 

@@ -22,10 +22,20 @@ function SplittermondChatCardModelSchema() {
             blind: new fields.BooleanField({required:true, nullable:false}),
             whisper: new fields.ArrayField(new fields.StringField({}), {required: true, nullable: false, initial: []}),
         }, {required: true, blank: false, nullable: false}),
-        messageId: new fields.StringField({required: true, blank: false, nullable:true}),
+        messageId: new fields.StringField({required: true, blank: false, nullable: true, initial:null}),
         speaker: new fields.ObjectField({required: true, blank: false}),
         message: new fields.ObjectField({required: true, blank: false, nullable:false}), //if not object then foundry does not store the derived object properties.
     }
 }
 
-type SplittermondChatCardData = DataModelSchemaType<typeof SplittermondChatCardModelSchema>;
+interface SplittermondChatMessageBearer {
+    message: SplittermondChatMessage;
+}
+
+export interface SplittermondChatMessage {
+    template: string;
+    getData(): object;
+    handleGenericAction(data:{action:string}):Promise<void>
+    readonly constructorKey: string;
+}
+export type SplittermondChatCardData = Omit<DataModelSchemaType<typeof SplittermondChatCardModelSchema>,"message"> & SplittermondChatMessageBearer;

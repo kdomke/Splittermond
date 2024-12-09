@@ -84,5 +84,21 @@ Der in Foundry eingebaute "Combat Tracker" lässt sich nun als Tickleiste verwen
 Der NSC-Bogen bietet für Nicht-Spieler-Charaktere die Möglichkeit *abgeleitete Werte* sowie eine Auswahl an Fertigkeiten einzutragen.
 
 ![Screenshot](screenshots/npc-sheet-general.png)
-
 Gegnermerkmale wie *Schwächlich* haben aufgrund der einstellbaren Modifikatoren Auswirkungen auf die Anzahl der Wundstufen.
+
+## Entwicklung
+Das Projekt baut produziert mittels `vite` eine ES6-Webanwendung. Die Anwendung wird in den Ordner `dist` gebaut. Um Änderungen automatisch auf seinem Server zu haben, muss der Order `dist` in Foundry VTT als System-Ordner hinzugefügt werden.
+Bash:
+```bash
+ln -s /path/to/splittermond-fvtt/dist /path/to/foundryvtt/Data/systems/splittermond
+```
+PowerShell:
+```powershell
+New-Item -ItemType SymbolicLink -Path "C:\path\to\foundryvtt\Data\systems\splittermond" -Value "C:\path\to\splittermond-fvtt\dist"
+```
+Es sollte darauf geachtet werden, dass das Projekt nicht gebaut werden kann, wenn der dist ordner als Splittermond-Systemordner in Foundry VTT eingetragen ist,
+da der Server die Kompendium-Dateteien offen hält, sodass sie vom Build-Prozess nicht überschrieben werden können.
+
+Zur Entwicklung empfiehlt es sich deshalb, das Projekt mit `npm run dev` zu starten. Die Anwendung wird dann unter `localhost:30001` bereitgestellt,
+und zwar als Proxy zum eigentlichen Foundry server, von dem erwartet wird, dass er unter `localhost:30000` läuft. Der dev Server lädt 
+automatisch neu, wenn Änderungen gespeichert werden, sodass man immer auf einem aktuellen Stand ist.

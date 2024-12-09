@@ -9,8 +9,8 @@ import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
-import { parseCostString } from "../util/costs/costParser.js";
-import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.js";
+import { parseCostString } from "../util/costs/costParser.ts";
+import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.ts";
 
 /**
  * @property {SplittermondSpellData} system
@@ -27,7 +27,7 @@ export default class SplittermondActor extends Actor {
     Prepare Base Data Model
     */
     prepareBaseData() {
-        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);
+        //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
 
@@ -898,20 +898,27 @@ export default class SplittermondActor extends Actor {
         return super.importFromJSON(json);
     }
 
-    /** @returns {{pointSpent:boolean, getBonus(skillName:string): number}} splinterpoints spent */
+    /** @returns {{pointSpent:boolean, getBonus(skillName:SplittermondSkill): number}} splinterpoints spent */
     spendSplinterpoint() {
         if (this.splinterpoints.value > 0) {
             this.update({
-                "data.splinterpoints.value": parseInt(this.system.splinterpoints.value) - 1
+                system:{
+                    ...this.system,
+                    splinterpoints:{
+                        ...this.system.splinterpoints,
+                        value:parseInt(this.system.splinterpoints.value) - 1,
+
+                    }
+                }
             });
             return { pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName) }
-        };
+        }
         return { pointSpent: false, getBonus: () => 0 };
     }
 
     /**
      * This is a stub
-     * @param {string} skillName
+     * @param {SplittermondSkill} skillName
      * @return {number}
      */
     #getSplinterpointBonus(skillName) {

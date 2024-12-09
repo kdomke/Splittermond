@@ -1,6 +1,6 @@
 import {identity} from "../../../foundryMocks.js"; //also declares core foundry objects globally
 import {expect} from 'chai';
-import {createHtml} from "../../../../handlebarHarness.js";
+import {createHtml} from "../../../../handlebarHarness.ts";
 import {produceJQuery} from "../../../../jQueryHarness.js";
 import SplittermondSpellSheet from "../../../../../module/item/sheets/spell-sheet.js";
 import SplittermondSpellItem from "../../../../../module/item/spell.js";

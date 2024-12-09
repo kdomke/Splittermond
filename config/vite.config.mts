@@ -26,6 +26,11 @@ export default defineConfig({
             }
         }
     },
+    resolve:{
+        alias:{
+            'module': path.resolve(__dirname, '../src/module')
+        }
+    },
     build: {
         outDir: path.resolve(__dirname, '../dist'),
         emptyOutDir: true,
@@ -41,6 +46,9 @@ export default defineConfig({
                 assetFileNames: (chunkInfo) => {
                     if (chunkInfo.name === 'style.css')
                         return 'splittermond.css'
+                    else {
+                        return chunkInfo.name ?? ""
+                    }
                 }
             }
         }

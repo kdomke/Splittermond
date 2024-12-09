@@ -1,17 +1,12 @@
-/**
- * @typedef {{total:number, getTooltip():Promise<string>, dice: [{total:number}]}} RollResultForSplittermond
- * @typedef {{
-    difficulty: number
-    rollType: RollType
-    succeeded: boolean,
-    isFumble: boolean,
-    isCrit: boolean,
-    degreeOfSuccess: number,
-    degreeOfSuccessMessage: string,
-    roll: RollResultForSplittermond,
- }} GenericRollEvaluation
- */
 import {DamageRoll} from "./damage/DamageRoll.js";
+import {foundryApi} from "../api/foundryApi.ts";
+
+export const Dice = {
+    check,
+    evaluateCheck,
+    damage,
+    riskModifier
+};
 
 /**
  * @param skill
@@ -59,13 +54,13 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     const degreeOfSuccessMessageModifier = Math.min(Math.abs(degreeOfSuccess), 5)
     let degreeOfSuccessMessage;
     if (isCrit) {
-        degreeOfSuccessMessage = game.i18n.localize(`splittermond.critical`);
+        degreeOfSuccessMessage = foundryApi.localize(`splittermond.critical`);
     } else if (isFumble) {
-        degreeOfSuccessMessage = game.i18n.localize(`splittermond.fumble`);
+        degreeOfSuccessMessage = foundryApi.localize(`splittermond.fumble`);
     } else if (succeeded) {
-        degreeOfSuccessMessage = game.i18n.localize(`splittermond.successMessage.${degreeOfSuccessMessageModifier}`);
+        degreeOfSuccessMessage = foundryApi.localize(`splittermond.successMessage.${degreeOfSuccessMessageModifier}`);
     } else {
-        degreeOfSuccessMessage = game.i18n.localize(`splittermond.failMessage.${degreeOfSuccessMessageModifier}`);
+        degreeOfSuccessMessage = foundryApi.localize(`splittermond.failMessage.${degreeOfSuccessMessageModifier}`);
     }
     return {
         difficulty: difficulty,

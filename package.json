@@ -7,9 +7,9 @@
   "scripts": {
     "compileCss": "gulp less",
     "dev": "vite serve --config config/vite.config.mts",
-    "typecheck": "tsc -p config/tsconfig.test.json --noEmit",
-    "test": "npm run typecheck && tsc -p config/tsconfig.test.json && mocha --config config/mocharc.json",
-    "build": "tsc -p config/tsconfig.build.json && npm run test && vite build --config config/vite.config.mts"
+    "typecheck": "tsc",
+    "test": "npm run typecheck && mocha --config config/mocharc.json src/__tests__/unit/**",
+    "build": "npm run test && vite build --config config/vite.config.mts"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,6 @@
     "@types/chai": "^4.3.17",
     "@types/gulp": "^4.0.17",
     "@types/gulp-less": "^0.0.36",
-    "@types/handlebars": "^4.0.40",
     "@types/jquery": "^3.5.30",
     "@types/mocha": "^10.0.7",
     "@types/sinon": "^17.0.3",
@@ -35,7 +34,7 @@
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
     "tsx": "^4.17.0",
-    "typescript": "^5.5.3",
-    "vite": "^5.4.0"
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3"
   }
 }

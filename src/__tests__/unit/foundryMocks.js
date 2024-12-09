@@ -9,41 +9,61 @@ global.Application = class {
     }
 };
 
-global.Actor = class {
+global.Actor = class Actor{
+    constructor(data, context) {
+    }
 }
 
-global.Item = class {
+global.Item = class Item{
     constructor(data, context) {
     }
 };
+
 global.foundry = {
     data: {
         fields: {
             StringField: class {
                 options = null;
-                constructor(options){this.options = options}
+
+                constructor(options) {
+                    this.options = options
+                }
             },
             NumberField: class {
                 options = null;
-                constructor(options){this.options = options}
+
+                constructor(options) {
+                    this.options = options
+                }
             },
             ObjectField: class {
                 options = null;
-                constructor(options){this.options = options}
+
+                constructor(options) {
+                    this.options = options
+                }
             },
             SchemaField: class {
                 /**@type object */ schema = null;
                 /**@type unknown */ options = null;
-                constructor(schema, options){this.schema= schema; this.options = options}
+
+                constructor(schema, options) {
+                    this.schema = schema;
+                    this.options = options
+                }
             },
             BooleanField: class {
                 /**@type unknown */ options = null;
-                constructor(options){this.options = options}
+
+                constructor(options) {
+                    this.options = options
+                }
             },
             EmbeddedDataField: class {
                 /**@type function*/ type = null;
                 /**@type unknown */ options = null;
-                constructor(type, options){
+
+                constructor(type, options) {
                     this.type = type;
                     this.options = options;
                 }
@@ -52,10 +72,18 @@ global.foundry = {
     },
     abstract: {
         DataModel: class {
-            constructor(data, context={}) {
+            constructor(data, context = {}) {
                 for (const key in data) {
                     Object.defineProperty(this, key, {
                         value: data[key],
+                        writable: true,
+                        enumerable: true,
+                        configurable: true
+                    });
+                }
+                if("parent" in context){
+                    Object.defineProperty(this, "parent", {
+                        value: context.parent,
                         writable: true,
                         enumerable: true,
                         configurable: true
@@ -67,6 +95,10 @@ global.foundry = {
                 for (const key in data) {
                     this[key] = data[key];
                 }
+            }
+
+            update(data, context) {
+                this.updateSource(data, context)
             }
 
             /**

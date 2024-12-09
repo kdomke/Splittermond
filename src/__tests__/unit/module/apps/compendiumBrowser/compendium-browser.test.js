@@ -2,7 +2,7 @@ import "../../../foundryMocks.js";
 
 import {expect} from 'chai';
 import {produceJQuery} from "../../../../jQueryHarness.js";
-import {createHtml} from "../../../../handlebarHarness.js";
+import {createHtml} from "../../../../handlebarHarness.ts";
 import SplittermondCompendiumBrowser from "../../../../../module/apps/compendiumBrowser/compendium-browser.js";
 
 describe('compendium-browser filters spells', async () => {
