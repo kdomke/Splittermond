@@ -21,7 +21,7 @@ export const expected: Record<string,unknown> &{system:Omit<SplittermondSpellSys
     name: "Machtexplosion",
     img: "icons/svg/daze.svg",
     system: {
-        availableIn: "fightmagic 4",
+        availableIn: "combatmagic 4",
         spellType: "Schaden",
         costs: "8V3",
         difficulty: "KW",

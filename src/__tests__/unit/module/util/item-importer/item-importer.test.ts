@@ -5,6 +5,7 @@ import sinon, {SinonSandbox} from "sinon";
 import {itemCreator} from "../../../../../module/data/ItemCreator";
 import {expect} from "chai";
 import {foundryApi} from "../../../../../module/api/foundryApi";
+import {initLocalizer} from "./poorMansLocalizer";
 
 declare const game:any;
 global.ClipboardEvent = class {
@@ -18,7 +19,7 @@ describe("ItemImporter", () => {
     let sandbox: SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
-        sandbox.stub(foundryApi, "localize").callsFake((key:string)=>key);
+        sandbox.stub(foundryApi, "localize").callsFake(initLocalizer());
     });
     afterEach(() => {
         sandbox.restore();
