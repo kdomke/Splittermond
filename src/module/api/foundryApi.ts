@@ -3,7 +3,7 @@ import type {ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, User} from "./f
 export const foundryApi = new class FoundryApi {
 
     /**
-     * @param {string} messageKey the key to an entry in the localization file
+     * @param messageKey the key to an entry in the localization file
      */
     reportError(messageKey: string): void {
         //@ts-ignore
@@ -11,7 +11,7 @@ export const foundryApi = new class FoundryApi {
     }
 
     /**
-     * @param {string} messageKey the key to an entry in the localization file
+     * @param messageKey the key to an entry in the localization file
      */
     warnUser(messageKey: string): void {
         //@ts-ignore
@@ -19,7 +19,7 @@ export const foundryApi = new class FoundryApi {
     }
 
     /**
-     * @param {string} messageKey the key to an entry in the localization file
+     * @param messageKey the key to an entry in the localization file
      */
     informUser(messageKey: string): void {
         // @ts-ignore
@@ -39,6 +39,11 @@ export const foundryApi = new class FoundryApi {
     createChatMessage(chatData: object): Promise<ChatMessage> {
         //@ts-ignore
         return ChatMessage.create(chatData);
+    }
+
+    createItem(data: object): Promise<Item>{
+        //@ts-ignore
+        return Item.create(data);
     }
 
     /**
