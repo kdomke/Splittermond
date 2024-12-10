@@ -356,6 +356,27 @@
         "long": "Körperlicher Widerstand"
       }
     },
+    "skillAbbreviation": {
+      "antimagic": "Bann",
+      "controlmagic": "Beherrschung",
+      "motionmagic": "Bewegung",
+      "insightmagic": "Erkenntnis",
+      "stonemagic": "Fels",
+      "firemagic": "Feuer",
+      "healmagic": "Heilung",
+      "illusionmagic": "Illusion",
+      "combatmagic": "Kampf",
+      "lightmagic": "Licht",
+      "naturemagic": "Natur",
+      "shadowmagic": "Schatten",
+      "fatemagic": "Schicksal",
+      "protectionmagic": "Schutz",
+      "enhancemagic": "Stärkung",
+      "deathmagic": "Tod",
+      "transformationmagic": "Verwandlung",
+      "watermagic": "Wasser",
+      "windmagic": "Wind"
+    },
     "skillLabel": {
       "melee": "Handgemenge",
       "slashing": "Hiebwaffen",

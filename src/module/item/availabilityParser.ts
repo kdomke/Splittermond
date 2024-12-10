@@ -40,9 +40,17 @@ abstract class AvailabilityParser {
     private __skills : Iterable<SplittermondSkill>;
     private __i18n : Localizer;
 
-    constructor(i18n:Localizer, skills:Iterable<SplittermondSkill>) {
+    /**
+     *
+     * @param i18n The localizer to obtain the translations from
+     * @param skills The skills to translate
+     * @param additonalTranslations Additional translation to skills that are not the official translations.
+     */
+    constructor(i18n:Localizer, skills:Iterable<SplittermondSkill>, additonalTranslations:Map<string,SplittermondSkill>=new Map()) {
         this.__skills = skills;
         this.__i18n = i18n;
+
+        additonalTranslations.forEach((value, key) =>this._translationsAsKeys.set(key, value));
         for (const skill of skills) {
             const translation = i18n.localize(`splittermond.skillLabel.${skill}`);
             this._translationsAsKeys.set(translation.toLowerCase(), skill);
@@ -111,6 +119,16 @@ class SpellAvailabilityParser extends AvailabilityParser {
             splitItem.length === 2 &&
             !isNaN(parseFloat(splitItem[1]));
     }
+}
+
+function shorthandTranslations(i18n:Localizer, skills:Iterable<SplittermondSkill>):Map<string,SplittermondSkill> {
+    const translations = new Map<string,SplittermondSkill>();
+    for (const skill of skills) {
+        const translation = i18n.localize(`splittermond.skillAbbreviation.${skill}`);
+        const shorthand = translation.split(" ")[0].toLowerCase();
+        translations.set(shorthand, skill);
+    }
+    return translations;
 }
 
 class MasteryAvailabilityParser extends AvailabilityParser {

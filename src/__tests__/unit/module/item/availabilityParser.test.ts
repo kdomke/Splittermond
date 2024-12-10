@@ -18,8 +18,19 @@ const masteryI18n = {
 };
 
 const spellI18n = {
-    localize: (str:string) => str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie"
+    localize: spellLocalizerFunction
 };
+
+function spellLocalizerFunction(str:string){
+    if(str.includes("splittermond.skillLabel.")){
+        return str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie";
+    }else if(str.includes("splittermond.skillAbbreviation.")) {
+       return str === `splittermond.skillAbbreviation.${magicSkills[0]}` ? "Schicksal" : "Tod";
+    }else{
+        return str;
+    }
+
+}
 describe("spell availabilty display transformation", () => {
     const parser = getSpellAvailabilityParser(spellI18n, magicSkills);
     it("should return the input if no transformation is set", () => {
@@ -45,6 +56,11 @@ describe("spell availabilty display transformation", () => {
         expect(parser.toDisplayRepresentation("Cederion2, deaThmagic:1, GRW 234"))
             .to.equal("Cederion2, Todesmagie 1, GRW 234");
     });
+
+    it("should handle spell abbreviations",()=>{
+        expect(parser.toInternalRepresentation("Schicksal 1, Tod:2"))
+            .to.equal("fatemagic 1, deathmagic 2");
+    })
 });
 
 describe("spell availabilty internal transformation", () => {
