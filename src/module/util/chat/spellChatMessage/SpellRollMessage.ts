@@ -143,10 +143,9 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
         const degreeOfSuccessOption = this.optionsHandlerMap.get(optionData.action);
         const action = this.actionsHandlerMap.get(optionData.action);
         if(!action && !degreeOfSuccessOption ) {
-            //TODO: localize
-            foundryApi.warnUser("No handler found for action");
+            foundryApi.warnUser("splittermond.chatCard.spellMessage.noHandler", {action: optionData.action});
         } else if(!!action && !!degreeOfSuccessOption){
-            foundryApi.warnUser("Ambiguous action, please report this bug");
+            foundryApi.warnUser("splittermond.chatCard.spellMessage.tooManyHandlers", {action: optionData.action});
         } else if (action) {
             return this.handleActions(action, optionData);
         } else if (degreeOfSuccessOption){
