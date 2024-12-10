@@ -1,9 +1,9 @@
 import {foundryApi} from "../api/foundryApi";
 import type SplittermondSpellItem from "../item/spell";
-import {SplittermondSpellType} from "./SplittermondSpellData";
+import {SplittermondSpellSystemData} from "module/data/ItemSystemData";
 
 export const itemCreator = {
-    createSpell(data: {type: "spell", system: SplittermondSpellType}): Promise<SplittermondSpellItem> {
+    createSpell(data: {type: "spell", system: SplittermondSpellSystemData}): Promise<SplittermondSpellItem> {
         return foundryApi.createItem(data) as Promise<SplittermondSpellItem>;
     }
 }
