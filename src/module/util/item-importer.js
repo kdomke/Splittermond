@@ -1,5 +1,5 @@
 import SplittermondCompendium from "./compendium.js";
-import { getSpellAvailabilityParser } from "../item/availabilityParser.js";
+import { getSpellAvailabilityParser } from "../item/availabilityParser";
 import {itemCreator} from "../data/ItemCreator";
 import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config.js";

@@ -6,19 +6,19 @@ import {identity} from "../../foundryMocks.js";
 const magicSkills = [
     "fatemagic",
     "deathmagic",
-];
+] as const;
 
 const masterySkills = [
     "staffs",
-    "swords"
-];
+    "blades"
+] as const;
 
 const masteryI18n = {
-    localize: (str) => str === `splittermond.skillLabel.${masterySkills[0]}` ? "Stangenwaffen" : "Klingenwaffen"
+    localize: (str:string) => str === `splittermond.skillLabel.${masterySkills[0]}` ? "Stangenwaffen" : "Klingenwaffen"
 };
 
 const spellI18n = {
-    localize: (str) => str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie"
+    localize: (str:string) => str === `splittermond.skillLabel.${magicSkills[0]}` ? "Schicksalsmagie" : "Todesmagie"
 };
 describe("spell availabilty display transformation", () => {
     const parser = getSpellAvailabilityParser(spellI18n, magicSkills);
@@ -61,7 +61,7 @@ describe("spell availabilty internal transformation", () => {
     });
 
     it("should handle null input", () => {
-        expect(parser.toInternalRepresentation(/**@type {string}*/null )).to.equal(null);
+        expect(parser.toInternalRepresentation(null as any)).to.equal(null);
     });
     it("should handle empty input", () => {
         expect(parser.toInternalRepresentation("")).to.equal("");
@@ -100,12 +100,12 @@ describe("mastery availability display transformation", () => {
     });
 
     it("should handle typing errors", () => {
-        expect(parser.toDisplayRepresentation("sTaFFs, sWOrds"))
+        expect(parser.toDisplayRepresentation("sTaFFs, bLAdes"))
             .to.equal("Stangenwaffen, Klingenwaffen");
     });
 
     it("should pass on illegal values inbetween legal values",()=>{
-        expect(parser.toDisplayRepresentation("Cederion2, swoRDs, GRW 234"))
+        expect(parser.toDisplayRepresentation("Cederion2, blaDEs, GRW 234"))
             .to.equal("Cederion2, Klingenwaffen, GRW 234");
     });
 });
@@ -119,17 +119,17 @@ describe("mastery availabilty internal transformation", () => {
     });
 
     it("should translate localized availabilities", () => {
-        const expectedString = "staffs, swords";
+        const expectedString = "staffs, blades";
         expect(parser.toInternalRepresentation(`Stangenwaffen, Klingenwaffen`)).to.equal(expectedString);
     });
 
     it("should handle null input", () => {
-        expect(parser.toInternalRepresentation(/**@type string*/null)).to.equal(null);
+        expect(parser.toInternalRepresentation(null as any)).to.equal(null);
     });
 
     it("should handle typing errors", () => {
         expect(parser.toInternalRepresentation("stAnGenWAffen, kLInGenWafFen"))
-            .to.equal("staffs, swords");
+            .to.equal("staffs, blades");
     });
 
     it("should pass on illegal values inbetween legal values",()=>{
@@ -153,7 +153,7 @@ describe("cache consistency", () => {
 
     it("should return new instance if localizer differs", () => {
         const firstParser = getSpellAvailabilityParser({localize: identity}, ["fatemagic", "deathmagic"]);
-        const secondParser= getSpellAvailabilityParser({localize: (a)=> a}, ["fatemagic", "deathmagic"]);
+        const secondParser= getSpellAvailabilityParser({localize: (a:string)=> a}, ["fatemagic", "deathmagic"]);
 
         expect(firstParser).not.to.equal(secondParser);
     });
