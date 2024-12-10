@@ -119,7 +119,6 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
                 difficulty: `${this.checkReport.difficulty}`,
                 hideDifficulty: this.checkReport.hideDifficulty,
                 rollTypeMessage: foundryApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),
-                //@ts-expect-error We haven't typed spell yet
                 title: this.spellReference.getItem().name,
             },
             degreeOfSuccessDisplay: {

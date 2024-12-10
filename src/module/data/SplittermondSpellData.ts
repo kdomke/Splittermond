@@ -29,6 +29,7 @@ function SplittermondSpellSchema(){
     }
 }
 export type SplittermondSpellType = DataModelSchemaType<typeof SplittermondSpellSchema>
+
 export class SplittermondSpellData extends SplittermondDataModel<SplittermondSpellType>{
     static defineSchema = SplittermondSpellSchema;
 
