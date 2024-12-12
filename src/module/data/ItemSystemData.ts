@@ -1,20 +1,20 @@
 export interface SplittermondSpellSystemData {
-    "description": string,
-    "source": string
-    "availableIn": string,
-    "skill": string,
-    "skillLevel": number,
-    "spellType": string,
-    "costs": string,
-    "difficulty": string,
-    "damage": string,
-    "range": string,
-    "castDuration": string,
-    "effectDuration": string,
-    "effectArea": string,
-    "enhancementDescription": string,
-    "enhancementCosts": string,
-    "features": string,
+    "description": string | null | undefined,
+    "source": string | null | undefined
+    "availableIn": string | null | undefined,
+    "skill": string | null | undefined,
+    "skillLevel": number | null | undefined,
+    "spellType": string | null | undefined,
+    "costs": string | null | undefined,
+    "difficulty": string | null | undefined,
+    "damage": string | null | undefined,
+    "range": string | null | undefined,
+    "castDuration": string | null | undefined,
+    "effectDuration": string | null | undefined,
+    "effectArea": string | null | undefined,
+    "enhancementDescription": string | null | undefined,
+    "enhancementCosts": string | null | undefined,
+    "features": string | null | undefined,
     "degreeOfSuccessOptions": {
         "castDuration": boolean,
         "consumedFocus": boolean,
@@ -25,4 +25,15 @@ export interface SplittermondSpellSystemData {
         "range": boolean,
         "effectArea": boolean
     }
+}
+
+export interface SplittermondMasterySystemData {
+    description: string | null | undefined,
+    source: string | null | undefined,
+    modifier: string | null | undefined,
+    availableIn: string | null | undefined,
+    skill: string | null | undefined,
+    isGrandmaster: string | null | undefined,
+    isManeuver: string | null | undefined,
+    level: number | null | undefined,
 }
