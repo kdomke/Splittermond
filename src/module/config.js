@@ -9,6 +9,7 @@ import SplittermondMastery from "./item/mastery.js";
 import {rollType} from "./config/RollType";
 import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements";
 import {modifiers} from "./config/modifiers";
+import {skillGroups} from "./config/skillGroups";
 
 export const splittermond = {};
 
@@ -70,63 +71,8 @@ splittermond.woundMalus = {
 
 splittermond.damageLevel = ["splittermond.damageLevels.undamaged", "splittermond.damageLevels.tarnished", "splittermond.damageLevels.demolished", "splittermond.damageLevels.destroyed"]
 
-splittermond.skillGroups = {
-    fighting: [
-        "melee",
-        "slashing",
-        "chains",
-        "blades",
-        "longrange",
-        "staffs",
-        "throwing"],
-    general: ["acrobatics",
-        "alchemy",
-        "leadership",
-        "arcanelore",
-        "athletics",
-        "performance",
-        "diplomacy",
-        "clscraft",
-        "empathy",
-        "determination",
-        "dexterity",
-        "history",
-        "craftmanship",
-        "heal",
-        "stealth",
-        "hunting",
-        "countrylore",
-        "nature",
-        "eloquence",
-        "locksntraps",
-        "swim",
-        "seafaring",
-        "streetlore",
-        "animals",
-        "survival",
-        "perception",
-        "endurance"],
-    magic: ["antimagic",
-        "controlmagic",
-        "motionmagic",
-        "insightmagic",
-        "stonemagic",
-        "firemagic",
-        "healmagic",
-        "illusionmagic",
-        "combatmagic",
-        "lightmagic",
-        "naturemagic",
-        "shadowmagic",
-        "fatemagic",
-        "protectionmagic",
-        "enhancemagic",
-        "deathmagic",
-        "transformationmagic",
-        "watermagic",
-        "windmagic"]
-};
-splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic];
+splittermond.skillGroups = skillGroups;
+
 splittermond.resources = {
     core: ["reputation",
         "contacts",

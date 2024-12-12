@@ -1,5 +1,5 @@
 import {GenericRollEvaluation} from "../util/GenericRollEvaluation";
-import {SplittermondSkill} from "../../../public/template";
+import {SplittermondSkill} from "../config/skillGroups";
 
 export interface CheckReport extends Omit<GenericRollEvaluation, "roll"> {
     skill: {

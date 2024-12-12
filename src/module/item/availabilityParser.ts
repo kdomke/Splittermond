@@ -1,4 +1,4 @@
-import {SplittermondSkill} from "../../../public/template";
+import {SplittermondSkill} from "../config/skillGroups";
 
 /**
  * This module transformes the internal representation of the availability of spells and masteries into a

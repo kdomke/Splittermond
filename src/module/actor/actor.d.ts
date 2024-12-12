@@ -1,5 +1,6 @@
 import SplittermondItem from "../item/item";
-import {CostTypes, SplittermondSkill} from "../../../public/template";
+import {CostTypes} from "../../../public/template";
+import type {SplittermondSkill} from "../config/skillGroups";
 
 declare class SplittermondActor extends Actor {
     items: Collection<SplittermondItem>;
