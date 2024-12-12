@@ -1,5 +1,5 @@
 import {SplittermondSpellSystemData} from "module/data/ItemSystemData"
-
+export const testname = "Machtexplosion";
 export const input = `Machtexplosion (Spruch)
 Schulen: Kampf 4
 Typus: Schaden

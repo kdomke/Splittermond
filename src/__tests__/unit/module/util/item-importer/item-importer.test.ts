@@ -1,6 +1,7 @@
 import ItemImporter from "../../../../../module/util/item-importer";
 import * as Machtexplosion from "./GRW/spells/Machtexplosion.resource";
 import * as Maskerade from "./GRW/spells/Maskerade.resource";
+import * as Stahlhaut from "./GRW/spells/Stahlhaut.resource";
 import {describe, it} from "mocha";
 import sinon, {SinonSandbox, SinonStub} from "sinon";
 import {itemCreator} from "../../../../../module/data/ItemCreator";
@@ -34,35 +35,23 @@ describe("ItemImporter", () => {
             let spellCreationStub: SinonStub;
             beforeEach(() => {
                 spellCreationStub = sandbox.stub(itemCreator, "createSpell");
+                sandbox.stub(ItemImporter, "_folderDialog").returns(Promise.resolve("folderId"));
+                sandbox.stub(ItemImporter, "_skillDialog").returns(Promise.resolve("fightmagic"));
             });
 
-            it("should import spell 'Machtexplosion'", async () => {
-                const text = Machtexplosion.input
+            [Machtexplosion,Maskerade,Stahlhaut].forEach((resource) => {
 
-                sandbox.stub(ItemImporter, "_folderDialog").returns(Promise.resolve("folderId"));
-                sandbox.stub(ItemImporter, "_skillDialog").returns(Promise.resolve("fightmagic"));
+                it(`should import spell '${resource.testname}'`, async () => {
+                    const text = resource.input
 
-                await ItemImporter.pasteEventhandler(new ClipboardEvent(text));
+                    await ItemImporter.pasteEventhandler(new ClipboardEvent(text));
 
-                expect(spellCreationStub.calledOnce).to.be.true;
-                expect(spellCreationStub.getCalls()[0].args[0]).to.deep.equal(
-                    {folder: "folderId", ...Machtexplosion.expected});
+                    expect(spellCreationStub.calledOnce).to.be.true;
+                    expect(spellCreationStub.getCalls()[0].args[0]).to.deep.equal(
+                        {folder: "folderId", ...resource.expected});
 
-            })
-
-            it("should import spell 'Maskerade'", async () => {
-                const text = Maskerade.input
-
-                sandbox.stub(ItemImporter, "_folderDialog").returns(Promise.resolve("folderId"));
-                sandbox.stub(ItemImporter, "_skillDialog").returns(Promise.resolve("fightmagic"));
-
-
-                await ItemImporter.pasteEventhandler(new ClipboardEvent(text));
-
-                expect(spellCreationStub.calledOnce).to.be.true;
-                expect(spellCreationStub.getCalls()[0].args[0]).to.deep.equal(
-                    {folder: "folderId", ...Maskerade.expected});
-            })
+                })
+            });
         });
 
         it("should import several banemagtic masteries at once")

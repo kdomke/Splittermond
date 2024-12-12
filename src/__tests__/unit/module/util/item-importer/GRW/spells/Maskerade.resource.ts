@@ -1,4 +1,4 @@
-
+export const testname = "Maskerade";
 export const input = `
 Maskerade (Ritus)
 Schulen: Illusion 4
