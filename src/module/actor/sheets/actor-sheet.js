@@ -1,5 +1,7 @@
 import * as Dice from "../../util/dice.js"
 import * as Tooltip from "../../util/tooltip.js"
+import {splittermond} from "../../config.js";
+import {foundryApi} from "../../api/foundryApi";
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
@@ -558,6 +560,18 @@ export default class SplittermondActorSheet extends ActorSheet {
                                 }
                             }
                         });
+                        //if the entries from the availableIn are not valid, show all magic skills for all levels
+                        //this is fallback prudes hideous GUI, but should prevent errors at item rendering.
+                        if (Object.keys(buttons).length === 0) {
+                            splittermond.skillGroups.magic.forEach(item => {
+                                    buttons[item] = {
+                                        label: foundryApi.localize(`splittermond.skillLabel.${item}`),
+                                        callback: html => {
+                                            resolve(`${item} 0`);
+                                        }
+                                    };
+                            });
+                        }
                         buttons["_cancel"] = {
                             label: game.i18n.localize("splittermond.cancel"),
                             callback: html => {
