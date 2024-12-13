@@ -1,5 +1,5 @@
 import ActiveDefense from "../actor/active-defense.js";
-import AttackableItem from "./attackable-item.js";
+import AttackableItem from "./attackable-item.ts";
 import SplittermondPhysicalItem from "./physical.js";
 
 

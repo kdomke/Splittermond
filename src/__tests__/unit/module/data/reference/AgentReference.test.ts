@@ -10,7 +10,10 @@ import SplittermondActor from "../../../../../module/actor/actor";
 describe("AgentReference", () => {
     it("should initialize a token as token", () => {
         const mockActor = sinon.createStubInstance(SplittermondActor);
-        const probe = AgentReference.initialize({documentName: "Token", id: "1", parent: {documentName: "Scene", id: "2"}, actor:mockActor});
+        //mocks are incomplete but these properties are the only ones needed for the test
+        const parent = {documentName: "Scene", id: "2"} as unknown as FoundryDocument
+        const agent = {documentName: "Token", id: "1", parent , actor:mockActor}as unknown as TokenDocument
+        const probe = AgentReference.initialize(agent);
 
         expect(probe.id).to.equal("1");
         expect(probe.sceneId).to.equal("2");

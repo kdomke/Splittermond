@@ -17,7 +17,7 @@ describe('getBestActor', () => {
             id: "1",
             items: new Map(),
             actor: actor
-        }
+        } as unknown as TokenDocument; /* mock good enough for this test */
         sinon.stub(foundryApi, "getToken").returns(agentMock);
         sinon.stub(foundryApi, "getSpeaker").returns(sampleToken);
 
@@ -28,7 +28,7 @@ describe('getBestActor', () => {
 
     it("should query the actor if no token is found", () => {
         const sampleToken = {scene: "scene", token: "token", actor: "actor", alias: "alias"};
-        const agentMock = {documentName: "Actor", parent: undefined, id: "1", items: new Map()}
+        const agentMock = {documentName: "Actor", parent: undefined, id: "1", items: new Map()} as unknown as SplittermondActor /*mock good enough for this test */;
         sinon.stub(foundryApi, "getToken").returns(undefined);
         sinon.stub(foundryApi, "getActor").returns(agentMock);
         sinon.stub(foundryApi, "getSpeaker").returns(sampleToken);
