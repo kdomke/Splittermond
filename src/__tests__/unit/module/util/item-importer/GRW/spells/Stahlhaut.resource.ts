@@ -28,6 +28,12 @@ export const expected = {
         availableIn:  "stonemagic 4, protectionmagic 4",
         castDuration:  "25 Ticks",
         costs:  "K16V4",
+        damage: null,
+        effectArea: null,
+        features:  null,
+        skill:null,
+        skillLevel:null,
+        source:null,
         degreeOfSuccessOptions:  {
             castDuration:  true,
             channelizedFocus:  true,

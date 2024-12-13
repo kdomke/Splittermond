@@ -22,7 +22,6 @@ export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<Spli
 
 export function setUpMockSpellSelfReference(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondSpellItem> & ItemReference<SinonStubbedInstance<SplittermondSpellItem>> {
     const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
-    //@ts-expect-error splittermond item is not typed yet
     spellMock.system = {};
     sandbox.stub(foundryApi, "getItem").returns(spellMock);
     Object.defineProperty(spellMock, "getItem", {

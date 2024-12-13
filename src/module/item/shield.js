@@ -1,5 +1,5 @@
 import SplittermondPhysicalItem from "./physical.js";
-import AttackableItem from "./attackable-item.js";
+import AttackableItem from "./attackable-item.ts";
 import ActiveDefense from "../actor/active-defense.js";
 import Skill from "../actor/skill.js";
 

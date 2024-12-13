@@ -64,19 +64,19 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             spellReference: spellReference.toObject(),
             adjusted: new Cost(0, 0, false, false).asModifier().toObject(),
             consumed: FocusDegreeOfSuccessOptionField.initialize(
-                focusOptions.consumedFocus,
+                !!focusOptions.consumedFocus,
                 consumedFocusConfig.degreesOfSuccess,
                 parseCostString(consumedFocusConfig.focusCostReduction).asModifier(),
                 consumedFocusConfig.textTemplate
             ).toObject(),
             channeled: FocusDegreeOfSuccessOptionField.initialize(
-                focusOptions.channelizedFocus,
+                !!focusOptions.channelizedFocus,
                 channeledFocusConfig.degreesOfSuccess,
                 parseCostString(channeledFocusConfig.focusCostReduction).asModifier(),
                 channeledFocusConfig.textTemplate
             ).toObject(),
             exhausted: FocusDegreeOfSuccessOptionField.initialize(
-                focusOptions.exhaustedFocus,
+                !!focusOptions.exhaustedFocus,
                 exhaustedFocusConfig.degreesOfSuccess,
                 parseCostString(exhaustedFocusConfig.focusCostReduction).asModifier(),
                 exhaustedFocusConfig.textTemplate

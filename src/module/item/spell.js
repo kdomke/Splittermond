@@ -1,5 +1,5 @@
 import SplittermondItem from "./item.js";
-import AttackableItem from "./attackable-item.js";
+import AttackableItem from "./attackable-item.ts";
 
 import {getSpellAvailabilityParser} from "./availabilityParser.ts";
 import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
@@ -14,7 +14,7 @@ import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage.t
 
 /**
  * @extends SplittermondItem
- * @property {SplittermondSpellType} system
+ * @property {SplittermondSpellSystemData} system
  * @property {SplittermondActor} actor
  */
 export default class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
@@ -102,7 +102,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get degreeOfSuccessOptions() {
-        return this.system.degreeOfSuccessOptions;
+        return this.system.degreeOfSuccessOptions ?? {};
     }
 
     get spellType() {

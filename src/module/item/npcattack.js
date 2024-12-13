@@ -1,4 +1,4 @@
-import AttackableItem from "./attackable-item.js";
+import AttackableItem from "./attackable-item.ts";
 import SplittermondItem from "./item.js";
 import ActiveDefense from "../actor/active-defense.js";
 

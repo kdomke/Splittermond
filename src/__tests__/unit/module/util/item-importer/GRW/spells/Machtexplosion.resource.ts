@@ -17,7 +17,7 @@ Erfolgsgrade:
 Fokus
 • 1 EG (Kosten +1V1) Lorem ipsum dolor sit 30 Ticks mundo Zustand Benommen 1.
 `
-export const expected: Record<string,unknown> &{system:Omit<SplittermondSpellSystemData,"effectArea"|"effectDuration"|"features"|"skill"|"skillLevel"|"source">} = {
+export const expected: Record<string,unknown> &{system:SplittermondSpellSystemData} = {
     name: "Machtexplosion",
     img: "icons/svg/daze.svg",
     system: {
@@ -29,8 +29,14 @@ export const expected: Record<string,unknown> &{system:Omit<SplittermondSpellSys
         castDuration: "9 Ticks",
         damage: "5W6",
         description: "O feiticeiro alcancea seu arvore com uma toca doce e nao faz 5W6 Punkte Schaden. Schadensreduktion wirkt hier nicht wenn der Gegner ein Token ist. Das Ziel isst für 30 Ticks den Zustand Erschöpft 2.",
-        enhancementDescription: "Lorem ipsum dolor sit 30 Ticks mundo Zustand Benommen 1.",
+        effectArea: null,
+        effectDuration: null,
         enhancementCosts: "1 EG/+1V1",
+        enhancementDescription: "Lorem ipsum dolor sit 30 Ticks mundo Zustand Benommen 1.",
+        features: null,
+        skill: null,
+        skillLevel: null,
+        source: null,
         degreeOfSuccessOptions: {
             "castDuration": true,
             "consumedFocus": true,

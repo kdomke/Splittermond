@@ -38,6 +38,12 @@ export const expected = {
         availableIn: "illusionmagic 4",
         castDuration: "4 Minuten",
         costs: "K16V4",
+        damage:null,
+        effectArea: null,
+        features: null,
+        skill: null,
+        skillLevel: null,
+        source: null,
         degreeOfSuccessOptions: {
             castDuration: true,
             channelizedFocus: true,

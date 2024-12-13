@@ -9,6 +9,6 @@ export const itemCreator = {
     },
 
     createMastery(data:{type: "mastery", system: SplittermondMasterySystemData}): Promise<SplittermondMasteryItem> {
-        return foundryApi.createItem(data) as Promise<SplittermondSpellItem>;
+        return foundryApi.createItem(data) as Promise<SplittermondMasteryItem>;
     }
 }
