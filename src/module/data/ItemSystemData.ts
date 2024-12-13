@@ -65,7 +65,7 @@ export interface SplittermondProjectileSystemData
     skill?: string | null;
     subSkill?: string | null;
     weapon?: string | null;
-    features?: string[] | null;
+    features?: string | null;
 }
 
 export interface SplittermondEquipmentSystemData
@@ -79,7 +79,7 @@ export interface SplittermondShieldSystemData
         DefenseTemplate,
         ModifierTemplate {
     skill?: string | null;
-    features?: string[] | null;
+    features?: string | null;
     minAttributes?: string | null;
     equipped?: boolean | null;
 }
@@ -91,7 +91,7 @@ export interface SplittermondArmorSystemData
         ModifierTemplate {
     minStr?: number | null;
     damageReduction?: number | null;
-    features?: string[] | null;
+    features?: string | null;
     equipped?: boolean | null;
 }
 

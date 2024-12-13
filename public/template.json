@@ -468,7 +468,7 @@
       "skill": "craftmanship",
       "subSkill": "",
       "weapon": "",
-      "features": []
+      "features": ""
     },
     "equipment": {
       "templates": [
@@ -485,7 +485,7 @@
         "modifier"
       ],
       "skill": "",
-      "features": [],
+      "features": "",
       "minAttributes": "",
       "equipped": false
     },
@@ -498,7 +498,7 @@
       ],
       "minStr": 0,
       "damageReduction": 0,
-      "features": [],
+      "features": "",
       "equipped": false
     },
     "spell": {

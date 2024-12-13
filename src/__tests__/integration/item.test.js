@@ -36,6 +36,8 @@ export function itemTest(context) {
             expect(item.system).to.deep.equal(itemData.system);
             expect(item.name).to.equal(itemData.name);
             expect(item.type).to.equal(itemData.type);
+
+            await Item.deleteDocuments([item.id]);
         });
     });
 }
