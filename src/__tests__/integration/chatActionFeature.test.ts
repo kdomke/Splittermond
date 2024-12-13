@@ -1,5 +1,9 @@
 import {getActor, getActorWithItemOfType} from "./fixtures.js"
-import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard";
+import {
+    handleChatAction,
+    handleLocalChatAction,
+    SplittermondChatCard
+} from "../../module/util/chat/SplittermondChatCard";
 import {foundryApi} from "../../module/api/foundryApi";
 import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
 import type {ChatMessage, Hooks} from "../../module/api/foundryTypes";
@@ -65,7 +69,19 @@ export function chatActionFeatureTest(this:unknown, context: QuenchContext) {
 
             const messageId = chatCard.messageId ?? "This should not happen";
             await handleChatAction({action: "alterTitle"}, messageId);
-            expect(foundryApi.messages.get(messageId).content, "title was updated").to.contain("title2");
+            expect(foundryApi.messages.get(messageId).content, "title not was updated").to.contain("title2");
+            return ChatMessage.deleteDocuments([messageId]);
+        });
+
+        it("should be able to reproduce a message from local handled chat action", async () => {
+            const actor = getActor(this);
+            const message = new SplittermondTestRollMessage({title: "title"});
+            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
+            await chatCard.sendToChat();
+
+            const messageId = chatCard.messageId ?? "This should not happen";
+            expect(await handleLocalChatAction({localaction: "alterTitle"}, messageId)).not.to.throw;
+            expect(foundryApi.messages.get(messageId).content, "title was updated").not.to.contain("title2");
             return ChatMessage.deleteDocuments([messageId]);
         });
 
