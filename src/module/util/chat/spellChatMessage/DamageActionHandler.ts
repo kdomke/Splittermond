@@ -105,7 +105,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
         }
         return [
             {
-                type: "advanceToken",
+                type: "applyDamage",
                 value: `${this.totalDamage.getDamageFormula()}`,
                 disabled: this.used,
                 isLocal: false
