@@ -49,7 +49,7 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     const isCrit = roll.dice[0].total >= 19;
     const succeeded = difference >= 0 && !isFumble;
     degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
-    degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
+    degreeOfSuccess = degreeOfSuccess + ((isCrit && succeeded) ? 3 : 0);
 
     const degreeOfSuccessMessageModifier = Math.min(Math.abs(degreeOfSuccess), 5)
     let degreeOfSuccessMessage;
