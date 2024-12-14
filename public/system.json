@@ -101,7 +101,7 @@
     "verified": 12.326,
     "maximum": 12
   },
-  "url": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/",
-  "manifest": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/raw/main/system.json",
+  "url": "https://github.com/SplittermondFoundry/splittermond",
+  "manifest": "https://github.com/SplittermondFoundry/splittermond/releases/download/v0.12.3/system.json",
   "download": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt/get/main.zip"
 }

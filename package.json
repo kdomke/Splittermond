@@ -1,5 +1,5 @@
 {
-  "name": "splittermond",
+  "name": "@SplittermondFoundry/splittermond",
   "version": "1.0.0",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
   "main": "src/splittermond.js",
@@ -13,8 +13,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/rpgframework-cloud/splittermond-fvtt.git"
+    "url": "git+https://github.com/SplittermondFoundry/Splittermond.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "FoundryModul1.png",
+    "screenshots"
+  ],
   "author": "simon",
   "license": "ISC",
   "homepage": "https://bitbucket.org/rpgframework-cloud/splittermond-fvtt#readme",
