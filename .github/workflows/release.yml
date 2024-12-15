@@ -1,4 +1,4 @@
-name: Manual Build and Zip
+name: Release new Splittermond version
 permissions:
   contents: write
   packages: write
@@ -11,7 +11,7 @@ on:
         required: true
 
 jobs:
-  build-and-zip:
+  release-new-version:
     runs-on: ubuntu-latest
     env:
       outputName: splittermond-${{github.event.inputs.version}}
