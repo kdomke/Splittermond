@@ -73,6 +73,15 @@ describe("DamageActionHandler", () => {
             expect(options).to.have.length(0);
         });
 
+        it("should not render options degrees of success prohibit it",() =>{
+            const underTest = setUpDamageActionHandler(sandbox);
+            sandbox.replaceGetter(underTest.spellReference.getItem(),"degreeOfSuccessOptions",() =>({damage:false}))
+            underTest.checkReportReference.get().succeeded = true;
+
+            const options = underTest.renderDegreeOfSuccessOptions();
+            expect(options).to.have.length(0);
+        });
+
         [1,2,4,8].forEach((multiplicity) => {
             it(`should render degree of success costs negatively if the consumed ${multiplicity} is checked`, () => {
                 const underTest = setUpDamageActionHandler(sandbox);
@@ -164,16 +173,7 @@ function setUpDamageActionHandler(sandbox:SinonSandbox):WithMockedRefs<DamageAct
     })as unknown as WithMockedRefs<DamageActionHandler> /*TS cannot know that we're injecting mocks*/
 }
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
-    sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({
-        consumedFocus:true,
-        exhaustedFocus:true,
-        channelizedFocus:true,
-        damage: true,
-        castDuration: true,
-        effectDuration: true,
-        range: true,
-        effectArea: true,
-    }as Record<keyof typeof splittermond.spellEnhancement, boolean>));
+    sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({damage: true,}as Record<keyof typeof splittermond.spellEnhancement, boolean>));
     sandbox.stub(spellMock, "damage").get(()=> "1W6");
     spellMock.name = "name";
 }
