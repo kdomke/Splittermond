@@ -71,7 +71,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
     }
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
-        if (!this.isOption() && this.spellReference.getItem().damage) {
+        if (!(this.isOption() && this.spellReference.getItem().damage)) {
             return [];
         }
         return this.options.getMultiplicities()
