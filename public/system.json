@@ -98,7 +98,7 @@
   "secondaryTokenAttribute": "focusBar",
   "compatibility": {
     "minimum": 12,
-    "verified": 12.326,
+    "verified": 12.333,
     "maximum": 12
   },
   "url": "https://github.com/SplittermondFoundry/splittermond",
