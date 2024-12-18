@@ -21,6 +21,7 @@ describe("DamageActionHandler", () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         sandbox.stub(foundryApi, "localize").callsFake((key:string)=>key)
+        sandbox.stub(foundryApi, "getSpeaker").returns({actor: "actor", alias: "alias", scene: "scene", token: "token"});
     });
     afterEach(() => {
         sandbox.restore();
@@ -112,7 +113,7 @@ describe("DamageActionHandler", () => {
 
         it("should invoke Dice module on damage application", () =>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 
@@ -123,7 +124,7 @@ describe("DamageActionHandler", () => {
 
         it("should respect damage increases", () =>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
             underTest.checkReportReference.get().succeeded = true;
 
@@ -135,7 +136,7 @@ describe("DamageActionHandler", () => {
 
         it("should not allow using actions multiple times", ()=>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 

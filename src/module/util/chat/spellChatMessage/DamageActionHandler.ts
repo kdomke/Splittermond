@@ -99,7 +99,6 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                     this.totalDamage.getDamageFormula(),
                     //@ts-expect-error name and system exist, but we haven't typed this yet
                     this.spellReference.getItem().system.features,
-                    //@ts-expect-error name and system exist, but we haven't typed this yet
                     this.spellReference.getItem().name,//we don't wait for the promise, because we're done.
                     foundryApi.getSpeaker({actor: this.actorReference.getAgent()}))
                     .then(()=>{}); //don't pass chat message outstide
