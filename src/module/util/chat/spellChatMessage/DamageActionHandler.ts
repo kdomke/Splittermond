@@ -94,7 +94,6 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
             .withHandlesActions(this.handlesActions)
             .whenAllChecksPassed(()=> {
                 this.updateSource({used: true});
-                //@ts-expect-error name and system exist, but we haven't typed this yet
                 return Dice.damage(this.totalDamage.getDamageFormula(), this.spellReference.getItem().system.features, this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
                 }
             ).useAction(actionData);

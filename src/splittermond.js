@@ -215,19 +215,19 @@ Hooks.on("redraw-combat-tick", async () => {
     //yes i know this is not ideal, but either this or a websocket lib like https://github.com/manuelVo/foundryvtt-socketlib to signal the update of the combat tracker
     //Update: Since foundry now has its own socket system, this should maybe be changed?
     const currentScene = game.scenes.current?.id || null;    
-    let activeCombat = game.combats.find(c => (c.scene === null) || (c.data.scene === currentScene));
+    let activeCombat = game.combats.find(c => (c.scene === null) || (c.scene.id === currentScene));
     if(activeCombat == null)
     {
         return;
     }
     
-    var combatant = activeCombat.data.combatants.contents[0];     
+    var combatant = activeCombat.combatants.contents[0];
     if(combatant == null)
     {
         return;
     }       
     
-    await game.combat.setInitiative(combatant.id, combatant.data.initiative);
+    await game.combat.setInitiative(combatant.id, combatant.initiative);
 });
 
 Hooks.on("hotbarDrop", async (bar, data, slot) => {

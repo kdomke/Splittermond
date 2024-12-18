@@ -69,6 +69,9 @@ declare global {
 
     class Item extends FoundryDocument {
         readonly actor: Actor
+        name: string;
+        type:string;
+        system: Record<string,any>
     }
 
     class TokenDocument extends FoundryDocument {
@@ -82,5 +85,12 @@ declare global {
         readonly id: string
         readonly documentName: string
         readonly parent?: FoundryDocument
+
+        prepareBaseData():void;
+
+        /**
+         * Computation of values that are not put to the database
+         */
+        prepareDerivedData():void;
     }
 }

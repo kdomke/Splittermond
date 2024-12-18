@@ -8,6 +8,8 @@ import SplittermondNPCAttackItem from "./item/npcattack.js";
 import SplittermondMastery from "./item/mastery.js";
 import {rollType} from "./config/RollType";
 import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements";
+import {modifiers} from "./config/modifiers";
+import {skillGroups} from "./config/skillGroups";
 
 export const splittermond = {};
 
@@ -69,63 +71,8 @@ splittermond.woundMalus = {
 
 splittermond.damageLevel = ["splittermond.damageLevels.undamaged", "splittermond.damageLevels.tarnished", "splittermond.damageLevels.demolished", "splittermond.damageLevels.destroyed"]
 
-splittermond.skillGroups = {
-    fighting: [
-        "melee",
-        "slashing",
-        "chains",
-        "blades",
-        "longrange",
-        "staffs",
-        "throwing"],
-    general: ["acrobatics",
-        "alchemy",
-        "leadership",
-        "arcanelore",
-        "athletics",
-        "performance",
-        "diplomacy",
-        "clscraft",
-        "empathy",
-        "determination",
-        "dexterity",
-        "history",
-        "craftmanship",
-        "heal",
-        "stealth",
-        "hunting",
-        "countrylore",
-        "nature",
-        "eloquence",
-        "locksntraps",
-        "swim",
-        "seafaring",
-        "streetlore",
-        "animals",
-        "survival",
-        "perception",
-        "endurance"],
-    magic: ["antimagic",
-        "controlmagic",
-        "motionmagic",
-        "insightmagic",
-        "stonemagic",
-        "firemagic",
-        "healmagic",
-        "illusionmagic",
-        "combatmagic",
-        "lightmagic",
-        "naturemagic",
-        "shadowmagic",
-        "fatemagic",
-        "protectionmagic",
-        "enhancemagic",
-        "deathmagic",
-        "transformationmagic",
-        "watermagic",
-        "windmagic"]
-};
-splittermond.skillGroups.all = [...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic];
+splittermond.skillGroups = skillGroups;
+
 splittermond.resources = {
     core: ["reputation",
         "contacts",
@@ -1001,53 +948,7 @@ splittermond.icons = {
     }
 };
 
-splittermond.modifier = {
-    addsplinter: "splinterpoints +2",
-    sturdy: "LP +1",
-    resistbody: "KW +2",
-    resistmind: "GW +2",
-    focuspool: "FO +5",
-    highini: "INI -3",
-    resistpain: "woundMalus.mod -1",
-    resistpain1: "woundMalus.mod -1",
-    resistpain2: "woundMalus.mod -1",
-    swift: "GSW +1",
-    armour1: "handicap.armor.mod -1",
-    shield1: "handicap.shield.mod -1",
-    armour2: "tickMalus.armor.mod -1",
-    shield2: "tickMalus.shield.mod -1",
-    flashreflexes: "INI -3",
-    goodreflexes: "VTD +1",
-    arcanespeed: "GSW +1",
-    sprinter: "GSW +1",
-    focusregen: "focusRegeneration.multiplier 3",
-    liferegen: "healthRegeneration.multiplier 3",
-    naturalarmor: "SR +1",
-    "schmerzimmunität": "woundMalus.mod -100",
-    "schmerzresistenz": "woundMalus.mod -1",
-    "schwächlich": "woundMalus.nbrLevels 3",
-    "erhöhte fokusregeneration": "focusRegeneration.multiplier 3",
-    "erhöhte lebensregeneration": "healthRegeneration.multiplier 3",
-    "erhöhter fokuspool": "FO +5",
-    "flink": "GSW +1",
-    "hoher geistiger widerstand": "GW +2",
-    "hoher körperlicher widerstand": "KW +2",
-    "robust": "LP +1",
-    "verbesserte initiative": "INI -3",
-    "zusätzliche splitterpunkte": "splinterpoints +2",
-    "stabile magie": "lowerFumbleResult +1",
-    "blitzreflexe": "INI -3",
-    "gute reflexe": "VTD +1",
-    "rüstungsträger i": "handicap.armor.mod -1",
-    "rüstungsträger 1": "handicap.armor.mod -1",
-    "rüstungsträger ii": "tickMalus.armor.mod -1",
-    "rüstungsträger 2": "tickMalus.armor.mod -1",
-    "schildträger i": "handicap.shield.mod -1",
-    "schildträger 1": "handicap.shield.mod -1",
-    "schildträger ii": "tickMalus.shield.mod -1",
-    "schildträger 2": "tickMalus.shield.mod -1",
-    "natürlicher rüstungsschutz": "SR +1"
-};
+splittermond.modifier = modifiers;
 
 splittermond.fumbleTable = {
     fight: [

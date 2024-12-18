@@ -68,7 +68,7 @@ describe("ItemReference", () => {
         Object.defineProperty(itemMock, "actor", {value:actorMock})
         Object.defineProperty(actorMock, "items", {value:new Map()})
         Object.defineProperty(actorMock, "id", {value:"1"})
-        sinon.stub(foundryApi, "getActor").returns({id:"1", items: new Map(), documentName:"Actor"});
+        sinon.stub(foundryApi, "getActor").returns({id:"1", items: new Map(), documentName:"Actor"} as unknown as Actor/*mock good enough for this test */);
 
         const underTest = ItemReference.initialize(itemMock);
 

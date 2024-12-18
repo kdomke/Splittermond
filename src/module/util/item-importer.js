@@ -1,5 +1,8 @@
 import SplittermondCompendium from "./compendium.js";
-import { getSpellAvailabilityParser } from "../item/availabilityParser.js";
+import {itemCreator} from "../data/ItemCreator";
+import {foundryApi} from "../api/foundryApi";
+import {splittermond} from "../config.js";
+import {importSpell as spellImporter} from "./item-importer/spellImporter";
 
 export default class ItemImporter {
 
@@ -9,14 +12,14 @@ export default class ItemImporter {
         }, "");
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
-                title: game.i18n.localize("splittermond.selectAFolder"),
+                title: foundryApi.localize("splittermond.selectAFolder"),
                 content: `<label>Ordner</label> <select name="folder">
                 <option value="">keinen Ordner</option>
             ${folderList}
         </select>`,
                 buttons: {
                     ok: {
-                        label: game.i18n.localize("splittermond.ok"),
+                        label: foundryApi.localize("splittermond.ok"),
                         callback: html => {
                             resolve(html.find('[name="folder"]')[0].value);
                         }
@@ -31,7 +34,7 @@ export default class ItemImporter {
 
     static async _skillDialog(skillOptions) {
         let optionsList = skillOptions.reduce((str, skill) => {
-            let skillLabel = game.i18n.localize(`splittermond.skillLabel.${skill}`);
+            let skillLabel = foundryApi.localize(`splittermond.skillLabel.${skill}`);
             return `${str} <option value="${skill}">${skillLabel}</option>`;
         }, "");
         let p = new Promise((resolve, reject) => {
@@ -42,7 +45,7 @@ export default class ItemImporter {
         </select>`,
                 buttons: {
                     ok: {
-                        label: game.i18n.localize("splittermond.ok"),
+                        label: foundryApi.localize("splittermond.ok"),
                         callback: html => {
                             resolve(html.find('[name="skill"]')[0].value);
                         }
@@ -95,10 +98,10 @@ export default class ItemImporter {
         }
 
         // Check Weapons
-        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${CONFIG.splittermond.weaponFeatures.join("|").replace(/\s+/, "\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
+        let weaponRegex = `(.*?\\s*.*?)\\s+(?:Dorf|Kleinstadt|Großstadt|Metropole)\\s+(?:([0-9]+ [LST]|-|–)(?:\\s*\\/\\s*[0-9]+\\s[LST])?)\\s+([0-9]+|-|–)\\s+([0-9]+|-|–)\\s+([UGFMA]|-|–)\\s+([0-9+\\-W]+)\\s+([0-9]+)\\s+((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|\\+){3})\\s+(((AUS|BEW|INT|KON|MYS|STÄ|VER|WIL|)\\s*[0-9],?\\s*)*|–)\\s+((?:${splittermond.weaponFeatures.join("|").replace(/\s+/, "\\s+")}|\\s+|\s*[\\-–]\s*)\\s*[0-9]*\\s*,?\\s*)+`;
         let test = rawData.match(new RegExp(weaponRegex, "gm"));
         if (test && test.length > 0) {
-            let skills = CONFIG.splittermond.skillGroups.fighting.map(s => game.i18n.localize(`splittermond.skillLabel.${s}`)).join('|');
+            let skills = CONFIG.splittermond.skillGroups.fighting.map(s => foundryApi.localize(`splittermond.skillLabel.${s}`)).join('|');
             weaponRegex = `${skills}|${weaponRegex}`;
             test = rawData.match(new RegExp(weaponRegex, "gm"));
             if (test.length > 0) {
@@ -108,7 +111,7 @@ export default class ItemImporter {
                 for (let k = 0; k < test.length; k++) {
                     const m = test[k].trim().replace(/\s{2,}/gm, " ").replace("(*)", "");
                     if (m.match(new RegExp(skills, "gm"))) {
-                        skill = CONFIG.splittermond.skillGroups.fighting.find(s => game.i18n.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
+                        skill = CONFIG.splittermond.skillGroups.fighting.find(s => foundryApi.localize(`splittermond.skillLabel.${s}`).trim().toLowerCase() === m.trim().toLowerCase());
                         continue;
                     }
                     if (skill === "") {
@@ -172,8 +175,7 @@ export default class ItemImporter {
 
         // Import mastery
         if (rawData.match(/Schwelle [0-9]/gm)) {
-            this.importMastery(rawData);
-            return;
+            return this.importMastery(rawData);
         }
 
         // Import npcfeature
@@ -184,8 +186,9 @@ export default class ItemImporter {
     }
 
     static async importMastery(rawData) {
+        const itemPromises= [];
         let folder = await this._folderDialog();
-        let skill = await this._skillDialog([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.fighting, ...CONFIG.splittermond.skillGroups.magic]);
+        let skill = await this._skillDialog([...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]);
 
         rawData.match(/Schwelle\s+[0-9]\n.+/gm).forEach((s) => {
 
@@ -213,7 +216,7 @@ export default class ItemImporter {
                         skill: skill,
                         availableIn: skill,
                         level: level,
-                        modifier: CONFIG.splittermond.modifier[token[1].trim().toLowerCase()] || ""
+                        modifier: splittermond.modifier[token[1].trim().toLowerCase()] || ""
                     }
                 };
                 let escapeStr = token[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -226,13 +229,14 @@ export default class ItemImporter {
                 }
                 itemData.system.description = descriptionData[1].replace("\n", "").replace("", "");
 
-                Item.create(itemData);
+                itemPromises.push(itemCreator.createMastery(itemData));
 
                 console.log(itemData);
-                ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeMastery") }));
+                foundryApi.informUser("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeMastery") });
             });
 
         });
+        return Promise.all(itemPromises);
     }
 
     static async importNpcFeatures(rawData) {
@@ -260,7 +264,7 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
-            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeNpcfeature") }));
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeNpcfeature") }));
         });
     }
 
@@ -290,7 +294,7 @@ export default class ItemImporter {
             Item.create(itemData);
 
             console.log(itemData);
-            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeStrength") }));
+            ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeStrength") }));
         });
     }
 
@@ -336,7 +340,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeShield") }));
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeShield") }));
     }
 
     static async importArmor(rawData, folder = "") {
@@ -383,7 +387,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeArmor") }));
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeArmor") }));
     }
 
     static async importWeapon(rawData, skill = "", folder = "") {
@@ -477,96 +481,10 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: game.i18n.localize("ITEM.TypeWeapon") }));
+        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeWeapon") }));
     }
 
-    static async importSpell(spellName, rawData, folder) {
-        let spellData = {
-            type: "spell",
-            name: spellName,
-            img: CONFIG.splittermond.icons.spell.default,
-            folder: folder,
-            system: {}
-        };
-
-        const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
-        let tokens = rawData.split(new RegExp(`(${sectionLabels.map(sl => sl + ":").join("|")})`, "gm"));
-
-        for (let k = 0; k < tokens.length - 1; k++) {
-            const sectionHeading = tokens[k].trim();
-            const sectionData = tokens[k + 1].trim();
-            switch (sectionHeading) {
-                case "Schulen:":
-                    spellData.system.availableIn = getSpellAvailabilityParser(game.i18n, CONFIG.splittermond.skillGroups.magic).toInternalRepresentation(sectionData);
-                    break;
-                case "Typus:":
-                    spellData.system.spellType = sectionData;
-                    break;
-                case "Schwierigkeit:":
-                    spellData.system.difficulty = sectionData;
-                    if (spellData.system.difficulty.search("Geistiger Widerstand") >= 0 ||
-                        spellData.system.difficulty.search("Geist") >= 0) {
-                        spellData.system.difficulty = "GW";
-                    }
-
-                    if (spellData.system.difficulty.search("Körperlicher Widerstand") >= 0 ||
-                        spellData.system.difficulty.search("Körper") >= 0) {
-                        spellData.system.difficulty = "KW";
-                    }
-
-                    if (spellData.system.difficulty.search("Verteidigung") >= 0) {
-                        spellData.system.difficulty = "VTD";
-                    }
-                    break;
-                case "Kosten:":
-                    spellData.system.costs = sectionData;
-                    break;
-                case "Zauberdauer:":
-                    spellData.system.castDuration = sectionData;
-                    break;
-                case "Reichweite:":
-                    spellData.system.range = sectionData;
-                    break;
-                case "Wirkung:":
-                    spellData.system.description = sectionData;
-                    spellData.system.description = spellData.system.description.replace(/\n/g, " ");
-                    spellData.system.description = spellData.system.description.replace(/  /g, " ");
-                    break;
-                case "Wirkungsdauer:":
-                    spellData.system.effectDuration = sectionData;
-                    break;
-                case "Wirkungsbereich:":
-                    spellData.system.effectArea = sectionData;
-                    break;
-                case "Erfolgsgrade:":
-                    let enhancementData = sectionData.match(/([0-9] EG) \(Kosten ([KV0-9+]+)\): ([^]+)/);
-                    spellData.system.enhancementCosts = `${enhancementData[1]}/${enhancementData[2]}`;
-                    spellData.system.enhancementDescription = enhancementData[3].replace(/\n/g, " ");
-                    spellData.system.enhancementDescription = spellData.system.enhancementDescription.replace(/  /g, " ");
-                    spellData.system.degreeOfSuccessOptions = {
-                        castDuration: sectionData.search("Auslösezeit") >= 0,
-                        consumedFocus: sectionData.search("Verzehrter") >= 0,
-                        exhaustedFocus: sectionData.search("Erschöpfter") >= 0,
-                        channelizedFocus: sectionData.search("Kanalisierter") >= 0,
-                        effectDuration: sectionData.search("Wirkungsd") >= 0 || sectionData.search("dauer") >= 0,
-                        damage: sectionData.search("Schaden,") >= 0,
-                        range: sectionData.search("Reichw") >= 0,
-                        effectArea: sectionData.search("Wirkungsb") >= 0 || sectionData.search("bereich") >= 0
-                    }
-            }
-        }
-
-        let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.system.description);
-        if (damage) {
-            spellData.system.damage = damage[0] || "";
-        }
-
-        Item.create(spellData);
-
-
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: spellData.name, type: game.i18n.localize("ITEM.TypeSpell") }));
-        console.log(spellData);
-    }
+    static importSpell = spellImporter;
 
     static async importNpc(rawData) {
         let rawString = rawData.replace(/\r|\x02/g, "").replace(/\r\n/g, "\n");
@@ -758,7 +676,7 @@ export default class ItemImporter {
                     case /Fertigkeiten:/.test(tokenizedData[i]):
                         tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").split(",").forEach(skillStr => {
                             let skillData = skillStr.trim().match(/(.*?)\s+([0-9]+)/);
-                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].trim().toLowerCase());
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => foundryApi.localize(`splittermond.skillLabel.${i}`).toLowerCase() === skillData[1].trim().toLowerCase());
                             let skillValue = parseInt(skillData[2]) || 0;
                             actorData.system.skills[skill] = {
                                 value: skillValue
@@ -825,7 +743,7 @@ export default class ItemImporter {
                         let masteries = [];
                         tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").match(/[^(]+\s*\([^)]+\),?/g)?.forEach((skillEntryStr) => {
                             let masteryEntryData = skillEntryStr.trim().match(/([^(]+)\s*\(([^)]+)\)/);
-                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].trim().toLowerCase());
+                            let skill = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].find(i => foundryApi.localize(`splittermond.skillLabel.${i}`).toLowerCase() === masteryEntryData[1].trim().toLowerCase());
                             let level = 1;
                             masteryEntryData[2].split(/[,;:]/).forEach((masteryStr) => {
                                 masteryStr = masteryStr.trim();
@@ -903,7 +821,7 @@ export default class ItemImporter {
                         tokenizedData[i + 1].replace(/\n/g, " ").replace("  ", " ").split(/[;,]/)?.forEach(skillEntryStr => {
                             let spellEntryData = skillEntryStr.trim().match(/(:?([^ ]{3,})?\s*([0IV]+):)?\s*([^]+)/);
                             if (spellEntryData[2]) {
-                                let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[2].toLowerCase()));
+                                let newSkill = CONFIG.splittermond.skillGroups.magic.find(i => foundryApi.localize(`splittermond.skillLabel.${i}`).toLowerCase().startsWith(spellEntryData[2].toLowerCase()));
                                 if (newSkill) {
                                     skill = newSkill;
                                 }

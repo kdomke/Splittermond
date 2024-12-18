@@ -34,7 +34,7 @@ export class TickCostActionHandler extends SplittermondDataModel<TickCostActionH
         const castDurationConfig = splittermond.spellEnhancement.castDuration;
         return new TickCostActionHandler({
             used: false,
-            isOption: spellReference.getItem().degreeOfSuccessOptions.castDuration,
+            isOption: !!spellReference.getItem().degreeOfSuccessOptions.castDuration,
             tickReduction: 0,
             actorReference: actorReference,
             baseTickCost,
