@@ -16,6 +16,7 @@ import {OnAncestorReference} from "../../../data/references/OnAncestorReference"
 import {CheckReport} from "../../../actor/CheckReport";
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
+import {foundryApi} from "../../../api/foundryApi";
 
 function DamageActionHandlerSchema() {
     return {
@@ -70,7 +71,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
     }
 
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
-        if (!this.isOption()) {
+        if (!(this.isOption() && this.spellReference.getItem().degreeOfSuccessOptions.damage)) {
             return [];
         }
         return this.options.getMultiplicities()
@@ -94,7 +95,13 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
             .withHandlesActions(this.handlesActions)
             .whenAllChecksPassed(()=> {
                 this.updateSource({used: true});
-                return Dice.damage(this.totalDamage.getDamageFormula(), this.spellReference.getItem().system.features, this.spellReference.getItem().name); //we don't wait for the promise, because we're done.
+                return Dice.damage(
+                    this.totalDamage.getDamageFormula(),
+                    //@ts-expect-error name and system exist, but we haven't typed this yet
+                    this.spellReference.getItem().system.features,
+                    this.spellReference.getItem().name,//we don't wait for the promise, because we're done.
+                    foundryApi.getSpeaker({actor: this.actorReference.getAgent()}))
+                    .then(()=>{}); //don't pass chat message outstide
                 }
             ).useAction(actionData);
     }
@@ -105,7 +112,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
         }
         return [
             {
-                type: "advanceToken",
+                type: "applyDamage",
                 value: `${this.totalDamage.getDamageFormula()}`,
                 disabled: this.used,
                 isLocal: false

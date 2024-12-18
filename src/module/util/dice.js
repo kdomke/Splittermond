@@ -49,7 +49,7 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     const isCrit = roll.dice[0].total >= 19;
     const succeeded = difference >= 0 && !isFumble;
     degreeOfSuccess = isFumble ? Math.min(degreeOfSuccess - 3, -1) : degreeOfSuccess;
-    degreeOfSuccess = degreeOfSuccess + ((isCrit & succeeded) ? 3 : 0);
+    degreeOfSuccess = degreeOfSuccess + ((isCrit && succeeded) ? 3 : 0);
 
     const degreeOfSuccessMessageModifier = Math.min(Math.abs(degreeOfSuccess), 5)
     let degreeOfSuccessMessage;
@@ -73,7 +73,15 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
     };
 }
 
-export async function damage(damageFormula, featureString, damageSource = "") {
+/**
+ *
+ * @param {string} damageFormula
+ * @param {string} featureString
+ * @param {string} damageSource
+ * @param {{actor:string, alias:string, scene:string, token:string}|null} speaker
+ * @returns {Promise<ChatMessage>}
+ */
+export async function damage(damageFormula, featureString, damageSource = "", speaker= null) {
 
     const damage = DamageRoll.parse(damageFormula, featureString);
 
@@ -82,7 +90,7 @@ export async function damage(damageFormula, featureString, damageSource = "") {
     let actions = [];
 
     actions.push({
-        name: game.i18n.localize("splittermond.applyDamage"),
+        name: foundryApi.localize("splittermond.applyDamage"),
         icon: "fa-heart-broken",
         classes: "apply-damage",
         data: {
@@ -102,15 +110,16 @@ export async function damage(damageFormula, featureString, damageSource = "") {
         actions: actions
     };
 
+    const speakerOrUser = speaker?{speaker}:{user: game.user.id};
     let chatData = {
-        user: game.user.id,
+        ...speakerOrUser,
         rolls: [roll],
         content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
         sound: CONFIG.sounds.dice,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        type: foundryApi.chatMessageTypes.OTHER
     };
 
-    return ChatMessage.create(chatData);
+    return foundryApi.createChatMessage(chatData)
 }
 
 export function riskModifier() {

@@ -21,6 +21,7 @@ describe("DamageActionHandler", () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         sandbox.stub(foundryApi, "localize").callsFake((key:string)=>key)
+        sandbox.stub(foundryApi, "getSpeaker").returns({actor: "actor", alias: "alias", scene: "scene", token: "token"});
     });
     afterEach(() => {
         sandbox.restore();
@@ -72,6 +73,15 @@ describe("DamageActionHandler", () => {
             expect(options).to.have.length(0);
         });
 
+        it("should not render options degrees of success prohibit it",() =>{
+            const underTest = setUpDamageActionHandler(sandbox);
+            sandbox.replaceGetter(underTest.spellReference.getItem(),"degreeOfSuccessOptions",() =>({damage:false}))
+            underTest.checkReportReference.get().succeeded = true;
+
+            const options = underTest.renderDegreeOfSuccessOptions();
+            expect(options).to.have.length(0);
+        });
+
         [1,2,4,8].forEach((multiplicity) => {
             it(`should render degree of success costs negatively if the consumed ${multiplicity} is checked`, () => {
                 const underTest = setUpDamageActionHandler(sandbox);
@@ -112,7 +122,7 @@ describe("DamageActionHandler", () => {
 
         it("should invoke Dice module on damage application", () =>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 
@@ -123,7 +133,7 @@ describe("DamageActionHandler", () => {
 
         it("should respect damage increases", () =>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
             underTest.checkReportReference.get().succeeded = true;
 
@@ -135,7 +145,7 @@ describe("DamageActionHandler", () => {
 
         it("should not allow using actions multiple times", ()=>{
             const underTest = setUpDamageActionHandler(sandbox);
-            const diceModuleStub = sandbox.stub(Dice, "damage");
+            const diceModuleStub = sandbox.stub(Dice, "damage").returns(Promise.resolve());
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(()=>"1");
 
@@ -163,16 +173,7 @@ function setUpDamageActionHandler(sandbox:SinonSandbox):WithMockedRefs<DamageAct
     })as unknown as WithMockedRefs<DamageActionHandler> /*TS cannot know that we're injecting mocks*/
 }
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
-    sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({
-        consumedFocus:true,
-        exhaustedFocus:true,
-        channelizedFocus:true,
-        damage: true,
-        castDuration: true,
-        effectDuration: true,
-        range: true,
-        effectArea: true,
-    }as Record<keyof typeof splittermond.spellEnhancement, boolean>));
+    sandbox.stub(spellMock,"degreeOfSuccessOptions").get(()=>({damage: true,}as Record<keyof typeof splittermond.spellEnhancement, boolean>));
     sandbox.stub(spellMock, "damage").get(()=> "1W6");
     spellMock.name = "name";
 }
