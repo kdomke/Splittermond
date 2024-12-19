@@ -28,4 +28,24 @@ const response = await fetch("https://api.foundryvtt.com/_api/packages/release_v
     method: "POST",
     body: JSON.stringify(body)
 });
-const responseData = await response.json().then(data => {console.debug(data); return data})
+const isSuccessful = await processResponse(response);
+if (response.status !== 200 || !isSuccessful) {
+    console.error(`Error while publishing to FoundryVTT: ${response.statusText}`);
+    process.exit(1);
+} else {
+    console.log(`Successfully published to FoundryVTT: ${data}`)
+    process.exit(0);
+}
+
+/**
+ * @param {Response} response
+ * @return {Promise<boolean>} whether the response was successful
+ */
+async function processResponse(response) {
+    console.debug("Response", response);
+    console.log(`Received response with status ${response.status} and statusText ${response.statusText}`)
+    return response.json()
+        .then(data => {console.debug(data); return data})
+        .then(data => {console.log(`Foundry responds with status '${data.status} and message ${data.message}`); return data})
+        .then(data => data.status === "success");
+}
