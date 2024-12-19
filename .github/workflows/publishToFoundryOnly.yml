@@ -22,7 +22,9 @@ jobs:
         with:
           node-version: '20'
       - name: Release to Foundry
-        run: node ./.github/scripts/publish_to_foundry.mjs
+        run: |
+          curl -v https://api.foundryvtt.com/_api/packages/release_version/
+          node ./.github/scripts/publish_to_foundry.mjs
         env:
           AUTH_TOKEN: ${{secrets.FOUNDRY_VTT_PUBLISH_TOKEN}}
           SYSTEM_JSON_PATH: './public/system.json'
