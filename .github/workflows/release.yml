@@ -1,6 +1,7 @@
 name: Release new Splittermond version
 permissions:
   contents: write
+  id-token: write
   packages: write
 
 on:
