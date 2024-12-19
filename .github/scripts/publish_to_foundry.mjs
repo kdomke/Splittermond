@@ -15,7 +15,7 @@ const  body = {
         "version": systemJson.version,
         "manifest": systemJson.manifest,
         "notes": `https://github.com/SplittermondFoundry/splittermond/releases/tag/v${systemJson.version}`,
-        "copmatibility": systemJson.compatibility
+        "compatibility": systemJson.compatibility
     }
 }
 console.debug("Request body", body);
