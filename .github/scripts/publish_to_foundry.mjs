@@ -33,7 +33,7 @@ if (response.status !== 200 || !isSuccessful) {
     console.error(`Error while publishing to FoundryVTT: ${response.statusText}`);
     process.exit(1);
 } else {
-    console.log(`Successfully published to FoundryVTT: ${data}`)
+    console.log(`Successfully published to FoundryVTT`)
     process.exit(0);
 }
 
@@ -43,9 +43,9 @@ if (response.status !== 200 || !isSuccessful) {
  */
 async function processResponse(response) {
     console.debug("Response", response);
-    console.log(`Received response with status ${response.status} and statusText ${response.statusText}`)
+    console.debug(`Received response with status ${response.status} and statusText ${response.statusText}`)
     return response.json()
-        .then(data => {console.debug(data); return data})
-        .then(data => {console.log(`Foundry responds with status '${data.status} and message ${data.message}`); return data})
+        .then(data => {console.debug(data); return data;})
+        .then(data => {console.debug(`Foundry responds with status '${data.status} and message ${data.message}`); return data;})
         .then(data => data.status === "success");
 }
