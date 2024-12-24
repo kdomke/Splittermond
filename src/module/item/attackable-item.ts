@@ -20,9 +20,8 @@ function AttackableItem<TBase extends Constructor<SplittermondItem>>(Base: TBase
         prepareActorData(): void {
             super.prepareActorData();
 
-            if(!("equipped" in this.system)) {
-               return
-            }else if (!this.system.equipped && this.type !== "npcattack") {
+            const isUnequipped = !("equipped" in this.system  && this.system.equipped);
+            if ( isUnequipped && this.type !== "npcattack") {
                 return;
             }
 
