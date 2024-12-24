@@ -73,7 +73,7 @@ jobs:
         env:
             NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Create release
-        uses: elgohr/Github-Release-Action@20240816194204
+        uses: elgohr/Github-Release-Action@release-20241111151247
         with:
           title: v${{github.event.inputs.version}}
           tag: v${{github.event.inputs.version}}
