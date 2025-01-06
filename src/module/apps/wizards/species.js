@@ -1,4 +1,5 @@
 import SplittermondWizard from "./wizard.js";
+import {foundryApi} from "../../api/foundryApi";
 
 export default class SplittermondSpeciesWizard extends SplittermondWizard {
     constructor(actor, item) {
@@ -35,7 +36,7 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/wizards/species.hbs",
             classes: ["splittermond", "wizard", "species"]
         });

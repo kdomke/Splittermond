@@ -1,6 +1,8 @@
+import {foundryApi} from "../../api/foundryApi";
+
 export default class SplittermondItemSheet extends ItemSheet {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/item/item-sheet.hbs",
             classes: ["splittermond", "sheet", "item"],
             tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "description"}],

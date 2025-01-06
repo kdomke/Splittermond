@@ -1,10 +1,11 @@
 import SplittermondSpeciesWizard from "../../apps/wizards/species.js"
 import SplittermondActorSheet from "./actor-sheet.js"
+import {foundryApi} from "../../api/foundryApi";
 
 
 export default class SplittermondCharacterSheet extends SplittermondActorSheet {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/actor/character-sheet.hbs",
             classes: ["splittermond", "sheet", "actor"],
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },

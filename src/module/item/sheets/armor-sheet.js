@@ -1,8 +1,9 @@
 import SplittermondItemSheet from "./item-sheet.js";
+import {foundryApi} from "../../api/foundryApi";
 
 export default class SplittermondArmorSheet extends SplittermondItemSheet {
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             classes: ["splittermond", "sheet", "item", "armor"]
         });
     }

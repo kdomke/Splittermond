@@ -1,3 +1,4 @@
+import {foundryApi} from "../api/foundryApi";
 
 export default class TokenActionBar extends Application {
 
@@ -14,7 +15,7 @@ export default class TokenActionBar extends Application {
 
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/action-bar.hbs",
             id: "token-action-bar",
             popOut: false,

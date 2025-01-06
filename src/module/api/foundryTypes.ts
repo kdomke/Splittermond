@@ -11,7 +11,7 @@ export interface ChatMessage {
 
     getFlag(scope: string, key: string): object
 
-    deleteDocuments(documentId:string[]):Promise<void>
+    deleteDocuments(documentId: string[]): Promise<void>
 }
 
 export enum ChatMessageTypes {
@@ -28,14 +28,14 @@ export interface User {
 }
 
 export interface Socket {
-    on: (key: string, callback: (data:unknown) => void) => void;
+    on: (key: string, callback: (data: unknown) => void) => void;
     emit: (key: string, object: object) => void;
 }
 
 export interface Hooks {
-    once: (key: string, callback: (...args:any[]) => void) => number;
-    on: ((key: string, callback: (...args:any[]) => void) => number);
-    off: (key:string, id:number) => void;
+    once: (key: string, callback: (...args: any[]) => void) => number;
+    on: ((key: string, callback: (...args: any[]) => void) => number);
+    off: (key: string, id: number) => void;
 }
 
 export interface Die {
@@ -70,8 +70,8 @@ declare global {
     class Item extends FoundryDocument {
         readonly actor: Actor
         name: string;
-        type:string;
-        system: Record<string,any>
+        type: string;
+        system: Record<string, any>
     }
 
     class TokenDocument extends FoundryDocument {
@@ -81,16 +81,30 @@ declare global {
     }
 
     class FoundryDocument {
-        constructor(data:Object, options?:Record<string, any>);
+        constructor(data: Object, options?: Record<string, any>);
+
         readonly id: string
         readonly documentName: string
         readonly parent?: FoundryDocument
 
-        prepareBaseData():void;
+        prepareBaseData(): void;
 
         /**
          * Computation of values that are not put to the database
          */
-        prepareDerivedData():void;
+        prepareDerivedData(): void;
     }
+}
+
+export interface MergeObjectOptions {
+    insertKeys?: boolean;
+    insertValues?: boolean;
+    overwrite?: boolean;
+    inplace?: boolean;
+    enforceTypes?: boolean;
+    /** <p>Forces the function to interpret keys that start with -= as deletion instructions.
+     *  E.g. If  set to <em> true</em> {"-=k1": null} will delete k1 from the object.</p>
+     *  <p><strong>DO NOT USE THIS.</strong> if this prop is set to false, "-=k1" will be added to the object. </p>
+     */
+    performDeletions?: boolean;
 }
