@@ -80,7 +80,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                 render: {
                     ...m.render(),
                     disabled: this.used,
-                    action: "castDurationUpdate",
+                    action: "damageUpdate",
                 },
                 cost: m.isChecked() ? -m.cost : m.cost
             }));
