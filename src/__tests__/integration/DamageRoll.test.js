@@ -1,5 +1,5 @@
 import {foundryApi} from "../../module/api/foundryApi.ts";
-import {DamageRoll} from "../../module/util/damage/DamageRoll.js";
+import {DamageRoll} from "../../module/util/damage/DamageRoll.ts";
 
 export function DamageRollTest(context) {
     const {describe, it, expect} = context;
