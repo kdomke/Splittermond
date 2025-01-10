@@ -149,18 +149,90 @@ function parseFeatureString(featureString) {
     return features;
 }
 
-/** @param {string} damageString */
+/**
+ * @param {string} damageString
+ * @return {{nDice:number, nFaces:number,modifiers:number}}
+ */
 function parseDamageString(damageString) {
-    const sanitizedFormula = damageString.toLowerCase().replace("w", "d").replaceAll("_", "");
-    //throwing more than 999 dice is not supported by Foundr V11.
-    const damageFormulaData = /([0-9]{1,999})d(6|10)(\s*([+-])\s*([0-9]*))?/.exec(sanitizedFormula);
-    if (!damageFormulaData) {
-        return { nDice: 0, nFaces: 0, damageModifier: 0 };
+    const sanitizedFormula = sanitizeDamageString(damageString)
+    const terms = getStringSegments(sanitizedFormula);
+    const firstDieTerm = parseDie(terms.firstDie);
+    //dice other than 6 or 10 faced do not occur in damage calculation
+    if(![0,6,10].includes(firstDieTerm.nFaces)){
+        console.warn(`Discarded damage string ${damageString}, because it uses dice with an invalid number of faces.`)
+        return {nDice:0, nFaces:0, damageModifier:0}
     }
-    const nDice = parseInt(damageFormulaData[1] || 1);
-    const nFaces = parseInt(damageFormulaData[2]);
-    const sign = damageFormulaData[4] === "-" ? -1 : 1;
-    const parsedDamageModifier = sign * parseInt(damageFormulaData[5]);
-    const damageModifier = isNaN(parsedDamageModifier) ? 0 : parsedDamageModifier;
-    return { nDice, nFaces, damageModifier };
+    return {...firstDieTerm, damageModifier: parseModifiers(terms.modifiers)}
+}
+
+/**
+ * @param {string} damageString
+ * @return {string}
+ */
+function sanitizeDamageString(damageString) {
+    return damageString.toLowerCase()
+        .replace(/\s/g,"")
+        .replace(/w/g, "d")
+        .replace(/_/g, "");
+}
+
+/**
+ *
+ * @param {string} damageString
+ * @returns {{firstDie: string, otherDice: *[], modifiers: *[]}}
+ */
+function getStringSegments(damageString){
+    const pattern = /([+-]?\d*d\d+|[+-]\d+)/g;
+    const terms = damageString.match(pattern);
+    const segmentedTerms = {firstDie:"0d0", otherDice:[], modifiers:[]}
+    if(!Array.isArray(terms)){
+        return segmentedTerms
+    }
+    let firstDieFound =false;
+    for(/**@type string*/const term of terms){
+        if(term.includes("d") && !firstDieFound){
+            firstDieFound = true;
+           segmentedTerms.firstDie = term;
+        }else if (terms.includes("d")){
+            segmentedTerms.otherDice.push(term)
+        }else {
+            segmentedTerms.modifiers.push(term)
+        }
+    }
+    return segmentedTerms;
+}
+
+/**
+ * @param {string}dieTerm
+ * @return {{ndice:number, nfaces:number}}
+ */
+function parseDie(dieTerm){
+    //throwing more than 999 dice is not supported by Foundry V12.
+    const diceTermPattern = /(?<ndice>\d{0,999})d(?<nfaces>\d+)/
+    const parsedTerm = diceTermPattern.exec(dieTerm);
+    return {
+        nDice: parseInt(parsedTerm.groups.ndice ?? '0'),
+        nFaces: parseInt(parsedTerm.groups.nfaces)
+    }
+}
+
+
+/**
+ *
+ * @param {string[]}modifierTerms
+ * @returns {number}
+ */
+function parseModifiers(modifierTerms){
+    function isANumber(modifier, index){
+        if(isNaN(modifier)){
+            console.warn(`Discarded flat damage term ${modifierTerms[index]}, because it could not be parsed`)
+            return false;
+        }else {
+            return true;
+        }
+    }
+    return modifierTerms
+        .map(term => parseInt(term))
+        .filter(isANumber)
+        .reduce((a,b)=>a+b,0);
 }

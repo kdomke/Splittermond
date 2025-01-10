@@ -20,6 +20,8 @@ describe("DamageRoll damage string parsing and stringifying", () => {
         ["1w6+ 1", {nDice: 1, nFaces: 6, damageModifier: 1}],
         ["1W6- 1", {nDice: 1, nFaces: 6, damageModifier: -1}],
         ["2d6- 1", {nDice: 2, nFaces: 6, damageModifier: -1}],
+        ["2d6+ 1 +1", {nDice: 2, nFaces: 6, damageModifier: +2}],
+        ["2d6+ 1 +1+3", {nDice: 2, nFaces: 6, damageModifier: +5}],
         ["9d6+10", {nDice: 9, nFaces: 6, damageModifier: 10}],
         ["9W10+20", {nDice: 9, nFaces: 10, damageModifier: 20}],
         ["20W10+200", {nDice: 20, nFaces: 10, damageModifier: 200}],
