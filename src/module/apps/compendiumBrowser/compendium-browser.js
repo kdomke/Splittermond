@@ -1,4 +1,5 @@
 import {initializeDisplayPreparation} from "./itemDisplayPreparation.js";
+import {foundryApi} from "../../api/foundryApi";
 
 /**
  * @returns {typeof indexSearchParameters};
@@ -24,7 +25,7 @@ export default class SplittermondCompendiumBrowser extends Application {
 
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/compendium-browser.hbs",
             classes: ["splittermond", "compendium-browser"],
             tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "spell"}],

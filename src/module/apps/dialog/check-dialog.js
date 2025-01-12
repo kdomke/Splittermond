@@ -1,3 +1,5 @@
+import {foundryApi} from "../../api/foundryApi";
+
 export default class CheckDialog extends Dialog {
     constructor(checkData, dialogData = {}, options = {}) {
         super(dialogData, options);
@@ -6,7 +8,7 @@ export default class CheckDialog extends Dialog {
     }
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             classes:["splittermond", "dialog","dialog-check"],
             width: 450,
         });

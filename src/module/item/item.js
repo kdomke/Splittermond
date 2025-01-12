@@ -1,3 +1,4 @@
+import {foundryApi} from "../api/foundryApi";
 
 export default class SplittermondItem extends Item {
 
@@ -5,7 +6,7 @@ export default class SplittermondItem extends Item {
         if (context?.splittermond?.ready) {
             super(data, context);
         } else {
-            mergeObject(context, { splittermond: { ready: true } });
+            foundryApi.mergeObject(context, { splittermond: { ready: true } },{inplace:true});
             const ItemConstructor = CONFIG.splittermond.Item.documentClasses[data.type];
             return ItemConstructor ? new ItemConstructor(data, context) : new SplittermondItem(data, context);
         }

@@ -2,12 +2,13 @@ import SplittermondSpeciesWizard from "../../apps/wizards/species.js"
 import SplittermondActorSheet from "./actor-sheet.js"
 import * as Dice from "../../util/dice.js"
 import CheckDialog from "../../apps/dialog/check-dialog.js";
+import {foundryApi} from "../../api/foundryApi";
 
 
 export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/actor/npc-sheet.hbs",
             classes: ["splittermond", "sheet", "actor", "npc"],
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },

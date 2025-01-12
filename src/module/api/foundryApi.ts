@@ -1,4 +1,4 @@
-import type {ChatMessage, ChatMessageTypes, Hooks, Roll, Socket, User} from "./foundryTypes";
+import type {ChatMessage, ChatMessageTypes, Hooks, MergeObjectOptions, Roll, Socket, User} from "./foundryTypes";
 
 export const foundryApi = new class FoundryApi {
 
@@ -104,7 +104,6 @@ export const foundryApi = new class FoundryApi {
         return Hooks;
     }
 
-
     /**
      * @return {SplittermondItem}
      */
@@ -126,5 +125,10 @@ export const foundryApi = new class FoundryApi {
     roll(damageFormula: string, context: object = {}): Roll {
         // @ts-ignore
         return new Roll(damageFormula, context)
+    }
+
+    mergeObject<T extends object, U extends object>(original: T, other?: U, options?:MergeObjectOptions): Partial<T> & Partial<U>{
+        // @ts-ignore
+        return foundry.utils.mergeObject(original, other, options);
     }
 }
