@@ -3,7 +3,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
 import {foundryApi} from "module/api/foundryApi";
-import {Roll} from "../../../../module/api/foundryTypes";
+import {Die, Roll} from "../../../../module/api/foundryTypes";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -20,6 +20,8 @@ describe("DamageRoll damage string parsing and stringifying", () => {
         ["1w6+ 1", {nDice: 1, nFaces: 6, damageModifier: 1}],
         ["1W6- 1", {nDice: 1, nFaces: 6, damageModifier: -1}],
         ["2d6- 1", {nDice: 2, nFaces: 6, damageModifier: -1}],
+        ["2d6+ 1 +1", {nDice: 2, nFaces: 6, damageModifier: +2}],
+        ["2d6+ 1 +1+3", {nDice: 2, nFaces: 6, damageModifier: +5}],
         ["9d6+10", {nDice: 9, nFaces: 6, damageModifier: 10}],
         ["9W10+20", {nDice: 9, nFaces: 10, damageModifier: 20}],
         ["20W10+200", {nDice: 20, nFaces: 10, damageModifier: 200}],
@@ -128,8 +130,8 @@ describe("DamageRoll evaluation", () => {
         const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
 
         expect(roll._total).to.equal(4);
-        expect(roll.terms[0].results[0].result).to.equal(1);
-        expect(roll.terms[0].results[1].result).to.equal(1);
+        expect(getFirstDie(roll).results[0].result).to.equal(1);
+        expect(getFirstDie(roll).results[1].result).to.equal(1);
     });
 
     it("Should not increase the highest dice for kritisch feature", async () => {
@@ -151,7 +153,11 @@ describe("DamageRoll evaluation", () => {
         const roll = await DamageRoll.parse(damageString, "Kritisch 2").evaluate();
 
         expect(roll._total).to.equal(16);
-        expect(roll.terms[0].results[0].result).to.equal(6);
-        expect(roll.terms[0].results[1].result).to.equal(6);
+        expect(getFirstDie(roll).results[0].result).to.equal(6);
+        expect(getFirstDie(roll).results[1].result).to.equal(6);
     });
 });
+
+function getFirstDie(roll: Roll) {
+    return roll.terms.find(term => "results" in term && "faces" in term) as Die;
+}

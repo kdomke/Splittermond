@@ -1,4 +1,4 @@
-import {DamageRoll} from "./damage/DamageRoll.js";
+import {DamageRoll} from "./damage/DamageRoll.ts";
 import {foundryApi} from "../api/foundryApi.ts";
 
 export const Dice = {
