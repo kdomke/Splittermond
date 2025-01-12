@@ -36,6 +36,7 @@ describe("DamageActionHandler", () => {
             const options = underTest.renderDegreeOfSuccessOptions()
 
             expect(options).to.have.length(4);
+            expect(options.map(o => o.render.action)).to.contain("damageUpdate");
         });
 
         it("active options addToDamage", () =>{
