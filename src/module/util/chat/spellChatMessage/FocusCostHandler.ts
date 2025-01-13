@@ -16,6 +16,7 @@ import {FocusDegreeOfSuccessOptionField} from "./optionFields/FocusDegreeOfSucce
 import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../costs/costParser";
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
+import {PrimaryCost} from "../../costs/PrimaryCost";
 
 
 function FocusCostHandlerSchema() {
@@ -92,7 +93,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     get cost() {
         const checkReport = this.checkReportReference.get();
-        let cost = this.spellReference.getItem().getCostsForFinishedRoll(checkReport.degreeOfSuccess, checkReport.succeeded)
+        let cost: PrimaryCost = this.spellReference.getItem().getCostsForFinishedRoll(checkReport.degreeOfSuccess, checkReport.succeeded)
             .add(this.adjusted)
         if (cost.isZero()) {
             cost = cost.add(new Cost(1, 0, false).asModifier());
@@ -105,21 +106,24 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         if (this.consumed.isOption) {
             this.consumed.getMultiplicities()
                 .map(m => this.consumed.forMultiplicity(m))
-                .filter(m => m.isChecked() || !(this.cost.consumed < m.effect.getConsumed(this.cost)))
+                .filter(m => m.isChecked() ||
+                    !(this.cost.consumed < m.effect.getConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
                 .map(m => this.createRender(m, "consumedFocusUpdate"))
                 .forEach(m => options.push(m))
         }
         if (this.channeled.isOption) {
             this.channeled.getMultiplicities()
                 .map(m => this.channeled.forMultiplicity(m))
-                .filter(m => m.isChecked() || !(this.cost.channeled <= m.effect.getNonConsumed(this.cost)))
+                .filter(m => m.isChecked() ||
+                    !(this.cost.channeled < m.effect.getNonConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
                 .map(m => this.createRender(m, "channeledFocusUpdate"))
                 .forEach(m => options.push(m))
         }
         if (this.exhausted.isOption) {
             this.exhausted.getMultiplicities()
                 .map(m => this.exhausted.forMultiplicity(m))
-                .filter(m => m.isChecked() || !(this.cost.exhausted <= m.effect.getNonConsumed(this.cost)))
+                .filter(m => m.isChecked() ||
+                    !(this.cost.exhausted < m.effect.getNonConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
                 .map(m => this.createRender(m, "exhaustedFocusUpdate"))
                 .forEach(m => options.push(m))
         }
@@ -132,7 +136,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                 multiplicity: "1",
                 text: `${this.spellReference.getItem().enhancementCosts} ${this.spellReference.getItem().enhancementDescription}`
             },
-            cost: this.spellEnhancement.checked ? -1 * this.spellEnhancement.cost: this.spellEnhancement.cost
+            cost: this.spellEnhancement.checked ? -1 * this.spellEnhancement.cost : this.spellEnhancement.cost
         })
         return options;
     }
