@@ -1,1 +1,1 @@
-export type QuenchContext = { describe: Mocha.SuiteFunction, it: Mocha.TestFunction, expect: Chai.ExpectStatic };
+export type QuenchContext = { describe: Mocha.SuiteFunction, it: Mocha.TestFunction, expect: Chai.ExpectStatic, afterEach: Mocha.HookFunction };

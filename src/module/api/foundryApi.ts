@@ -1,4 +1,13 @@
-import type {ChatMessage, ChatMessageTypes, Hooks, MergeObjectOptions, Roll, Socket, User} from "./foundryTypes";
+import type {
+    ChatMessage,
+    ChatMessageTypes,
+    Hooks,
+    MergeObjectOptions,
+    Roll,
+    SettingsConfig, SettingTypeMapper,
+    Socket,
+    User
+} from "./foundryTypes";
 
 export const foundryApi = new class FoundryApi {
 
@@ -130,5 +139,22 @@ export const foundryApi = new class FoundryApi {
     mergeObject<T extends object, U extends object>(original: T, other?: U, options?:MergeObjectOptions): Partial<T> & Partial<U>{
         // @ts-ignore
         return foundry.utils.mergeObject(original, other, options);
+    }
+
+    get settings() {
+        return {
+            set(namespace: string, key: string, value: unknown): void {
+                // @ts-ignore
+                return game.settings.set(namespace, key, value);
+            },
+            get<T extends typeof Number | typeof Boolean | typeof String>(namespace: string, key: string): SettingTypeMapper<T> {
+                // @ts-ignore
+                return game.settings.get(namespace, key);
+            },
+            register<T extends typeof Number | typeof Boolean | typeof String>(namespace: string, key: string, data: SettingsConfig<T>): void {
+                // @ts-ignore
+                game.settings.register(namespace, key, data);
+            }
+        }
     }
 }
