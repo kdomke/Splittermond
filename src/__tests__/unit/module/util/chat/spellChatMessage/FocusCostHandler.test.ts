@@ -3,7 +3,9 @@ import {expect} from 'chai';
 import sinon, {SinonSandbox, SinonStubbedInstance} from 'sinon';
 import {afterEach} from "mocha";
 import {Cost, CostModifier} from "module/util/costs/Cost";
-import {FocusDegreeOfSuccessOptionField} from "module/util/chat/spellChatMessage/optionFields/FocusDegreeOfSuccessOptionField";
+import {
+    FocusDegreeOfSuccessOptionField
+} from "module/util/chat/spellChatMessage/optionFields/FocusDegreeOfSuccessOptionField";
 import {
     injectParent,
     linkSpellAndActor,
@@ -76,7 +78,7 @@ describe("FocusCostActionHandler", () => {
             expect(options.map(o => o.render.action)).to.contain.members(expectedActions);
         });
 
-        it("should not render multiplicities that reduce cost past minimum", () => {
+        it("should not render multiplicities that reduce consumed cost past minimum", () => {
             const underTest = setUpFocusActionHandler(sandbox);
 
             // Setting up initial cost and adjusted cost
@@ -93,6 +95,63 @@ describe("FocusCostActionHandler", () => {
             const multiplicitiesRendered = consumedOptions.map(o => o.render.multiplicity);
             expect(multiplicitiesRendered).to.include('1');
             expect(multiplicitiesRendered).to.not.include('2');
+        });
+
+        ([
+            ["consumedFocusUpdate", new Cost(0, 1, false)],
+            ["channeledFocusUpdate", new Cost(1, 0, true)],
+            ["exhaustedFocusUpdate", new Cost(1, 0, false)]] as const)
+            .forEach(([option, effect]) => {
+                it(`${option} should not render if it reduces cost past minimum`, () => {
+                    const underTest = setUpFocusActionHandler(sandbox);
+
+                    const initialCost = effect.asPrimaryCost();
+
+                    underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
+
+                    const options = underTest.renderDegreeOfSuccessOptions();
+
+                    const consumedOptions = options.filter(o => o.render.action === option);
+                    expect(consumedOptions).to.be.empty;
+                });
+            });
+        ([
+            ["consumedFocusUpdate", new Cost(1, 1, false)],
+            ["channeledFocusUpdate", new Cost(1, 1, true)],
+            ["exhaustedFocusUpdate", new Cost(1, 1, false)]] as const)
+            .forEach(([option, effect]) => {
+            it(`${option} should render exactly one reduction`, () => {
+                const underTest = setUpFocusActionHandler(sandbox);
+
+                const initialCost = effect.asPrimaryCost();
+
+                underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
+
+                const options = underTest.renderDegreeOfSuccessOptions();
+
+                const consumedOptions = options.filter(o => o.render.action === option);
+                const multiplicitiesRendered = consumedOptions.map(o => o.render.multiplicity);
+
+                expect(consumedOptions).not.to.be.empty;
+                expect(multiplicitiesRendered).to.include('1');
+            });
+        });
+
+        it("should render multiplicities that affect enhanced costs", () => {
+            const underTest = setUpFocusActionHandler(sandbox);
+
+            const initialCost = new Cost(1, 0, true).asPrimaryCost();
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
+            underTest.spellEnhancement.effect = new Cost(0, 1, true).asModifier();
+
+            underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
+            const options = underTest.renderDegreeOfSuccessOptions();
+
+            const consumedOptions = options.filter(o => o.render.action === 'channeledFocusUpdate');
+            expect(consumedOptions).to.not.be.empty;
+
+            const multiplicitiesRendered = consumedOptions.map(o => o.render.multiplicity);
+            expect(multiplicitiesRendered).to.include('1');
         });
 
         ["consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate"].forEach((option) => {
