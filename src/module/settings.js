@@ -1,6 +1,7 @@
 import {foundryApi} from "./api/foundryApi";
 
 let gameInitialized = false;
+const prematurelyRegisteredSettings = [];
 
 /**
  * Register a new setting
@@ -22,6 +23,14 @@ async function registerSetting(key, setting) {
             }
         }
     };
+    const promise = delayAction(action);
+    if(!gameInitialized){
+        prematurelyRegisteredSettings.push(promise);
+    }
+    return promise;
+}
+
+function delayAction(action){
     return new Promise((resolve, reject) => {
         const checkInitialized = (invocation) => {
             if (invocation > 20) {
@@ -103,7 +112,7 @@ export const registerSystemSettings = function () {
                 return x * mult;
             });
             game.actors.forEach(actor => {
-                if (actor.system.type == "character") {
+                if (actor.system.type === "character") {
                     actor.prepareData();
                 }
             });
@@ -157,7 +166,7 @@ export const registerSystemSettings = function () {
         }
     });
 
-
     document.body.setAttribute("data-theme", game.settings.get("splittermond", "theme"));
+    return Promise.all(prematurelyRegisteredSettings);
 
 }

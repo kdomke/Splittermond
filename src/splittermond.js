@@ -74,7 +74,7 @@ Hooks.once("ready", function () {
     game.splittermond.tickBarHud = new TickBarHud();
 });
 
-Hooks.once("init", function () {
+Hooks.once("init", async function () {
     console.log(
         " __\n"+
         "(_  ._  | o _|_ _|_  _  ._ ._ _   _  ._   _|\n" +
@@ -104,7 +104,7 @@ Hooks.once("init", function () {
         }
     };
 
-    registerSystemSettings();
+    await registerSystemSettings();
 
     game.splittermond = {
         skillCheck: Macros.skillCheck,
