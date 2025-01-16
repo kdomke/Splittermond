@@ -1,38 +1,42 @@
-import {foundryApi} from "./api/foundryApi";
+import { foundryApi } from "./api/foundryApi";
+import type {SettingsConfig, SettingTypeMapper, SettingTypes} from "./api/foundryTypes";
 
 let gameInitialized = false;
-const prematurelyRegisteredSettings = [];
+const prematurelyRegisteredSettings: Promise<any>[] = [];
+
+type PartialSettings<T extends SettingTypes> = Omit<SettingsConfig<T>, "type" | "name" | "hint">;
+type SettingAccessor<T extends SettingTypes> = {
+    get(): SettingTypeMapper<T>,
+    set(value: SettingTypeMapper<T>): void
+}
 
 /**
  * Register a new setting
- * @param {string} key
- * @param {Omit<SettingsConfig, "name"|"hint">}setting
- * @returns {Promise<{get(): number | boolean | string, set(value: number | boolean | string): void}>}
  */
-async function registerSetting(key, setting) {
+async function registerSetting<T extends SettingTypes>(key: string, setting: Omit<SettingsConfig<T>, "name" | "hint">): Promise<SettingAccessor<T>> {
     const nameKey = `splittermond.settings.${key}.name`;
     const hintKey = `splittermond.settings.${key}.hint`;
     const action = () => {
-        foundryApi.settings.register("splittermond", key, {name: nameKey, hint: hintKey, ...setting});
+        foundryApi.settings.register<T>("splittermond", key, { name: nameKey, hint: hintKey, ...setting });
         return {
             get() {
                 return foundryApi.settings.get("splittermond", key);
             },
-            set(value) {
+            set(value: SettingTypeMapper<T>) {
                 return foundryApi.settings.set("splittermond", key, value);
             }
         }
     };
     const promise = delayAction(action);
-    if(!gameInitialized){
+    if (!gameInitialized) {
         prematurelyRegisteredSettings.push(promise);
     }
     return promise;
 }
 
-function delayAction(action){
+function delayAction(action: () => any): Promise<any> {
     return new Promise((resolve, reject) => {
-        const checkInitialized = (invocation) => {
+        const checkInitialized = (invocation: number) => {
             if (invocation > 20) {
                 return reject(`Game not initialized after 2 seconds`);
             } else if (gameInitialized) {
@@ -45,31 +49,16 @@ function delayAction(action){
     });
 }
 
-/**
- * @param {string} key
- * @param {Omit<SettingsConfig,"type"|"name","hint">}setting
- * @returns {Promise<{get(): string, set(value: string): void}>}
- */
-async function registerStringSetting(key, setting) {
-    return registerSetting(key, {...setting, type: String, range: undefined});
+async function registerStringSetting(key: string, setting: PartialSettings<StringConstructor>) {
+    return registerSetting(key, { ...setting, type: String, range: undefined });
 }
 
-/**
- * @param {string} key
- * @param {Omit<SettingsConfig,"type"|"name","hint">}setting
- * @returns {Promise<{get(): number, set(value: number): void}>}
- */
-async function registerNumberSetting(key, setting) {
-    return registerSetting(key, {...setting, type: Number,});
+async function registerNumberSetting(key: string, setting: PartialSettings<NumberConstructor>) {
+    return registerSetting(key, { ...setting, type: Number });
 }
 
-/**
- * @param {string} key
- * @param {Omit<SettingsConfig,"type"|"name"|"hint"|"range">}setting
- * @returns {Promise<{get(): boolean, set(value: boolean): void}>}
- */
-async function registerBooleanSetting(key, setting) {
-    return registerSetting(key, {...setting, type: Boolean, range: undefined});
+async function registerBooleanSetting(key: string, setting: Omit<PartialSettings<BooleanConstructor>, "range">) {
+    return registerSetting(key, { ...setting, type: Boolean, range: undefined });
 }
 
 export const settings = {
@@ -78,7 +67,7 @@ export const settings = {
     registerBoolean: registerBooleanSetting,
 }
 
-export const registerSystemSettings = function () {
+export const registerSystemSettings = async function (): Promise<void> {
     /**
      * Track the system version upon which point a migration was last applied
      */
@@ -105,12 +94,12 @@ export const registerSystemSettings = function () {
             max: 2.0,
             step: 0.25
         },
-        onChange: mult => {
+        onChange: (mult: number) => {
             console.log("HGMultiplier adjusted!");
-            game.splittermond.heroLevel = CONFIG.splittermond.heroLevel.map(function (x) {
+            global.game.splittermond.heroLevel = global.CONFIG.splittermond.heroLevel.map(function (x: number) {
                 return x * mult;
             });
-            game.actors.forEach(actor => {
+            global.game.actors.forEach((actor: any) => {
                 if (actor.system.type === "character") {
                     actor.prepareData();
                 }
@@ -118,16 +107,16 @@ export const registerSystemSettings = function () {
         }
     });
 
-    prematurelyRegisteredSettings.push(registerStringSetting("theme",{
+    prematurelyRegisteredSettings.push(registerStringSetting("theme", {
         scope: "client",
         config: true,
-        choices: {           // If choices are defined, the resulting setting will be a select menu
+        choices: {// If choices are defined, the resulting setting will be a select menu
             "default": "splittermond.settings.theme.options.default",
             "dark": "splittermond.settings.theme.options.dark",
             "splittermond-blue": "splittermond.settings.theme.options.splittermond_blue",
         },
         default: "default",
-        onChange: theme => {
+        onChange: (theme: string) => {
             document.body.setAttribute("data-theme", theme);
         }
     }));
@@ -136,27 +125,38 @@ export const registerSystemSettings = function () {
         scope: "client",
         config: true,
         default: true,
-        onChange: useActionBar => {
+        onChange: () => {
             setTimeout(() => {
-                game.splittermond.tokenActionBar.update();
+                global.game.splittermond.tokenActionBar.update();
             }, 500);
 
         }
     }));
 
-    prematurelyRegisteredSettings.push(registerBooleanSetting("showHotbarDuringActionBar",{
+    prematurelyRegisteredSettings.push(registerBooleanSetting("showHotbarDuringActionBar", {
         scope: "client",
         config: true,
         default: true,
-        onChange: useActionBar => {
+        onChange: () => {
             setTimeout(() => {
-                game.splittermond.tokenActionBar.update();
+                global.game.splittermond.tokenActionBar.update();
             }, 500);
 
         }
     }));
-    document.body.setAttribute("data-theme", game.settings.get("splittermond", "theme"));
+    document.body.setAttribute("data-theme", foundryApi.settings.get<StringConstructor>("splittermond", "theme"));
 
     gameInitialized = true;
-    return Promise.all(prematurelyRegisteredSettings);
+    await Promise.all(prematurelyRegisteredSettings);
+}
+
+declare namespace global {
+    const game : {
+        splittermond : {
+            tokenActionBar: {update: () => void},
+            heroLevel: number[]
+        },
+        actors: any,
+    }
+    const CONFIG: {splittermond: typeof game["splittermond"]};
 }
