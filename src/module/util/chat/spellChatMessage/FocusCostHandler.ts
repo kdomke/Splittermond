@@ -17,7 +17,10 @@ import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../cost
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 import {PrimaryCost} from "../../costs/PrimaryCost";
+import {settings} from "../../../settings";
 
+let hasReducibleEnhancementCosts:()=>boolean = ()=>false;
+settings.registerBoolean("reducibleEnhancement",{scope:"world",config:true,default:false}).then(value=>hasReducibleEnhancementCosts=value.get);
 
 function FocusCostHandlerSchema() {
     return {
@@ -101,6 +104,11 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         return cost;
     }
 
+    /**not exactly for public use, but I need to be able to mock ths function */
+    hasReducibleEnhancementCosts(){
+        return hasReducibleEnhancementCosts();
+    }
+
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
         const options: DegreeOfSuccessOptionSuggestion[] = [];
         if (this.consumed.isOption) {
@@ -138,7 +146,10 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         return options;
     }
     private overshootsCost(cost:CostModifier){
-        const baseCost= this.cost;
+        let baseCost= this.cost;
+        if(this.spellEnhancement.checked && !this.hasReducibleEnhancementCosts()){
+           baseCost = baseCost.subtract(this.spellEnhancement.effect);
+        }
         return baseCost.consumed < cost.getConsumed(baseCost) ||
             (baseCost.isChanneled ? baseCost.channeled < cost.getNonConsumed(baseCost) : baseCost.exhausted < cost.getNonConsumed(baseCost)) ||
             baseCost.subtract(cost).isZero();

@@ -535,6 +535,10 @@
       "notfound": "Kein PDF mit dem angegebenen Code gefunden."
     },
     "settings": {
+      "reducibleEnhancmentCosts": {
+        "name": "Reduzible Zauberverstärkungskosten",
+        "hint": "Erlaubt die Reduzierung der Verstärkungskosten durch die Verwendung von Erfolgsgraden."
+      },
       "theme": {
         "name": "UI-Theme",
         "hint": "Wähle eine UI-Design",

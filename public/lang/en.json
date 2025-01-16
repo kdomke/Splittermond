@@ -9,6 +9,12 @@
         "noHandler": "No handler registered for action '{action}'. Please contact the developer.",
         "tooManyHandlers": "More than one handler registered for action '{action}'. Please contact the developer"
       }
+    },
+    "settings": {
+      "reducibleEnhancmentCosts": {
+        "name": "Reducable Spell Enhancement Costs",
+        "hint": "Permits the reduction of enhancement costs by using degrees of success"
+      }
     }
   }
 }
