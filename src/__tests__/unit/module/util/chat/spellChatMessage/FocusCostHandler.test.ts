@@ -21,6 +21,7 @@ import SplittermondSpellItem from "../../../../../../module/item/spell";
 import {splittermond} from "../../../../../../module/config";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import {parseCostString} from "../../../../../../module/util/costs/costParser";
+import {settingsMock} from "../../../../settingsMock";
 
 describe("FocusCostActionHandler", () => {
     let sandbox: SinonSandbox;
@@ -143,7 +144,7 @@ describe("FocusCostActionHandler", () => {
             const initialCost = new Cost(1, 0, true).asPrimaryCost();
             underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
             underTest.spellEnhancement.effect = new Cost(0, 1, true).asModifier();
-            sandbox.stub(underTest, "hasReducibleEnhancementCosts").returns(true);
+            settingsMock.booleanExpectation = true;
 
             underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
             const options = underTest.renderDegreeOfSuccessOptions();
@@ -161,7 +162,7 @@ describe("FocusCostActionHandler", () => {
             const initialCost = new Cost(1, 0, true).asPrimaryCost();
             underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
             underTest.spellEnhancement.effect = new Cost(0, 1, true).asModifier();
-            sandbox.stub(underTest, "hasReducibleEnhancementCosts").returns(false);
+            settingsMock.booleanExpectation = false;
 
             underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
             const options = underTest.renderDegreeOfSuccessOptions();

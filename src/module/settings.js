@@ -25,11 +25,11 @@ async function registerSetting(key, setting) {
     return new Promise((resolve, reject) => {
         const checkInitialized = (invocation) => {
             if (invocation > 20) {
-                return reject("Game not initialized after 2 seconds");
+                return reject(`Game not initialized after 2 seconds`);
             } else if (gameInitialized) {
                 return resolve(action())
             } else {
-                setTimeout(() => checkInitialized(invocation++), 100);
+                return setTimeout(() => checkInitialized(++invocation), 100);
             }
         }
         checkInitialized(0);

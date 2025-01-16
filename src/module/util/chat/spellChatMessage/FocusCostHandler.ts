@@ -104,11 +104,6 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         return cost;
     }
 
-    /**not exactly for public use, but I need to be able to mock ths function */
-    hasReducibleEnhancementCosts(){
-        return hasReducibleEnhancementCosts();
-    }
-
     renderDegreeOfSuccessOptions(): DegreeOfSuccessOptionSuggestion[] {
         const options: DegreeOfSuccessOptionSuggestion[] = [];
         if (this.consumed.isOption) {
@@ -147,7 +142,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
     private overshootsCost(cost:CostModifier){
         let baseCost= this.cost;
-        if(this.spellEnhancement.checked && !this.hasReducibleEnhancementCosts()){
+        if(this.spellEnhancement.checked && !hasReducibleEnhancementCosts()){
            baseCost = baseCost.subtract(this.spellEnhancement.effect);
         }
         return baseCost.consumed < cost.getConsumed(baseCost) ||
