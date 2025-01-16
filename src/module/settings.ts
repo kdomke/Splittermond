@@ -107,7 +107,7 @@ export const registerSystemSettings = async function (): Promise<void> {
         }
     });
 
-    prematurelyRegisteredSettings.push(registerStringSetting("theme", {
+    registerStringSetting("theme", {
         scope: "client",
         config: true,
         choices: {// If choices are defined, the resulting setting will be a select menu
@@ -119,7 +119,9 @@ export const registerSystemSettings = async function (): Promise<void> {
         onChange: (theme: string) => {
             document.body.setAttribute("data-theme", theme);
         }
-    }));
+    }).then((accessor) =>{
+        document.body.setAttribute("data-theme", accessor.get());
+    });
 
     prematurelyRegisteredSettings.push(registerBooleanSetting("showActionBar", {
         scope: "client",
@@ -144,7 +146,6 @@ export const registerSystemSettings = async function (): Promise<void> {
 
         }
     }));
-    document.body.setAttribute("data-theme", foundryApi.settings.get<StringConstructor>("splittermond", "theme"));
 
     gameInitialized = true;
     await Promise.all(prematurelyRegisteredSettings);
