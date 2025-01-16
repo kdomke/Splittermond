@@ -20,7 +20,7 @@ import {PrimaryCost} from "../../costs/PrimaryCost";
 import {settings} from "../../../settings";
 
 let hasReducibleEnhancementCosts:()=>boolean = ()=>false;
-settings.registerBoolean("reducibleEnhancement",{scope:"world",config:true,default:false}).then(value=>hasReducibleEnhancementCosts=value.get);
+settings.registerBoolean("reducibleEnhancementCosts",{scope:"world",config:true,default:false}).then(value=>hasReducibleEnhancementCosts=value.get);
 
 function FocusCostHandlerSchema() {
     return {

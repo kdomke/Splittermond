@@ -11,7 +11,7 @@
       }
     },
     "settings": {
-      "reducibleEnhancmentCosts": {
+      "reducibleEnhancementCosts": {
         "name": "Reducable Spell Enhancement Costs",
         "hint": "Permits the reduction of enhancement costs by using degrees of success"
       }
