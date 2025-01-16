@@ -79,11 +79,10 @@ export const settings = {
 }
 
 export const registerSystemSettings = function () {
-    gameInitialized = true;
     /**
      * Track the system version upon which point a migration was last applied
      */
-    game.settings.register("splittermond", "systemMigrationVersion", {
+    foundryApi.settings.register("splittermond", "systemMigrationVersion", {
         name: "System Migration Version",
         scope: "world",
         config: false,
@@ -94,7 +93,7 @@ export const registerSystemSettings = function () {
     /**
      * Register resting variants
      */
-    game.settings.register("splittermond", "HGMultiplier", {
+    foundryApi.settings.register("splittermond", "HGMultiplier", {
         name: "SETTINGS.HGMultiplierN",
         hint: "SETTINGS.HGMultiplierL",
         scope: "world",
@@ -119,12 +118,9 @@ export const registerSystemSettings = function () {
         }
     });
 
-    game.settings.register("splittermond", "theme", {
-        name: "splittermond.settings.theme.name",
-        hint: "splittermond.settings.theme.hint",
+    prematurelyRegisteredSettings.push(registerStringSetting("theme",{
         scope: "client",
         config: true,
-        type: String,
         choices: {           // If choices are defined, the resulting setting will be a select menu
             "default": "splittermond.settings.theme.options.default",
             "dark": "splittermond.settings.theme.options.dark",
@@ -134,14 +130,11 @@ export const registerSystemSettings = function () {
         onChange: theme => {
             document.body.setAttribute("data-theme", theme);
         }
-    });
+    }));
 
-    game.settings.register("splittermond", "showActionBar", {
-        name: "splittermond.settings.showActionBar.name",
-        hint: "splittermond.settings.showActionBar.hint",
+    prematurelyRegisteredSettings.push(registerBooleanSetting("showActionBar", {
         scope: "client",
         config: true,
-        type: Boolean,
         default: true,
         onChange: useActionBar => {
             setTimeout(() => {
@@ -149,14 +142,11 @@ export const registerSystemSettings = function () {
             }, 500);
 
         }
-    });
+    }));
 
-    game.settings.register("splittermond", "showHotbarDuringActionBar", {
-        name: "splittermond.settings.showHotbarDuringActionBar.name",
-        hint: "splittermond.settings.showHotbarDuringActionBar.hint",
+    prematurelyRegisteredSettings.push(registerBooleanSetting("showHotbarDuringActionBar",{
         scope: "client",
         config: true,
-        type: Boolean,
         default: true,
         onChange: useActionBar => {
             setTimeout(() => {
@@ -164,9 +154,9 @@ export const registerSystemSettings = function () {
             }, 500);
 
         }
-    });
-
+    }));
     document.body.setAttribute("data-theme", game.settings.get("splittermond", "theme"));
-    return Promise.all(prematurelyRegisteredSettings);
 
+    gameInitialized = true;
+    return Promise.all(prematurelyRegisteredSettings);
 }
