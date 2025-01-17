@@ -87,17 +87,6 @@ export const settings = {
 }
 
 export const registerSystemSettings = async function (): Promise<void> {
-    /**
-     * Track the system version upon which point a migration was last applied
-     */
-    foundryApi.settings.register("splittermond", "systemMigrationVersion", {
-        name: "System Migration Version",
-        scope: "world",
-        config: false,
-        type: String,
-        default: ""
-    });
-
     registerStringSetting("theme", {
         position: 2,
         scope: "client",
