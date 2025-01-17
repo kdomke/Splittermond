@@ -1,4 +1,4 @@
-import SplittermondActor from "./module/actor/actor.js";
+import SplittermondActor  from "./module/actor/actor.js";
 import SplittermondItem from "./module/item/item.js";
 import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
 import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
@@ -9,16 +9,15 @@ import SplittermondShieldSheet from "./module/item/sheets/shield-sheet.js";
 import SplittermondArmorSheet from "./module/item/sheets/armor-sheet.js";
 import SplittermondAttackSheet from "./module/item/sheets/attack-sheet.js";
 import ApplyDamageDialog from "./module/apps/dialog/apply-damage-dialog.js";
-import { splittermond } from "./module/config.js";
+import {splittermond} from "./module/config.js";
 import * as Dice from "./module/util/dice.js"
 import * as Macros from "./module/util/macros.js"
 import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
-import { registerSystemSettings } from "./module/settings.ts";
+import {registerSystemSettings} from "./module/settings.ts";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
-import TokenActionBar from "./module/apps/token-action-bar.js";
 
 import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
 import {chatActionFeature} from "./module/util/chat/chatActionFeature.ts";
@@ -104,19 +103,17 @@ Hooks.once("init", async function () {
         }
     };
 
+    game.splittermond ={}
     await registerSystemSettings();
 
-    game.splittermond = {
-        skillCheck: Macros.skillCheck,
-        attackCheck: Macros.attackCheck,
-        itemCheck: Macros.itemCheck,
-        requestSkillCheck: Macros.requestSkillCheck,
-        importNpc: Macros.importNpc,
-        magicFumble: Macros.magicFumble,
-        attackFumble: Macros.attackFumble,
-        heroLevel: CONFIG.splittermond.heroLevel.map(function (x) { return x * game.settings.get("splittermond", "HGMultiplier") }),
-        compendiumBrowser: new SplittermondCompendiumBrowser()
-    }
+    game.splittermond.skillCheck= Macros.skillCheck;
+    game.splittermond.attackCheck = Macros.attackCheck;
+    game.splittermond.itemCheck = Macros.itemCheck;
+    game.splittermond.requestSkillCheck = Macros.requestSkillCheck;
+    game.splittermond.importNpc = Macros.importNpc;
+    game.splittermond.magicFumble = Macros.magicFumble;
+    game.splittermond.attackFumble = Macros.attackFumble;
+    game.splittermond.compendiumBrowser= new SplittermondCompendiumBrowser();
     Die.MODIFIERS.ri = Dice.riskModifier;
 
     Actors.unregisterSheet("core", ActorSheet);

@@ -9,14 +9,42 @@ import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager.js";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
-import { parseCostString } from "../util/costs/costParser.ts";
-import { initializeSpellCostManagement } from "../util/costs/spellCostManagement.ts";
+import {parseCostString} from "../util/costs/costParser.ts";
+import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.ts";
+import {settings} from "../settings";
+import {splittermond} from "../config.js";
 
-/**
- * @property {SplittermondSpellData} system
- * @property {Map<string, SplittermondItem> & Array<SplittermondItem> } items
- * @property {Readonly<string>} id
- */
+/** @type ()=>number */
+let getHeroLevelMultiplier = () => 1;
+
+/**@return number[]*/
+export function calculateHeroLevels() {
+    const baseHeroLevels = [...splittermond.heroLevel];
+    const multplier = getHeroLevelMultiplier();
+    return baseHeroLevels.map((l) => l * multplier);
+}
+
+
+settings.registerNumber("HGMultiplier", {
+    scope: "world",
+    config: true,
+    default: 1.0,
+    range: {
+        min: 0.5,
+        max: 2.0,
+        step: 0.25
+    },
+    onChange: (mult) => {
+        console.log("Splittermond | adjusted hero level");
+        game.splittermond.heroLevel = calculateHeroLevels();
+        game.actors.forEach((actor) => {
+            if (actor.type === "character") {
+                actor.prepareData();
+            }
+        });
+    }
+}).then(accessor => getHeroLevelMultiplier = accessor.get)
+
 export default class SplittermondActor extends Actor {
 
     actorData() {
@@ -125,9 +153,10 @@ export default class SplittermondActor extends Actor {
             };
 
 
-            data.experience.heroLevel = game.splittermond.heroLevel.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
-            data.experience.nextLevelValue = game.splittermond.heroLevel[Math.min(data.experience.heroLevel, 3)];
-            data.experience.percentage = data.experience.spent - game.splittermond.heroLevel[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
+            const heroLevels = calculateHeroLevels();
+            data.experience.heroLevel = heroLevels.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
+            data.experience.nextLevelValue = heroLevels[Math.min(data.experience.heroLevel, 3)];
+            data.experience.percentage = data.experience.spent - heroLevels[Math.min(Math.max(data.experience.heroLevel - 1, 0), 3)];
             data.experience.percentage /= data.experience.nextLevelValue;
             data.experience.percentage = Math.min(data.experience.percentage * 100, 100);
 
@@ -140,7 +169,7 @@ export default class SplittermondActor extends Actor {
             }
         }
 
-        if (this.type == "npc") {
+        if (this.type === "npc") {
             if (parseInt(this.system.damageReduction.value) != 0) {
                 this.modifier.add("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), this.system.damageReduction.value);
             }
@@ -375,7 +404,8 @@ export default class SplittermondActor extends Actor {
                     if (modifierLabelParts[1]) {
                         emphasis = modifierLabelParts[1];
                     }
-                };
+                }
+                ;
 
                 let addModifierHelper = (path, emphasis = "") => {
                     var floatValue = parseFloat(value);
@@ -478,8 +508,7 @@ export default class SplittermondActor extends Actor {
                     default:
                         if (modifierLabel.toLowerCase().startsWith("foreduction")) {
                             data.spellCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
-                        }
-                        else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
+                        } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
                             data.spellEnhancedCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
                             return;
                         }
@@ -902,18 +931,18 @@ export default class SplittermondActor extends Actor {
     spendSplinterpoint() {
         if (this.splinterpoints.value > 0) {
             this.update({
-                system:{
+                system: {
                     ...this.system,
-                    splinterpoints:{
+                    splinterpoints: {
                         ...this.system.splinterpoints,
-                        value:parseInt(this.system.splinterpoints.value) - 1,
+                        value: parseInt(this.system.splinterpoints.value) - 1,
 
                     }
                 }
             });
-            return { pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName) }
+            return {pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName)}
         }
-        return { pointSpent: false, getBonus: () => 0 };
+        return {pointSpent: false, getBonus: () => 0};
     }
 
     /**
@@ -942,7 +971,7 @@ export default class SplittermondActor extends Actor {
             description: game.i18n.localize("splittermond.splinterpoint")
         })
 
-        this.update({ system: { splinterpoints: { value: parseInt(this.splinterpoints.value) - 1 } } });
+        this.update({system: {splinterpoints: {value: parseInt(this.splinterpoints.value) - 1}}});
         checkMessageData.availableSplinterpoints = 0;
 
         let checkData = await Dice.evaluateCheck(message.rolls[0], checkMessageData.skillPoints, checkMessageData.difficulty, checkMessageData.rollType);
@@ -1015,7 +1044,7 @@ export default class SplittermondActor extends Actor {
 
         let chatData = {
             user: game.user.id,
-            speaker: ChatMessage.getSpeaker({ actor: this }),
+            speaker: ChatMessage.getSpeaker({actor: this}),
             rolls: [roll],
             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
             sound: CONFIG.sounds.dice,
@@ -1071,7 +1100,10 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {
+                            eg: eg,
+                            costs: costs
+                        })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -1109,7 +1141,7 @@ export default class SplittermondActor extends Actor {
 
                         let chatData = {
                             user: game.user.id,
-                            speaker: ChatMessage.getSpeaker({ actor: this }),
+                            speaker: ChatMessage.getSpeaker({actor: this}),
                             rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
@@ -1134,7 +1166,10 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, { eg: eg, costs: costs })).evaluate();
+                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {
+                            eg: eg,
+                            costs: costs
+                        })).evaluate();
 
                         let result = rollTable.find(el => el.min <= roll.total && el.max >= roll.total);
                         let index = rollTable.indexOf(result);
@@ -1170,7 +1205,7 @@ export default class SplittermondActor extends Actor {
 
                         let chatData = {
                             user: game.user.id,
-                            speaker: ChatMessage.getSpeaker({ actor: this }),
+                            speaker: ChatMessage.getSpeaker({actor: this}),
                             rolls: [roll],
                             content: await renderTemplate("systems/splittermond/templates/chat/skill-check.hbs", templateContext),
                             sound: CONFIG.sounds.dice,
@@ -1183,7 +1218,7 @@ export default class SplittermondActor extends Actor {
                 },
             },
             default: defaultTable
-        }, { classes: ["splittermond", "dialog"] });
+        }, {classes: ["splittermond", "dialog"]});
         d.render(true);
         return;
     }
@@ -1243,7 +1278,7 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        return this.update({ "system.focus": focusData, "system.health": healthData });
+        return this.update({"system.focus": focusData, "system.health": healthData});
     }
 
     async longRest() {
@@ -1286,7 +1321,7 @@ export default class SplittermondActor extends Actor {
         focusData.consumed.value = Math.max(focusData.consumed.value - data.focusRegeneration.multiplier * this.attributes.willpower.value - data.focusRegeneration.bonus, 0);
         healthData.consumed.value = Math.max(healthData.consumed.value - data.healthRegeneration.multiplier * this.attributes.constitution.value - data.healthRegeneration.bonus, 0);
 
-        return this.update({ "system.focus": focusData, "system.health": healthData });
+        return this.update({"system.focus": focusData, "system.health": healthData});
     }
 
     /**
@@ -1351,7 +1386,7 @@ export default class SplittermondActor extends Actor {
         }
 
         if (type === "defense") {
-            let content = await renderTemplate("systems/splittermond/templates/apps/dialog/active-defense.hbs", { activeDefense: this.activeDefense.defense });
+            let content = await renderTemplate("systems/splittermond/templates/apps/dialog/active-defense.hbs", {activeDefense: this.activeDefense.defense});
             let p = new Promise((resolve, reject) => {
                 let dialog = new Dialog({
                     title: game.i18n.localize("splittermond.activeDefense"),
@@ -1375,7 +1410,7 @@ export default class SplittermondActor extends Actor {
                             }
                         });
                     }
-                }, { classes: ["splittermond", "dialog"], width: 500 });
+                }, {classes: ["splittermond", "dialog"], width: 500});
                 dialog.render(true);
             });
         } else {

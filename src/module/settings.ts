@@ -78,33 +78,6 @@ export const registerSystemSettings = async function (): Promise<void> {
         type: String,
         default: ""
     });
-
-    /**
-     * Register resting variants
-     */
-    foundryApi.settings.register("splittermond", "HGMultiplier", {
-        name: "splittermond.settings.HGMultiplier.name",
-        hint: "splittermond.settings.HGMultiplier.hint",
-        scope: "world",
-        config: true,
-        type: Number,
-        default: 1.0,
-        range: {
-            min: 0.5,
-            max: 2.0,
-            step: 0.25
-        },
-        onChange: (mult: number) => {
-            console.log("adjusted hero level");
-            global.game.splittermond.heroLevel = global.CONFIG.splittermond.heroLevel.map((x: number) => x * mult);
-            global.game.actors.forEach((actor: any) => {
-                if (actor.system.type === "character") {
-                    actor.prepareData();
-                }
-            });
-        }
-    });
-
     registerStringSetting("theme", {
         scope: "client",
         config: true,
