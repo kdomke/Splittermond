@@ -26,6 +26,7 @@ export function calculateHeroLevels() {
 
 
 settings.registerNumber("HGMultiplier", {
+    position:1,
     scope: "world",
     config: true,
     default: 1.0,
