@@ -14,6 +14,10 @@
       "reducibleEnhancementCosts": {
         "name": "Reducable Spell Enhancement Costs",
         "hint": "Permits the reduction of enhancement costs by using degrees of success"
+      },
+      "HGMultiplier": {
+        "name": "Hero level multiplier",
+        "hint": "Multiplier for calculating skill points and attribute modifiers."
       }
     }
   }

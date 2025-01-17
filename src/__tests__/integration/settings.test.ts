@@ -94,5 +94,5 @@ export function settingsTest(context: QuenchContext) {
             expect(accessors.get()).to.equal(4);
         });
     });
-};
+}
 
