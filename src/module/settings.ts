@@ -47,7 +47,7 @@ function addToRegisterQueue(action: Function, position: number | null) {
     if (position === null) {
         settingsQueue.push({position, action});
     } else {
-        const insertAt=settingsQueue.findIndex(({position: p}) => p===null || p > position);
+        const insertAt = settingsQueue.findIndex(({position: p}) => p === null || p > position);
         settingsQueue.splice(insertAt, 0, {position, action});
     }
     console.log("After", [...settingsQueue]);
@@ -68,15 +68,18 @@ function delayAccessors(action: () => any): Promise<any> {
     });
 }
 
-async function registerStringSetting(key: string, setting: PartialSettings<StringConstructor>) {
+async function registerStringSetting(key: string, setting: PartialSettings<StringConstructor>):
+    Promise<SettingAccessor<StringConstructor>> {
     return registerSetting(key, {...setting, type: String, range: undefined});
 }
 
-async function registerNumberSetting(key: string, setting: PartialSettings<NumberConstructor>) {
+async function registerNumberSetting(key: string, setting: PartialSettings<NumberConstructor>):
+    Promise<SettingAccessor<NumberConstructor>> {
     return registerSetting(key, {...setting, type: Number});
 }
 
-async function registerBooleanSetting(key: string, setting: Omit<PartialSettings<BooleanConstructor>, "range">) {
+async function registerBooleanSetting(key: string, setting: Omit<PartialSettings<BooleanConstructor>, "range">):
+    Promise<SettingAccessor<BooleanConstructor>> {
     return registerSetting(key, {...setting, type: Boolean, range: undefined});
 }
 
@@ -86,58 +89,12 @@ export const settings = {
     registerBoolean: registerBooleanSetting,
 }
 
-export const registerSystemSettings = async function (): Promise<void> {
-    registerStringSetting("theme", {
-        position: 2,
-        scope: "client",
-        config: true,
-        choices: {// If choices are defined, the resulting setting will be a select menu
-            "default": "splittermond.settings.theme.options.default",
-            "dark": "splittermond.settings.theme.options.dark",
-            "splittermond-blue": "splittermond.settings.theme.options.splittermond_blue",
-        },
-        default: "default",
-        onChange: (theme: string) => {
-            document.body.setAttribute("data-theme", theme);
-        }
-    }).then((accessor) => {
-        document.body.setAttribute("data-theme", accessor.get());
-    });
-
-    registerBooleanSetting("showHotbarDuringActionBar", {
-        position: 4,
-        scope: "client",
-        config: true,
-        default: true,
-        onChange: () => {
-            setTimeout(() => {
-                global.game.splittermond.tokenActionBar.update();
-            }, 500);
-
-        }
-    });
-    registerBooleanSetting("showActionBar", {
-        position: 3,
-        scope: "client",
-        config: true,
-        default: true,
-        onChange: () => {
-            setTimeout(() => {
-                global.game.splittermond.tokenActionBar.update();
-            }, 500);
-
-        }
-    });
+export const registerSystemSettings = function (): void {
 
 
     settingsQueue.forEach(({action}) => action());
+    settingsQueue.splice(0, settingsQueue.length); //delete all elements
     gameInitialized = true;
 }
 
-declare namespace global {
-    const game: {
-        splittermond: {
-            tokenActionBar: { update: () => void },
-        },
-    }
-}
+

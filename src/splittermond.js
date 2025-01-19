@@ -16,7 +16,7 @@ import SplittermondCombat from "./module/combat/combat.js";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
 import ItemImporter from "./module/util/item-importer.js";
 import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
-import {registerSystemSettings} from "./module/settings.ts";
+import {registerRequestedSystemSettings} from "./module/settings.ts";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 
 import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
@@ -29,10 +29,12 @@ import SplittermondEquipmentItem from "./module/item/equipment.js";
 import SplittermondNPCAttackItem from "./module/item/npcattack.js";
 import SplittermondMastery from "./module/item/mastery.js";
 import {referencesUtils} from "./module/data/references/referencesUtils.ts";
-import {foundryApi} from "./module/api/foundryApi.ts";
+import {foundryApi} from "./module/api/foundryApi";
 import {canEditMessageOf} from "./module/util/chat.js";
+import "./module/apps/token-action-bar.js";
 
 import './less/splittermond.less';
+import {initTheme} from "./module/theme";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -104,7 +106,8 @@ Hooks.once("init", async function () {
     };
 
     game.splittermond ={}
-    await registerSystemSettings();
+    initTheme();
+    await registerRequestedSystemSettings();
 
     game.splittermond.skillCheck= Macros.skillCheck;
     game.splittermond.attackCheck = Macros.attackCheck;
