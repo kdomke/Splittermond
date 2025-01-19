@@ -32,7 +32,7 @@ async function registerSetting<T extends SettingTypes>(key: string, setting: Par
         }
     };
     if (!gameInitialized) {
-        console.log(`Game not initialized, adding ${key} to queue`);
+        console.debug(`Game not initialized, adding ${key} to queue`);
         addToRegisterQueue(action, setting.position ?? null);
         return delayAccessors(() => accessors);
     }
@@ -43,14 +43,12 @@ async function registerSetting<T extends SettingTypes>(key: string, setting: Par
 }
 
 function addToRegisterQueue(action: Function, position: number | null) {
-    console.log("Before", [...settingsQueue]);
     if (position === null) {
         settingsQueue.push({position, action});
     } else {
         const insertAt = settingsQueue.findIndex(({position: p}) => p === null || p > position);
-        settingsQueue.splice(insertAt, 0, {position, action});
+        settingsQueue.splice(insertAt <0 ? settingsQueue.length:insertAt, 0, {position, action});
     }
-    console.log("After", [...settingsQueue]);
 }
 
 function delayAccessors(action: () => any): Promise<any> {
@@ -89,12 +87,22 @@ export const settings = {
     registerBoolean: registerBooleanSetting,
 }
 
-export const registerSystemSettings = function (): void {
-
-
+export const registerRequestedSystemSettings = function (): void {
     settingsQueue.forEach(({action}) => action());
     settingsQueue.splice(0, settingsQueue.length); //delete all elements
     gameInitialized = true;
+}
+
+/**
+ * Reset the gameInitialized flag
+ * DON'T USE THIS IN PRODUCTION
+ * This is only for testing purposes, because there is no way of importing this module repeatedly
+ */
+export function resetIsInitialized() {
+    if(false){
+        console.error("");
+    }
+    gameInitialized = false;
 }
 
 

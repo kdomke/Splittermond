@@ -1,31 +1,53 @@
-import sinon from "sinon";
 import {settings} from "../../module/settings";
 
-let booleanExpectation: boolean = false;
-let numberExpectation: number = 0;
-let stringExpectation: string = "";
-sinon.stub(settings, "registerBoolean").callsFake(() => Promise.resolve({
-    get: () => booleanExpectation, set: () => {
-    }
-}))
-sinon.stub(settings, "registerString").callsFake(() => Promise.resolve({
-    get: () => stringExpectation, set: () => {
-    }
-}))
-sinon.stub(settings, "registerNumber").callsFake(() => Promise.resolve({
-    get: () => numberExpectation, set: () => {
-    }
-}))
+type SettingMock<M extends SettingMethod> = M & {callOriginal: M, returnsSetting: (value: SettingType<M>) => void};
+type WhateverThatIsItMakesTSHappy<METHOD extends SettingMethod>=
+    () => Promise<Awaited<{
+        get: () => SettingType<METHOD>
+        set: () => void
+    }>>;
+function SettingsMock<METHOD extends SettingMethod>(registration: METHOD, setting: SettingType<METHOD>):WhateverThatIsItMakesTSHappy<METHOD>{
+    const settingRef = {value: setting};
+    const original = registration;
 
-export const settingsMock = {
-    set booleanExpectation(value: boolean) {
-        booleanExpectation = value
-    },
-    set numberExpectation(value: number) {
-        numberExpectation = value;
-    },
-    set stringExpectation(value: string) {
-        stringExpectation = value;
+    const mockFunction = function () {
+        return Promise.resolve(accessors(settingRef));
+    }
+    mockFunction.callOriginal = original
+
+    mockFunction.returnsSetting = function (value: SettingType<METHOD>) {
+        settingRef.value = value;
     }
 
+    return mockFunction;
+}
+
+function accessors<T>(returnValueRef: { value: T }) {
+    return {
+        get: () => returnValueRef.value,
+        set: () => {
+        }
+    }
+}
+
+settings.registerBoolean = SettingsMock(settings.registerBoolean, false);
+settings.registerNumber = SettingsMock(settings.registerNumber, 0);
+settings.registerString = SettingsMock(settings.registerString, "");
+
+type SettingMethod = typeof settings.registerBoolean | typeof settings.registerNumber | typeof settings.registerString;
+
+type SettingType<T extends SettingMethod> = T extends typeof settings.registerBoolean ? boolean
+    : T extends typeof settings.registerNumber ? number
+        : T extends typeof settings.registerString ? string : never;
+
+export function asMock<M extends SettingMethod>(setting: M|SettingMock<M>): SettingMock<M> {
+    if (isSettingMock(setting)) {
+        return setting as SettingMock<M>;
+    } else {
+        throw new Error("The setting registration function is not a mock");
+    }
+}
+
+function isSettingMock<M extends SettingMethod>(setting: M | SettingMock<M>): setting is SettingMock<M> {
+    return setting.hasOwnProperty("returnsSetting") && setting.hasOwnProperty("callOriginal");
 }
