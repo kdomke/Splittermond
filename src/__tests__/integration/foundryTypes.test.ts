@@ -30,7 +30,7 @@ export function foundryTypeDeclarationsTest(context: QuenchContext) {
                 }
             )
         });
-        ["prepareBaseData", "prepareDerivedData"].forEach(property => {
+        ["prepareBaseData", "prepareDerivedData", "toObject", "getFlag", "updateSource"].forEach(property => {
             it(`should have a method ${property}`, () => {
                 expect(Item.prototype, `Item prototype does not have ${property}`).to.have.property(property);
                 expect(typeof Item.prototype[property as keyof typeof Item.prototype], `item property ${property} is not a function`)
@@ -41,7 +41,7 @@ export function foundryTypeDeclarationsTest(context: QuenchContext) {
 
     });
     describe("Actor", () => {
-        ["prepareBaseData", "prepareDerivedData"].forEach(property => {
+        ["prepareBaseData", "prepareDerivedData", "toObject", "getFlag", "updateSource"].forEach(property => {
             it(`should have a method ${property}`, () => {
                 expect(Item.prototype, `Item prototype does not have ${property}`).to.have.property(property);
                 expect(typeof Item.prototype[property as keyof typeof Item.prototype], `item property ${property} is not a function`)
