@@ -35,6 +35,7 @@ import "./module/apps/token-action-bar.js";
 
 import './less/splittermond.less';
 import {initTheme} from "./module/theme";
+import {CharacterDataModel} from "./module/actor/dataModel/CharacterDataModel";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -88,6 +89,7 @@ Hooks.once("init", async function () {
     }
 
     CONFIG.Actor.documentClass = SplittermondActor;
+    CONFIG.Actor.dataModels.character = CharacterDataModel;
     CONFIG.Item.documentClass = SplittermondItem;
     CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;

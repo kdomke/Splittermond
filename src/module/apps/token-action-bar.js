@@ -211,6 +211,9 @@ export default class TokenActionBar extends Application {
 }
 
 Hooks.on("ready", () => {
+    if(game.splittermond === undefined){
+        game.splittermond = {};
+    }
     game.splittermond.tokenActionBar = new TokenActionBar();
 
     game.splittermond.tokenActionBar.update();
