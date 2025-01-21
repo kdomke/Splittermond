@@ -60,6 +60,22 @@ export interface Roll {
     terms: (Die | OperatorTerm | NumericTerm)[]
 }
 
+export type SettingTypeMapper<T extends SettingTypes> = T extends typeof Number ? number:T extends typeof Boolean?boolean:T extends typeof String?string:never;
+export type SettingTypes = NumberConstructor|BooleanConstructor|StringConstructor;
+export interface SettingsConfig<T extends SettingTypes> {
+    name?: string;
+    hint?: string;
+    /** defaults to client */
+    scope?: "world" | "client";
+    /** will default to false if you not configurable. e.g. missing type */
+    config: boolean;
+    type: T;
+    range?: T extends NumberConstructor ? {min: number, max:number, step:number}: never;
+    default: InstanceType<T>;
+    onChange?: (value: SettingTypeMapper<T>) => void;
+    choices?: Record<string, InstanceType<T>>
+}
+
 declare global {
     type Collection<T> = ReadonlyMap<string, T>
 

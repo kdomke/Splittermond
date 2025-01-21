@@ -21,6 +21,8 @@ import SplittermondSpellItem from "../../../../../../module/item/spell";
 import {splittermond} from "../../../../../../module/config";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import {parseCostString} from "../../../../../../module/util/costs/costParser";
+import {settings} from "../../../../../../module/settings";
+import {asMock} from "../../../../settingsMock";
 
 describe("FocusCostActionHandler", () => {
     let sandbox: SinonSandbox;
@@ -137,12 +139,13 @@ describe("FocusCostActionHandler", () => {
             });
         });
 
-        it("should render multiplicities that affect enhanced costs", () => {
+        it("should render multiplicities that affect enhanced costs if setting is true", () => {
             const underTest = setUpFocusActionHandler(sandbox);
 
             const initialCost = new Cost(1, 0, true).asPrimaryCost();
             underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
             underTest.spellEnhancement.effect = new Cost(0, 1, true).asModifier();
+            (asMock(settings.registerBoolean)).returnsSetting(true)
 
             underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
             const options = underTest.renderDegreeOfSuccessOptions();
@@ -152,6 +155,21 @@ describe("FocusCostActionHandler", () => {
 
             const multiplicitiesRendered = consumedOptions.map(o => o.render.multiplicity);
             expect(multiplicitiesRendered).to.include('1');
+        });
+
+        it("should render multiplicities that affect enhanced costs if setting is false", () => {
+            const underTest = setUpFocusActionHandler(sandbox);
+
+            const initialCost = new Cost(1, 0, true).asPrimaryCost();
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(initialCost)
+            underTest.spellEnhancement.effect = new Cost(0, 1, true).asModifier();
+            (asMock(settings.registerBoolean)).returnsSetting(false)
+
+            underTest.useDegreeOfSuccessOption({action: "spellEnhancementUpdate", multiplicity: "1"}).action();
+            const options = underTest.renderDegreeOfSuccessOptions();
+
+            const consumedOptions = options.filter(o => o.render.action === 'channeledFocusUpdate');
+            expect(consumedOptions).to.be.empty;
         });
 
         ["consumedFocusUpdate", "channeledFocusUpdate", "exhaustedFocusUpdate", "spellEnhancementUpdate"].forEach((option) => {

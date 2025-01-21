@@ -28,10 +28,7 @@
     "npc": "NSC"
         }
   },
-  "SETTINGS": {
-    "HGMultiplierN": "Heldengrad-Multiplikator",
-    "HGMultiplierL": "Die für das Erreichen des nächsten Heldengrades erfolderlichen Erfahrungspunkte werden mit diesem Wert multipliziert."
-  },
+  "SETTINGS": {},
   "splittermond": {
     "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte erstellen Sie einen Fehlerbericht.",
     "chatCard": {
@@ -535,6 +532,10 @@
       "notfound": "Kein PDF mit dem angegebenen Code gefunden."
     },
     "settings": {
+      "reducibleEnhancementCosts": {
+        "name": "Reduzible Zauberverstärkungskosten",
+        "hint": "Erlaubt die Reduzierung der Verstärkungskosten durch die Verwendung von Erfolgsgraden."
+      },
       "theme": {
         "name": "UI-Theme",
         "hint": "Wähle eine UI-Design",
@@ -551,6 +552,10 @@
       "showHotbarDuringActionBar": {
         "name": "Macroleiste zeitgleich mit Aktionsleiste anzeigen",
         "hint": "Ist diese Option aktiviert, wird die Macroleiste nicht ausgeblendet, wenn die Token-Aktionsleiste angezeigt wird."
+      },
+      "HGMultiplier": {
+        "name": "Heldengrad-Multiplikator",
+        "hint": "Der Multiplikator für die Berechnung der Fertigkeitspunkte und Attributsmodifikatoren."
       }
     },
     "error": {

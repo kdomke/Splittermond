@@ -1,4 +1,32 @@
 import {foundryApi} from "../api/foundryApi";
+import {settings} from "../settings";
+
+
+settings.registerBoolean("showHotbarDuringActionBar", {
+    position: 4,
+    scope: "client",
+    config: true,
+    default: true,
+    onChange: () => {
+        setTimeout(() => {
+            global.game.splittermond.tokenActionBar.update();
+        }, 500);
+
+    }
+});
+
+settings.registerBoolean("showActionBar", {
+    position: 3,
+    scope: "client",
+    config: true,
+    default: true,
+    onChange: () => {
+        setTimeout(() => {
+            game.splittermond.tokenActionBar.update();
+        }, 500);
+
+    }
+});
 
 export default class TokenActionBar extends Application {
 

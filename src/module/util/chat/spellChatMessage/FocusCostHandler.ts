@@ -17,7 +17,10 @@ import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../../cost
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 import {PrimaryCost} from "../../costs/PrimaryCost";
+import {settings} from "../../../settings";
 
+let hasReducibleEnhancementCosts:()=>boolean = ()=>false;
+settings.registerBoolean("reducibleEnhancementCosts",{position:5,scope:"world",config:true,default:false}).then(value=>hasReducibleEnhancementCosts=value.get);
 
 function FocusCostHandlerSchema() {
     return {
@@ -106,24 +109,21 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
         if (this.consumed.isOption) {
             this.consumed.getMultiplicities()
                 .map(m => this.consumed.forMultiplicity(m))
-                .filter(m => m.isChecked() ||
-                    !(this.cost.consumed < m.effect.getConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
+                .filter(m => m.isChecked() || !this.overshootsCost(m.effect))
                 .map(m => this.createRender(m, "consumedFocusUpdate"))
                 .forEach(m => options.push(m))
         }
         if (this.channeled.isOption) {
             this.channeled.getMultiplicities()
                 .map(m => this.channeled.forMultiplicity(m))
-                .filter(m => m.isChecked() ||
-                    !(this.cost.channeled < m.effect.getNonConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
+                .filter(m => m.isChecked() || !this.overshootsCost(m.effect))
                 .map(m => this.createRender(m, "channeledFocusUpdate"))
                 .forEach(m => options.push(m))
         }
         if (this.exhausted.isOption) {
             this.exhausted.getMultiplicities()
                 .map(m => this.exhausted.forMultiplicity(m))
-                .filter(m => m.isChecked() ||
-                    !(this.cost.exhausted < m.effect.getNonConsumed(this.cost) || this.cost.subtract(m.effect).isZero()))
+                .filter(m => m.isChecked() ||!this.overshootsCost(m.effect))
                 .map(m => this.createRender(m, "exhaustedFocusUpdate"))
                 .forEach(m => options.push(m))
         }
@@ -139,6 +139,15 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
             cost: this.spellEnhancement.checked ? -1 * this.spellEnhancement.cost : this.spellEnhancement.cost
         })
         return options;
+    }
+    private overshootsCost(cost:CostModifier){
+        let baseCost= this.cost;
+        if(this.spellEnhancement.checked && !hasReducibleEnhancementCosts()){
+           baseCost = baseCost.subtract(this.spellEnhancement.effect);
+        }
+        return baseCost.consumed < cost.getConsumed(baseCost) ||
+            (baseCost.isChanneled ? baseCost.channeled < cost.getNonConsumed(baseCost) : baseCost.exhausted < cost.getNonConsumed(baseCost)) ||
+            baseCost.subtract(cost).isZero();
     }
 
     private createRender(m: ReturnType<FocusDegreeOfSuccessOptionField["forMultiplicity"]>, action: string) {

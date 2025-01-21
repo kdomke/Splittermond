@@ -5,6 +5,7 @@ import {dataModelTest} from "./dataModel.test.ts.js";
 import {DamageRollTest} from "./DamageRoll.test.js";
 import {foundryTypeDeclarationsTest} from "./foundryTypes.test";
 import {mergeObjectTest} from "./mergeObject.test.ts";
+import {settingsTest} from "./settings.test";
 
 
 function registerQuenchTests(quench) {
@@ -15,6 +16,7 @@ function registerQuenchTests(quench) {
     quench.registerBatch("damageRoll", DamageRollTest);
     quench.registerBatch("foundry types", foundryTypeDeclarationsTest);
     quench.registerBatch("merge Objects", mergeObjectTest);
+    quench.registerBatch("Splittermond Settings Module", settingsTest)
 }
 
 export function init() {

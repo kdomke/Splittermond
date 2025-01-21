@@ -28,7 +28,7 @@ type PrimaryCostType = DataModelSchemaType<typeof PrimaryCostSchema>
 export class PrimaryCost extends SplittermondDataModel<PrimaryCostType>{
     static defineSchema  = PrimaryCostSchema
 
-    get isChanneled() {
+    get isChanneled():boolean {
         return this._isChanneled;
     }
 
