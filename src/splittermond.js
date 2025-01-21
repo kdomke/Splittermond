@@ -36,6 +36,8 @@ import "./module/apps/token-action-bar.js";
 import './less/splittermond.less';
 import {initTheme} from "./module/theme";
 import {CharacterDataModel} from "./module/actor/dataModel/CharacterDataModel";
+import {NpcDataModel} from "./module/actor/dataModel/NpcDataModel";
+import {initializeItem} from "./module/item";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -90,22 +92,17 @@ Hooks.once("init", async function () {
 
     CONFIG.Actor.documentClass = SplittermondActor;
     CONFIG.Actor.dataModels.character = CharacterDataModel;
-    CONFIG.Item.documentClass = SplittermondItem;
+    CONFIG.Actor.dataModels.npc = NpcDataModel;
+
+    initializeItem();
+
     CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
-    CONFIG.splittermond = {...splittermond};
-    CONFIG.splittermond.Item = {
-        documentClasses: {
-            default: SplittermondItem,
-            weapon: SplittermondWeaponItem,
-            shield: SplittermondShieldItem,
-            armor: SplittermondArmorItem,
-            spell: SplittermondSpellItem,
-            equipment: SplittermondEquipmentItem,
-            npcattack: SplittermondNPCAttackItem,
-            mastery: SplittermondMastery
-        }
-    };
+
+    CONFIG.splittermond = {
+        ...(CONFIG.splittermond ?? {}),
+        ...splittermond};
+
 
     game.splittermond ={}
     initTheme();
