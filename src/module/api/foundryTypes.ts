@@ -113,6 +113,11 @@ declare global {
          */
         prepareDerivedData(): void;
     }
+
+    const CONFIG:{
+        Item: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+        Actor: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+    } & Record<string, unknown>
 }
 
 export interface MergeObjectOptions {
