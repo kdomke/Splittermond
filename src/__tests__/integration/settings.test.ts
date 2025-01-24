@@ -1,7 +1,7 @@
-import {QuenchContext} from "./resources/types";
 import {settings} from "../../module/settings";
+import {QuenchBatchContext} from "@ethaks/fvtt-quench";
 declare const game: any
-export function settingsTest(context: QuenchContext) {
+export function settingsTest(context: QuenchBatchContext) {
     const {describe, it, expect, afterEach} = context;
 
     describe("SettingsConfig", () => {
