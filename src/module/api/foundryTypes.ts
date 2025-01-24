@@ -81,6 +81,7 @@ declare global {
 
     class Actor extends FoundryDocument {
         items: Collection<Item>
+        system: Record<string, any>
     }
 
     class Item extends FoundryDocument {
