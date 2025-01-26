@@ -19,7 +19,7 @@ import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compe
 import {registerRequestedSystemSettings} from "./module/settings.ts";
 import TickBarHud from "./module/apps/tick-bar-hud.js";
 
-import {init as quenchTestsInit} from "./__tests__/integration/quench.js";
+import {init as quenchTestsInit} from "./__tests__/integration/quench.ts";
 import {chatActionFeature} from "./module/util/chat/chatActionFeature.ts";
 import SplittermondWeaponItem from "./module/item/weapon.js";
 import SplittermondShieldItem from "./module/item/shield.js";
