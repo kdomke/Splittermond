@@ -77,7 +77,7 @@ export interface SettingsConfig<T extends SettingTypes> {
 }
 
 declare global {
-    type Collection<T> = ReadonlyMap<string, T>
+    type Collection<T> = ReadonlyMap<string, T> & ReadonlyArray<T>
 
     class Actor extends FoundryDocument {
         items: Collection<Item>
