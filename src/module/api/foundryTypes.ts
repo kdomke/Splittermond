@@ -77,10 +77,11 @@ export interface SettingsConfig<T extends SettingTypes> {
 }
 
 declare global {
-    type Collection<T> = ReadonlyMap<string, T>
+    type Collection<T> = ReadonlyMap<string, T> & ReadonlyArray<T>
 
     class Actor extends FoundryDocument {
         items: Collection<Item>
+        system: Record<string, any>
     }
 
     class Item extends FoundryDocument {
@@ -101,7 +102,10 @@ declare global {
 
         readonly id: string
         readonly documentName: string
-        readonly parent?: FoundryDocument
+        readonly parent: FoundryDocument|undefined
+        toObject(source?:boolean): object
+        getFlag(scope: string, key: string): unknown;
+        updateSource(data: object): void;
 
         prepareBaseData(): void;
 
@@ -110,6 +114,11 @@ declare global {
          */
         prepareDerivedData(): void;
     }
+
+    const CONFIG:{
+        Item: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+        Actor: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+    } & Record<string, unknown>
 }
 
 export interface MergeObjectOptions {
