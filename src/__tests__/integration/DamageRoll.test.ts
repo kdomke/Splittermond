@@ -58,6 +58,12 @@ export function DamageRollTest(context:QuenchBatchContext) {
 
             expect(rollResult.total).to.equal(0);
         });
+
+        it("should produce a tooltip",async () => {
+            const rollResult = await foundryApi.roll("2d6+1").evaluate()
+
+            expect(rollResult.getTooltip()).to.equal("2d6+1");//TODO: paste actual value here
+        });
     });
 
     describe("Damage Roll evaluation", () => {

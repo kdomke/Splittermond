@@ -60,6 +60,8 @@ export interface Roll {
     readonly total: number
     dice: Die[]
     terms: (Die | OperatorTerm | NumericTerm)[]
+
+    getTooltip(): string;
 }
 
 export type SettingTypeMapper<T extends SettingTypes> = T extends typeof Number ? number:T extends typeof Boolean?boolean:T extends typeof String?string:never;
