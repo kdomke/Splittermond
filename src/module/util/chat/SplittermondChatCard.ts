@@ -7,23 +7,28 @@ import {getFromRegistry} from "./chatMessageRegistry";
 import {foundryApi} from "../../api/foundryApi";
 import SplittermondActor from "../../actor/actor";
 import {ChatMessageTypes} from "../../api/foundryTypes";
+import { Roll } from "module/api/Roll";
 
 interface ChatMessageConfig {
     type: ChatMessageTypes;
     mode?: string;
     whisper: string[];
     blind: boolean;
-    rolls: string[];
+    rolls: Roll[];
 }
 
 export class SplittermondChatCard extends SplittermondChatCardModel {
 
     static create(actor: SplittermondActor, message: SplittermondChatMessage, chatOptions: ChatMessageConfig): SplittermondChatCard {
         const speaker = foundryApi.getSpeaker({actor});
+        const normalizedChatOptions = {
+            ...chatOptions,
+            rolls: chatOptions.rolls.map(r => JSON.stringify(r)),
+        }
 
         return new SplittermondChatCard({
             speaker,
-            chatOptions,
+            chatOptions: normalizedChatOptions,
             message,
             messageId: null /*We set the ID internally*/,
         }, foundryApi);
@@ -89,9 +94,9 @@ export async function handleChatAction(data: unknown, messageId: string): Promis
     const chatCard = getChatCard(messageId);
     const isObjectWithAction = data instanceof Object && "action" in data
 
-    if(isObjectWithAction && canBeKey(data.action)) {
-        await chatCard.message.handleGenericAction({...data, action:data.action})
-            .catch(()=>throwNoActionError(chatCard, data, messageId ))
+    if (isObjectWithAction && canBeKey(data.action)) {
+        await chatCard.message.handleGenericAction({...data, action: data.action})
+            .catch(() => throwNoActionError(chatCard, data, messageId))
         await chatCard.updateMessage();
     } else {
         throwNoActionError(chatCard, data, messageId);
@@ -101,7 +106,7 @@ export async function handleChatAction(data: unknown, messageId: string): Promis
 export async function handleLocalChatAction(data: unknown, messageId: string) {
     const chatCard = getChatCard(messageId);
     const isObjectWithAction = data instanceof Object && "localaction" in data
-    if(isObjectWithAction && canBeKey(data.localaction)) {
+    if (isObjectWithAction && canBeKey(data.localaction)) {
         return chatCard.message.handleGenericAction({...data, action: data.localaction})
             .catch(() => throwNoActionError(chatCard, data, messageId))
     } else {
@@ -122,11 +127,11 @@ function getChatCard(messageId: string): SplittermondChatCard {
 
 }
 
-function canBeKey(input:unknown): input is string {
+function canBeKey(input: unknown): input is string {
     return typeof input === "string";
 }
 
-function throwNoActionError(chatCard:SplittermondChatCard, data:any, messageId:string) {
+function throwNoActionError(chatCard: SplittermondChatCard, data: any, messageId: string) {
     foundryApi.warnUser("splittermond.chatCard.actionNotFound");
     throw new Error(`Action ${data.action} not found on chat card for message ${chatCard.message.constructorKey} with ${messageId}`);
 }
