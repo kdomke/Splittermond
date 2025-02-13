@@ -1,4 +1,5 @@
 import {DataModel} from "./DataModel";
+import {Roll} from "./Roll";
 
 export interface ChatMessage {
     id: string,
@@ -38,30 +39,6 @@ export interface Hooks {
     once: (key: string, callback: (...args: any[]) => void) => number;
     on: ((key: string, callback: (...args: any[]) => void) => number);
     off: (key: string, id: number) => void;
-}
-
-export interface Die {
-    faces: number;
-    results: { active: boolean, result: number }[]
-}
-
-export interface OperatorTerm {
-    operator: string;
-
-}
-
-export interface NumericTerm {
-    number: number;
-}
-
-export interface Roll {
-    evaluate: () => Promise<Roll>;
-    _total: number
-    readonly total: number
-    dice: Die[]
-    terms: (Die | OperatorTerm | NumericTerm)[]
-
-    getTooltip(): string;
 }
 
 export type SettingTypeMapper<T extends SettingTypes> = T extends typeof Number ? number:T extends typeof Boolean?boolean:T extends typeof String?string:never;

@@ -3,11 +3,11 @@ import type {
     ChatMessageTypes,
     Hooks,
     MergeObjectOptions,
-    Roll,
     SettingsConfig, SettingTypeMapper,
     Socket,
     User
 } from "./foundryTypes";
+import type{Roll} from "./Roll";
 
 export const foundryApi = new class FoundryApi {
 
@@ -136,9 +136,9 @@ export const foundryApi = new class FoundryApi {
         return game.scenes.get(sceneId)?.tokens.get(tokenId);
     }
 
-    roll(damageFormula: string, context: object = {}): Roll {
-        // @ts-ignore
-        return new Roll(damageFormula, context)
+    roll(damageFormula: string, data:Record<string,string>={}, context: object = {}): Roll{
+        //@ts-ignore
+        return new Roll(damageFormula, data, context)
     }
 
     mergeObject<T extends object, U extends object>(original: T, other?: U, options?:MergeObjectOptions): Partial<T> & Partial<U>{

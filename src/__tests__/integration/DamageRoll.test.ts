@@ -1,6 +1,7 @@
 import {foundryApi} from "../../module/api/foundryApi";
 import {DamageRoll} from "../../module/util/damage/DamageRoll";
 import {QuenchBatchContext} from "@ethaks/fvtt-quench";
+import {addRolls, sumRolls} from "../../module/api/Roll";
 
 declare class Die{
     results: any;
@@ -59,10 +60,43 @@ export function DamageRollTest(context:QuenchBatchContext) {
             expect(rollResult.total).to.equal(0);
         });
 
+        it("should not have a result if not evalutated",()=>{
+            expect(foundryApi.roll("1d6").result).to.be.empty;
+        })
+        it("should have a result if evalutated",async ()=>{
+            const rollResult = await foundryApi.roll("1d6").evaluate().then((roll)=>roll.result);
+            expect(parseInt(rollResult)).to.be.above(0);
+            expect(parseInt(rollResult)).to.be.below(7);
+        })
+
         it("should produce a tooltip",async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
 
-            expect(rollResult.getTooltip()).to.equal("2d6+1");//TODO: paste actual value here
+            const tooltip = await rollResult.getTooltip();
+            expect(tooltip).to.contain('<span class="part-formula">2d6</span>');
+            expect(tooltip).to.match(/(<li class="roll die d6">[1-6]<\/li>)/);
+        });
+
+        it("should allow concatenation of rolls",async () => {
+            const rollResult1 = await foundryApi.roll("2d6+1").evaluate();
+            const rollResult2 = await foundryApi.roll("1d10+3").evaluate();
+
+            const roll = addRolls(rollResult1, rollResult2);
+
+            expect(rollResult1.formula).to.equal("2d6 + 1");
+            expect(rollResult2.formula).to.equal("1d10 + 3");
+            expect(roll.formula).to.equal("2d6 + 1 + 1d10 + 3")
+        });
+
+        it("should allow summation of rolls",async () => {
+            const rollResult1 = await foundryApi.roll("2d6+1").evaluate();
+            const rollResult2 = await foundryApi.roll("1d10+3").evaluate();
+
+            const roll = sumRolls([rollResult1, rollResult2]);
+
+            expect(rollResult1.formula).to.equal("2d6 + 1");
+            expect(rollResult2.formula).to.equal("1d10 + 3");
+            expect(roll.formula).to.equal("2d6 + 1 + 1d10 + 3")
         });
     });
 

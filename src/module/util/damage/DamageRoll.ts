@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {Die, Roll} from "../../api/foundryTypes";
+import {Die, Roll} from "../../api/Roll";
 
 interface Feature {
     name: string;

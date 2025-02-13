@@ -3,7 +3,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
 import {foundryApi} from "module/api/foundryApi";
-import {Die, Roll} from "../../../../module/api/foundryTypes";
+import {Die, Roll} from "module/api/Roll";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -101,8 +101,9 @@ describe("DamageRoll evaluation", () => {
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
         const rollMock: Roll = {
+            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
             _total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}]}]
+            dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
         };
         const mock = sinon.stub(foundryApi, "roll").returns(rollMock);
         await DamageRoll.parse(damageString, "Exakt 1").evaluate();
@@ -116,14 +117,16 @@ describe("DamageRoll evaluation", () => {
         const terms = [
             {
                 faces: 6,
+                _evaluated: false,
                 results: [
                     {active: true, result: 1},
                     {active: true, result: 1}],
             }
         ];
         const rollMock: Roll = {
+            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
             _total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}]}]
+            dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
         };
         sinon.stub(foundryApi, "roll").returns(rollMock);
 
@@ -139,14 +142,16 @@ describe("DamageRoll evaluation", () => {
         const terms = [
             {
                 faces: 6,
+                _evaluated: false,
                 results: [
                     {active: true, result: 6},
                     {active: true, result: 6}],
             }
         ];
         const rollMock: Roll = {
+            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
             _total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:6}]}]
+            dice: [{faces: 6, results: [{active: true, result:6}], _evaluated: true}]
         };
         sinon.stub(foundryApi, "roll").returns(rollMock);
 
