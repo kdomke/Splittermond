@@ -1,8 +1,5 @@
-import {DamageRoll} from "./damage/DamageRoll.ts";
-import {foundryApi} from "../api/foundryApi.ts";
-import {SplittermondChatCard} from "./chat/SplittermondChatCard.js";
-import {DamageMessage} from "./chat/damageChatMessage/DamageMessage.js";
-import {DamageEvent} from "./damage/DamageEvent.js";
+import {DamageRoll} from "./damage/DamageRoll";
+import {foundryApi} from "../api/foundryApi";
 
 export const Dice = {
     check,
@@ -89,14 +86,6 @@ export async function damage(damageFormula, featureString, damageSource = "", sp
     const damage = DamageRoll.parse(damageFormula, featureString);
 
     const roll = await damage.evaluate();
-
-   SplittermondChatCard.create(
-       foundryApi.getActor(speaker?.actor),
-       DamageMessage.initialize(new DamageEvent({
-           
-       }))
-
-   )
 
     let actions = [];
 
