@@ -7,7 +7,7 @@ function ItemShieldDataModelSchema() {
     return {
         ...getDescriptorFields(),
         ...getPhysicalProperties(),
-        defense: getDefense(),
+        ...getDefense(),
         modifier: new fields.StringField({ required: true, nullable: false }),
         skill: new fields.StringField({ required: true, nullable: false }),
         features: new fields.StringField({ required: true, nullable: false }),
