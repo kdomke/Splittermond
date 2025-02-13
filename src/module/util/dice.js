@@ -1,5 +1,6 @@
 import {DamageRoll} from "./damage/DamageRoll";
 import {foundryApi} from "../api/foundryApi";
+import {singleDamage} from "./chat/damageChatMessage/initDamage";
 
 export const Dice = {
     check,
@@ -83,6 +84,7 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
  */
 export async function damage(damageFormula, featureString, damageSource = "", speaker= null) {
 
+    return singleDamage(damageFormula, featureString, damageSource, speaker);
     const damage = DamageRoll.parse(damageFormula, featureString);
 
     const roll = await damage.evaluate();

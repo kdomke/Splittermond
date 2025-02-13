@@ -200,4 +200,4 @@ function getRollResultClass(checkReport: CheckReport): string {
     return resultClasses.join(" ")
 }
 
-addToRegistry("SpellRollMessage", SpellRollMessage);
+addToRegistry(constructorRegistryKey, SpellRollMessage);

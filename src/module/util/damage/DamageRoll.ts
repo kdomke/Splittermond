@@ -1,11 +1,6 @@
 import {foundryApi} from "../../api/foundryApi";
 import {Die, Roll} from "../../api/Roll";
-
-interface Feature {
-    name: string;
-    value: number;
-    active: boolean;
-}
+import {Feature, parseFeatureString} from "./featureParser";
 
 interface DamageRollObjectType {
     nDice: number;
@@ -134,21 +129,6 @@ export class DamageRoll {
             features: this._features
         }
     }
-}
-
-function parseFeatureString(featureString:string):Record<string,Feature> {
-    const features:Record<string,Feature> = {};
-    featureString.split(',').forEach(feat => {
-        let temp = /([^0-9 ]+)\s*([0-9]*)/.exec(feat.trim());
-        if (temp && temp[1]) {
-            features[temp[1].toLowerCase()] = {
-                name: temp[1],
-                value: parseInt(temp[2]) || 1,
-                active: false
-            };
-        }
-    });
-    return features;
 }
 
 function parseDamageString(damageString:string):{nDice:number, nFaces:number,damageModifier:number}{
