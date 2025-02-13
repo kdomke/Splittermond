@@ -1,11 +1,16 @@
 import {foundryApi} from "../api/foundryApi";
 import type SplittermondSpellItem from "../item/spell";
-import {SplittermondMasterySystemData, SplittermondSpellSystemData} from "module/data/ItemSystemData";
+import {
+    SplittermondArmorSystemData,
+    SplittermondMasterySystemData,
+    SplittermondSpellSystemData
+} from "module/data/ItemSystemData";
 import SplittermondMasteryItem from "../item/mastery";
 import SplittermondActor from "../actor/actor";
 import {CharacterDataModel} from "../actor/dataModel/CharacterDataModel";
 import {NpcDataModelType} from "../actor/dataModel/NpcDataModel";
 import {DataModelConstructorInput} from "./SplittermondDataModel";
+import SplittermondArmorItem from "../item/armor";
 
 export const itemCreator = {
     createSpell(data: {type: "spell", system: Partial<SplittermondSpellSystemData>}): Promise<SplittermondSpellItem> {
@@ -14,6 +19,9 @@ export const itemCreator = {
 
     createMastery(data:{type: "mastery", system: Partial<SplittermondMasterySystemData>}): Promise<SplittermondMasteryItem> {
         return foundryApi.createItem(data) as Promise<SplittermondMasteryItem>;
+    },
+    createArmor(data:{type: "armor", system: Partial<SplittermondArmorSystemData>}): Promise<SplittermondArmorItem> {
+        return foundryApi.createItem(data) as Promise<SplittermondArmorItem>;
     }
 }
 

@@ -8,6 +8,7 @@ import * as Baumwandler from "../../../../resources/importSamples/GRW/NSC/Baumwa
 import * as Oger from "../../../../resources/importSamples/GRW/NSC/Oger.resource";
 import * as Vorarbeiter from "../../../../resources/importSamples/Hexenkönigin/Vorarbeiter.resource";
 import * as Regenbogenschwinge from "../../../../resources/importSamples/Hexenkönigin/Regenbogenschwinge.resource";
+import * as Schuppenruestung from "../../../../resources/importSamples/GRW/armor/Schuppenrüstung.resource";
 import {describe, it} from "mocha";
 import sinon, {SinonSandbox, SinonStub} from "sinon";
 import {actorCreator, itemCreator} from "../../../../../module/data/EntityCreator";
@@ -44,6 +45,22 @@ describe("ItemImporter", () => {
 
     describe("Imports from the core rulebook", () => {
 
+        describe("Armor imports", () => {
+            let armorCreationStub: SinonStub;
+            beforeEach(() => {
+                armorCreationStub = sandbox.stub(itemCreator, "createArmor").returns(Promise.resolve({} as any));
+                sandbox.stub(ItemImporter, "_folderDialog").returns(Promise.resolve("folderId"));
+            });
+
+            it(`should import armor ${Schuppenruestung.testname}`, async () => {
+                const text = Schuppenruestung.input;
+
+                await ItemImporter.pasteEventhandler(new ClipboardEvent(text));
+
+                expect(armorCreationStub.calledOnce).to.be.true;
+                expect(armorCreationStub.lastCall.args[0]).to.deep.equal(Schuppenruestung.expected);
+            });
+        });
         describe("Spell imports", () => {
             let spellCreationStub: SinonStub;
             beforeEach(() => {

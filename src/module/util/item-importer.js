@@ -140,8 +140,7 @@ export default class ItemImporter {
 
         // Check Armor
         if (rawData.match(/([^]*)\s+(Dorf|Kleinstadt|Großstadt|Metropole)\s+([0-9]+ [LST])\s+([0-9]+)\s+([0-9]+)\s+([UGFMA])\s+(\+[0-9]+|0)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+([^]+)/)) {
-            this.importArmor(rawData);
-            return;
+            return this.importArmor(rawData);
         }
 
         // Check multiple Shield
@@ -180,8 +179,7 @@ export default class ItemImporter {
 
         // Import npcfeature
         if (rawData.match(/^(.*): .*/gm)) {
-            this.importNpcFeatures(rawData);
-            return;
+            return this.importNpcFeatures(rawData);
         }
     }
 
@@ -384,10 +382,12 @@ export default class ItemImporter {
         itemData.system.minStr = parseInt(tokens[11]);
         itemData.system.features = tokens[12].trim();
 
-        Item.create(itemData);
+        return itemCreator.createArmor(itemData)
+            .then(()=>{
+                console.log(itemData);
+                foundryApi.informUser("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeArmor") });
+            });
 
-        console.log(itemData);
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeArmor") }));
     }
 
     static async importWeapon(rawData, skill = "", folder = "") {
@@ -481,7 +481,7 @@ export default class ItemImporter {
         Item.create(itemData);
 
         console.log(itemData);
-        ui.notifications.info(game.i18n.format("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeWeapon") }));
+        foundryApi.informUser("splittermond.message.itemImported", { name: itemData.name, type: foundryApi.localize("ITEM.TypeWeapon") });
     }
 
     static importSpell = spellImporter;
