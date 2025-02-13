@@ -23,9 +23,9 @@ export function getDescriptorFields(){
 }
 
 export function getDefense(){
-    return new fields.SchemaField({
-        tickMalus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-        defenseBonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-        handicap: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    }, { required: true, nullable: false });
+    return {
+        tickMalus: new fields.NumberField({required: true, nullable: false, initial: 0}),
+        defenseBonus: new fields.NumberField({required: true, nullable: false, initial: 0}),
+        handicap: new fields.NumberField({required: true, nullable: false, initial: 0}),
+    }
 }

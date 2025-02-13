@@ -7,7 +7,7 @@ function ItemArmorDataModelSchema() {
     return {
         ...getDescriptorFields(),
         ...getPhysicalProperties(),
-        defense: getDefense(),
+        ...getDefense(),
         modifier: new fields.StringField({ required: true, nullable: false }),
         minStr: new fields.NumberField({ required: true, nullable: true}),
         damageReduction: new fields.NumberField({ required: true, nullable: true}),
