@@ -137,7 +137,7 @@ describe("Addition to Damage Roll", () => {
 describe("DamageRoll evaluation", () => {
     let sandbox: sinon.SinonSandbox;
     beforeEach(() => sandbox = sinon.createSandbox());
-    afterEach(() => sinon.restore());
+    afterEach(() => sandbox.restore());
 
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"

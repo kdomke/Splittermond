@@ -9,6 +9,7 @@ import {parseFeatureString} from "../../damage/featureParser";
 import {DamageMessage} from "./DamageMessage";
 import {Roll, sumRolls} from "../../../api/Roll";
 import {Speaker} from "../../../api/foundryTypes";
+import {DamageFeature} from "../../damage/DamageFeature";
 
 interface ProtoDamageImplement {
     damageFormula: string;
@@ -33,12 +34,13 @@ export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' 
         costVector,
         formula: damageResults.totalRoll.formula,
         tooltip: await damageResults.totalRoll.getTooltip(),
-        implements: damageResults.damageImplements
+        implements: damageResults.damageImplements,
+        isGrazingHit: false,
     });
 
     return SplittermondChatCard.create(
         actorReference?.getAgent() as any, //TODO: We either need a speaker or allow no speaker
-        DamageMessage.initialize(damageEvent),
+        DamageMessage.initialize(damageEvent,damageResults.features),
         {
             type: foundryApi.chatMessageTypes.OTHER,
             whisper: [],
@@ -50,19 +52,22 @@ export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' 
 
 async function rollDamages(damages: ProtoDamageImplement[]) {
     const allRolls: Roll[] = [];
+    const allFeature:DamageFeature[] = [];
     const damageImplements = await Promise.all(damages.map(async damage => {
-        const rollResult = await DamageRoll.parse(damage.damageFormula, damage.featureString).evaluate();
+        const damageRoll = DamageRoll.parse(damage.damageFormula, damage.featureString);
+        const rollResult = await damageRoll.evaluate();
+        allFeature.push(...Object.values(damageRoll.getActiveFeatures()));
         allRolls.push(rollResult);
         return new DamageImplement({
             damage: rollResult.total,
             formula: damage.damageFormula,
             implementName: damage.damageSource,
             damageExplanation: await rollResult.getTooltip(),
-            baseReductionOverride: parseFeatureString(damage.featureString)["Durchdringung"]?.value ?? 0,
+            _baseReductionOverride: parseFeatureString(damage.featureString)["durchdringung"]?.value ?? 0,
             damageType: damage.damageType
         });
     }));
-    return {totalRoll: sumRolls(allRolls), damageImplements};
+    return {totalRoll: sumRolls(allRolls),features: allFeature, damageImplements};
 }
 
 function resolveActor(speaker: Speaker | null) {

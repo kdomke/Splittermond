@@ -1,11 +1,7 @@
-export interface Feature {
-    name: string;
-    value: number;
-    active: boolean;
-}
+import {DamageFeature} from "./DamageFeature";
 
-export function parseFeatureString(featureString: string): Record<string, Feature> {
-    const features: Record<string, Feature> = {};
+export function parseFeatureString(featureString: string): Record<string, DamageFeature> {
+    const features: Record<string, DamageFeature> = {};
     featureString.split(',').forEach(feat => {
         let temp = /([^0-9 ]+)\s*([0-9]*)/.exec(feat.trim());
         if (temp && temp[1]) {

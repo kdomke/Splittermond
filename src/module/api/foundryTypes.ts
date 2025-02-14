@@ -68,6 +68,7 @@ declare global {
     type Collection<T> = ReadonlyMap<string, T> & ReadonlyArray<T>
 
     class Actor extends FoundryDocument {
+        name:string;
         items: Collection<Item>
         system: Record<string, any>
     }

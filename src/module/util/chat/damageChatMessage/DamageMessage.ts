@@ -5,12 +5,16 @@ import {addToRegistry} from "../chatMessageRegistry";
 import {DamageEvent} from "../../damage/DamageEvent";
 import {foundryApi} from "../../../api/foundryApi";
 import ApplyDamageDialog from "../../../apps/dialog/apply-damage-dialog";
+import {DamageFeature, DamageFeatureSchema} from "../../damage/DamageFeature";
 
 const constructorRegistryKey = "DamageMessage";
 
 function DamageMessageSchema() {
     return {
         constructorKey: new fields.StringField({required: true, nullable: false, initial: constructorRegistryKey}),
+        featuresToDisplay: new fields.ArrayField(
+            new fields.SchemaField(DamageFeatureSchema(), {required: true, nullable: false}),
+            {required: true, nullable: false}),
         damageEvent: new fields.EmbeddedDataField(DamageEvent, {required: true, nullable: false}),
     };
 }
@@ -22,9 +26,10 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
 
     static defineSchema = DamageMessageSchema;
 
-    static initialize(damageEvent: DamageEvent): DamageMessage {
+    static initialize(damageEvent: DamageEvent, featuresToDisplay: DamageFeature[] = []): DamageMessage {
         return new DamageMessage({
             damageEvent,
+            featuresToDisplay,
             constructorKey: constructorRegistryKey,
         });
     }
@@ -36,10 +41,10 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
 
     getData(): DamageMessageData {
         return {
-            features: [],
+            features: this.renderFeaturesToDisplay(),
             formula: this.damageEvent.formula,
             total: this.damageEvent.totalDamage(),
-            source: this.damageEvent.causer?.getAgent().name,
+            source: this.damageEvent.causer?.getAgent().name ?? null,
             tooltip: this.damageEvent.tooltip,
             actions: [
                 this.renderApplyDamageToTargetAction()
@@ -47,15 +52,13 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
         }
     }
 
-    handleGenericAction(data: { action: string }): Promise<void> {
-        if(data.action === "applyDamageToTarget"){
-            return ApplyDamageDialog.create(this.damageEvent.totalDamage(),"V","")
-        }
-        return Promise.resolve();
+    private renderFeaturesToDisplay() {
+        return this.featuresToDisplay
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 4);
     }
 
-
-    private renderApplyDamageToTargetAction(){
+    private renderApplyDamageToTargetAction() {
         return {
             classes: "splittermond-chat-action",
             data: {
@@ -65,6 +68,15 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
             name: foundryApi.localize("splittermond.applyDamage")
         }
     }
+
+    handleGenericAction(data: { action: string }): Promise<void> {
+        if (data.action === "applyDamageToTarget") {
+            return ApplyDamageDialog.create(this.damageEvent.totalDamage(), "V", "")
+        }
+        return Promise.resolve();
+    }
+
+
 }
 
 addToRegistry(constructorRegistryKey, DamageMessage);
