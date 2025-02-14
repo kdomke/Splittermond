@@ -1,9 +1,9 @@
 import {compendiumBrowserTest} from "./compendium-browser.test";
 import {itemTest} from "./item.test";
 import {chatActionFeatureTest} from "./chatActionFeature.test";
-import {dataModelTest} from "./dataModel.test";
+import {dataModelTest} from "./api/dataModel.test";
 import {DamageRollTest} from "./DamageRoll.test";
-import {foundryTypeDeclarationsTest} from "./foundryTypes.test";
+import {foundryTypeDeclarationsTest} from "./api/foundryTypes.test";
 import {mergeObjectTest} from "./mergeObject.test";
 import {actorTest} from "./actor.test";
 import type {Quench} from "@ethaks/fvtt-quench";
