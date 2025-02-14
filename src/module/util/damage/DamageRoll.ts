@@ -1,12 +1,13 @@
 import {foundryApi} from "../../api/foundryApi";
 import {Die, FoundryRoll} from "../../api/Roll";
-import {Feature, parseFeatureString} from "./featureParser";
+import {parseFeatureString} from "./featureParser";
+import {DamageFeature} from "./DamageFeature";
 
 interface DamageRollObjectType {
     nDice: number;
     nFaces: number;
     damageModifier: number;
-    features: Record<string, Feature>
+    features: Record<string, DamageFeature>
 }
 
 export class DamageRoll {
@@ -24,7 +25,7 @@ export class DamageRoll {
     private _nDice: number;
     private _nFaces: number;
     private _damageModifier: number;
-    private _features: Record<string,Feature>;
+    private _features: Record<string,DamageFeature>;
 
     constructor({nDice, nFaces, damageModifier, features}: DamageRollObjectType) {
         this._nDice = nDice;
@@ -124,6 +125,15 @@ export class DamageRoll {
     getFeatureString():string {
         return Object.keys(this._features).map(key => `${this._features[key].name} ${this._features[key].value}`).join(", ");
     }
+    getActiveFeatures():Record<string,DamageFeature>{
+        const starter = {} as Record<string,DamageFeature>;
+        if(this._features["wuchtig"]){
+            this._features["wuchtig"].active = this._damageModifier != 0;
+        }
+        return Object.entries(this._features)
+            .filter(([__,feature])=>feature.active)
+            .reduce((acc,[key,value])=>{acc[key]=value;return acc},starter);
+    };
 
     toObject():DamageRollObjectType {
         return {
