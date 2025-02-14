@@ -4,10 +4,10 @@ import type {
     Hooks,
     MergeObjectOptions,
     SettingsConfig, SettingTypeMapper,
-    Socket,
+    Socket, Speaker,
     User
 } from "./foundryTypes";
-import type{Roll} from "./Roll";
+import type {FoundryRoll, Roll} from "./Roll";
 
 export const foundryApi = new class FoundryApi {
 
@@ -67,10 +67,10 @@ export const foundryApi = new class FoundryApi {
     }
 
     /**
-     * @param {object} data object containing the actor
-     * @return {{scene:string,token: string,actor: string,alias: string}} the token that is registered as the speaker
+     * @param {actor:Actor,scene:Scene,token:TokenDocument, alias:string} data object containing the actor
+     * @return  the token that is registered as the speaker
      */
-    getSpeaker(data: object) {
+    getSpeaker(data:object): Speaker {
         //@ts-ignore
         return ChatMessage.getSpeaker(data);
     }
@@ -136,7 +136,7 @@ export const foundryApi = new class FoundryApi {
         return game.scenes.get(sceneId)?.tokens.get(tokenId);
     }
 
-    roll(damageFormula: string, data:Record<string,string>={}, context: object = {}): Roll{
+    roll(damageFormula: string, data:Record<string,string>={}, context: object = {}): FoundryRoll{
         //@ts-ignore
         return new Roll(damageFormula, data, context)
     }
