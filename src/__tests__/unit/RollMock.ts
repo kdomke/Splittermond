@@ -25,7 +25,7 @@ class MockNumericTerm implements NumericTerm {
     ) {}
 }
 
-class MockRoll implements FoundryRoll{
+export class MockRoll implements FoundryRoll{
     /**@internal*/_evaluated: boolean;
     /**@internal*/_total: number;
     terms: Array<Die | OperatorTerm | NumericTerm>;
@@ -42,11 +42,11 @@ class MockRoll implements FoundryRoll{
         this.dice = [];
 
         // Simple formula parsing for common cases
-        const match = formula.match(/(\d+)d(\d+)([+-]\d+)?/);
+        const match = formula.replace(/ /g, "").match(/(\d+)d(\d+)([+-]\d+)?/);
         if (match) {
             const diceCount = parseInt(match[1]);
             const faces = parseInt(match[2]);
-            const modifier = match[3] ? parseInt(match[3]) : 0;
+            const modifier = match[3] ? parseInt(match[3]) : null;
 
             // Create dice terms
             const dieResults = Array.from({ length: diceCount }, () => ({
@@ -58,7 +58,7 @@ class MockRoll implements FoundryRoll{
             this.terms.push(die);
             this.dice.push(die);
 
-            if (modifier !== 0) {
+            if (modifier !== null) {
                 this.terms.push(
                     new MockOperatorTerm(modifier > 0 ? '+' : '-'),
                     new MockNumericTerm(Math.abs(modifier))

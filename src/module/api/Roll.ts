@@ -87,7 +87,7 @@ namespace Terms {
 
     export function getEvaluatedAddTerm(): OperatorTerm {
         if (evaluatedAddTerm === null) {
-            evaluatedAddTerm = new Roll("0 + 0").terms[1] as OperatorTerm
+            evaluatedAddTerm = new Roll("0d0+0").terms[1] as OperatorTerm
             evaluatedAddTerm._evaluated = true;
         }
         return evaluatedAddTerm
@@ -95,7 +95,7 @@ namespace Terms {
 
     export function getUnevaluatedAddTerm(): OperatorTerm {
         if (unEvaluatedAddTerm === null) {
-            unEvaluatedAddTerm = new Roll("0 + 0").terms[1] as OperatorTerm
+            unEvaluatedAddTerm = new Roll("0d0+0").terms[1] as OperatorTerm
         }
         return unEvaluatedAddTerm
     }
