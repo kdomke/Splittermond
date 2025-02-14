@@ -2,8 +2,8 @@ import {describe, it} from "mocha";
 import {expect} from "chai";
 import sinon from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
-import {foundryApi} from "module/api/foundryApi";
-import {Die, Roll} from "module/api/Roll";
+import {Die, FoundryRoll} from "module/api/Roll";
+import {createTestRoll, stubFoundryRoll} from "../../../RollMock";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -95,17 +95,14 @@ describe("DamageRoll feature string parsing and stringifying", () => {
 });
 
 describe("DamageRoll evaluation", () => {
-
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
     afterEach(() => sinon.restore());
 
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
-        const rollMock: Roll = {
-            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
-            _total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
-        };
-        const mock = sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll =createTestRoll("1d6", [1],0);
+        const mock = stubFoundryRoll(rollMock, sandbox);
         await DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
         expect(mock.callCount).to.equal(1);
@@ -114,21 +111,8 @@ describe("DamageRoll evaluation", () => {
 
     it("Should not increase the lowest dice for scharf feature", async () => {
         const damageString = "2d6";
-        const terms = [
-            {
-                faces: 6,
-                _evaluated: false,
-                results: [
-                    {active: true, result: 1},
-                    {active: true, result: 1}],
-            }
-        ];
-        const rollMock: Roll = {
-            result: "2", formula: "2d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
-            _total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
-        };
-        sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll= createTestRoll("2d6", [1,1],0);
+        stubFoundryRoll(rollMock, sandbox);
 
         const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
 
@@ -139,21 +123,8 @@ describe("DamageRoll evaluation", () => {
 
     it("Should not increase the highest dice for kritisch feature", async () => {
         const damageString = "2d6"
-        const terms = [
-            {
-                faces: 6,
-                _evaluated: false,
-                results: [
-                    {active: true, result: 6},
-                    {active: true, result: 6}],
-            }
-        ];
-        const rollMock: Roll = {
-            result: "12", formula: "2d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
-            _total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:6}], _evaluated: true}]
-        };
-        sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll= createTestRoll("2d6", [6,6],0);;
+        stubFoundryRoll(rollMock, sandbox);
 
         const roll = await DamageRoll.parse(damageString, "Kritisch 2").evaluate();
 
@@ -163,6 +134,6 @@ describe("DamageRoll evaluation", () => {
     });
 });
 
-function getFirstDie(roll: Roll) {
+function getFirstDie(roll: FoundryRoll) {
     return roll.terms.find(term => "results" in term && "faces" in term) as Die;
 }

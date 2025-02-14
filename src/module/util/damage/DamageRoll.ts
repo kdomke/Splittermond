@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {Die, Roll} from "../../api/Roll";
+import {Die, FoundryRoll} from "../../api/Roll";
 import {Feature, parseFeatureString} from "./featureParser";
 
 interface DamageRollObjectType {
@@ -41,7 +41,7 @@ export class DamageRoll {
         this._damageModifier -= amount;
     }
 
-    async evaluate():Promise<Roll> {
+    async evaluate():Promise<FoundryRoll> {
         const rollFormula = `${this._nDice}d${this._nFaces}`;
         const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
         const damageFormula = `${rollFormulaWithPrecision}${this.#getSign()}${Math.abs(this._damageModifier)}`;
@@ -62,7 +62,7 @@ export class DamageRoll {
         return rollFormula;
     }
 
-    #modifyResultForScharfFeature(roll:Roll):Roll {
+    #modifyResultForScharfFeature(roll:FoundryRoll):FoundryRoll{
         if (this._features["scharf"]) {
             let scharfBonus = 0;
             this.getFirstDieTerm(roll).results.forEach(r => {
@@ -78,7 +78,7 @@ export class DamageRoll {
         return roll;
     }
 
-    #modifyResultForKritischFeature(roll:Roll):Roll {
+    #modifyResultForKritischFeature(roll:FoundryRoll):FoundryRoll{
         if (this._features["kritisch"]) {
             let kritischBonus = 0;
             const firstDie = this.getFirstDieTerm(roll);
@@ -95,7 +95,7 @@ export class DamageRoll {
         return roll;
     }
 
-    private getFirstDieTerm(roll:Roll):Die{
+    private getFirstDieTerm(roll:FoundryRoll):Die{
         for(const term of roll.terms){
            if("results" in term && "faces" in term){
                return term;
