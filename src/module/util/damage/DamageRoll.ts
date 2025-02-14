@@ -34,11 +34,15 @@ export class DamageRoll {
     }
 
     increaseDamage(amount:number) {
-        this._damageModifier += amount;
+        this._damageModifier += amount * this.damageModifierFactor;
     }
 
     decreaseDamage(amount:number) {
-        this._damageModifier -= amount;
+        this._damageModifier -= amount * this.damageModifierFactor;
+    }
+
+    private get damageModifierFactor():number{
+        return !!this._features["wuchtig"] ? 2 : 1;
     }
 
     async evaluate():Promise<FoundryRoll> {

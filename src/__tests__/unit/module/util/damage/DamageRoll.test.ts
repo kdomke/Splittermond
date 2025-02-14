@@ -55,7 +55,8 @@ describe("DamageRoll feature string parsing and stringifying", () => {
         ["Kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
         ["kritisch2", {kritisch: {name: "kritisch", value: 2, active: false}}],
         ["Exakt 3", {exakt: {name: "Exakt", value: 3, active: false}}],
-        ["eXakT     25", {exakt: {name: "eXakT", value: 25, active: false}}]
+        ["eXakT     25", {exakt: {name: "eXakT", value: 25, active: false}}],
+        ["Wuchtig", {wuchtig: {name: "Wuchtig", value: 1, active: false}}],
     ] as const).forEach(([input, expected]) => {
         it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
             expect(DamageRoll.parse("", input).toObject().features).to.deep.equal(expected);
@@ -93,6 +94,41 @@ describe("DamageRoll feature string parsing and stringifying", () => {
         expect(damageRoll.getFeatureString()).to.equal("Scharf 1, Kritisch 2, Exakt 3");
     });
 });
+
+describe("Addition to Damage Roll", () =>{
+    it("should increase damage modifier by amount", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 1, features: {}});
+        damageRoll.increaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+6");
+    });
+
+    it("should decrease damage modifier by amount", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features: {}});
+        damageRoll.decreaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+2");
+    });
+
+    it("should double damage modifier on addition if 'Wuchtig' feature exists", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features: {
+            wuchtig: {name: "Wuchtig", value: 1, active: false}
+            }});
+        damageRoll.increaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+17");
+    });
+
+    it("should double damage modifier on subtraction if 'Wuchtig' feature exists", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features: {
+            wuchtig: {name: "Wuchtig", value: 1, active: false}
+            }});
+        damageRoll.decreaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6-3");
+    });
+
+})
 
 describe("DamageRoll evaluation", () => {
     let sandbox: sinon.SinonSandbox;
