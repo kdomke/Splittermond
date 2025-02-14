@@ -101,7 +101,7 @@ describe("DamageRoll evaluation", () => {
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
         const rollMock: Roll = {
-            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
+            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
             _total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock),
             dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
         };
@@ -124,7 +124,7 @@ describe("DamageRoll evaluation", () => {
             }
         ];
         const rollMock: Roll = {
-            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
+            result: "2", formula: "2d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
             _total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock),
             dice: [{faces: 6, results: [{active: true, result:1}], _evaluated: true}]
         };
@@ -149,7 +149,7 @@ describe("DamageRoll evaluation", () => {
             }
         ];
         const rollMock: Roll = {
-            result: "1", formula: "1d6", getTooltip:()=>Promise.resolve(""),
+            result: "12", formula: "2d6", getTooltip:()=>Promise.resolve(""),_evaluated:false,
             _total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock),
             dice: [{faces: 6, results: [{active: true, result:6}], _evaluated: true}]
         };

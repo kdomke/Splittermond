@@ -18,8 +18,10 @@ export interface NumericTerm {
 
 export declare class Roll {
     evaluate: () => Promise<Roll>;
-    readonly result: string|"";
+    /** Will contain all definite (evaluated and constant) components of the roll*/
+    readonly result: string;
     readonly formula: string
+    /**@internal*/_evaluated: boolean
     /**@internal*/_total: number
     readonly total: number
     dice: Die[]
@@ -45,11 +47,10 @@ export function addRolls (one:Roll, other:Roll): Roll {
         /*
          *Workaround for foundry bug https://github.com/foundryvtt/foundryvtt/issues/12080
          *
-         * We're using result to check if the roll has been evaluated (b/c it's an API property) and then set all terms to evaluated
          * Since foundry allows that either all terms are evaluated or none, we don't need to bother checking 'other'
          */
         //TODO: Remove with Foundry V13
-        const isEvaluated = one.result !== "";
+        const isEvaluated = one._evaluated;
         const addTerm = isEvaluated? Terms.getEvaluatedAddTerm() : Terms.getUnevaluatedAddTerm();
         if (isEvaluated) {
             oneTerms.forEach(term => term._evaluated = true)
@@ -64,7 +65,7 @@ export function sumRolls(rolls:Roll[]):Roll {
     }
 
     //TODO: Remove with Foundry V13, see above
-    const isEvaluated = rolls.some(r => r.result !== "")
+    const isEvaluated = rolls.some(r => r._evaluated);
     const addTerm = isEvaluated? Terms.getEvaluatedAddTerm() : Terms.getUnevaluatedAddTerm();
 
     const terms:(Die|OperatorTerm|NumericTerm)[] = []
