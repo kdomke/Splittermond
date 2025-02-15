@@ -15,7 +15,7 @@ interface ProtoDamageImplement {
     damageFormula: string;
     featureString: string;
     damageSource: string;
-    damageType: DamageType
+    damageType: DamageType|null;
 }
 
 
@@ -64,7 +64,7 @@ async function rollDamages(damages: ProtoDamageImplement[]) {
             implementName: damage.damageSource,
             damageExplanation: await rollResult.getTooltip(),
             _baseReductionOverride: parseFeatureString(damage.featureString)["durchdringung"]?.value ?? 0,
-            damageType: damage.damageType
+            damageType: damage.damageType ?? "physical"
         });
     }));
     return {totalRoll: sumRolls(allRolls),features: allFeature, damageImplements};
