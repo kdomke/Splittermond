@@ -1,7 +1,7 @@
 import {describe} from "mocha";
 import sinon from "sinon";
 import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
-import {initDamage} from "module/util/chat/damageChatMessage/initDamage";
+import {DamageInitializer} from "module/util/chat/damageChatMessage/initDamage";
 import {expect} from "chai";
 import {DamageMessage} from "module/util/chat/damageChatMessage/DamageMessage";
 import {foundryApi} from "module/api/foundryApi";
@@ -43,7 +43,7 @@ describe("Damage Event initialization", ()=>{
         sandbox.stub(foundryApi, 'roll')
             .onFirstCall().returns(createTestRoll("1d6", [5], 0))
             .onSecondCall().returns(createTestRoll("1d10", [3], 0));
-        const damageMessage= await initDamage([firstImplement, secondImplement], "V", null)
+        const damageMessage= await DamageInitializer.initDamage([firstImplement, secondImplement], "V", null)
             .then((chatMessage) => chatMessage.message)
             .then((message) => message as DamageMessage);
 
@@ -55,7 +55,7 @@ describe("Damage Event initialization", ()=>{
         sandbox.stub(foundryApi, 'roll')
             .onFirstCall().returns(createTestRoll("2d10", [10,1], 0))
 
-        const damageMessage= await initDamage([thirdImplement], "V", null)
+        const damageMessage= await DamageInitializer.initDamage([thirdImplement], "V", null)
             .then((chatMessage) => chatMessage.message)
             .then((message) => message as DamageMessage);
 

@@ -530,15 +530,6 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         actor.consumeCost(type, value, description);
     });
 
-    html.find(".apply-damage").click(event => {
-        event.preventDefault();
-        event.stopPropagation()
-        let value = $(event.currentTarget).closestData("damage");
-        let type = $(event.currentTarget).closestData("type");
-        let source = $(event.currentTarget).closestData("source");
-        ApplyDamageDialog.create(value,type, source);
-    });
-
     html.find(".active-defense").click(event => {
         event.preventDefault();
         event.stopPropagation()

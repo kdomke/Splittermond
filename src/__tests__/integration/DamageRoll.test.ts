@@ -1,8 +1,7 @@
 import {DamageRoll} from "../../module/util/damage/DamageRoll";
 import {QuenchBatchContext} from "@ethaks/fvtt-quench";
-import {initDamage} from "../../module/util/chat/damageChatMessage/initDamage";
-import {foundryApi} from "../../module/api/foundryApi";
 import {DamageMessage} from "../../module/util/chat/damageChatMessage/DamageMessage";
+import {DamageInitializer} from "../../module/util/chat/damageChatMessage/initDamage";
 
 declare class Die{
     results: any;
@@ -60,7 +59,7 @@ export function DamageRollTest(context:QuenchBatchContext) {
                 damageSource: "Brennende Klinge",
                 damageType: "fire" as const
             }
-            const chatMessage = await initDamage([firstImplement,secondImplement],"V", foundryApi.getSpeaker({}))
+            const chatMessage = await DamageInitializer.initDamage([firstImplement,secondImplement],"V", null)
             const damageMessage = chatMessage.message as DamageMessage;
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);

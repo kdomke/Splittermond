@@ -17,14 +17,11 @@ interface ProtoDamageImplement {
     damageSource: string;
     damageType: DamageType|null;
 }
-
-
-export async function singleDamage(damageFormula: string, featureString: string, damageSource = "", speaker: SplittermondActor | null) {
-    const singleImplement = {damageFormula, featureString, damageSource, damageType: "physical" as const};
-    return initDamage([singleImplement], "V", speaker);
+export const DamageInitializer ={
+    initDamage,
 }
 
-export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
+async function initDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
 
     const damageResults = await rollDamages(damages);
     const costVector = toCost(costType);
