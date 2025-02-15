@@ -10,7 +10,7 @@ const FoundryDataModelConstructor = foundry.abstract.DataModel as typeof DataMod
  * @param PARENT The encompassing {@link DataModel} of this data model. Useful for Embedded data fields
  */
 const SplittermondDataModel = class<T extends object, PARENT extends DataModel<any, any> | never = never> extends FoundryDataModelConstructor<T, PARENT> {
-    }
+}
 
 
 /**
@@ -50,6 +50,17 @@ type ArrayField<A, REQ, NULL> = { __brand: "ArrayField" };
 type EmbeddedDataField<E, REQ, NULL> = { __brand: "EmbeddedDataField" };
 // @ts-ignore: unused-parameters
 type SchemaField<S, REQ, NULL> = { __brand: "SchemaField" };
+
+//These are extensions of the above types. they don't exist as actual objects from foundy but allow us to type narrow
+// @ts-ignore: unused-parameters
+type StringEnumField<E, REQ, NULL> = { __brand: "StringEnumField" };
+// @ts-ignore: unused-parameters
+type TypedObjectField<T, REQ, NULL> = { __brand: "TypedObjectField" };
+
+type ValidatedOption<T, REQ extends boolean, NULL extends boolean> =
+    Required<Pick<DataFieldOption<T, REQ, NULL>, "validate">>
+    & DataFieldOption<T, REQ, NULL>
+
 type DataField<T = unknown, REQ extends boolean = true, NULL extends boolean = false> =
     ObjectField<REQ, NULL>
     | BooleanField<REQ, NULL>
@@ -58,7 +69,10 @@ type DataField<T = unknown, REQ extends boolean = true, NULL extends boolean = f
     | NumberField<REQ, NULL>
     | ArrayField<T, REQ, NULL>
     | EmbeddedDataField<T, REQ, NULL>
-    | SchemaField<T, REQ, NULL>;
+    | SchemaField<T, REQ, NULL>
+    | StringEnumField<T, REQ, NULL>
+    | TypedObjectField<T, REQ, NULL>
+    ;
 
 interface DataFields {
     ObjectField: new<REQ extends boolean, NULL extends boolean>(x: DataFieldOption<unknown, REQ, NULL>) => ObjectField<REQ, NULL>;
@@ -69,11 +83,18 @@ interface DataFields {
     EmbeddedDataField: new <E extends DataModel<any, unknown>, REQ extends boolean, NULL extends boolean>(x: new (...args: any) => E, y: DataFieldOption<unknown, REQ, NULL>) => EmbeddedDataField<E, REQ, NULL>;
     SchemaField: new <S extends Record<string, DataField>, REQ extends boolean, NULL extends boolean>(x: S, y: DataFieldOption<unknown, REQ, NULL>) => SchemaField<S, REQ, NULL>;
     HTMLField: new <REQ extends boolean, NULL extends boolean>(x: DataFieldOption<string, REQ, NULL>) => HTMLField<REQ, NULL>;
+
 }
+
 
 //@ts-ignore
 const fields: DataFields = foundry.data.fields;//Here we promise that this framework field will have the types that we have so meticulously crafted.
-
+const fieldExtensions = {
+    //@ts-ignore This is blatant lying.But within our module we will be able to limit the use of these fields to the correct types
+    StringEnumField: fields.StringField as new <E, REQ extends boolean, NULL extends boolean>(x: ValidatedOption<E, REQ, NULL>) => StringEnumField<E, REQ, NULL>,
+    //@ts-ignore This is blatant lying.But within our module we will be able to limit the use of these fields to the correct types
+    TypedObjectField: fields.ObjectField as new <T, REQ extends boolean, NULL extends boolean>(x: ValidatedOption<T, REQ, NULL>) => TypedObjectField<T, REQ, NULL>,
+}
 
 /**
  * This only works if your defineSchema methods only use compile-time resolvable properties. That is,
@@ -92,7 +113,9 @@ type DataFieldMapper<T> =
                         T extends ArrayField<infer A, infer REQ, infer NULL> ? ArrayFieldMap<A, REQ, NULL> :
                             T extends EmbeddedDataField<infer E, infer REQ, infer NULL> ? EmbeddedDataFieldMap<E, REQ, NULL> :
                                 T extends SchemaField<infer S, infer REQ, infer NULL> ? SchemaFieldMap<S, REQ, NULL> :
-                                    never;
+                                    T extends StringEnumField<infer E, infer REQ, infer NULL> ? StringEnumFieldMap<E, REQ, NULL> :
+                                        T extends TypedObjectField<infer O, infer REQ, infer NULL> ? TypedObjectFieldMap<O, REQ, NULL> :
+                                            never;
 type ObjectFieldMap<REQ, NULL> = object | WithReq<REQ> | WithNull<NULL>;
 type BooleanFieldMap<REQ, NULL> = boolean | WithReq<REQ> | WithNull<NULL>;
 type StringFieldMap<REQ, NULL> = string | WithReq<REQ> | WithNull<NULL>;
@@ -100,6 +123,10 @@ type NumberFieldMap<REQ, NULL> = number | WithReq<REQ> | WithNull<NULL>;
 type ArrayFieldMap<A, REQ, NULL> = DataFieldMapper<A>[] | WithReq<REQ> | WithNull<NULL>
 type EmbeddedDataFieldMap<E, REQ, NULL> = E | WithReq<REQ> | WithNull<NULL>
 type SchemaFieldMap<S, REQ, NULL> = MemberDefinitionContainerMapper<S> | WithReq<REQ> | WithNull<NULL>;
+
+type StringEnumFieldMap<E, REQ, NULL> = E extends string ? E | WithReq<REQ> | WithNull<NULL> : never;
+type TypedObjectFieldMap<O, REQ, NULL> = O extends object ? O | WithReq<REQ> | WithNull<NULL> : never;
+
 
 type WithReq<REQ> = REQ extends true ? never : undefined;
 type WithNull<NULL> = NULL extends true ? null : never;
@@ -111,6 +138,6 @@ type MakeUndefinedOptional<T> =
     { [OPTIONAL in keyof T as FilterOptional<T[OPTIONAL], OPTIONAL>]+?: Exclude<T[OPTIONAL], undefined> } &
     { [REQUIRED in keyof T as FilterRequired<T[REQUIRED], REQUIRED>]: T[REQUIRED] };
 
-export {SplittermondDataModel, fields};
+export {SplittermondDataModel, fields, fieldExtensions};
 export type {DataModelSchemaType}
 

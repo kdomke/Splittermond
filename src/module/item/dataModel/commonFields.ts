@@ -1,8 +1,8 @@
-import {fields} from "../../data/SplittermondDataModel";
+import {fieldExtensions, fields} from "../../data/SplittermondDataModel";
 import {DamageType} from "../../config/damageTypes";
 import {splittermond} from "../../config";
 
-export function getPhysicalProperties(){
+export function getPhysicalProperties() {
     return {
         quantity: new fields.NumberField({required: true, nullable: true, initial: 1}),
         price: new fields.StringField({required: true, nullable: true}),
@@ -17,14 +17,14 @@ export function getPhysicalProperties(){
     }
 }
 
-export function getDescriptorFields(){
+export function getDescriptorFields() {
     return {
-        description: new fields.HTMLField({ required: true, nullable: true}),
-        source: new fields.StringField({ required: true, nullable: true}),
+        description: new fields.HTMLField({required: true, nullable: true}),
+        source: new fields.StringField({required: true, nullable: true}),
     }
 }
 
-export function getDefense(){
+export function getDefense() {
     return {
         tickMalus: new fields.NumberField({required: true, nullable: false, initial: 0}),
         defenseBonus: new fields.NumberField({required: true, nullable: false, initial: 0}),
@@ -32,13 +32,16 @@ export function getDefense(){
     }
 }
 
-export function damageType(){
+export function damageType() {
     return {
-        damageType:new fields.StringField({
+        damageType: new fieldExtensions.StringEnumField({
+                validate: (x:DamageType) => splittermond.damageTypes.includes(x),
                 required: true,
+                trim: true,
                 nullable: true,
+                blank: false,
                 initial: "physical",
-                validate: (x) => splittermond.damageTypes.includes(x as DamageType)
             }
-        )};
+        )
+    };
 }
