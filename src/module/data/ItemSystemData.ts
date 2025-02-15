@@ -2,6 +2,8 @@
 
 
 // Templates
+import {SpellDataModel} from "../item/dataModel/SpellDataModel";
+
 interface DescriptionTemplate {
     description?: string | null;
     source?: string | null;
@@ -93,33 +95,6 @@ export interface SplittermondArmorSystemData
     damageReduction?: number | null;
     features?: string | null;
     equipped?: boolean | null;
-}
-
-export interface SplittermondSpellSystemData extends DescriptionTemplate {
-    availableIn?: string | null;
-    skill?: string | null;
-    skillLevel?: number | null;
-    spellType?: string | null;
-    costs?: string | null;
-    difficulty?: string | null;
-    damage?: string | null;
-    range?: string | null;
-    castDuration?: string | null;
-    effectDuration?: string | null;
-    effectArea?: string | null;
-    enhancementDescription?: string | null;
-    enhancementCosts?: string | null;
-    features?: string | null;
-    degreeOfSuccessOptions?: {
-        castDuration?: boolean | null;
-        consumedFocus?: boolean | null;
-        exhaustedFocus?: boolean | null;
-        channelizedFocus?: boolean | null;
-        effectDuration?: boolean | null;
-        damage?: boolean | null;
-        range?: boolean | null;
-        effectArea?: boolean | null;
-    } | null;
 }
 
 export interface SplittermondStrengthSystemData
@@ -215,4 +190,4 @@ export interface SplittermondNpcattackSystemData extends DescriptionTemplate {
     features?: string | null;
 }
 
-export type SplittermondItemSystemData = SplittermondWeaponSystemData | SplittermondProjectileSystemData | SplittermondEquipmentSystemData | SplittermondShieldSystemData | SplittermondArmorSystemData | SplittermondSpellSystemData | SplittermondStrengthSystemData | SplittermondWeaknessSystemData | SplittermondMasterySystemData | SplittermondSpeciesSystemData | SplittermondCultureSystemData | SplittermondAncestrySystemData | SplittermondEducationSystemData | SplittermondResourceSystemData | SplittermondNpcfeatureSystemData | SplittermondMoonsignSystemData | SplittermondLanguageSystemData | SplittermondCultureloreSystemData | SplittermondStatuseffectSystemData | SplittermondSpelleffectSystemData | SplittermondNpcattackSystemData;
+export type SplittermondItemSystemData = SplittermondWeaponSystemData | SplittermondProjectileSystemData | SplittermondEquipmentSystemData | SplittermondShieldSystemData | SplittermondArmorSystemData | SpellDataModel | SplittermondStrengthSystemData | SplittermondWeaknessSystemData | SplittermondMasterySystemData | SplittermondSpeciesSystemData | SplittermondCultureSystemData | SplittermondAncestrySystemData | SplittermondEducationSystemData | SplittermondResourceSystemData | SplittermondNpcfeatureSystemData | SplittermondMoonsignSystemData | SplittermondLanguageSystemData | SplittermondCultureloreSystemData | SplittermondStatuseffectSystemData | SplittermondSpelleffectSystemData | SplittermondNpcattackSystemData;

@@ -1,10 +1,10 @@
 import SplittermondItem from "./item";
 import AttackableItem from "./attackable-item";
-import {SplittermondSpellSystemData} from "../data/ItemSystemData";
+import {SpellDataModelType} from "./dataModel/SpellDataModel";
 
 declare class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
    type: "spell";
-   system: SplittermondSpellSystemData
+   system: SpellDataModelType;
    constructor(data: any, context: any, availabilityParser: any): void;
 
    get costs(): string;
@@ -21,7 +21,7 @@ declare class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
    get effectArea(): any;
    get description(): any;
    get enhancementDescription(): any;
-   get degreeOfSuccessOptions(): Exclude<SplittermondSpellSystemData["degreeOfSuccessOptions"],null|undefined>;
+   get degreeOfSuccessOptions(): Exclude<SpellDataModelType["degreeOfSuccessOptions"],null|undefined>;
    get spellType(): string;
    get spellTypeList(): string[];
    get damage(): any;

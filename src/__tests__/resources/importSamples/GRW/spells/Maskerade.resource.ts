@@ -39,6 +39,7 @@ export const expected = {
         castDuration: "4 Minuten",
         costs: "K16V4",
         damage:null,
+        damageType:null,
         effectArea: null,
         features: null,
         skill: null,

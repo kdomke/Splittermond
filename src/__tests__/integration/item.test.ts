@@ -65,6 +65,7 @@ export function itemTest(this:any, context: QuenchBatchContext) {
                     skillLevel: 6,
                     description: "abc",
                     damage: "500d10+200",
+                    damageType: "physical",
                     effectArea: "50km²",
                     enhancementDescription: "Obliterates everything",
                     enhancementCosts: "1",

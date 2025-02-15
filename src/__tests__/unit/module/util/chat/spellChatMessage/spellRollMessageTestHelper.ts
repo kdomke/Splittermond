@@ -9,6 +9,7 @@ import {CheckReport} from "module/actor/CheckReport";
 import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference";
 import SplittermondItem from "../../../../../../module/item/item";
+import {SpellDataModel} from "../../../../../../module/item/dataModel/SpellDataModel";
 
 export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondActor> {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
@@ -21,7 +22,7 @@ export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<Spli
 
 export function setUpMockSpellSelfReference(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondSpellItem> & ItemReference<SinonStubbedInstance<SplittermondSpellItem>> {
     const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
-    spellMock.system = {};
+    spellMock.system = sandbox.createStubInstance(SpellDataModel) ;
     sandbox.stub(foundryApi, "getItem").returns(spellMock);
     Object.defineProperty(spellMock, "getItem", {
         value: function () {

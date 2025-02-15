@@ -1,4 +1,6 @@
 import {fields} from "../../data/SplittermondDataModel";
+import {DamageType} from "../../config/damageTypes";
+import {splittermond} from "../../config";
 
 export function getPhysicalProperties(){
     return {
@@ -28,4 +30,15 @@ export function getDefense(){
         defenseBonus: new fields.NumberField({required: true, nullable: false, initial: 0}),
         handicap: new fields.NumberField({required: true, nullable: false, initial: 0}),
     }
+}
+
+export function damageType(){
+    return {
+        damageType:new fields.StringField({
+                required: true,
+                nullable: true,
+                initial: "physical",
+                validate: (x) => splittermond.damageTypes.includes(x as DamageType)
+            }
+        )};
 }
