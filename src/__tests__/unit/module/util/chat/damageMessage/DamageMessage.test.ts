@@ -1,6 +1,6 @@
 import {describe, it} from "mocha";
 import {DamageMessage} from "../../../../../../module/util/chat/damageChatMessage/DamageMessage";
-import {createDamageEvent} from "../../damage/damageEventTestHelper";
+import {createDamageEvent, createDamageImplement} from "../../damage/damageEventTestHelper";
 import sinon from "sinon";
 import {expect} from "chai";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
@@ -15,7 +15,7 @@ describe("Damage Message", () => {
     afterEach(() => sandbox.restore());
 
     it("should display at most 4 features", () => {
-        const damageEvent = createDamageEvent(sandbox, [])
+        const damageEvent = createDamageEvent(sandbox, [createDamageImplement(5, 0)]);
         const features = [
             createFeature("lange waffe",0),
             createFeature("kritisch",2),
@@ -39,6 +39,18 @@ describe("Damage Message", () => {
 
         expect(damageDialog.calledOnce).to.be.true;
     });
+
+    it("should return the principle damage component", () => {
+        const principalDamageComponent = createDamageImplement(8, 0);
+        principalDamageComponent.updateSource({implementName: "Brennende Klinge"});
+        const damageEvent = createDamageEvent(sandbox, [
+            createDamageImplement(5, 0), principalDamageComponent, createDamageImplement(3, 0)
+        ]);
+        const damageMessage = DamageMessage.initialize(damageEvent, []);
+
+        expect(damageMessage.getData().source).to.equal(principalDamageComponent.implementName);
+    })
+
 });
 
 function createFeature(name:string, value:number){

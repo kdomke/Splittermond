@@ -44,12 +44,16 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
             features: this.renderFeaturesToDisplay(),
             formula: this.damageEvent.formula,
             total: this.damageEvent.totalDamage(),
-            source: this.damageEvent.causer?.getAgent().name ?? null,
+            source: this.getPrincipalDamageComponent().implementName,
             tooltip: this.damageEvent.tooltip,
             actions: [
                 this.renderApplyDamageToTargetAction()
             ],
         }
+    }
+
+    private getPrincipalDamageComponent(){
+        return this.damageEvent.implements.sort((a,b)=>b.damage-a.damage)[0];
     }
 
     private renderFeaturesToDisplay() {
