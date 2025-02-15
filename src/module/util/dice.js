@@ -84,7 +84,7 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
  */
 export async function damage(damageFormula, featureString, damageSource = "", speaker= null) {
 
-    return (await singleDamage(damageFormula, featureString, damageSource, speaker)).sendToChat();
+    return (await singleDamage(damageFormula, featureString, damageSource, foundryApi.getActor(speaker.actor))).sendToChat();
     const damage = DamageRoll.parse(damageFormula, featureString);
 
     const roll = await damage.evaluate();

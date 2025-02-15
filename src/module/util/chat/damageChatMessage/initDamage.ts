@@ -8,8 +8,8 @@ import {DamageType} from "../../../config/damageTypes";
 import {parseFeatureString} from "../../damage/featureParser";
 import {DamageMessage} from "./DamageMessage";
 import {Roll, sumRolls} from "../../../api/Roll";
-import {Speaker} from "../../../api/foundryTypes";
 import {DamageFeature} from "../../damage/DamageFeature";
+import SplittermondActor from "../../../actor/actor";
 
 interface ProtoDamageImplement {
     damageFormula: string;
@@ -19,16 +19,16 @@ interface ProtoDamageImplement {
 }
 
 
-export async function singleDamage(damageFormula: string, featureString: string, damageSource = "", speaker: Speaker | null) {
+export async function singleDamage(damageFormula: string, featureString: string, damageSource = "", speaker: SplittermondActor | null) {
     const singleImplement = {damageFormula, featureString, damageSource, damageType: "physical" as const};
     return initDamage([singleImplement], "V", speaker);
 }
 
-export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: Speaker | null) {
+export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
 
     const damageResults = await rollDamages(damages);
     const costVector = toCost(costType);
-    const actorReference = resolveActor(speaker);
+    const actorReference = speaker ? AgentReference.initialize(speaker) : null;
     const damageEvent = new DamageEvent({
         causer: actorReference,
         costVector,
@@ -39,7 +39,7 @@ export async function initDamage(damages: ProtoDamageImplement[], costType: 'K' 
     });
 
     return SplittermondChatCard.create(
-        actorReference?.getAgent() as any, //TODO: We either need a speaker or allow no speaker
+        speaker,
         DamageMessage.initialize(damageEvent,damageResults.features),
         {
             type: foundryApi.chatMessageTypes.OTHER,
@@ -69,13 +69,6 @@ async function rollDamages(damages: ProtoDamageImplement[]) {
     }));
     return {totalRoll: sumRolls(allRolls),features: allFeature, damageImplements};
 }
-
-function resolveActor(speaker: Speaker | null) {
-    const actorId = speaker?.actor;
-    const actor = actorId ? foundryApi.getActor(actorId) : null;
-    return actor ? AgentReference.initialize(actor) : null;
-}
-
 
 function toCost(damageType: 'K' | 'V' | "") {
     switch (damageType) {

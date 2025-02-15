@@ -60,7 +60,7 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
 
     private renderApplyDamageToTargetAction() {
         return {
-            classes: "splittermond-chat-action",
+            classes: "splittermond-chat-action gm-only",
             data: {
                 localAction: "applyDamageToTarget",
             },
@@ -71,7 +71,9 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
 
     handleGenericAction(data: { action: string }): Promise<void> {
         if (data.action === "applyDamageToTarget") {
-            return ApplyDamageDialog.create(this.damageEvent.totalDamage(), "V", "")
+            const damageType = this.damageEvent.costVector._channeled ? "K" :
+                this.damageEvent.costVector._consumed?"V":"";
+            return ApplyDamageDialog.create(this.damageEvent.totalDamage(), damageType, "")
         }
         return Promise.resolve();
     }

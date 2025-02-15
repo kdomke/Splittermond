@@ -19,7 +19,12 @@ interface ChatMessageConfig {
 
 export class SplittermondChatCard extends SplittermondChatCardModel {
 
-    static create(actor: SplittermondActor, message: SplittermondChatMessage, chatOptions: ChatMessageConfig): SplittermondChatCard {
+    /**
+     * @param actor The message inducing actor. Will take a user as speaker if null
+     * @param message The message content object
+     * @param chatOptions
+     */
+    static create(actor: SplittermondActor|null, message: SplittermondChatMessage, chatOptions: ChatMessageConfig): SplittermondChatCard {
         const speaker = foundryApi.getSpeaker({actor});
         const normalizedChatOptions = {
             ...chatOptions,
