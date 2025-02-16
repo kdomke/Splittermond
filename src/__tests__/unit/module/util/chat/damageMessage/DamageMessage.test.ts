@@ -35,7 +35,7 @@ describe("Damage Message", () => {
 
         const damageDialog = sandbox.stub(ApplyDamageDialog, 'create').returns(Promise.resolve());
 
-        damageMessage.handleGenericAction({action: "applyDamageToTarget"});
+        damageMessage.handleGenericAction({action: "applyDamageToTargets"});
 
         expect(damageDialog.calledOnce).to.be.true;
     });

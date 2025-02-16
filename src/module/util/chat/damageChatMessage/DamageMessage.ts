@@ -66,7 +66,7 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
         return {
             classes: "splittermond-chat-action gm-only",
             data: {
-                localAction: "applyDamageToTarget",
+                localAction: "applyDamageToTargets",
             },
             icon: "fa-heart-broken",
             name: foundryApi.localize("splittermond.applyDamage")
@@ -74,7 +74,7 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
     }
 
     handleGenericAction(data: { action: string }): Promise<void> {
-        if (data.action === "applyDamageToTarget") {
+        if (data.action === "applyDamageToTargets") {
             const damageType = this.damageEvent.costVector._channeled ? "K" :
                 this.damageEvent.costVector._consumed?"V":"";
             return ApplyDamageDialog.create(this.damageEvent.totalDamage(), damageType, "")

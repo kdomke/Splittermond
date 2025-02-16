@@ -64,7 +64,7 @@ export function DamageRollTest(context:QuenchBatchContext) {
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);
             expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());
-            expect(damageMessage.getData().actions).to.contain.keys(["applyDamageToOthers"]);
+            expect(damageMessage.getData().actions.map(a => a.data.localAction)).to.contain("applyDamageToTargets");
             expect(damageMessage.getData().formula).to.equal("1d6 + 1d10");
             expect
 
