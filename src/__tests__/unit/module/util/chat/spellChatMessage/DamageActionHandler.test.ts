@@ -131,7 +131,7 @@ describe("DamageActionHandler", () => {
         it("should invoke Dice module on damage application", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "initDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
                 .returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
@@ -144,7 +144,7 @@ describe("DamageActionHandler", () => {
         it("should respect damage increases", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "initDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
                 .returns(Promise.resolve(chatCardMock));
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
             underTest.checkReportReference.get().succeeded = true;
@@ -160,7 +160,7 @@ describe("DamageActionHandler", () => {
         it("should not allow using actions multiple times", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "initDamage").returns(Promise.resolve(chatCardMock));
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage").returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
 

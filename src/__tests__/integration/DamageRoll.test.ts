@@ -59,7 +59,7 @@ export function DamageRollTest(context:QuenchBatchContext) {
                 damageSource: "Brennende Klinge",
                 damageType: "fire" as const
             }
-            const chatMessage = await DamageInitializer.initDamage([firstImplement,secondImplement],"V", null)
+            const chatMessage = await DamageInitializer.rollDamage([firstImplement,secondImplement],"V", null)
             const damageMessage = chatMessage.message as DamageMessage;
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);

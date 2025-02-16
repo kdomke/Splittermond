@@ -18,10 +18,10 @@ interface ProtoDamageImplement {
     damageType: DamageType|null;
 }
 export const DamageInitializer ={
-    initDamage,
+    rollDamage,
 }
 
-async function initDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
+async function rollDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
 
     const damageResults = await rollDamages(damages);
     const costVector = toCost(costType);

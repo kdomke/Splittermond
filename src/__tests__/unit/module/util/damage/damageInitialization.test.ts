@@ -43,7 +43,7 @@ describe("Damage Event initialization", ()=>{
         sandbox.stub(foundryApi, 'roll')
             .onFirstCall().returns(createTestRoll("1d6", [5], 0))
             .onSecondCall().returns(createTestRoll("1d10", [3], 0));
-        const damageMessage= await DamageInitializer.initDamage([firstImplement, secondImplement], "V", null)
+        const damageMessage= await DamageInitializer.rollDamage([firstImplement, secondImplement], "V", null)
             .then((chatMessage) => chatMessage.message)
             .then((message) => message as DamageMessage);
 
@@ -55,7 +55,7 @@ describe("Damage Event initialization", ()=>{
         sandbox.stub(foundryApi, 'roll')
             .onFirstCall().returns(createTestRoll("2d10", [10,1], 0))
 
-        const damageMessage= await DamageInitializer.initDamage([thirdImplement], "V", null)
+        const damageMessage= await DamageInitializer.rollDamage([thirdImplement], "V", null)
             .then((chatMessage) => chatMessage.message)
             .then((message) => message as DamageMessage);
 

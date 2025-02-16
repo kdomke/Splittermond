@@ -103,7 +103,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                     this.updateSource({used: true});
                     const spell = this.spellReference.getItem();
                     const damageFormula  =this.totalDamage.getDamageFormula();
-                    return DamageInitializer.initDamage(
+                    return DamageInitializer.rollDamage(
                         [{
                             damageFormula,
                             featureString: spell.system.features ?? "",
