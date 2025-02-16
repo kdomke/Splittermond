@@ -33,7 +33,7 @@ Merkmale: Dämmersicht, Erschöpfungsresistenz 2, Schmerzresistenz
 Beute: Kriegshammer (18 Lunare)`
 
 export const expected = {
-    system:{
+    system: {
         attributes: {
             agility: {
                 value: 3,
@@ -113,6 +113,10 @@ export const expected = {
                 points: 13,
                 value: 25,
             },
+            melee: {
+                points: 10,
+                value: 20
+            },
             perception: {
                 points: 1,
                 value: 6,
@@ -124,7 +128,34 @@ export const expected = {
         },
         type: "Humanoider, Monster",
     },
-    items:[
+    items: [
+
+        {
+            img: "icons/svg/sword.svg",
+            name: "Körper",
+            system: {
+                damage: "1W10+2",
+                features: "Wuchtig",
+                range: 0,
+                skillValue: 16,
+                weaponSpeed: 7,
+            },
+            type: "npcattack",
+        },
+        {
+            _id: 1,
+            name: "Kriegshammer",
+            system: {
+                attribute1: "agility",
+                attribute2: "strength",
+                damage: "2W10+4",
+                features: "Unhandlich",
+                range: 0,
+                skill: "melee",
+                weaponSpeed: 12,
+            },
+            type: "weapon",
+        },
         {
             name: "Umreißen",
             system: {
@@ -186,7 +217,7 @@ export const expected = {
                 quantity: 1,
                 sufferedDamage: null,
                 weight: 0,
-                },
+            },
             type: "equipment",
         },
     ],

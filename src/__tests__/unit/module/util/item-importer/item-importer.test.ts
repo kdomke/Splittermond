@@ -6,6 +6,7 @@ import * as Bannmagie from "../../../../resources/importSamples/GRW/masteries/Ba
 import * as BannendeHand from "../../../../resources/importSamples/GRW/masteries/BannendeHand.resource";
 import * as Baumwandler from "../../../../resources/importSamples/GRW/NSC/Baumwandler.resource";
 import * as Oger from "../../../../resources/importSamples/GRW/NSC/Oger.resource";
+import * as Orkspaeher from "../../../../resources/importSamples/GRW/NSC/Orkspaeher.resource";
 import * as Vorarbeiter from "../../../../resources/importSamples/Hexenkönigin/Vorarbeiter.resource";
 import * as Regenbogenschwinge from "../../../../resources/importSamples/Hexenkönigin/Regenbogenschwinge.resource";
 import * as Schuppenruestung from "../../../../resources/importSamples/GRW/armor/Schuppenrüstung.resource";
@@ -34,6 +35,9 @@ describe("ItemImporter", () => {
         sandbox.stub(foundryApi, "informUser");
         sandbox.stub(foundryApi, "warnUser");
         sandbox.stub(SplittermondCompendium, "findItem").callsFake((type, name)=>{
+            if(name === "Körper"){
+                return Promise.resolve(null);
+            }
             const fakeItem= {_id:1, type, name, system:{} };
             return Promise.resolve({...fakeItem, toObject:()=>fakeItem});
         })
@@ -134,7 +138,7 @@ describe("ItemImporter", () => {
             });
             afterEach(() => sandbox.restore());
 
-            [Baumwandler, Oger].forEach((resource) => {
+            [Baumwandler, Oger,Orkspaeher].forEach((resource) => {
                 it(`should import npc ${resource.testname}`, async () => {
                     const text = resource.input;
 

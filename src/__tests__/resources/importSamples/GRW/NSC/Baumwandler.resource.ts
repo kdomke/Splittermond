@@ -124,6 +124,19 @@ export const expected = {
             type: "Feenwesen, Magisches Wesen III, Naturwesen, Pflanze",
         },
     items:[
+        //Technicall, 'Körper' is not a weapon, but an NPC Attack. Our Compendium Mock makes the importer think it is a weapon.
+        {
+            img: "icons/svg/sword.svg",
+            name: "Körper",
+            system: {
+                damage: "5W6+7",
+                features: "Umklammern, Wuchtig",
+                range: 0,
+                skillValue: 22,
+                weaponSpeed: 13,
+            },
+            "type": "npcattack"
+        },
         {
             name: "Umklammern",
             system: {
