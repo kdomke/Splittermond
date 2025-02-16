@@ -1,7 +1,7 @@
-import * as Dice from "../../util/dice.js"
 import * as Tooltip from "../../util/tooltip.js"
 import {splittermond} from "../../config.js";
 import {foundryApi} from "../../api/foundryApi";
+import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
 
 export default class SplittermondActorSheet extends ActorSheet {
     constructor(...args) {
@@ -278,7 +278,7 @@ export default class SplittermondActorSheet extends ActorSheet {
         });
 
 
-        html.find(".rollable").click(event => {
+        html.find(".rollable").on("click", event => {
             const type = $(event.currentTarget).closestData('roll-type');
             if (type === "skill") {
                 const skill = $(event.currentTarget).closestData('skill');
@@ -295,10 +295,12 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (type === "damage") {
-                const damage = event.currentTarget.dataset.damage;
-                const features = event.currentTarget.dataset.features;
-                const source = event.currentTarget.dataset.source;
-                Dice.damage(damage, features, source);
+                const damageFormula = event.currentTarget.dataset.damage;
+                const featureString = event.currentTarget.dataset.features;
+                const damageSource = event.currentTarget.dataset.source;
+                const damageType = event.currentTarget.dataset.damageType ?? null;
+                return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}], "V", this.actor)
+                    .then(chatCard => chatCard.sendToChat());
             }
 
             if (type === "activeDefense") {

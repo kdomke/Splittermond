@@ -3,7 +3,7 @@ import {splittermond} from "../../config";
 import {foundryApi} from "../../api/foundryApi";
 import {itemCreator} from "../../data/EntityCreator";
 import {getSpellAvailabilityParser} from "../../item/availabilityParser";
-import {SplittermondSpellSystemData} from "../../data/ItemSystemData";
+import {SpellDataModelType} from "../../item";
 
 export async function importSpell(spellName: string, rawData: string, folder: string): Promise<SplittermondSpellItem> {
     let spellData = {
@@ -13,6 +13,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
         folder: folder,
         system: {
             damage: null,
+            damageType:null,
             features: null,
             skill: null,
             skillLevel: null,
@@ -38,7 +39,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
                 range: false,
                 effectArea: false
             }
-        } as SplittermondSpellSystemData
+        } as SpellDataModelType
     };
 
     const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
@@ -49,7 +50,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
         const sectionData = tokens[k + 1].trim();
         switch (sectionHeading) {
             case "Schulen:":
-                spellData.system.availableIn = getSpellAvailabilityParser(foundryApi, splittermond.skillGroups.magic).toInternalRepresentation(sectionData);
+                spellData.system.availableIn = getSpellAvailabilityParser(foundryApi, splittermond.skillGroups.magic).toInternalRepresentation(sectionData) ?? null;
                 break;
             case "Typus:":
                 spellData.system.spellType = sectionData;
@@ -115,6 +116,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
     let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.system.description ?? "");
     if (damage) {
         spellData.system.damage = (damage[0] || "").trim();
+        spellData.system.damageType = "physical";
     }
 
     const itemPromise = itemCreator.createSpell(spellData);

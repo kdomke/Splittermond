@@ -1,8 +1,8 @@
-import {getActor, getSpell, getUnlinkedToken} from "./fixtures.js";
-import {AgentReference} from "../../module/data/references/AgentReference";
-import {foundryApi} from "../../module/api/foundryApi";
-import {ItemReference} from "../../module/data/references/ItemReference";
-import {OnAncestorReference} from "../../module/data/references/OnAncestorReference";
+import {getActor, getSpell, getUnlinkedToken} from "../fixtures.js";
+import {AgentReference} from "../../../module/data/references/AgentReference";
+import {foundryApi} from "../../../module/api/foundryApi";
+import {ItemReference} from "../../../module/data/references/ItemReference";
+import {OnAncestorReference} from "../../../module/data/references/OnAncestorReference";
 import {QuenchBatchContext} from "@ethaks/fvtt-quench";
 
 declare const DataModelValidationError: any;

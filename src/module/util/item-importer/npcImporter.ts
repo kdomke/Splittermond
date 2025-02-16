@@ -3,13 +3,13 @@ import {splittermond} from "../../config";
 import {actorCreator} from "../../data/EntityCreator";
 import SplittermondCompendium from "../compendium";
 import {SplittermondFightingSkill, SplittermondSkill} from "../../config/skillGroups";
-import {DataModelConstructorInput} from "../../data/SplittermondDataModel";
 import type {
     MasteryDataModelType,
     NpcFeatureDataModelType,
     SpellDataModelType,
     SplittermondItemDataModelType
 } from "../../item";
+import {DataModelConstructorInput} from "../../api/DataModel";
 
 type NpcCreationData = typeof actorCreator["createNpc"]["arguments"][0];
 type PartialItemData<T extends SplittermondItemDataModelType> = {
@@ -224,13 +224,13 @@ export async function importNpc(rawData: string) {
                             skillValue: parseInt(weaponMatch?.[2].trim() ?? "0") || 0,
                             damage: weaponMatch?.[3].trim() ?? null,
                             weaponSpeed: parseInt(weaponMatch?.[4].trim() ?? "0") || 0,
-                            range: weaponMatch?.[6].trim() || "-",
+                            range: weaponMatch?.[5]?.trim() || "-",
                             features: weaponMatch?.[7].trim() ?? null,
                         };
                     });
 
                     actorData.items.push(...await Promise.all(weaponData.map(async data => {
-                        let weaponData = await SplittermondCompendium.findItem("weapon", data.name);
+                        let weaponData = data.name ? await SplittermondCompendium.findItem("weapon", data.name):null;
                         if (!weaponData) {
                             weaponData = {
                                 type: "npcattack",
@@ -244,17 +244,17 @@ export async function importNpc(rawData: string) {
                         }
                         weaponData.system.damage = data.damage;
                         weaponData.system.weaponSpeed = data.weaponSpeed;
-                        weaponData.system.range = data.range;
+                        weaponData.system.range = parseInt(data.range) || 0;
                         weaponData.system.features = data.features;
                         if (weaponData.type == "npcattack") {
                             weaponData.system.skillValue = data.skillValue;
                         } else {
-                            if (!weaponData.data.skill) {
+                            if (!weaponData.system.skill) {
                                 weaponData.system.skill = "melee";
                                 weaponData.system.attribute1 = "agility";
                                 weaponData.system.attribute2 = "strength";
                             }
-                            actorData.system.skills[weaponData.data.skill] = {
+                            actorData.system.skills[weaponData.system.skill] = {
                                 value: data.skillValue,
                                 points: data.skillValue - actorData.system.attributes[weaponData.system.attribute1].value - actorData.system.attributes[weaponData.system.attribute2].value
                             };

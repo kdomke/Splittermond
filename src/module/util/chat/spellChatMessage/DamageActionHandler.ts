@@ -1,6 +1,7 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
 import {
-    ActionHandler, ActionInput,
+    ActionHandler,
+    ActionInput,
     DegreeOfSuccessAction,
     DegreeOfSuccessOptionSuggestion,
     ValuedAction
@@ -11,20 +12,25 @@ import {splittermond} from "../../../config";
 import {ItemReference} from "../../../data/references/ItemReference";
 import SplittermondSpellItem from "../../../item/spell";
 import {DamageRoll} from "../../damage/DamageRoll";
-import {Dice} from "../../dice";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {CheckReport} from "../../../actor/CheckReport";
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
-import {foundryApi} from "../../../api/foundryApi";
+import {DamageInitializer} from "../damageChatMessage/initDamage";
 
 function DamageActionHandlerSchema() {
     return {
         used: new fields.BooleanField({required: true, nullable: false, initial: false}),
         damageAddition: new fields.NumberField({required: true, nullable: false, initial: 0}),
         actorReference: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: false}),
-        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {required: true, nullable: false}),
-        checkReportReference: new fields.EmbeddedDataField(OnAncestorReference<CheckReport>, {required: true, nullable: false}),
+        spellReference: new fields.EmbeddedDataField(ItemReference<SplittermondSpellItem>, {
+            required: true,
+            nullable: false
+        }),
+        checkReportReference: new fields.EmbeddedDataField(OnAncestorReference<CheckReport>, {
+            required: true,
+            nullable: false
+        }),
         options: new fields.EmbeddedDataField(NumberDegreeOfSuccessOptionField, {required: true, nullable: false})
     }
 }
@@ -35,7 +41,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
     static defineSchema = DamageActionHandlerSchema;
 
-    static initialize(actorReference: AgentReference, spellReference: ItemReference<SplittermondSpellItem>, checkReportReference:OnAncestorReference<CheckReport>): DamageActionHandler {
+    static initialize(actorReference: AgentReference, spellReference: ItemReference<SplittermondSpellItem>, checkReportReference: OnAncestorReference<CheckReport>): DamageActionHandler {
         const damageAdditionConfig = splittermond.spellEnhancement.damage;
         return new DamageActionHandler({
             used: false,
@@ -54,16 +60,16 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
     useDegreeOfSuccessOption(degreeOfSuccessOptionData: any): DegreeOfSuccessAction {
         return configureUseOption()
-            .withUsed(()=> this.used)
+            .withUsed(() => this.used)
             .withHandlesOptions(this.handlesDegreeOfSuccessOptions)
-            .whenAllChecksPassed((degreeOfSuccessOptionData)=> {
+            .whenAllChecksPassed((degreeOfSuccessOptionData) => {
                 const multiplicity = Number.parseInt(degreeOfSuccessOptionData.multiplicity);
                 const option = this.options.forMultiplicity(multiplicity);
                 return {
-                    usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost: option.cost,
+                    usedDegreesOfSuccess: option.isChecked() ? -1 * option.cost : option.cost,
                     action: () => {
                         option.check()
-                        const damageAdditionIncrement =  option.isChecked()? option.effect: -1 * option.effect;
+                        const damageAdditionIncrement = option.isChecked() ? option.effect : -1 * option.effect;
                         this.updateSource({damageAddition: this.damageAddition + damageAdditionIncrement});
                     }
                 }
@@ -88,27 +94,32 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
     public readonly handlesActions = ["applyDamage"] as const;
 
-    useAction(actionData:ActionInput): Promise<void> {
+    useAction(actionData: ActionInput): Promise<void> {
         return configureUseAction()
             .withUsed(() => this.used)
             .withIsOptionEvaluator(() => this.isOption())
             .withHandlesActions(this.handlesActions)
-            .whenAllChecksPassed(()=> {
-                this.updateSource({used: true});
-                return Dice.damage(
-                    this.totalDamage.getDamageFormula(),
-                    //@ts-expect-error name and system exist, but we haven't typed this yet
-                    this.spellReference.getItem().system.features,
-                    this.spellReference.getItem().name,//we don't wait for the promise, because we're done.
-                    foundryApi.getSpeaker({actor: this.actorReference.getAgent()}))
-                    .then(()=>{}); //don't pass chat message outstide
+            .whenAllChecksPassed(() => {
+                    this.updateSource({used: true});
+                    const spell = this.spellReference.getItem();
+                    const damageFormula  =this.totalDamage.getDamageFormula();
+                    return DamageInitializer.rollDamage(
+                        [{
+                            damageFormula,
+                            featureString: spell.system.features ?? "",
+                            damageSource: spell.name,
+                            damageType: spell.system.damageType,
+                        }],
+                        "V",
+                        this.actorReference.getAgent()
+                    ).then((chatCard) => chatCard.sendToChat());
                 }
             ).useAction(actionData);
     }
 
     renderActions(): ValuedAction[] {
-        if(!this.isOption()){
-            return[]
+        if (!this.isOption()) {
+            return []
         }
         return [
             {

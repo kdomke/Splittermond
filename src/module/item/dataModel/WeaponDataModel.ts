@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondWeaponItem from "../weapon";
-import {getDescriptorFields, getPhysicalProperties} from "./commonFields";
+import {damageType, getDescriptorFields, getPhysicalProperties} from "./commonFields";
 
 function ItemWeaponDataModelSchema() {
     return {
@@ -8,6 +8,7 @@ function ItemWeaponDataModelSchema() {
         ...getPhysicalProperties(),
         modifier: new fields.StringField({required: true, nullable: true}),
         damage: new fields.StringField({required: true, nullable: true}),
+        ...damageType(),
         range: new fields.NumberField({required: true, nullable: true, initial: 0}),
         weaponSpeed: new fields.NumberField({required: true, nullable: true, initial: 0}),
         skill: new fields.StringField({required: true, nullable: false}),

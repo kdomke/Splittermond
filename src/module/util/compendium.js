@@ -2,6 +2,11 @@ export default class SplittermondCompendium {
 
     static allItems = {};
 
+    /**
+     * @param {string} type
+     * @param {string} name
+     * @returns {Promise<SplittermondItem|null>}
+     */
     static async findItem(type, name) {
         let item = game.items.find(i => i.type === type && i.name.startsWith(name));
         if (!item) {

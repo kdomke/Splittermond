@@ -1,26 +1,22 @@
 import {foundryApi} from "../api/foundryApi";
 import type SplittermondSpellItem from "../item/spell";
-import {
-    SplittermondArmorSystemData,
-    SplittermondMasterySystemData,
-    SplittermondSpellSystemData
-} from "module/data/ItemSystemData";
 import SplittermondMasteryItem from "../item/mastery";
 import SplittermondActor from "../actor/actor";
 import {CharacterDataModel} from "../actor/dataModel/CharacterDataModel";
 import {NpcDataModelType} from "../actor/dataModel/NpcDataModel";
-import {DataModelConstructorInput} from "./SplittermondDataModel";
 import SplittermondArmorItem from "../item/armor";
+import {DataModelConstructorInput} from "../api/DataModel";
+import {ArmorDataModelType, MasteryDataModelType, SpellDataModelType} from "../item";
 
 export const itemCreator = {
-    createSpell(data: {type: "spell", system: Partial<SplittermondSpellSystemData>}): Promise<SplittermondSpellItem> {
+    createSpell(data: {type: "spell", system: Partial<SpellDataModelType>}): Promise<SplittermondSpellItem> {
         return foundryApi.createItem(data) as Promise<SplittermondSpellItem>;
     },
 
-    createMastery(data:{type: "mastery", system: Partial<SplittermondMasterySystemData>}): Promise<SplittermondMasteryItem> {
+    createMastery(data:{type: "mastery", system: Partial<MasteryDataModelType>}): Promise<SplittermondMasteryItem> {
         return foundryApi.createItem(data) as Promise<SplittermondMasteryItem>;
     },
-    createArmor(data:{type: "armor", system: Partial<SplittermondArmorSystemData>}): Promise<SplittermondArmorItem> {
+    createArmor(data:{type: "armor", system: Partial<ArmorDataModelType>}): Promise<SplittermondArmorItem> {
         return foundryApi.createItem(data) as Promise<SplittermondArmorItem>;
     }
 }

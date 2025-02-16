@@ -1,17 +1,13 @@
 import {foundryApi} from "../../api/foundryApi";
-import {Die, Roll} from "../../api/foundryTypes";
-
-interface Feature {
-    name: string;
-    value: number;
-    active: boolean;
-}
+import {Die, FoundryRoll} from "../../api/Roll";
+import {parseFeatureString} from "./featureParser";
+import {DamageFeature} from "./DamageFeature";
 
 interface DamageRollObjectType {
     nDice: number;
     nFaces: number;
     damageModifier: number;
-    features: Record<string, Feature>
+    features: Record<string, DamageFeature>
 }
 
 export class DamageRoll {
@@ -29,7 +25,7 @@ export class DamageRoll {
     private _nDice: number;
     private _nFaces: number;
     private _damageModifier: number;
-    private _features: Record<string,Feature>;
+    private _features: Record<string,DamageFeature>;
 
     constructor({nDice, nFaces, damageModifier, features}: DamageRollObjectType) {
         this._nDice = nDice;
@@ -39,17 +35,22 @@ export class DamageRoll {
     }
 
     increaseDamage(amount:number) {
-        this._damageModifier += amount;
+        this._damageModifier += amount * this.damageModifierFactor;
     }
 
     decreaseDamage(amount:number) {
-        this._damageModifier -= amount;
+        this._damageModifier -= amount * this.damageModifierFactor;
     }
 
-    async evaluate():Promise<Roll> {
+    private get damageModifierFactor():number{
+        return !!this._features["wuchtig"] ? 2 : 1;
+    }
+
+    async evaluate():Promise<FoundryRoll> {
         const rollFormula = `${this._nDice}d${this._nFaces}`;
         const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
-        const damageFormula = `${rollFormulaWithPrecision}${this.#getSign()}${Math.abs(this._damageModifier)}`;
+        const modifierTerm = this._damageModifier ? `${this.#getSign()}${Math.abs(this._damageModifier)}` : "";
+        const damageFormula = `${rollFormulaWithPrecision}${modifierTerm}`;
 
         let rollResult = await foundryApi.roll(damageFormula, {}).evaluate();
 
@@ -67,7 +68,7 @@ export class DamageRoll {
         return rollFormula;
     }
 
-    #modifyResultForScharfFeature(roll:Roll):Roll {
+    #modifyResultForScharfFeature(roll:FoundryRoll):FoundryRoll{
         if (this._features["scharf"]) {
             let scharfBonus = 0;
             this.getFirstDieTerm(roll).results.forEach(r => {
@@ -83,7 +84,7 @@ export class DamageRoll {
         return roll;
     }
 
-    #modifyResultForKritischFeature(roll:Roll):Roll {
+    #modifyResultForKritischFeature(roll:FoundryRoll):FoundryRoll{
         if (this._features["kritisch"]) {
             let kritischBonus = 0;
             const firstDie = this.getFirstDieTerm(roll);
@@ -100,7 +101,7 @@ export class DamageRoll {
         return roll;
     }
 
-    private getFirstDieTerm(roll:Roll):Die{
+    private getFirstDieTerm(roll:FoundryRoll):Die{
         for(const term of roll.terms){
            if("results" in term && "faces" in term){
                return term;
@@ -125,6 +126,15 @@ export class DamageRoll {
     getFeatureString():string {
         return Object.keys(this._features).map(key => `${this._features[key].name} ${this._features[key].value}`).join(", ");
     }
+    getActiveFeatures():Record<string,DamageFeature>{
+        const starter = {} as Record<string,DamageFeature>;
+        if(this._features["wuchtig"]){
+            this._features["wuchtig"].active = this._damageModifier != 0;
+        }
+        return Object.entries(this._features)
+            .filter(([__,feature])=>feature.active)
+            .reduce((acc,[key,value])=>{acc[key]=value;return acc},starter);
+    };
 
     toObject():DamageRollObjectType {
         return {
@@ -134,21 +144,6 @@ export class DamageRoll {
             features: this._features
         }
     }
-}
-
-function parseFeatureString(featureString:string):Record<string,Feature> {
-    const features:Record<string,Feature> = {};
-    featureString.split(',').forEach(feat => {
-        let temp = /([^0-9 ]+)\s*([0-9]*)/.exec(feat.trim());
-        if (temp && temp[1]) {
-            features[temp[1].toLowerCase()] = {
-                name: temp[1],
-                value: parseInt(temp[2]) || 1,
-                active: false
-            };
-        }
-    });
-    return features;
 }
 
 function parseDamageString(damageString:string):{nDice:number, nFaces:number,damageModifier:number}{

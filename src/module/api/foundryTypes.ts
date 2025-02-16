@@ -1,3 +1,6 @@
+import {DataModel} from "./DataModel";
+import {Roll} from "./Roll";
+
 export interface ChatMessage {
     id: string,
     /** The Ids of the users that are to be addressed by this message*/
@@ -12,6 +15,13 @@ export interface ChatMessage {
     getFlag(scope: string, key: string): object
 
     deleteDocuments(documentId: string[]): Promise<void>
+}
+
+export interface Speaker {
+    scene: string;
+    actor: string|null;
+    token: string|null;
+    alias: string;
 }
 
 export enum ChatMessageTypes {
@@ -38,28 +48,6 @@ export interface Hooks {
     off: (key: string, id: number) => void;
 }
 
-export interface Die {
-    faces: number;
-    results: { active: boolean, result: number }[]
-}
-
-export interface OperatorTerm {
-    operator: string;
-
-}
-
-export interface NumericTerm {
-    number: number;
-}
-
-export interface Roll {
-    evaluate: () => Promise<Roll>;
-    _total: number
-    readonly total: number
-    dice: Die[]
-    terms: (Die | OperatorTerm | NumericTerm)[]
-}
-
 export type SettingTypeMapper<T extends SettingTypes> = T extends typeof Number ? number:T extends typeof Boolean?boolean:T extends typeof String?string:never;
 export type SettingTypes = NumberConstructor|BooleanConstructor|StringConstructor;
 export interface SettingsConfig<T extends SettingTypes> {
@@ -80,6 +68,7 @@ declare global {
     type Collection<T> = ReadonlyMap<string, T> & ReadonlyArray<T>
 
     class Actor extends FoundryDocument {
+        name:string;
         items: Collection<Item>
         system: Record<string, any>
     }
@@ -97,14 +86,12 @@ declare global {
         actor: Actor;
     }
 
-    class FoundryDocument {
+    class FoundryDocument extends DataModel<any,any>{
         constructor(data: Object, options?: Record<string, any>);
 
         readonly id: string
         readonly documentName: string
         readonly parent: FoundryDocument|undefined
-        toObject(source?:boolean): object
-        getFlag(scope: string, key: string): unknown;
         updateSource(data: object): void;
 
         prepareBaseData(): void;

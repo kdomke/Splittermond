@@ -2,8 +2,8 @@ import {describe, it} from "mocha";
 import {expect} from "chai";
 import sinon from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
-import {foundryApi} from "module/api/foundryApi";
-import {Die, Roll} from "../../../../module/api/foundryTypes";
+import {Die, FoundryRoll} from "module/api/Roll";
+import {createTestRoll, stubFoundryRoll} from "../../../RollMock";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -55,7 +55,8 @@ describe("DamageRoll feature string parsing and stringifying", () => {
         ["Kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
         ["kritisch2", {kritisch: {name: "kritisch", value: 2, active: false}}],
         ["Exakt 3", {exakt: {name: "Exakt", value: 3, active: false}}],
-        ["eXakT     25", {exakt: {name: "eXakT", value: 25, active: false}}]
+        ["eXakT     25", {exakt: {name: "eXakT", value: 25, active: false}}],
+        ["Wuchtig", {wuchtig: {name: "Wuchtig", value: 1, active: false}}],
     ] as const).forEach(([input, expected]) => {
         it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
             expect(DamageRoll.parse("", input).toObject().features).to.deep.equal(expected);
@@ -94,38 +95,64 @@ describe("DamageRoll feature string parsing and stringifying", () => {
     });
 });
 
-describe("DamageRoll evaluation", () => {
+describe("Addition to Damage Roll", () => {
+    it("should increase damage modifier by amount", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 1, features: {}});
+        damageRoll.increaseDamage(5);
 
-    afterEach(() => sinon.restore());
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+6");
+    });
+
+    it("should decrease damage modifier by amount", () => {
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features: {}});
+        damageRoll.decreaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+2");
+    });
+
+    it("should double damage modifier on addition if 'Wuchtig' feature exists", () => {
+        const damageRoll = new DamageRoll({
+            nDice: 1, nFaces: 6, damageModifier: 7, features: {
+                wuchtig: {name: "Wuchtig", value: 1, active: false}
+            }
+        });
+        damageRoll.increaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6+17");
+    });
+
+    it("should double damage modifier on subtraction if 'Wuchtig' feature exists", () => {
+        const damageRoll = new DamageRoll({
+            nDice: 1, nFaces: 6, damageModifier: 7, features: {
+                wuchtig: {name: "Wuchtig", value: 1, active: false}
+            }
+        });
+        damageRoll.decreaseDamage(5);
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6-3");
+    });
+
+})
+
+describe("DamageRoll evaluation", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
 
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
-        const rollMock: Roll = {
-            _total: 1, total: 1, terms: [], evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}]}]
-        };
-        const mock = sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll = createTestRoll("1d6", [1], 0);
+        const mock = stubFoundryRoll(rollMock, sandbox);
         await DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
         expect(mock.callCount).to.equal(1);
-        expect(mock.firstCall.args[0]).to.equal("2d6kh1+0");
+        expect(mock.firstCall.args[0]).to.equal("2d6kh1");
     });
 
     it("Should not increase the lowest dice for scharf feature", async () => {
         const damageString = "2d6";
-        const terms = [
-            {
-                faces: 6,
-                results: [
-                    {active: true, result: 1},
-                    {active: true, result: 1}],
-            }
-        ];
-        const rollMock: Roll = {
-            _total: 2, total: 2, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:1}]}]
-        };
-        sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll = createTestRoll("2d6", [1, 1], 0);
+        stubFoundryRoll(rollMock, sandbox);
 
         const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
 
@@ -136,19 +163,8 @@ describe("DamageRoll evaluation", () => {
 
     it("Should not increase the highest dice for kritisch feature", async () => {
         const damageString = "2d6"
-        const terms = [
-            {
-                faces: 6,
-                results: [
-                    {active: true, result: 6},
-                    {active: true, result: 6}],
-            }
-        ];
-        const rollMock: Roll = {
-            _total: 12, total: 12, terms, evaluate: () => Promise.resolve(rollMock),
-            dice: [{faces: 6, results: [{active: true, result:6}]}]
-        };
-        sinon.stub(foundryApi, "roll").returns(rollMock);
+        const rollMock: FoundryRoll = createTestRoll("2d6", [6, 6], 0);
+        stubFoundryRoll(rollMock, sandbox);
 
         const roll = await DamageRoll.parse(damageString, "Kritisch 2").evaluate();
 
@@ -158,6 +174,42 @@ describe("DamageRoll evaluation", () => {
     });
 });
 
-function getFirstDie(roll: Roll) {
+describe("Feature activation", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
+
+    it("should activate the exakt feature", async () => {
+        const damageString = "1d6"
+        const rollMock: FoundryRoll = createTestRoll("1d6", [1], 0);
+        stubFoundryRoll(rollMock, sandbox);
+        const damageRoll = DamageRoll.parse(damageString, "Exakt 1");
+        await damageRoll.evaluate();
+
+        expect(damageRoll.getActiveFeatures()).to.deep.equal({exakt: {name: "Exakt", value: 1, active: true}});
+    });
+
+    it("should activate the scharf feature", async () => {
+        const damageString = "1d6"
+        const rollMock: FoundryRoll = createTestRoll("1d6", [1], 0);
+        stubFoundryRoll(rollMock, sandbox);
+        const damageRoll = DamageRoll.parse(damageString, "Scharf 2");
+        await damageRoll.evaluate();
+
+        expect(damageRoll.getActiveFeatures()).to.deep.equal({scharf: {name: "Scharf", value: 2, active: true}});
+    });
+
+    it("should activate the kritisch feature", async () => {
+        const damageString = "1d6"
+        const rollMock: FoundryRoll = createTestRoll("1d6", [6], 0);
+        stubFoundryRoll(rollMock, sandbox);
+        const damageRoll = DamageRoll.parse(damageString, "Kritisch 1");
+        await damageRoll.evaluate();
+
+        expect(damageRoll.getActiveFeatures()).to.deep.equal({kritisch: {name: "Kritisch", value: 1, active: true}});
+    });
+});
+
+function getFirstDie(roll: FoundryRoll) {
     return roll.terms.find(term => "results" in term && "faces" in term) as Die;
 }

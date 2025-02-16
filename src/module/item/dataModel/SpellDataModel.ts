@@ -1,7 +1,7 @@
 import {DataModelSchemaType, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondSpellItem from "../spell";
-import {getDescriptorFields} from "./commonFields";
+import {damageType, getDescriptorFields} from "./commonFields";
 
 function SpellDataModelSchema() {
     return {
@@ -13,6 +13,7 @@ function SpellDataModelSchema() {
         costs: new fields.StringField({ required: true, nullable:true }),
         difficulty: new fields.StringField({ required: true, nullable:true }),
         damage: new fields.StringField({ required: true, nullable:true }),
+        ...damageType(),
         range: new fields.StringField({ required: true, nullable:true }),
         castDuration: new fields.StringField({ required: true, nullable:true }),
         effectDuration: new fields.StringField({ required: true, nullable:true }),

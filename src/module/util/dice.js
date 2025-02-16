@@ -1,10 +1,8 @@
-import {DamageRoll} from "./damage/DamageRoll.ts";
-import {foundryApi} from "../api/foundryApi.ts";
+import {foundryApi} from "../api/foundryApi";
 
 export const Dice = {
     check,
     evaluateCheck,
-    damage,
     riskModifier
 };
 
@@ -15,7 +13,7 @@ export const Dice = {
  * @param {number} skillModifier
  * @return {GenericRollEvaluation}
  */
-export async function check(skill, difficulty , rollType = "standard", skillModifier = 0) {
+export async function check(skill, difficulty, rollType = "standard", skillModifier = 0) {
 
     let rollFormula = `${CONFIG.splittermond.rollType[rollType].rollFormula} + @skillValue`;
 
@@ -71,55 +69,6 @@ export async function evaluateCheck(roll, skillPoints, difficulty, rollType) {
         degreeOfSuccessMessage: degreeOfSuccessMessage,
         roll: roll,
     };
-}
-
-/**
- *
- * @param {string} damageFormula
- * @param {string} featureString
- * @param {string} damageSource
- * @param {{actor:string, alias:string, scene:string, token:string}|null} speaker
- * @returns {Promise<ChatMessage>}
- */
-export async function damage(damageFormula, featureString, damageSource = "", speaker= null) {
-
-    const damage = DamageRoll.parse(damageFormula, featureString);
-
-    const roll = await damage.evaluate();
-
-    let actions = [];
-
-    actions.push({
-        name: foundryApi.localize("splittermond.applyDamage"),
-        icon: "fa-heart-broken",
-        classes: "apply-damage",
-        data: {
-            damage: roll._total,
-            source: damageSource,
-            type: "V"
-        }
-    });
-
-
-    let templateContext = {
-        roll: roll,
-        source: damageSource,
-        features: damage.toObject().features,
-        formula: damageFormula,
-        tooltip: await roll.getTooltip(),
-        actions: actions
-    };
-
-    const speakerOrUser = speaker?{speaker}:{user: game.user.id};
-    let chatData = {
-        ...speakerOrUser,
-        rolls: [roll],
-        content: await renderTemplate("systems/splittermond/templates/chat/damage-roll.hbs", templateContext),
-        sound: CONFIG.sounds.dice,
-        type: foundryApi.chatMessageTypes.OTHER
-    };
-
-    return foundryApi.createChatMessage(chatData)
 }
 
 export function riskModifier() {

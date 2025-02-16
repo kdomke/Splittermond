@@ -1,4 +1,3 @@
-import {SplittermondSpellSystemData} from "module/data/ItemSystemData"
 export const testname = "Machtexplosion";
 export const input = `Machtexplosion (Spruch)
 Schulen: Kampf 4
@@ -17,7 +16,7 @@ Erfolgsgrade:
 Fokus
 • 1 EG (Kosten +1V1) Lorem ipsum dolor sit 30 Ticks mundo Zustand Benommen 1.
 `
-export const expected: Record<string,unknown> &{system:SplittermondSpellSystemData} = {
+export const expected  = {
     name: "Machtexplosion",
     img: "icons/svg/daze.svg",
     system: {
@@ -28,6 +27,7 @@ export const expected: Record<string,unknown> &{system:SplittermondSpellSystemDa
         range: "10 m",
         castDuration: "9 Ticks",
         damage: "5W6",
+        damageType: "physical",
         description: "O feiticeiro alcancea seu arvore com uma toca doce e nao faz 5W6 Punkte Schaden. Schadensreduktion wirkt hier nicht wenn der Gegner ein Token ist. Das Ziel isst für 30 Ticks den Zustand Erschöpft 2.",
         effectArea: null,
         effectDuration: null,

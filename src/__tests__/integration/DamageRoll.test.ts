@@ -1,64 +1,14 @@
-import {foundryApi} from "../../module/api/foundryApi";
 import {DamageRoll} from "../../module/util/damage/DamageRoll";
 import {QuenchBatchContext} from "@ethaks/fvtt-quench";
+import {DamageMessage} from "../../module/util/chat/damageChatMessage/DamageMessage";
+import {DamageInitializer} from "../../module/util/chat/damageChatMessage/initDamage";
 
 declare class Die{
     results: any;
 }
-declare class OperatorTerm{ operator:string}
-declare class NumericTerm{ number:number}
-declare class Roll{};
 
 export function DamageRollTest(context:QuenchBatchContext) {
     const {describe, it, expect} = context;
-
-    describe("test API", () => {
-        it("should fail if 1000 dice or more are requested", async () => {
-            foundryApi.roll("1000d6").evaluate()
-                .then(() => expect.fail("Expected test to throw an error"));
-        });
-        it("should return a roll object", async () => {
-            const rollResult = await foundryApi.roll("2d6+1").evaluate()
-
-            expect(rollResult).to.have.property("terms");
-            expect(rollResult).to.have.property("_total");
-            expect(rollResult).to.have.property("total");
-
-            expect(rollResult.terms).to.be.instanceOf(Array);
-            expect(rollResult.terms).to.have.length(3);
-            expect(rollResult.terms[0]).to.have.property("results");
-            expect(rollResult.terms[0]).to.have.property("faces");
-            const firstTerm = rollResult.terms[0] as {results:any, faces:any};
-            expect(firstTerm.results).to.be.instanceOf(Array);
-            expect(firstTerm.faces).to.equal(6);
-
-            expect(firstTerm).to.be.instanceOf(Die);
-            expect(firstTerm.results).to.have.length(2);
-            expect(firstTerm.results[0]).to.have.property("active");
-            expect(firstTerm.results[0]).to.have.property("result");
-            expect(firstTerm.results[0].result).to.be.below(7).and.above(0);
-            expect(firstTerm.results[0].active).to.be.true;
-
-            expect(rollResult.terms[1]).to.be.instanceOf(OperatorTerm);
-            expect((rollResult.terms[1] as OperatorTerm).operator).to.equal("+");
-
-            expect(rollResult.terms[2]).to.be.instanceOf(NumericTerm);
-            expect((rollResult.terms[2] as NumericTerm).number).to.equal(1);
-
-        });
-
-        it("should evaluate a roll synchronously",async () => {
-            const rollResult = await foundryApi.roll("2d6+1").evaluate()
-
-            expect(rollResult).to.be.instanceOf(Roll);
-        });
-
-        it("should not fail for a zero dice formula",async () => {
-            const rollResult = await foundryApi.roll("0d0").evaluate()
-
-            expect(rollResult.total).to.equal(0);
-        });
-    });
 
     describe("Damage Roll evaluation", () => {
         it("Exact should modify roll in a way that the highest dice is kept", async () => {
@@ -92,6 +42,34 @@ export function DamageRollTest(context:QuenchBatchContext) {
                     .flatMap(t => t.results)
                     .reduce((former,latter)=> former += latter.result,0)
             )
+        });
+    });
+
+    describe("Damage Message initialization", () => {
+        it("should account for multiple damage types", async () => {
+            const firstImplement = {
+                damageFormula: "1d6",
+                featureString: "Scharf 1",
+                damageSource: "Schwert",
+                damageType: "physical" as const
+            }
+            const secondImplement = {
+                damageFormula: "1d10",
+                featureString: "Durchdringung 1",
+                damageSource: "Brennende Klinge",
+                damageType: "fire" as const
+            }
+            const chatMessage = await DamageInitializer.rollDamage([firstImplement,secondImplement],"V", null)
+            const damageMessage = chatMessage.message as DamageMessage;
+
+            expect(damageMessage).to.be.instanceOf(DamageMessage);
+            expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());
+            expect(damageMessage.getData().actions.map(a => a.data.localAction)).to.contain("applyDamageToTargets");
+            expect(damageMessage.getData().formula).to.equal("1d6 + 1d10");
+
+            expect(damageMessage.damageEvent.implements).to.have.length(2);
+            expect(damageMessage.damageEvent.implements.map(i => i.damageType)).to.contain.members(["physical","fire"]);
+
         });
 
     });

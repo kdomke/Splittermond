@@ -84,9 +84,9 @@ function prohibitActionOnChatCard(__:unknown, html:JQuery, data:unknown) {
     if(!dataHasRequiredAttributes(data)) {
        throw new Error("data parameter is expected to be an object with keys 'message' and 'author', but it was not.") ;
     }
-    let actor = foundryApi.getSpeaker(data.message.speaker);
+    let actor = foundryApi.getSpeaker(data.message.speaker).actor;
 
-    if (!((actor && actor.isOwner) || canEditMessageOf(data.author.id))) {
+    if (!((actor && foundryApi.getActor(actor)?.isOwner) || canEditMessageOf(data.author.id))) {
         html.find(".splittermond-chat-action[data-action]").not(".splittermond-chat-action[data-localaction]").remove();
     }
 
