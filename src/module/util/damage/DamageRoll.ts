@@ -49,7 +49,8 @@ export class DamageRoll {
     async evaluate():Promise<FoundryRoll> {
         const rollFormula = `${this._nDice}d${this._nFaces}`;
         const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
-        const damageFormula = `${rollFormulaWithPrecision}${this.#getSign()}${Math.abs(this._damageModifier)}`;
+        const modifierTerm = this._damageModifier ? `${this.#getSign()}${Math.abs(this._damageModifier)}` : "";
+        const damageFormula = `${rollFormulaWithPrecision}${modifierTerm}`;
 
         let rollResult = await foundryApi.roll(damageFormula, {}).evaluate();
 

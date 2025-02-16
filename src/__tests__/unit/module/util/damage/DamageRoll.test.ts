@@ -146,7 +146,7 @@ describe("DamageRoll evaluation", () => {
         await DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
         expect(mock.callCount).to.equal(1);
-        expect(mock.firstCall.args[0]).to.equal("2d6kh1+0");
+        expect(mock.firstCall.args[0]).to.equal("2d6kh1");
     });
 
     it("Should not increase the lowest dice for scharf feature", async () => {

@@ -66,11 +66,9 @@ export function DamageRollTest(context:QuenchBatchContext) {
             expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());
             expect(damageMessage.getData().actions.map(a => a.data.localAction)).to.contain("applyDamageToTargets");
             expect(damageMessage.getData().formula).to.equal("1d6 + 1d10");
-            expect
 
             expect(damageMessage.damageEvent.implements).to.have.length(2);
-            expect(damageMessage.damageEvent.implements[0].damageType).to.equal("physical");
-            expect(damageMessage.damageEvent.implements[1].damageType).to.equal("fire");
+            expect(damageMessage.damageEvent.implements.map(i => i.damageType)).to.contain.members(["physical","fire"]);
 
         });
 
