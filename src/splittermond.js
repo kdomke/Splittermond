@@ -38,6 +38,7 @@ import {initTheme} from "./module/theme";
 import {CharacterDataModel} from "./module/actor/dataModel/CharacterDataModel";
 import {NpcDataModel} from "./module/actor/dataModel/NpcDataModel";
 import {initializeItem} from "./module/item";
+import {DamageInitializer} from "./module/util/chat/damageChatMessage/initDamage";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -499,10 +500,14 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         const type = $(event.currentTarget).closestData("roll-type");
 
         if (type === "damage") {
-            const damage = $(event.currentTarget).closestData("damage");
-            const features = $(event.currentTarget).closestData("features");
-            const source = $(event.currentTarget).closestData("source");
-            Dice.damage(damage, features, source);
+            const actorId= $(event.currentTarget).closestData("actorid");
+            const damageFormula = $(event.currentTarget).closestData("damageformula");
+            const featureString = $(event.currentTarget).closestData("featurestring");
+            const damageSource = $(event.currentTarget).closestData("damagesource");
+            const damageType= $(event.currentTarget).closestData("damagetype");
+            const actor = foundryApi.getActor(actorId) ?? null;//May fail if ID refers to a token
+            return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}],"V", actor)
+                .then(message => message.sendToChat());
         }
 
         if (type === "magicFumble") {

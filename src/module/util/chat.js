@@ -93,9 +93,11 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     classes: "rollable",
                     data: {
                         "roll-type": "damage",
-                        damage: data.weapon.damage,
-                        features: data.weapon.features,
-                        source: data.weapon.name
+                        actorId: actor.id,
+                        damageFormula: data.weapon.damage,
+                        featureString: data.weapon.features,
+                        damageSource: data.weapon.name,
+                        damageType: data.weapon.damageType
                     }
                 });
             }

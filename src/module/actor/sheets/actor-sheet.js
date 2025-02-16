@@ -295,11 +295,11 @@ export default class SplittermondActorSheet extends ActorSheet {
             }
 
             if (type === "damage") {
-                const damage = event.currentTarget.dataset.damage;
-                const features = event.currentTarget.dataset.features;
-                const source = event.currentTarget.dataset.source;
+                const damageFormula = event.currentTarget.dataset.damage;
+                const featureString = event.currentTarget.dataset.features;
+                const damageSource = event.currentTarget.dataset.source;
                 const damageType = event.currentTarget.dataset.damageType ?? null;
-                return DamageInitializer.rollDamage([{damage, features, source, damageType}], "V", this.actor)
+                return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}], "V", this.actor)
                     .then(chatCard => chatCard.sendToChat());
             }
 
