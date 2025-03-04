@@ -14,6 +14,7 @@ import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.t
 import {settings} from "../settings";
 import {splittermond} from "../config.js";
 import {foundryApi} from "../api/foundryApi";
+import {Susceptibilities} from "./modifiers/Susceptibilities.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -49,22 +50,7 @@ settings.registerNumber("HGMultiplier", {
 
 export default class SplittermondActor extends Actor {
 
-    /**@type {Record<DamageType, number>} */
-    _susceptibilities = {
-        physical: 0,
-        mental: 0,
-        electric: 0,
-        acid: 0,
-        rock: 0,
-        fire: 0,
-        heat: 0,
-        cold: 0,
-        poison: 0,
-        bleeding: 0,
-        disease: 0,
-        light:0,
-        shadow:0,
-    };
+    _susceptibilities = new Susceptibilities(new ModifierManager());//dummy empty susceptibilities
 
     actorData() {
         return this.system;
@@ -77,6 +63,7 @@ export default class SplittermondActor extends Actor {
         //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
+        this._susceptibilities = new Susceptibilities(this.modifier)
 
         if (!this.attributes) {
             this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
@@ -600,7 +587,7 @@ export default class SplittermondActor extends Actor {
      * negative values indicate a resistance.
      */
     get susceptibilities() {
-        return this._susceptibilities;
+        return this._susceptibilities.calculateSusceptibilities();
     }
 
 
