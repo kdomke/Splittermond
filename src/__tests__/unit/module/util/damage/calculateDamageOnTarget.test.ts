@@ -54,6 +54,16 @@ describe("Damage Application", () => {
         expect(result.render()).to.equal("11V11");
     });
 
+    it("should not apply damage reduction past zero", () => {
+        const damageImplement = createDamageImplement(1, 0);
+        const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+        const target = setUpTarget(sandbox, 10, {});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("0");
+    });
+
     it("should apply damage reduction", () => {
         const damageImplement = createDamageImplement(21, 0);
         const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
@@ -87,7 +97,7 @@ describe("Damage Application", () => {
         });
         const target = setUpTarget(sandbox, 3, {});
 
-        const result= calculateDamageOnTarget(damageEvent, target);
+        const result = calculateDamageOnTarget(damageEvent, target);
 
         expect(result.render()).to.equal("2V2");
     });
@@ -102,6 +112,20 @@ describe("Damage Application", () => {
 
             expect(result.render()).to.equal("10V10");
         });
+
+    });
+    it(`should not adjust damage for susceptibility past zero`, () => {
+        const damageImplement1 = createDamageImplement(5, 0, "physical");
+        const damageImplement2 = createDamageImplement(5, 0, "light" as any);
+        const damageEvent = createDamageEvent(sandbox, {
+            implements: [damageImplement1, damageImplement2],
+            _costBase: consumed
+        });
+        const target = setUpTarget(sandbox, 0, {["physical"]: -99999});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("5V5");
     });
 
     describe("Reporting", () => {
@@ -137,6 +161,20 @@ describe("Damage Application", () => {
             expect(recorder._target?.damageReduction).to.equal(8);
             expect(recorder.overriddenReduction.length).to.equal(6);
             expect(recorder.totalDamage.length).to.equal(6);
+        });
+
+        it("should report zero applied damage if reduction is higher than damage", () => {
+            const damageImplement = createDamageImplement(5, 3, "physical");
+            const target = setUpTarget(sandbox, 8, {physical: -99999});
+            const recorder = new MockReporter();
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement],
+                _costBase: consumed
+            });
+
+            calculateDamageOnTarget(damageEvent, target, recorder);
+
+            expect(recorder.records[0].appliedDamage.length).to.equal(0);
         });
 
         it("should report susceptibility", () => {
@@ -190,8 +228,8 @@ type RecordItem = {
 };
 
 class MockReporter implements UserReporter {
-    public _target: SplittermondActor|null = null;
-    public _event: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase; }|null = null;
+    public _target: SplittermondActor | null = null;
+    public _event: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase; } | null = null;
     public records: RecordItem[] = [];
     public totalDamage: CostModifier = new Cost(0, 0, false).asModifier();
     public overriddenReduction: CostModifier = new Cost(0, 0, false).asModifier();

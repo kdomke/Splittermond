@@ -59,7 +59,7 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
 
     for (const implement of event.implements) {
         const susceptibility = toCost(target.susceptibilities[implement.damageType]);
-        const damageAdded = implement.bruttoHealthCost.add(susceptibility);
+        const damageAdded = event.costBase.add(implement.bruttoHealthCost).add(susceptibility).toModifier(true);
         realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
         damageBeforeGrazingAndReduction = damageBeforeGrazingAndReduction.add(damageAdded);
         reporter.addRecord(implement.implementName, implement.damageType, implement.bruttoHealthCost, damageAdded);
