@@ -9,6 +9,13 @@ global.Application = class {
     }
 };
 
+global.Hooks = {
+    once(){},
+    on(){},
+    off(){},
+    callAll(){},
+}
+
 global.Actor = class Actor{
     constructor(data, context) {
     }

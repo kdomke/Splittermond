@@ -7,6 +7,8 @@ import {Cost, CostModifier} from "../../../../../module/util/costs/Cost";
 import {expect} from "chai";
 import {AgentReference} from "module/data/references/AgentReference";
 import {CostBase} from "../../../../../module/util/costs/costTypes";
+import {eventImmunityHook, Immunity, implementImmunityHook} from "../../../../../module/util/damage/immunities";
+import {foundryApi} from "../../../../../module/api/foundryApi";
 
 
 describe("Damage Application", () => {
@@ -40,6 +42,22 @@ describe("Damage Application", () => {
         expect(result.render()).to.equal("8V8");
     });
 
+    it("should nullify implements with immunities", () => {
+        const damageImplement1 = createDamageImplement(5, 0);
+        const damageImplement2 = createDamageImplement(3, 0);
+        sandbox.stub(foundryApi.hooks, "callAll")
+            .onFirstCall().callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
+        const damageEvent = createDamageEvent(sandbox, {
+            implements: [damageImplement1, damageImplement2],
+            _costBase: consumed
+        });
+        const target = setUpTarget(sandbox, 0, {});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("3V3");
+    });
+
     it("should halve damage for grazing hits", () => {
         const damageImplement = createDamageImplement(21, 0);
         const damageEvent = createDamageEvent(sandbox, {
@@ -52,6 +70,22 @@ describe("Damage Application", () => {
         const result = calculateDamageOnTarget(damageEvent, target);
 
         expect(result.render()).to.equal("11V11");
+    });
+
+    it("should nullify damage for event immunities", () => {
+        sandbox.stub(foundryApi.hooks, "callAll").withArgs(eventImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
+            .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
+        const damageImplement = createDamageImplement(21, 0);
+        const damageEvent = createDamageEvent(sandbox, {
+            implements: [damageImplement],
+            _costBase: consumed,
+            isGrazingHit: true
+        });
+        const target = setUpTarget(sandbox, 0, {});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("0");
     });
 
     it("should not apply damage reduction past zero", () => {
@@ -177,6 +211,26 @@ describe("Damage Application", () => {
             expect(recorder.records[0].appliedDamage.length).to.equal(0);
         });
 
+        it("should report zero applied damage if target is immune", () => {
+            sandbox.stub(foundryApi.hooks, "callAll")
+                .withArgs(eventImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
+                .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
+            const damageImplement = createDamageImplement(5, 3, "physical");
+            const target = setUpTarget(sandbox, 8, {});
+            const recorder = new MockReporter();
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement],
+                _costBase: consumed
+            });
+
+            calculateDamageOnTarget(damageEvent, target, recorder);
+
+            expect(recorder.immunity?.name).to.equal("MegaImmunity");
+            expect(recorder.totalDamage.length).to.equal(0);
+        });
+
+
+
         it("should report susceptibility", () => {
             const damageImplement1 = createDamageImplement(5, 3, "physical");
             const damageImplement2 = createDamageImplement(1, 0, "light");
@@ -196,6 +250,40 @@ describe("Damage Application", () => {
                 damageType: "physical",
                 implementName: "Schwert"
             });
+            expect(recorder.records[1].appliedDamage.length).to.equal(6);
+            expect(recorder.records[1].baseDamage.length).to.equal(1);
+            expect(recorder.records[1]).to.contain({
+                damageType: "light",
+                implementName: "Schwert"
+            });
+        });
+
+        it("should report despite immunity", () => {
+            sandbox.stub(foundryApi.hooks, "callAll")
+                .withArgs(implementImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
+                .onFirstCall()
+                .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
+            const damageImplement1 = createDamageImplement(5, 3, "physical");
+            const damageImplement2 = createDamageImplement(1, 0, "light");
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement1, damageImplement2],
+                _costBase: consumed
+            });
+
+            const target = setUpTarget(sandbox, 8, {light: 5, physical: 1});
+            const recorder = new MockReporter();
+
+            calculateDamageOnTarget(damageEvent, target, recorder);
+
+            expect(recorder.overriddenReduction.length).to.equal(0);
+            expect(recorder.records[0].immunity?.name).to.equal("MegaImmunity");
+            expect(recorder.records[0].appliedDamage.length).to.equal(6);
+            expect(recorder.records[0].baseDamage.length).to.equal(5);
+            expect(recorder.records[0]).to.contain({
+                damageType: "physical",
+                implementName: "Schwert"
+            });
+            expect(recorder.records[1].immunity).to.be.undefined;
             expect(recorder.records[1].appliedDamage.length).to.equal(6);
             expect(recorder.records[1].baseDamage.length).to.equal(1);
             expect(recorder.records[1]).to.contain({
@@ -224,7 +312,8 @@ type RecordItem = {
     implementName: string;
     damageType: DamageType;
     baseDamage: CostModifier;
-    appliedDamage: CostModifier
+    appliedDamage: CostModifier;
+    immunity?: Immunity;
 };
 
 class MockReporter implements UserReporter {
@@ -233,6 +322,7 @@ class MockReporter implements UserReporter {
     public records: RecordItem[] = [];
     public totalDamage: CostModifier = new Cost(0, 0, false).asModifier();
     public overriddenReduction: CostModifier = new Cost(0, 0, false).asModifier();
+    public immunity: Immunity | undefined;
 
     set event(value: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase }) {
         this._event = value;
@@ -242,8 +332,8 @@ class MockReporter implements UserReporter {
         this._target = value;
     }
 
-    addRecord(implementName: string, damageType: DamageType, baseDamage: CostModifier, appliedDamage: CostModifier): void {
-        this.records.push({implementName, damageType, baseDamage, appliedDamage});
+    addRecord(implementName: string, damageType: DamageType, baseDamage: CostModifier, appliedDamage: CostModifier, immunity = undefined): void {
+        this.records.push({implementName, damageType, baseDamage, appliedDamage, immunity});
     }
 
     public totalFromImplements: CostModifier = new Cost(0, 0, false).asModifier();

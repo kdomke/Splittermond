@@ -5,6 +5,7 @@ import {CostModifier} from "../costs/Cost";
 import {AgentReference} from "../../data/references/AgentReference";
 import {PrimaryCost} from "../costs/PrimaryCost";
 import {CostBase} from "../costs/costTypes";
+import {evaluateEventImmunities, evaluateInterfaceImmunities, Immunity} from "./immunities";
 
 
 export interface UserReporter {
@@ -18,10 +19,10 @@ export interface UserReporter {
 
     set event(event: { causer: AgentReference | null, isGrazingHit: boolean, costBase: CostBase });
 
-    addRecord(implementName: string, damageType: DamageType, baseDamage: CostModifier, appliedDamage: CostModifier): void;
+    set immunity(immunity: Immunity|undefined);
+
+    addRecord(implementName: string, damageType: DamageType, baseDamage: CostModifier, appliedDamage: CostModifier, immunity?: Immunity): void;
 }
-
-
 
 
 export class NoReporter implements UserReporter {
@@ -37,11 +38,15 @@ export class NoReporter implements UserReporter {
     set totalDamage(__: CostModifier) {
     }
 
-    set event(__: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase}) {
+    set event(__: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase }) {
+    }
+
+    set immunity(__: Immunity|undefined) {
     }
 
     addRecord(): void {
     }
+
 }
 
 export function calculateDamageOnTarget(event: DamageEvent, target: SplittermondActor, reporter: UserReporter = new NoReporter()): PrimaryCost {
@@ -60,9 +65,12 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     for (const implement of event.implements) {
         const susceptibility = toCost(target.susceptibilities[implement.damageType]);
         const damageAdded = event.costBase.add(implement.bruttoHealthCost).add(susceptibility).toModifier(true);
-        realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
-        damageBeforeGrazingAndReduction = damageBeforeGrazingAndReduction.add(damageAdded);
-        reporter.addRecord(implement.implementName, implement.damageType, implement.bruttoHealthCost, damageAdded);
+        const immunity = evaluateInterfaceImmunities(implement, target);
+        if (!immunity) {
+            realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
+            damageBeforeGrazingAndReduction = damageBeforeGrazingAndReduction.add(damageAdded);
+        }
+        reporter.addRecord(implement.implementName, implement.damageType, implement.bruttoHealthCost, damageAdded, immunity);
     }
     reporter.totalFromImplements = damageBeforeGrazingAndReduction;
     reporter.overriddenReduction = realizedDamageReductionOverride;
@@ -72,6 +80,11 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     const totalDamage = event.costBase.add(damageBeforeReduction.subtract(remainingReduction)).round();
     reporter.totalDamage = totalDamage.toModifier(true);
 
+    const immunity = evaluateEventImmunities(event, target);
+    if (immunity) {
+        reporter.immunity = immunity;
+        return event.costBase.add(CostModifier.zero);
+    }
     return totalDamage;
 }
 
