@@ -1,3 +1,9 @@
+## 0.12.10 HOTFIX##
+### Fixed
+* Hinzufügen von Mondzeichen Per Drag And Drop 
+* Anzeige von LP und FO im Token 
+### Breaking Changes
+* alle anderen Attribute eines Akteurs (außer Splitterpunkte für Charaktere) werden nicht mehr als Ressourcen geführt.
 ## 0.12.2 HOTFIX##
 2024-07-22
 
