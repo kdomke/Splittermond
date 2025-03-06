@@ -90,10 +90,22 @@ Hooks.once("init", async function () {
         CONFIG.compatibility.excludePatterns.push(new RegExp("systems/splittermond/"));
         CONFIG.compatibility.excludePatterns.push(new RegExp("Splittermond"));
     }
+    const trackableResources = {
+        bar:["healthBar","focusBar"],
+        value: ["health.available.value", "focus.available.value"]
+    }
 
     CONFIG.Actor.documentClass = SplittermondActor;
     CONFIG.Actor.dataModels.character = CharacterDataModel;
     CONFIG.Actor.dataModels.npc = NpcDataModel;
+    CONFIG.Actor.trackableAttributes = {
+        character: {
+            bar:[...trackableResources.bar, "splinterpoints"],
+            value: [...trackableResources.value, "splinterpoints.value"]
+        },
+        npc: trackableResources
+
+    }
 
     initializeItem();
 
