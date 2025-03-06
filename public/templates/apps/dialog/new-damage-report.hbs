@@ -12,7 +12,7 @@
             </thead>
             <tbody>
             {{#each items}}
-                <tr>
+                <tr class="{{#if immunity}}immune-row{{/if}}" {{#if immunity}}data-immunity="{{immunity}}"{{/if}}>
                     <td>{{name}}</td>
                     <td>{{type}}</td>
                     <td style="text-align: right">{{baseValue}}</td>

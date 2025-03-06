@@ -1,0 +1,22 @@
+.splittermond .immune-row {
+  background-color: #f0f0f0;
+  position: relative;
+}
+
+.splittermond .immune-row td {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.splittermond .immune-row::after {
+  content: attr(data-immunity);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  color: black;
+  font-weight: bold;
+  z-index: 1;
+}

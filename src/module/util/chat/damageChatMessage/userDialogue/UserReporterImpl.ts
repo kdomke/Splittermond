@@ -79,10 +79,10 @@ export class UserReporterImpl implements UserReporter {
             target: this._target,
             damageReduction: this._event.costBase.multiply(this._target.damageReduction),
             event: this._event,
-            records: this.records,
+            records: this.records.map(record => {record.immunity = this.immunity ?? record.immunity; return record}),
             totalDamage: this.totalDamage,
-            overriddenReduction: this.overriddenReduction,
-            totalFromImplements: this.totalFromImplements
+            overriddenReduction: this.immunity ? CostModifier.zero :  this.overriddenReduction,
+            totalFromImplements: this.immunity ? CostModifier.zero : this.totalFromImplements
         }
     }
 }
