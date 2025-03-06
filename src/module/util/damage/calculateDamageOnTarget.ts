@@ -5,7 +5,7 @@ import {CostModifier} from "../costs/Cost";
 import {AgentReference} from "../../data/references/AgentReference";
 import {PrimaryCost} from "../costs/PrimaryCost";
 import {CostBase} from "../costs/costTypes";
-import {evaluateEventImmunities, evaluateInterfaceImmunities, Immunity} from "./immunities";
+import {evaluateEventImmunities, evaluateImplementImmunities, Immunity} from "./immunities";
 
 
 export interface UserReporter {
@@ -65,7 +65,7 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     for (const implement of event.implements) {
         const susceptibility = toCost(target.susceptibilities[implement.damageType]);
         const damageAdded = event.costBase.add(implement.bruttoHealthCost).add(susceptibility).toModifier(true);
-        const immunity = evaluateInterfaceImmunities(implement, target);
+        const immunity = evaluateImplementImmunities(implement, target);
         if (!immunity) {
             realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
             damageBeforeGrazingAndReduction = damageBeforeGrazingAndReduction.add(damageAdded);

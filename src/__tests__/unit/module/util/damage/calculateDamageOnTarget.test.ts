@@ -45,7 +45,7 @@ describe("Damage Application", () => {
     it("should nullify implements with immunities", () => {
         const damageImplement1 = createDamageImplement(5, 0);
         const damageImplement2 = createDamageImplement(3, 0);
-        sandbox.stub(foundryApi.hooks, "callAll")
+        sandbox.stub(foundryApi.hooks, "call")
             .onFirstCall().callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
         const damageEvent = createDamageEvent(sandbox, {
             implements: [damageImplement1, damageImplement2],
@@ -73,7 +73,7 @@ describe("Damage Application", () => {
     });
 
     it("should nullify damage for event immunities", () => {
-        sandbox.stub(foundryApi.hooks, "callAll").withArgs(eventImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
+        sandbox.stub(foundryApi.hooks, "call").withArgs(eventImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
             .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
         const damageImplement = createDamageImplement(21, 0);
         const damageEvent = createDamageEvent(sandbox, {
@@ -212,7 +212,7 @@ describe("Damage Application", () => {
         });
 
         it("should report zero applied damage if target is immune", () => {
-            sandbox.stub(foundryApi.hooks, "callAll")
+            sandbox.stub(foundryApi.hooks, "call")
                 .withArgs(eventImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
                 .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));
             const damageImplement = createDamageImplement(5, 3, "physical");
@@ -259,7 +259,7 @@ describe("Damage Application", () => {
         });
 
         it("should report despite immunity", () => {
-            sandbox.stub(foundryApi.hooks, "callAll")
+            sandbox.stub(foundryApi.hooks, "call")
                 .withArgs(implementImmunityHook, sinon.match.any, sinon.match.any, sinon.match.any)
                 .onFirstCall()
                 .callsFake((_, __, ___, array) => array.push({name: "MegaImmunity"}));

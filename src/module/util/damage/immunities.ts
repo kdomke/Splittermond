@@ -7,10 +7,10 @@ export interface Immunity {
     name: string;
 }
 
-export function evaluateInterfaceImmunities(implement: DamageImplement, target : SplittermondActor): Immunity|undefined{
+export function evaluateImplementImmunities(implement: DamageImplement, target : SplittermondActor): Immunity|undefined{
 
     const immunities : unknown[] = [];
-    foundryApi.hooks.callAll(implementImmunityHook, target, implement, immunities);
+    foundryApi.hooks.call(implementImmunityHook, target, implement, immunities);
 
     return immunities.find(immunity => isImmunity(immunity));
 }
@@ -18,7 +18,7 @@ export function evaluateInterfaceImmunities(implement: DamageImplement, target :
 export function evaluateEventImmunities(event: DamageEvent, target : SplittermondActor): Immunity|undefined{
 
     const immunities : unknown[] = [];
-    foundryApi.hooks.callAll(eventImmunityHook, target, event, immunities);
+    foundryApi.hooks.call(eventImmunityHook, target, event, immunities);
 
     return immunities.find(immunity => isImmunity(immunity));
 }

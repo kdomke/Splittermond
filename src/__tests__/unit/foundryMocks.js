@@ -14,6 +14,7 @@ global.Hooks = {
     on(){},
     off(){},
     callAll(){},
+    call(){},
 }
 
 global.Actor = class Actor{

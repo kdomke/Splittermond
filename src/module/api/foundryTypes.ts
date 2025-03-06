@@ -51,7 +51,8 @@ export interface Hooks {
     once: (key: string, callback: (...args: any[]) => void) => number;
     on: ((key: string, callback: (...args: any[]) => void) => number);
     off: (key: string, id: number) => void;
-    callAll(key: string, ...args: any[]): void;
+    callAll(key: string, ...args: any[]): boolean;
+    call(key: string, ...args: any[]): boolean;
 }
 
 export type SettingTypeMapper<T extends SettingTypes> = T extends typeof Number ? number:T extends typeof Boolean?boolean:T extends typeof String?string:never;
