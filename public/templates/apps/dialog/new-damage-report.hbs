@@ -15,9 +15,9 @@
                 <tr class="{{#if immunity}}immune-row{{/if}}" {{#if immunity}}data-immunity="{{immunity}}"{{/if}}>
                     <td>{{name}}</td>
                     <td>{{type}}</td>
-                    <td style="text-align: right">{{baseValue}}</td>
-                    <td>{{modifiedBy}}</td>
-                    <td style="text-align: right">{{subTotal}}</td>
+                    <td class="number-col">{{baseValue}}</td>
+                    <td class="number-col">{{modifiedBy}}</td>
+                    <td class="number-col">{{subTotal}}</td>
                 </tr>
             {{/each}}
             <tr>

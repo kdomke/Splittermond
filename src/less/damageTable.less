@@ -3,7 +3,7 @@
 }
 
 .splittermond .immune-row td {
-  opacity: 0.6;
+  opacity: 0.4;
 }
 .splittermond .immune-row td::after {
   content: "";
@@ -11,13 +11,15 @@
   left: 0;
   right: 0;
   top: 50%;
-  height: 2px;
-  background: black;
+  height: 1px;
+  opacity: 0.8;
+  background: #a0a0a0;
   z-index: 0;
 }
 
 .splittermond .immune-row::after {
   content: attr(data-immunity);
+  font-weight: bolder;
   display: block;
   position: absolute;
   left: 50%;
@@ -25,8 +27,11 @@
   transform: translate(-50%, -50%);
   padding: 0 10px;
   z-index: 1;
-  font-weight: bold;
   color: black;
   padding-left: -25px;
   background-color: inherit;
+}
+
+.splittermond.dialog-apply-damage .number-col {
+  text-align: right;
 }
