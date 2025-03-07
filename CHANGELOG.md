@@ -1,3 +1,30 @@
+## 0.12.11
+### Fixed
+* Hinzufügen von Mondzeichen Per Drag And Drop wenn es schon ein Mondzeichen gibt
+### New features
+* Überarbeitete Schadensberechnung
+  * Schadensberechnung beachtet jetzt Verwundbarkeiten und Schadensreduktion
+  * Waffenlose Angriffe verursachen jetzt Betäubungsschaden außer der Charakter hat "Natürliche Waffe"
+  * Mittels Hooks können Immunitäten eingestellt werden
+  * Betäubungsimmunität wird automatisch auf Betäubungsschaden angewendet
+  * Es gibt eine Einstellung mit der man anzeigen kann welche Schadensdialoge man sehen möchte
+* Verwundbarkeiten können über den modifikator 'susceptibility' hinzugefügt werden
+  * Der Importer erkennt Verwundbarkeiten und Resistenzen
+  * folgende Modifikatoren existieren:
+      "physical",
+      "mental",
+      "electric",
+      "acid",
+      "rock",
+      "fire",
+      "heat",
+      "cold",
+      "poison",
+      "light",
+      "shadow",
+      "bleeding",
+      "disease"
+
 ## 0.12.10 HOTFIX##
 ### Fixed
 * Hinzufügen von Mondzeichen Per Drag And Drop 
