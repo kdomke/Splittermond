@@ -101,7 +101,7 @@ describe("UserModificationDialog", () => {
         it("should apply user adjustments to cost base", async () => {
             asMock(settings.registerString).returnsSetting("once");
             sandbox.createStubInstance(DamageReportDialog)
-            createMockDialog(sandbox, {costBaseChanged: true, costBase: ""})
+            createMockDialog(sandbox, {costBaseChanged: true, costBase: "E"})
             const underTest = UserModificationDialogue.create();
             const damage = new Cost(0, 10, false, true);
 

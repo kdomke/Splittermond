@@ -116,7 +116,7 @@ function createUserReport(sandbox: SinonSandbox, props: Partial<UserReport> = {}
         event: {
             causer: props.event?.causer ?? createAttacker(sandbox, {name: "Attacker"}),
             isGrazingHit: props.event?.isGrazingHit ?? false,
-            costBase: props.event?.costBase ?? CostBase.create(""),
+            costBase: props.event?.costBase ?? CostBase.create("E"),
         },
         overriddenReduction: props.overriddenReduction ?? new Cost(1, 0, false, true).asModifier(),
         records: props.records ?? [{

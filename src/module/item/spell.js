@@ -73,6 +73,9 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         if(data.system?.damageType === "null"){ //also apparently compendium data comes through here with an entirely different structure
             data.system.damageType = null;
         }
+        if(data.system?.costType === "null"){ //see above
+            data.system.costType = null;
+        }
         return super.updateSource(data, context);
 
     }

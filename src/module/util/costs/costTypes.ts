@@ -2,7 +2,7 @@ import {Cost, CostModifier} from "./Cost";
 import {PrimaryCost} from "./PrimaryCost";
 import {fieldExtensions, SplittermondDataModel} from "../../data/SplittermondDataModel";
 
-export const costTypes = ['K', 'V', ''] as const;
+export const costTypes = ['K', 'V', 'E'] as const;
 export function isCostType(value: string): value is CostType {
     return costTypes.includes(value as CostType);
 }
@@ -41,7 +41,7 @@ function toCost(costType: CostType): PrimaryCost {
             return new Cost(1, 0, true, true).asPrimaryCost()
         case 'V':
             return new Cost(0, 1, false, true).asPrimaryCost()
-        case "":
+        case "E":
             return new Cost(1, 0, false, true).asPrimaryCost();
     }
 }

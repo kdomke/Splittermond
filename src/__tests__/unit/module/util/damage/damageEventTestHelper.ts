@@ -23,7 +23,7 @@ export function createDamageEvent(sandbox: SinonSandbox, eventProps:EventProps={
     const damageImplements = eventProps.implements ?? [createDamageImplement(1, 0)];
     const event = new DamageEvent({
         causer: agent,
-        _costBase: eventProps._costBase ??  new CostBase({costType: ""}),
+        _costBase: eventProps._costBase ??  new CostBase({costType: "E"}),
         formula: eventProps.formula ?? damageImplements.map(imp => imp.formula).join(" + "),
         tooltip: eventProps.tooltip ?? "",
         isGrazingHit: eventProps.isGrazingHit ?? false,

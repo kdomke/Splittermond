@@ -9,7 +9,7 @@ import {DamageMessage} from "./DamageMessage";
 import {Roll, sumRolls} from "../../../api/Roll";
 import {DamageFeature} from "../../damage/DamageFeature";
 import SplittermondActor from "../../../actor/actor";
-import {CostBase} from "../../costs/costTypes";
+import {CostBase, CostType} from "../../costs/costTypes";
 
 interface ProtoDamageImplement {
     damageFormula: string;
@@ -21,13 +21,13 @@ export const DamageInitializer ={
     rollDamage,
 }
 
-async function rollDamage(damages: ProtoDamageImplement[], costType: 'K' | 'V' | "", speaker: SplittermondActor| null) {
+async function rollDamage(damages: ProtoDamageImplement[], costType: CostType|CostBase, speaker: SplittermondActor| null) {
 
     const damageResults = await rollDamages(damages);
     const actorReference = speaker ? AgentReference.initialize(speaker) : null;
     const damageEvent = new DamageEvent({
         causer: actorReference,
-        _costBase: CostBase.create(costType),
+        _costBase: costType instanceof CostBase? costType : CostBase.create(costType),
         formula: damageResults.totalRoll.formula,
         tooltip: await damageResults.totalRoll.getTooltip(),
         implements: damageResults.damageImplements,

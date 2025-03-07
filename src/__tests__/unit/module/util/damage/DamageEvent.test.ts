@@ -41,7 +41,7 @@ describe("DamageEvent", ()=> {
         });
 
         it("should return a zero cost base of type exhausted",() => {
-            const damageEvent = createDamageEvent(sandbox, {_costBase: CostBase.create("")});
+            const damageEvent = createDamageEvent(sandbox, {_costBase: CostBase.create("E")});
             const damage = damageEvent.costBase.add(new Cost(1,0,false,true).asModifier())
             expect(damage.render()).to.equal("1");
         });
@@ -53,7 +53,7 @@ describe("DamageEvent", ()=> {
         });
 
         it("should even work with mixed costs", () => {
-            const damageEvent = createDamageEvent(sandbox, {_costBase: CostBase.create("")});
+            const damageEvent = createDamageEvent(sandbox, {_costBase: CostBase.create("E")});
             const damage = damageEvent.costBase.add(new Cost(1,1,false,true).asModifier())
             expect(damage.render()).to.equal("2V1");
         });

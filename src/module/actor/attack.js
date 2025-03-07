@@ -74,6 +74,7 @@ export default class Attack {
             features: this.features,
             damage: this.damage,
             damageType: this.damageType,
+            costType: this.costType,
             weaponSpeed: this.weaponSpeed,
             editable: this.editable,
             deletable: this.deletable,
@@ -98,6 +99,10 @@ export default class Attack {
 
     get damageType() {
         return this.item.system.damageType;
+    }
+
+    get costType() {
+        return this.item.system.costType;
     }
 
     get weaponSpeed() {

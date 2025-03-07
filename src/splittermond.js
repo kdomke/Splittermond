@@ -38,6 +38,7 @@ import {CharacterDataModel} from "./module/actor/dataModel/CharacterDataModel";
 import {NpcDataModel} from "./module/actor/dataModel/NpcDataModel";
 import {initializeItem} from "./module/item";
 import {DamageInitializer} from "./module/util/chat/damageChatMessage/initDamage";
+import {CostBase} from "./module/util/costs/costTypes.js";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -515,9 +516,10 @@ Hooks.on('renderChatMessage', function (app, html, data) {
             const damageFormula = $(event.currentTarget).closestData("damageformula");
             const featureString = $(event.currentTarget).closestData("featurestring");
             const damageSource = $(event.currentTarget).closestData("damagesource");
-            const damageType= $(event.currentTarget).closestData("damagetype");
+            const damageType= $(event.currentTarget).closestData("damagetype") ?? "physical";
+            const costType = $(event.currentTarget).closestData("costtype") ?? "V";
             const actor = foundryApi.getActor(actorId) ?? null;//May fail if ID refers to a token
-            return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}],"V", actor)
+            return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}],CostBase.create(costType), actor)
                 .then(message => message.sendToChat());
         }
 
