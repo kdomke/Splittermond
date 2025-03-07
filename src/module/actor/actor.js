@@ -372,7 +372,7 @@ export default class SplittermondActor extends Actor {
                 attribute1: "agility",
                 attribute2: "strength",
                 weaponSpeed: 5,
-                features: ["Entwaffnend 1", "Umklammern",...(isInjuring ? []:["Stumpf"])],
+                features: ["Entwaffnend 1", "Umklammern",...(isInjuring ? []:["Stumpf"])].join(", "),
                 damage: "1W6",
                 damageType: "physical",
                 costType: isInjuring ? "V" : "E"
