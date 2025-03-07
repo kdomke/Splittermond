@@ -362,6 +362,7 @@ export default class SplittermondActor extends Actor {
 
     _prepareAttacks() {
         const attacks = this.attacks || [];
+        const isInjuring = this.items.find(i => i.name ==="Natürliche Waffe");
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
@@ -371,8 +372,10 @@ export default class SplittermondActor extends Actor {
                 attribute1: "agility",
                 attribute2: "strength",
                 weaponSpeed: 5,
-                features: "Entwaffnend 1, Stumpf, Umklammern",
-                damage: "1W6"
+                features: ["Entwaffnend 1", "Umklammern",...(isInjuring ? []:["Stumpf"])],
+                damage: "1W6",
+                damageType: "physical",
+                costType: isInjuring ? "V" : "E"
             }));
         }
     }
