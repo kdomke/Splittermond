@@ -98,11 +98,13 @@ export default class Attack {
     }
 
     get damageType() {
-        return this.item.system.damageType;
+        //We have fake items passing through here
+        return this.item.system?.damageType ?? this.item.damageType;
     }
 
     get costType() {
-        return this.item.system.costType;
+        //We have fake items passing through here
+        return this.item.system?.costType ?? this.item.costType;
     }
 
     get weaponSpeed() {
