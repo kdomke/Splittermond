@@ -14,6 +14,7 @@ import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.t
 import {settings} from "../settings";
 import {splittermond} from "../config.js";
 import {foundryApi} from "../api/foundryApi";
+import {Susceptibilities} from "./modifiers/Susceptibilities.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -27,7 +28,7 @@ export function calculateHeroLevels() {
 
 
 settings.registerNumber("HGMultiplier", {
-    position:1,
+    position: 1,
     scope: "world",
     config: true,
     default: 1.0,
@@ -49,6 +50,8 @@ settings.registerNumber("HGMultiplier", {
 
 export default class SplittermondActor extends Actor {
 
+    _susceptibilities = new Susceptibilities(new ModifierManager());//dummy empty susceptibilities
+
     actorData() {
         return this.system;
     }
@@ -60,6 +63,7 @@ export default class SplittermondActor extends Actor {
         //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
+        this._susceptibilities = new Susceptibilities(this.modifier)
 
         if (!this.attributes) {
             this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
@@ -184,9 +188,9 @@ export default class SplittermondActor extends Actor {
         return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
     }
 
-    /**@return {{value:number, max:number}|undefined}*/
+    /**@return {{value:number, max:number}}*/
     get splinterpoints() {
-        return this.system.splinterpoints;
+        return this.system.splinterpoints ?? {value: 0, max: 0};
     }
 
     prepareEmbeddedDocuments() {
@@ -358,6 +362,7 @@ export default class SplittermondActor extends Actor {
 
     _prepareAttacks() {
         const attacks = this.attacks || [];
+        const isInjuring = this.items.find(i => i.name ==="Natürliche Waffe");
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
@@ -367,8 +372,10 @@ export default class SplittermondActor extends Actor {
                 attribute1: "agility",
                 attribute2: "strength",
                 weaponSpeed: 5,
-                features: "Entwaffnend 1, Stumpf, Umklammern",
-                damage: "1W6"
+                features: ["Entwaffnend 1", "Umklammern",...(isInjuring ? []:["Stumpf"])].join(", "),
+                damage: "1W6",
+                damageType: "physical",
+                costType: isInjuring ? "V" : "E"
             }));
         }
     }
@@ -578,13 +585,22 @@ export default class SplittermondActor extends Actor {
         return this.modifier.value("damagereduction");
     }
 
-    async importFromJSON(json,updateActor) {
+    /**
+     * @return {Record<DamageType, number>} The actor's suceptibility for each damage type. Positive values indicate a weakness,
+     * negative values indicate a resistance.
+     */
+    get susceptibilities() {
+        return this._susceptibilities.calculateSusceptibilities();
+    }
+
+
+    async importFromJSON(json, updateActor) {
         const data = JSON.parse(json);
 
         // If Genesis-JSON-Export
         if (data.jsonExporterVersion && data.system === "SPLITTERMOND") {
             updateActor = updateActor ?? await askUserAboutActorOverwrite();
-            const importedGenesisData = await this.#importGenesisData(data,updateActor);
+            const importedGenesisData = await this.#importGenesisData(data, updateActor);
             json = JSON.stringify(importedGenesisData);
         }
 
@@ -886,7 +902,6 @@ export default class SplittermondActor extends Actor {
         }
 
 
-
         if (updateActor) {
             let updateItems = [];
 
@@ -936,11 +951,15 @@ export default class SplittermondActor extends Actor {
     }
 
     /**
-     * This is a stub
+     * This is a stub. It currently returns the flat upgrade value for health and skills.
+     * Later it should check for specific masteries that increase the bonus values.
      * @param {SplittermondSkill} skillName
      * @return {number}
      */
     #getSplinterpointBonus(skillName) {
+        if(skillName === "health"){
+            return 5;
+        }
         return 3;
     }
 
@@ -1419,7 +1438,7 @@ export default class SplittermondActor extends Actor {
 /**
  * @returns {Promise<boolean>}
  */
-async function askUserAboutActorOverwrite(){
+async function askUserAboutActorOverwrite() {
     return new Promise((resolve) => {
         let dialog = new Dialog({
             title: "Import",
