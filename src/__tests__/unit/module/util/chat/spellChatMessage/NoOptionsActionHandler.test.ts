@@ -58,7 +58,7 @@ describe("Roll Fumble", () => {
 
         expect(underTest.casterReference.getAgent().rollMagicFumble.calledWith(-eg, costs,skill)).to.be.true;
     });
-    it("should not allow using the action if it has already been used",async ()=>{
+    it("should allow using the action if it has already been used, as it is local",async ()=>{
         const underTest = setUpNoOptionsActionHandler(sandbox);
         underTest.checkReportReference.get().isFumble= true;
         underTest.checkReportReference.get().degreeOfSuccess = 3;
@@ -68,7 +68,7 @@ describe("Roll Fumble", () => {
         await underTest.useAction({action: "rollMagicFumble"});
         await underTest.useAction({action: "rollMagicFumble"});
 
-        expect(underTest.casterReference.getAgent().rollMagicFumble.calledOnce).to.be.true;
+        expect(underTest.casterReference.getAgent().rollMagicFumble.calledTwice).to.be.true;
     });
 });
 
