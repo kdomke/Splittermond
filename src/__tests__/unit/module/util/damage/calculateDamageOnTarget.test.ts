@@ -98,64 +98,130 @@ describe("Damage Application", () => {
         expect(result.render()).to.equal("0");
     });
 
-    it("should apply damage reduction", () => {
-        const damageImplement = createDamageImplement(21, 0);
-        const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
-        const target = setUpTarget(sandbox, 10, {});
+    describe("Damage reduction", () => {
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should apply damage reduction", () => {
+            const damageImplement = createDamageImplement(21, 0);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 10, {});
 
-        expect(result.render()).to.equal("11V11");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
-    it("should account for reduction override from multiple sources", () => {
-        const damageImplement1 = createDamageImplement(5, 3);
-        const damageImplement2 = createDamageImplement(3, 5);
-        const damageEvent = createDamageEvent(sandbox, {
-            implements: [damageImplement1, damageImplement2],
-            _costBase: consumed
+            expect(result.render()).to.equal("11V11");
         });
-        const target = setUpTarget(sandbox, 8, {});
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should account for reduction override", () => {
+            const damageImplement = createDamageImplement(21, 6);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 10, {});
+            sandbox.stub(target, "protectedDamageReduction").get(() => 5);
 
-        expect(result.render()).to.equal("6V6");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
-    it("should calculate reduction after grazing", () => {
-        const damageImplement = createDamageImplement(5, 2);
-        const damageEvent = createDamageEvent(sandbox, {
-            implements: [damageImplement],
-            _costBase: consumed,
-            isGrazingHit: true
+            expect(result.render()).to.equal("12V12");
         });
-        const target = setUpTarget(sandbox, 3, {});
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should account for reduction override from multiple sources", () => {
+            const damageImplement1 = createDamageImplement(5, 3);
+            const damageImplement2 = createDamageImplement(3, 5);
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement1, damageImplement2],
+                _costBase: consumed
+            });
+            const target = setUpTarget(sandbox, 8, {});
 
-        expect(result.render()).to.equal("2V2");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
+            expect(result.render()).to.equal("6V6");
+        });
+
+        it("should calculate reduction after grazing", () => {
+            const damageImplement = createDamageImplement(5, 2);
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement],
+                _costBase: consumed,
+                isGrazingHit: true
+            });
+            const target = setUpTarget(sandbox, 3, {});
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("2V2");
+        });
+
+        [5,10,15].forEach(number=> {
+            it(`should ignore overrides if they are smaller the protection of ${number}`, () => {
+                const damageImplement = createDamageImplement(21, 3);
+                const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+                const target = setUpTarget(sandbox, 10, {});
+                sandbox.stub(target, "protectedDamageReduction").get(() => number);
+
+                const result = calculateDamageOnTarget(damageEvent, target);
+
+                expect(result.render()).to.equal("11V11");
+            });
+        });
+
+    })
     damageTypes.forEach(damageType => {
-        it(`should adjust damage for ${damageType} susceptibility`, () => {
+        it(`should adjust damage for negative ${damageType} resistance`, () => {
             const damageImplement = createDamageImplement(5, 0, damageType);
             const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
-            const target = setUpTarget(sandbox, 0, {[damageType]: 5});
+            const target = setUpTarget(sandbox, 0, {[damageType]: -5});
 
             const result = calculateDamageOnTarget(damageEvent, target);
 
             expect(result.render()).to.equal("10V10");
         });
+        it(`should adjust damage for ${damageType} resistance`, () => {
+            const damageImplement = createDamageImplement(5, 0, damageType);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 0, {[damageType]: 2});
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("3V3");
+        });
+
+        it(`should adjust damage for ${damageType} weakness`, () => {
+            const damageImplement = createDamageImplement(5, 0, damageType);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 0, {},{[damageType]: 1});
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("10V10");
+        });
+        it(`should adjust damage for negative ${damageType} weakness`, () => {
+            const damageImplement = createDamageImplement(5, 0, damageType);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 0, {},{[damageType]: -1});
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("3V3");
+        });
 
     });
-    it(`should not adjust damage for susceptibility past zero`, () => {
+
+    it(`should account for resistances after weaknesses`,() => {
+        const damageImplement = createDamageImplement(5, 0, "physical");
+        const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+        const target = setUpTarget(sandbox, 0, {physical: 2},{physical: 1});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("8V8");
+    });
+
+    it(`should not adjust damage for resistance past zero`, () => {
         const damageImplement1 = createDamageImplement(5, 0, "physical");
         const damageImplement2 = createDamageImplement(5, 0, "light" as any);
         const damageEvent = createDamageEvent(sandbox, {
             implements: [damageImplement1, damageImplement2],
             _costBase: consumed
         });
-        const target = setUpTarget(sandbox, 0, {["physical"]: -99999});
+        const target = setUpTarget(sandbox, 0, {physical: 99999});
 
         const result = calculateDamageOnTarget(damageEvent, target);
 
@@ -163,7 +229,6 @@ describe("Damage Application", () => {
     });
 
     describe("Reporting", () => {
-
         it("should report damage halving for grazing hits", () => {
             const damageImplement = createDamageImplement(5, 0);
             const damageEvent = createDamageEvent(sandbox, {
@@ -188,18 +253,19 @@ describe("Damage Application", () => {
                 _costBase: consumed
             });
             const target = setUpTarget(sandbox, 8, {});
+            sandbox.stub(target,"protectedDamageReduction").get(()=>1);
             const recorder = new MockReporter();
 
             calculateDamageOnTarget(damageEvent, target, recorder);
 
             expect(recorder._target?.damageReduction).to.equal(8);
-            expect(recorder.overriddenReduction.length).to.equal(6);
-            expect(recorder.totalDamage.length).to.equal(6);
+            expect(recorder.overriddenReduction.length).to.equal(5);
+            expect(recorder.totalDamage.length).to.equal(5);
         });
 
         it("should report zero applied damage if reduction is higher than damage", () => {
             const damageImplement = createDamageImplement(5, 3, "physical");
-            const target = setUpTarget(sandbox, 8, {physical: -99999});
+            const target = setUpTarget(sandbox, 8, {physical: 99999});
             const recorder = new MockReporter();
             const damageEvent = createDamageEvent(sandbox, {
                 implements: [damageImplement],
@@ -229,9 +295,7 @@ describe("Damage Application", () => {
             expect(recorder.totalDamage.length).to.equal(0);
         });
 
-
-
-        it("should report susceptibility", () => {
+        it("should report resistance and weakness", () => {
             const damageImplement1 = createDamageImplement(5, 3, "physical");
             const damageImplement2 = createDamageImplement(1, 0, "light");
             const damageEvent = createDamageEvent(sandbox, {
@@ -239,12 +303,12 @@ describe("Damage Application", () => {
                 _costBase: consumed
             });
 
-            const target = setUpTarget(sandbox, 8, {light: 5, physical: 1});
+            const target = setUpTarget(sandbox, 8, {light: -5, physical: 1},{physical: -1});
             const recorder = new MockReporter();
 
             calculateDamageOnTarget(damageEvent, target, recorder);
 
-            expect(recorder.records[0].appliedDamage.length).to.equal(6);
+            expect(recorder.records[0].appliedDamage.length).to.equal(2);
             expect(recorder.records[0].baseDamage.length).to.equal(5);
             expect(recorder.records[0]).to.contain({
                 damageType: "physical",
@@ -270,14 +334,14 @@ describe("Damage Application", () => {
                 _costBase: consumed
             });
 
-            const target = setUpTarget(sandbox, 8, {light: 5, physical: 1});
+            const target = setUpTarget(sandbox, 8, {light: -5, physical: 1});
             const recorder = new MockReporter();
 
             calculateDamageOnTarget(damageEvent, target, recorder);
 
             expect(recorder.overriddenReduction.length).to.equal(0);
             expect(recorder.records[0].immunity?.name).to.equal("MegaImmunity");
-            expect(recorder.records[0].appliedDamage.length).to.equal(6);
+            expect(recorder.records[0].appliedDamage.length).to.equal(4);
             expect(recorder.records[0].baseDamage.length).to.equal(5);
             expect(recorder.records[0]).to.contain({
                 damageType: "physical",
@@ -294,10 +358,12 @@ describe("Damage Application", () => {
     });
 });
 
-function setUpTarget(sandbox: SinonSandbox, damageReduction: number, susceptibilties: Partial<Record<DamageType, number>>) {
+function setUpTarget(sandbox: SinonSandbox, damageReduction: number, resistances: Partial<Record<DamageType, number>>, weaknesses: Partial<Record<DamageType, number>> = {}) {
     const target = sandbox.createStubInstance(SplittermondActor);
-    sandbox.stub(target, "susceptibilities").get(() => ({...defaultSusceptibilities(), ...susceptibilties}));
+    sandbox.stub(target, "resistances").get(() => ({...defaultSusceptibilities(), ...resistances}));
+    sandbox.stub(target, "weaknesses").get(() => ({...defaultSusceptibilities(), ...weaknesses}));
     sandbox.stub(target, "damageReduction").get(() => damageReduction);
+    sandbox.stub(target, "protectedDamageReduction").get(()=>0);
     return target;
 }
 

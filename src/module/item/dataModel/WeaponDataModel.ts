@@ -1,6 +1,7 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondWeaponItem from "../weapon";
 import {damage, getDescriptorFields, getPhysicalProperties} from "./commonFields";
+import {migrateFrom0_12_10} from "./migrations";
 
 function ItemWeaponDataModelSchema() {
     return {
@@ -36,4 +37,9 @@ export type WeaponDataModelType = DataModelSchemaType<typeof ItemWeaponDataModel
 
 export class WeaponDataModel extends SplittermondDataModel<WeaponDataModelType, SplittermondWeaponItem> {
     static defineSchema = ItemWeaponDataModelSchema;
+
+    static migrateData(source:unknown){
+        source = migrateFrom0_12_10(source);
+        return super.migrateData(source);
+    }
 }

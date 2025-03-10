@@ -18,6 +18,7 @@ import {Susceptibilities} from "./modifiers/Susceptibilities.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
+let getStableProtectsAllReduction = () => true;
 
 /**@return number[]*/
 export function calculateHeroLevels() {
@@ -26,6 +27,13 @@ export function calculateHeroLevels() {
     return baseHeroLevels.map((l) => l * multplier);
 }
 
+
+settings.registerBoolean("stableProtectsAllReduction", {
+    position: 7,
+    scope: "world",
+    config: true,
+    default: true,
+}).then(accessor => getStableProtectsAllReduction = accessor.get);
 
 settings.registerNumber("HGMultiplier", {
     position: 1,
@@ -50,7 +58,8 @@ settings.registerNumber("HGMultiplier", {
 
 export default class SplittermondActor extends Actor {
 
-    _susceptibilities = new Susceptibilities(new ModifierManager());//dummy empty susceptibilities
+    _resistances = new Susceptibilities("resistance", new ModifierManager());//dummy empty resistances
+    _weaknesses= new Susceptibilities("weakness", new ModifierManager());//dummy empty weaknesses
 
     actorData() {
         return this.system;
@@ -63,7 +72,8 @@ export default class SplittermondActor extends Actor {
         //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
-        this._susceptibilities = new Susceptibilities(this.modifier)
+        this._resistances = new Susceptibilities("resistance", this.modifier);
+        this._weaknesses = new Susceptibilities("weakness", this.modifier);
 
         if (!this.attributes) {
             this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
@@ -586,11 +596,36 @@ export default class SplittermondActor extends Actor {
     }
 
     /**
-     * @return {Record<DamageType, number>} The actor's suceptibility for each damage type. Positive values indicate a weakness,
-     * negative values indicate a resistance.
+     * Under certain circumstances the actor can be protected against overriding damage reduction. This value represents the protected amount
+     * @return {number} The actor's protected damage reduction
      */
-    get susceptibilities() {
-        return this._susceptibilities.calculateSusceptibilities();
+    get protectedDamageReduction(){
+        const itemsWithProtection = this.items
+            .filter(i => i.system.features?.toLowerCase().includes("stabil"))
+            .filter(i => i.system.equipped ?? false)
+        if(itemsWithProtection.length ===0){
+            return 0;
+        }else if (getStableProtectsAllReduction()){
+            return this.damageReduction;
+        }else {
+            return itemsWithProtection.reduce((acc, item) => acc + item.system.damageReduction, 0);
+        }
+    }
+
+    /**
+     * @return {Record<DamageType, number>} The actor's linear resistance for each damage type. Positive values indicate a resistance,
+     * negative values (not actually in the ruleset) indicate a weakness.
+     */
+    get resistances() {
+        return this._resistances.calculateSusceptibilities();
+    }
+
+    /**
+     * @return {Record<DamageType, number>} The actor's linear resistance for each damage type. Positive values indicate a resistance,
+     * negative values (not actually in the ruleset) indicate a weakness.
+     */
+    get weaknesses() {
+        return this._weaknesses.calculateSusceptibilities();
     }
 
 

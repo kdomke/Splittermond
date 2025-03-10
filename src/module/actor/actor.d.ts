@@ -5,12 +5,14 @@ import {DamageType} from "../config/damageTypes";
 
 declare class SplittermondActor extends Actor {
 
-    private _susceptibilities: Record<DamageType, number>;
     items: Collection<SplittermondItem>;
     async activeDefenseDialog(type?: "defense"|"vtd"|"kw"|"gw"):Promise<void>;
     get splinterpoints(): {value:number, max:number};
-    get susceptibilities(): Record<DamageType, number>;
+    get weaknesses(): Record<DamageType, number>;
+    get resistances(): Record<DamageType, number>;
+
     get damageReduction(): number;
+    get protectedDamageReduction(): number;
     spendSplinterpoint(): {pointSpent:boolean, getBonus(skillName:SplittermondSkill|"health"):number};
     async rollMagicFumble(eg:number, costs?:string, skill?:SplittermondSkill):Promise<void>;
     async addTicks(value:number, message?:string, askPlayer?:boolean):Promise<void>;

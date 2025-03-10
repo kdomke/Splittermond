@@ -38,7 +38,7 @@ describe("Npc imports", () => {
         const text = Baumwandler.input;
         const expectedItems = [...Baumwandler.expected.items];
         const susceptibleFeature = expectedItems.find(item=>item.name==="Verwundbarkeit gegen Feuerschaden")!.system;
-        Object.defineProperty(susceptibleFeature,"modifier",{value:"susceptibility.fire 1", enumerable:true});
+        Object.defineProperty(susceptibleFeature,"modifier",{value:"weakness.fire 1", enumerable:true});
 
         await ItemImporter.pasteEventhandler(new ClipboardEvent(text));
 

@@ -65,7 +65,11 @@
         "never": "Nie",
         "always": "Immer"
       },
-      "skip": "Überspringen"
+      "skip": "Überspringen",
+      "tooltip": {
+        "base": "SR",
+        "ignored": "davon ignoriert"
+      }
     },
     "start": "Start",
     "value": "Wert",
@@ -626,6 +630,10 @@
           "never": "Nie",
           "always": "Immer"
         }
+      },
+      "stableProtectsAllReduction": {
+        "name": "Merkmal Stabil negiert alle Durchdringung",
+        "hint": "Wird eine Rüstung mit dem Merkmal 'Stabil' von einer durchdringenden Waffe angegriffen, so wird die gesamte Schadensreduktion des Angegriffenen nicht durch 'Durchdringung' reduziert. Wird diese Option deaktiviert beschränkt sich diese Wirkung auf die Rüstung die sa Merkmal 'Stabil' hat."
       }
     },
     "error": {

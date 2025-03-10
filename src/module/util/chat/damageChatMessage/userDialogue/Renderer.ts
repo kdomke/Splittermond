@@ -22,20 +22,22 @@ interface DamageRecordItem {
     immunity?: string;
 }
 
-export class Renderer{
-    constructor(private userModificationRecord: UserReport ){}
+export class Renderer {
+    constructor(private userModificationRecord: UserReport) {
+    }
 
     async getHtml(): Promise<string> {
         const damageRecord = this.mapData();
-        const targetHasSplinterpoints =  this.getTargetSplinterpoints() > 0
+        const targetHasSplinterpoints = this.getTargetSplinterpoints() > 0
         return await foundryApi.renderer("systems/splittermond/templates/apps/dialog/new-damage-report.hbs",
             {...damageRecord, displaySplinterpoints: targetHasSplinterpoints});
     }
 
     get attackerName(): string {
         return this.userModificationRecord.event.causer?.getAgent().name ??
-        foundryApi.localize("splittermond.damageMessage.unknown");
+            foundryApi.localize("splittermond.damageMessage.unknown");
     }
+
     get defenderName(): string {
         return this.userModificationRecord.target.name;
     }
@@ -44,17 +46,18 @@ export class Renderer{
         const source = this.userModificationRecord;
         return source.event.costBase.costType;
     }
+
     private getTargetSplinterpoints(): number {
-        return this.userModificationRecord.target.splinterpoints.max  ?? 0;
+        return this.userModificationRecord.target.splinterpoints.max ?? 0;
     }
 
 
-    private mapData():DamageRecord{
+    private mapData(): DamageRecord {
         const source = this.userModificationRecord;
         return {
             type: this.costType,
             damageReduction: source.damageReduction.length,
-            effectiveDamageReduction: source.damageReduction.subtract(source.overriddenReduction).length,
+            effectiveDamageReduction: this.getEffectiveDamageReduction(),
             ignoredReduction: source.overriddenReduction.length,
             isGrazingHit: source.event.isGrazingHit,
             items: this.mapRecords(source.records),
@@ -63,15 +66,21 @@ export class Renderer{
         }
     }
 
-    private mapRecords(records:UserReportRecord[]):DamageRecordItem[]{
+    private getEffectiveDamageReduction() {
+        const source = this.userModificationRecord;
+        return source.event.costBase.add(source.damageReduction)
+            .subtract(source.overriddenReduction).toModifier(true).length;
+    }
 
-        return records.map(record=>({
+    private mapRecords(records: UserReportRecord[]): DamageRecordItem[] {
+
+        return records.map(record => ({
             name: record.implementName,
             type: foundryApi.localize(`splittermond.damageTypes.short.${record.damageType}`),
             baseValue: record.baseDamage.length,
             modifiedBy: record.modifiedBy.length,
             subTotal: record.appliedDamage.length,
-            immunity: record.immunity?.name ,
+            immunity: record.immunity?.name,
         }));
     }
 }
