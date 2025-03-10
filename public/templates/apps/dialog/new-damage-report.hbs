@@ -31,7 +31,12 @@
                 </tr>
             {{/if}}
             <tr>
-                <td colspan="4">{{localize "splittermond.damageMessage.damageReduction"}}</td>
+                <td colspan="4" class="sr-tooltip-container">
+                    <span class="sr-tooltip">
+                        {{localize "splittermond.damageMessage.damageReduction"}}
+                        <span class="sr-tooltip-text">{{localize "splittermond.damageMessage.tooltip.base"}}: {{damageReduction}}, {{localize "splittermond.damageMessage.tooltip.ignored"}}: {{ignoredReduction}}</span>
+                    </span>
+                </td>
                 <td style="text-align: right">{{effectiveDamageReduction}}</td>
             </tr>
             </tbody>

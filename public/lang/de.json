@@ -65,7 +65,11 @@
         "never": "Nie",
         "always": "Immer"
       },
-      "skip": "Überspringen"
+      "skip": "Überspringen",
+      "tooltip": {
+        "base": "SR",
+        "ignored": "davon ignoriert"
+      }
     },
     "start": "Start",
     "value": "Wert",

@@ -37,7 +37,10 @@
         "never": "Never",
         "always": "Always"
       },
-      "skip": "Skip"
+      "skip": "Skip",
+      "tooltip": {
+        "base": "DR",
+        "ignored": "ignoring"
     },
     "message": {
       "itemImported": "The item \"{name}\" was imported as \"{type}\"!",
