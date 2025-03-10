@@ -98,44 +98,71 @@ describe("Damage Application", () => {
         expect(result.render()).to.equal("0");
     });
 
-    it("should apply damage reduction", () => {
-        const damageImplement = createDamageImplement(21, 0);
-        const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
-        const target = setUpTarget(sandbox, 10, {});
+    describe("Damage reduction", () => {
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should apply damage reduction", () => {
+            const damageImplement = createDamageImplement(21, 0);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 10, {});
 
-        expect(result.render()).to.equal("11V11");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
-    it("should account for reduction override from multiple sources", () => {
-        const damageImplement1 = createDamageImplement(5, 3);
-        const damageImplement2 = createDamageImplement(3, 5);
-        const damageEvent = createDamageEvent(sandbox, {
-            implements: [damageImplement1, damageImplement2],
-            _costBase: consumed
+            expect(result.render()).to.equal("11V11");
         });
-        const target = setUpTarget(sandbox, 8, {});
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should account for reduction override", () => {
+            const damageImplement = createDamageImplement(21, 6);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 10, {});
+            sandbox.stub(target, "protectedDamageReduction").get(() => 5);
 
-        expect(result.render()).to.equal("6V6");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
-    it("should calculate reduction after grazing", () => {
-        const damageImplement = createDamageImplement(5, 2);
-        const damageEvent = createDamageEvent(sandbox, {
-            implements: [damageImplement],
-            _costBase: consumed,
-            isGrazingHit: true
+            expect(result.render()).to.equal("12V12");
         });
-        const target = setUpTarget(sandbox, 3, {});
 
-        const result = calculateDamageOnTarget(damageEvent, target);
+        it("should account for reduction override from multiple sources", () => {
+            const damageImplement1 = createDamageImplement(5, 3);
+            const damageImplement2 = createDamageImplement(3, 5);
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement1, damageImplement2],
+                _costBase: consumed
+            });
+            const target = setUpTarget(sandbox, 8, {});
 
-        expect(result.render()).to.equal("2V2");
-    });
+            const result = calculateDamageOnTarget(damageEvent, target);
 
+            expect(result.render()).to.equal("6V6");
+        });
+
+        it("should calculate reduction after grazing", () => {
+            const damageImplement = createDamageImplement(5, 2);
+            const damageEvent = createDamageEvent(sandbox, {
+                implements: [damageImplement],
+                _costBase: consumed,
+                isGrazingHit: true
+            });
+            const target = setUpTarget(sandbox, 3, {});
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("2V2");
+        });
+
+        [5,10,15].forEach(number=> {
+            it(`should ignore overrides if they are smaller the protection of ${number}`, () => {
+                const damageImplement = createDamageImplement(21, 3);
+                const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+                const target = setUpTarget(sandbox, 10, {});
+                sandbox.stub(target, "protectedDamageReduction").get(() => number);
+
+                const result = calculateDamageOnTarget(damageEvent, target);
+
+                expect(result.render()).to.equal("11V11");
+            });
+        });
+
+    })
     damageTypes.forEach(damageType => {
         it(`should adjust damage for negative ${damageType} resistance`, () => {
             const damageImplement = createDamageImplement(5, 0, damageType);
@@ -202,7 +229,6 @@ describe("Damage Application", () => {
     });
 
     describe("Reporting", () => {
-
         it("should report damage halving for grazing hits", () => {
             const damageImplement = createDamageImplement(5, 0);
             const damageEvent = createDamageEvent(sandbox, {
@@ -227,13 +253,14 @@ describe("Damage Application", () => {
                 _costBase: consumed
             });
             const target = setUpTarget(sandbox, 8, {});
+            sandbox.stub(target,"protectedDamageReduction").get(()=>1);
             const recorder = new MockReporter();
 
             calculateDamageOnTarget(damageEvent, target, recorder);
 
             expect(recorder._target?.damageReduction).to.equal(8);
-            expect(recorder.overriddenReduction.length).to.equal(6);
-            expect(recorder.totalDamage.length).to.equal(6);
+            expect(recorder.overriddenReduction.length).to.equal(5);
+            expect(recorder.totalDamage.length).to.equal(5);
         });
 
         it("should report zero applied damage if reduction is higher than damage", () => {
@@ -267,8 +294,6 @@ describe("Damage Application", () => {
             expect(recorder.immunity?.name).to.equal("MegaImmunity");
             expect(recorder.totalDamage.length).to.equal(0);
         });
-
-
 
         it("should report resistance and weakness", () => {
             const damageImplement1 = createDamageImplement(5, 3, "physical");
@@ -338,6 +363,7 @@ function setUpTarget(sandbox: SinonSandbox, damageReduction: number, resistances
     sandbox.stub(target, "resistances").get(() => ({...defaultSusceptibilities(), ...resistances}));
     sandbox.stub(target, "weaknesses").get(() => ({...defaultSusceptibilities(), ...weaknesses}));
     sandbox.stub(target, "damageReduction").get(() => damageReduction);
+    sandbox.stub(target, "protectedDamageReduction").get(()=>0);
     return target;
 }
 

@@ -67,11 +67,12 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
         }
         reporter.addRecord(implement.implementName, implement.damageType, implement.bruttoHealthCost, damageAdded, immunity);
     }
+    const applicableOverriddenReduction = calculateApplicableOverride(event, target, realizedDamageReductionOverride);
     reporter.totalFromImplements = damageBeforeGrazingAndReduction;
-    reporter.overriddenReduction = realizedDamageReductionOverride;
+    reporter.overriddenReduction = applicableOverriddenReduction;
 
     const damageBeforeReduction = damageBeforeGrazingAndReduction.multiply(event.isGrazingHit ? 0.5 : 1);
-    const remainingReduction = calculateActualDamageReduction(event, target, realizedDamageReductionOverride);
+    const remainingReduction = calculateActualDamageReduction(event, target, applicableOverriddenReduction);
     const totalDamage = event.costBase.add(damageBeforeReduction.subtract(remainingReduction)).round();
     reporter.totalDamage = totalDamage.toModifier(true);
 
@@ -91,10 +92,13 @@ function calculateAddedDamage(target:SplittermondActor, costBase:CostBase, imple
 
 
 }
+function calculateApplicableOverride(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier){
+    const protectedReduction = event.costBase.multiply(target.protectedDamageReduction);
+    //Override protection can cancel at most what we override.
+    return event.costBase.add(realizedDamageReductionOverride).subtract(protectedReduction).toModifier(true);
+}
 
-function calculateActualDamageReduction(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier) {
-    //Base reduction must be be a primary cost, because it must not go below 0. However, we need to convert it to a modifier to apply the damage reduction
-    //Therefore, we need to apply the cost type both via cost base and cost vector;
-    const baseReduction = event.costBase.add(event.costBase.multiply(target.damageReduction));
-    return baseReduction.subtract(realizedDamageReductionOverride).toModifier(true);
+function calculateActualDamageReduction(event: DamageEvent, target: SplittermondActor, applicableReductionOverride: CostModifier) {
+    const baseReduction = event.costBase.multiply(target.damageReduction);
+    return event.costBase.add(baseReduction.subtract(applicableReductionOverride)).toModifier(true); //Wrap in primary cost to ensure that the reduction is not negative
 }

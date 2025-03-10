@@ -229,5 +229,6 @@ function createTargetActor(sandbox: SinonSandbox, id: number) {
     sandbox.stub(actor, "resistances").get(() => ({"physical": 0}));
     sandbox.stub(actor, "weaknesses").get(() => ({"physical": 0}));
     sandbox.stub(actor, "damageReduction").get(() => 0);
+    sandbox.stub(actor, "protectedDamageReduction").get(()=>0);
     return actor;
 }

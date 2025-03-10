@@ -13,6 +13,7 @@ declare class SplittermondActor extends Actor {
     get resistances(): Record<DamageType, number>;
 
     get damageReduction(): number;
+    get protectedDamageReduction(): number;
     spendSplinterpoint(): {pointSpent:boolean, getBonus(skillName:SplittermondSkill|"health"):number};
     async rollMagicFumble(eg:number, costs?:string, skill?:SplittermondSkill):Promise<void>;
     async addTicks(value:number, message?:string, askPlayer?:boolean):Promise<void>;

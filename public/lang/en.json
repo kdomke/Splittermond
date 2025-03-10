@@ -60,6 +60,10 @@
           "never": "Never",
           "always": "Always"
         }
+      },
+      "stableProtectsAllReduction": {
+        "name": "Feature 'stable' nullifies all 'Piercing' features",
+        "hint": "If an armor with feature 'stable' is attacked by a piercing weapon, then the effect of 'piercing' on the entire damage reduction is negated. If this option is deactivated, this effect only applies to the damage reduction provided by the armor with the feature.",
       }
     },
     "damageTypes": {
