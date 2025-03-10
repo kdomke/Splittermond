@@ -50,7 +50,8 @@ settings.registerNumber("HGMultiplier", {
 
 export default class SplittermondActor extends Actor {
 
-    _susceptibilities = new Susceptibilities(new ModifierManager());//dummy empty susceptibilities
+    _resistances = new Susceptibilities("resistance", new ModifierManager());//dummy empty resistances
+    _weaknesses= new Susceptibilities("weakness", new ModifierManager());//dummy empty weaknesses
 
     actorData() {
         return this.system;
@@ -63,7 +64,7 @@ export default class SplittermondActor extends Actor {
         //console.log(`prepareBaseData() - ${this.type}: ${this.name}`);/a
         super.prepareBaseData();
         this.modifier = new ModifierManager();
-        this._susceptibilities = new Susceptibilities(this.modifier)
+        this._resistances = new Susceptibilities(this.modifier)
 
         if (!this.attributes) {
             this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
@@ -586,11 +587,19 @@ export default class SplittermondActor extends Actor {
     }
 
     /**
-     * @return {Record<DamageType, number>} The actor's suceptibility for each damage type. Positive values indicate a weakness,
-     * negative values indicate a resistance.
+     * @return {Record<DamageType, number>} The actor's linear resistance for each damage type. Positive values indicate a resistance,
+     * negative values (not actually in the ruleset) indicate a weakness.
      */
-    get susceptibilities() {
-        return this._susceptibilities.calculateSusceptibilities();
+    get resistances() {
+        return this._resistances.calculateSusceptibilities();
+    }
+
+    /**
+     * @return {Record<DamageType, number>} The actor's linear resistance for each damage type. Positive values indicate a resistance,
+     * negative values (not actually in the ruleset) indicate a weakness.
+     */
+    get weaknesses() {
+        return this._weaknesses.calculateSusceptibilities();
     }
 
 

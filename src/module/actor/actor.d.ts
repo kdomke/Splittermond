@@ -9,7 +9,9 @@ declare class SplittermondActor extends Actor {
     items: Collection<SplittermondItem>;
     async activeDefenseDialog(type?: "defense"|"vtd"|"kw"|"gw"):Promise<void>;
     get splinterpoints(): {value:number, max:number};
-    get susceptibilities(): Record<DamageType, number>;
+    get weaknesses(): Record<DamageType, number>;
+    get resistances(): Record<DamageType, number>;
+
     get damageReduction(): number;
     spendSplinterpoint(): {pointSpent:boolean, getBonus(skillName:SplittermondSkill|"health"):number};
     async rollMagicFumble(eg:number, costs?:string, skill?:SplittermondSkill):Promise<void>;

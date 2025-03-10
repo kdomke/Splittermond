@@ -28,7 +28,9 @@ const languageMapper = initLanguageMapper((s) => foundryApi.localize(s));
 
 export function mapNameToSystemFeature(data: PartialItemData<NpcFeatureDataModelType>) {
     const modifiers = [...data.system.modifier?.split(",") ?? [],
-        ...susceptibilityFromName(data)]
+        ...weaknessFromName(data),
+        ...resistanceFromName(data)
+    ];
     return {
         type: data.type,
         name: data.name,
@@ -39,21 +41,34 @@ export function mapNameToSystemFeature(data: PartialItemData<NpcFeatureDataModel
     }
 }
 
-    function susceptibilityFromName(data: PartialItemData<NpcFeatureDataModelType>) {
-        const stringMatcher = /(?<type>verwundbarkeit|resistenz)\s+gegen\s+(?<damageType>[A-zäöüß]+(?:\s+[A-zäöüß]+)?)(?:\s+(?<modifier>\d*))?/
-        const matchResult = stringMatcher.exec(data.name.toLowerCase());
-        const concernsSusceptibility = matchResult !== null;
-        if (!concernsSusceptibility) {
-            return [];
-        }
-        const isResistant = matchResult.groups?.type.includes("resistenz");
-        const translatedDamageType = matchResult.groups?.damageType;
-        const translatedDamageValue = matchResult.groups?.modifier ?? "1";
-
-        const code = translatedDamageType ? languageMapper().toCode(translatedDamageType) : undefined;
-        if(!code){
-            return  [];
-        }
-
-        return [`susceptibility.${code} ${isResistant ? "-" : ""}${translatedDamageValue}`];
+function weaknessFromName(data: PartialItemData<NpcFeatureDataModelType>) {
+    const {code, translatedDamageValue} = mapSusceptibility("verwundbarkeit", data);
+    if (!code) {
+        return [];
     }
+    return [`weakness.${code} ${translatedDamageValue}`];
+}
+
+function resistanceFromName(data: PartialItemData<NpcFeatureDataModelType>) {
+    const {code, translatedDamageValue} = mapSusceptibility("resistenz", data);
+    if (!code) {
+        return [];
+    }
+
+    return [`resistance.${code} ${translatedDamageValue}`];
+}
+
+function mapSusceptibility(keyword: string, data: PartialItemData<NpcFeatureDataModelType>) {
+
+    const stringMatcher = /(?<type>\w+)\s+gegen\s+(?<damageType>[A-zäöüß]+(?:\s+[A-zäöüß]+)?)(?:\s+(?<modifier>\d*))?/
+    const matchResult = stringMatcher.exec(data.name.toLowerCase());
+    const concernsSusceptibility = matchResult !== null && matchResult.groups?.type === keyword;
+    if (!concernsSusceptibility) {
+        return {};
+    }
+    const translatedDamageType = matchResult.groups?.damageType;
+    const translatedDamageValue = matchResult.groups?.modifier ?? "1";
+
+    const code = translatedDamageType ? languageMapper().toCode(translatedDamageType) : undefined;
+    return {code, translatedDamageValue};
+}

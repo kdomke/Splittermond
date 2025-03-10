@@ -1,5 +1,5 @@
 import SplittermondActor from "../../actor/actor";
-import {DamageEvent} from "./DamageEvent";
+import {DamageEvent, DamageImplement} from "./DamageEvent";
 import {DamageType} from "../../config/damageTypes";
 import {CostModifier} from "../costs/Cost";
 import {AgentReference} from "../../data/references/AgentReference";
@@ -51,10 +51,6 @@ export class NoReporter implements UserReporter {
 
 export function calculateDamageOnTarget(event: DamageEvent, target: SplittermondActor, reporter: UserReporter = new NoReporter()): PrimaryCost {
 
-    function toCost(value: number) {
-        return event.costBase.multiply(value)
-    }
-
     reporter.event = event;
     reporter.target = target;
 
@@ -63,8 +59,7 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     let realizedDamageReductionOverride = CostModifier.zero;
 
     for (const implement of event.implements) {
-        const susceptibility = toCost(target.susceptibilities[implement.damageType]);
-        const damageAdded = event.costBase.add(implement.bruttoHealthCost).add(susceptibility).toModifier(true);
+        const damageAdded = calculateAddedDamage(target,event.costBase, implement);
         const immunity = evaluateImplementImmunities(implement, target);
         if (!immunity) {
             realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
@@ -86,6 +81,15 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
         return event.costBase.add(CostModifier.zero);
     }
     return totalDamage;
+}
+
+function calculateAddedDamage(target:SplittermondActor, costBase:CostBase, implement:DamageImplement) {
+    const damageAdjustedForWeakness= implement.bruttoHealthCost.multiply(Math.pow(2, target.weaknesses[implement.damageType]))
+    const resistanceSubtraction = costBase.multiply(target.resistances[implement.damageType]);
+    //wrap in primary cost to ensure that the damage is not negative
+    return costBase.add(damageAdjustedForWeakness.subtract(resistanceSubtraction)).round().toModifier(true);
+
+
 }
 
 function calculateActualDamageReduction(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier) {

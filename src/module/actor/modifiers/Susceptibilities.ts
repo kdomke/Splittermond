@@ -20,13 +20,13 @@ export class Susceptibilities {
         shadow: 0,
     };
 
-    constructor(private modifierManager: ModifierManager) {
+    constructor(private keyword:string,private modifierManager: ModifierManager) {
     }
 
     calculateSusceptibilities(): Record<DamageType, number> {
         const susceptibilities = {...this.susceptibilities};
         damageTypes.forEach(type => {
-                susceptibilities[type] = this.modifierManager.value(`susceptibility.${type}`);
+                susceptibilities[type] = this.modifierManager.value(`${this.keyword}.${type}`);
             }
         );
         return susceptibilities;

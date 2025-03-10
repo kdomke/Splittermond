@@ -25,10 +25,10 @@ describe("MapNameToSystemFeature", () => {
         afterEach(() => sandbox.restore());
 
         ([
-            ["Verwundbarkeit gegen Feuerschaden", "susceptibility.fire 1"],
-            ["Resistenz gegen Elektrizitätsschaden", "susceptibility.electric -1"],
-            ["Resistenz gegen Lichtschaden 6", "susceptibility.light -6"],
-            ["Verwundbarkeit gegen Kälteschaden 3", "susceptibility.cold 3"],
+            ["Verwundbarkeit gegen Feuerschaden", "weakness.fire 1"],
+            ["Resistenz gegen Elektrizitätsschaden", "resistance.electric 1"],
+            ["Resistenz gegen Lichtschaden 6", "resistance.light 6"],
+            ["Verwundbarkeit gegen Kälteschaden 3", "weakness.cold 3"],
         ] as const).forEach(([name, expectedModifier]) => {
             it(`should recognize ${name}`, () => {
                 const result = mapNameToSystemFeature({...({name, type: "npcFeature", system: {}})});
@@ -38,11 +38,11 @@ describe("MapNameToSystemFeature", () => {
         });
 
         ([
-            ["verwundbarkeit gegen Feuerschaden", "susceptibility.fire 1"],
-            ["verwundbarkeit gegen      Feuerschaden", "susceptibility.fire 1"],
-            ["resistenz gegen   Schattenschaden 4", "susceptibility.shadow -4"],
-            ["verwundbarkeit    gegen Hitzeschaden 2", "susceptibility.heat 2"],
-            ["Resistenz gegen felsSchaden      5", "susceptibility.rock -5"]
+            ["verwundbarkeit gegen Feuerschaden", "weakness.fire 1"],
+            ["verwundbarkeit gegen      Feuerschaden", "weakness.fire 1"],
+            ["resistenz gegen   Schattenschaden 4", "resistance.shadow 4"],
+            ["verwundbarkeit    gegen Hitzeschaden 2", "weakness.heat 2"],
+            ["Resistenz gegen felsSchaden      5", "resistance.rock 5"]
         ] as const).forEach(([name, expectedModifier]) => {
 
             it(`should handle typing deviation ${name}`, () => {
@@ -53,8 +53,8 @@ describe("MapNameToSystemFeature", () => {
         });
 
         ([
-            ["Verwundbarkeit gegen Mentalen Schaden 4", "susceptibility.mental 4"],
-            ["Resistenz gegen Physischen Schaden 3", "susceptibility.physical -3"],
+            ["Verwundbarkeit gegen Mentalen Schaden 4", "weakness.mental 4"],
+            ["Resistenz gegen Physischen Schaden 3", "resistance.physical 3"],
         ] as const).forEach(([name, expectedModifier]) => {
 
             it(`should handle typing deviation ${name}`, () => {
