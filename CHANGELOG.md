@@ -1,7 +1,17 @@
 ## 0.12.12 HOTFIX##
 ### Fixed
 * Verwundbarkeiten und Resistenzen werden nun korrekt bei der Schadensberechnung berücksichtigt
+  * Die Schlüsselwörter dafür sind 'weakness.<damage Type>' und 'resistance.<damage Type>'
+  * 'susceptibility' findet keine Anwendung mehr
+  * Beide Schlüsselwörter können positive und negative Werte annehmen. 
+    * Verwundbarkeiten werden dabe exponentiell gehandhabt: 
+      d.h "Verwundbarkeit 1 = "Schaden * 2", "Verwundbarkeit 2" = "Schaden * 4",
+    * Resistenzen sind linear = "Resizenz 2" = +2 Schaden, "Resistenz 3" = +3 Schaden
+ 
+### New Features
 * Das Rüstungsmerkmal Stabil wird nun berücksichtigt
+* Es gibt eine Option die Wirkung von 'Stabil' auf die Rüstung zu begrenzen, die das Merkmal trägt
+* Detaillierte Schadensreduktionsdaten via tooltip.
 ## 0.12.11
 ### Fixed
 * Hinzufügen von Mondzeichen Per Drag And Drop wenn es schon ein Mondzeichen gibt
