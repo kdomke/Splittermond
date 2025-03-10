@@ -5,7 +5,6 @@ import {DamageType} from "../config/damageTypes";
 
 declare class SplittermondActor extends Actor {
 
-    private _susceptibilities: Record<DamageType, number>;
     items: Collection<SplittermondItem>;
     async activeDefenseDialog(type?: "defense"|"vtd"|"kw"|"gw"):Promise<void>;
     get splinterpoints(): {value:number, max:number};

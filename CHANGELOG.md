@@ -1,3 +1,7 @@
+## 0.12.12 HOTFIX##
+### Fixed
+* Verwundbarkeiten und Resistenzen werden nun korrekt bei der Schadensberechnung berücksichtigt
+* Das Rüstungsmerkmal Stabil wird nun berücksichtigt
 ## 0.12.11
 ### Fixed
 * Hinzufügen von Mondzeichen Per Drag And Drop wenn es schon ein Mondzeichen gibt
