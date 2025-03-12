@@ -173,6 +173,7 @@ describe("Damage Application", () => {
 
             expect(result.render()).to.equal("10V10");
         });
+
         it(`should adjust damage for ${damageType} resistance`, () => {
             const damageImplement = createDamageImplement(5, 0, damageType);
             const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
@@ -192,6 +193,7 @@ describe("Damage Application", () => {
 
             expect(result.render()).to.equal("10V10");
         });
+
         it(`should adjust damage for negative ${damageType} weakness`, () => {
             const damageImplement = createDamageImplement(5, 0, damageType);
             const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
@@ -201,7 +203,6 @@ describe("Damage Application", () => {
 
             expect(result.render()).to.equal("3V3");
         });
-
     });
 
     it(`should account for resistances after weaknesses`,() => {
@@ -216,7 +217,7 @@ describe("Damage Application", () => {
 
     it(`should not adjust damage for resistance past zero`, () => {
         const damageImplement1 = createDamageImplement(5, 0, "physical");
-        const damageImplement2 = createDamageImplement(5, 0, "light" as any);
+        const damageImplement2 = createDamageImplement(5, 0, "light");
         const damageEvent = createDamageEvent(sandbox, {
             implements: [damageImplement1, damageImplement2],
             _costBase: consumed
@@ -226,6 +227,21 @@ describe("Damage Application", () => {
         const result = calculateDamageOnTarget(damageEvent, target);
 
         expect(result.render()).to.equal("5V5");
+    });
+
+    it(`should not apply a targets resistance more than once`, () => {
+        const damageImplement1 = createDamageImplement(1, 0, "physical");
+        const damageImplement2 = createDamageImplement(5, 0, "physical");
+        const damageImplement3 = createDamageImplement(2, 0, "physical");
+        const damageEvent = createDamageEvent(sandbox, {
+            implements: [damageImplement1, damageImplement2, damageImplement3],
+            _costBase: consumed
+        });
+        const target = setUpTarget(sandbox, 0, {physical: 4});
+
+        const result = calculateDamageOnTarget(damageEvent, target);
+
+        expect(result.render()).to.equal("4V4");
     });
 
     describe("Reporting", () => {

@@ -19,7 +19,7 @@ export interface UserReporter {
 
     set event(event: { causer: AgentReference | null, isGrazingHit: boolean, costBase: CostBase });
 
-    set immunity(immunity: Immunity|undefined);
+    set immunity(immunity: Immunity | undefined);
 
     addRecord(implementName: string, damageType: DamageType, baseDamage: CostModifier, appliedDamage: CostModifier, immunity?: Immunity): void;
 }
@@ -41,7 +41,7 @@ export class NoReporter implements UserReporter {
     set event(__: { causer: AgentReference | null; isGrazingHit: boolean; costBase: CostBase }) {
     }
 
-    set immunity(__: Immunity|undefined) {
+    set immunity(__: Immunity | undefined) {
     }
 
     addRecord(): void {
@@ -55,11 +55,12 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     reporter.target = target;
 
 
+    const damageCalculator = new AddedDamageCalculator(event.costBase, target);
     let damageBeforeGrazingAndReduction = CostModifier.zero;
     let realizedDamageReductionOverride = CostModifier.zero;
 
     for (const implement of event.implements) {
-        const damageAdded = calculateAddedDamage(target,event.costBase, implement);
+        const damageAdded = damageCalculator.calculateAddedDamage(implement);
         const immunity = evaluateImplementImmunities(implement, target);
         if (!immunity) {
             realizedDamageReductionOverride = realizedDamageReductionOverride.add(implement.ignoredReductionCost);
@@ -84,15 +85,37 @@ export function calculateDamageOnTarget(event: DamageEvent, target: Splittermond
     return totalDamage;
 }
 
-function calculateAddedDamage(target:SplittermondActor, costBase:CostBase, implement:DamageImplement) {
-    const damageAdjustedForWeakness= implement.bruttoHealthCost.multiply(Math.pow(2, target.weaknesses[implement.damageType]))
-    const resistanceSubtraction = costBase.multiply(target.resistances[implement.damageType]);
-    //wrap in primary cost to ensure that the damage is not negative
-    return costBase.add(damageAdjustedForWeakness.subtract(resistanceSubtraction)).round().toModifier(true);
+class AddedDamageCalculator {
+    private remainingReduction: Map<DamageType, CostModifier> = new Map();
 
+    constructor(private readonly costBase: CostBase, private readonly target: SplittermondActor) {
+    }
 
+    calculateAddedDamage(implement: DamageImplement) {
+        const damageAdjustedForWeakness = implement.bruttoHealthCost.multiply(Math.pow(2, this.target.weaknesses[implement.damageType]))
+        //wrap in primary cost to ensure that the damage is not negative
+        return this.costBase.add(this.getResistanceModifiedDamage(damageAdjustedForWeakness, implement.damageType)).round().toModifier(true);
+    }
+
+    private getResistanceModifiedDamage(damage: CostModifier, damageType: DamageType) {
+        const resistance = this.getResistance(damageType);
+        const adjustedDamage = damage.subtract(resistance);
+        this.remainingReduction.set(damageType, this.costBase.add(adjustedDamage.negate()).toModifier(true))
+        return adjustedDamage
+    }
+
+    private getResistance(damageType: DamageType): CostModifier {
+        if (this.remainingReduction.has(damageType)) {
+            console.warn("Splittermond | Registered multiple damage sources of the same type. This is not intended. Calculation will proceed correcly, but reporting might look weird.")
+            return this.remainingReduction.get(damageType)!;
+        } else {
+            return this.costBase.multiply(this.target.resistances[damageType]);
+        }
+
+    }
 }
-function calculateApplicableOverride(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier){
+
+function calculateApplicableOverride(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier) {
     const protectedReduction = event.costBase.multiply(target.protectedDamageReduction);
     //Override protection can cancel at most what we override.
     return event.costBase.add(realizedDamageReductionOverride).subtract(protectedReduction).toModifier(true);
