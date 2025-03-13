@@ -26,7 +26,7 @@ export class Susceptibilities {
     calculateSusceptibilities(): Record<DamageType, number> {
         const susceptibilities = {...this.susceptibilities};
         damageTypes.forEach(type => {
-                susceptibilities[type] = this.modifierManager.value(`${this.keyword}.${type}`);
+                susceptibilities[type] = this.modifierManager.value(`${this.keyword}.${type}`) ?? 0;
             }
         );
         return susceptibilities;

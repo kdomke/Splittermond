@@ -6,7 +6,7 @@ import * as Chat from "../util/chat.js";
 import Attribute from "./attribute.js";
 import Skill from "./skill.js";
 import DerivedValue from "./derived-value.js";
-import ModifierManager from "./modifier-manager.js";
+import ModifierManager from "./modifier-manager.ts";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
 import {parseCostString} from "../util/costs/costParser.ts";
