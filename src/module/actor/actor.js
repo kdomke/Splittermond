@@ -58,9 +58,6 @@ settings.registerNumber("HGMultiplier", {
 
 export default class SplittermondActor extends Actor {
 
-    _resistances = new Susceptibilities("resistance", new ModifierManager());//dummy empty resistances
-    _weaknesses= new Susceptibilities("weakness", new ModifierManager());//dummy empty weaknesses
-
     actorData() {
         return this.system;
     }
