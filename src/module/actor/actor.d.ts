@@ -2,6 +2,8 @@ import SplittermondItem from "../item/item";
 import type {SplittermondSkill} from "../config/skillGroups";
 import Attack from "./attack";
 import {DamageType} from "../config/damageTypes";
+import {CharacterDataModel} from "./dataModel/CharacterDataModel";
+import {NpcDataModel} from "./dataModel/NpcDataModel";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 
 declare class SplittermondActor extends Actor {
@@ -11,13 +13,16 @@ declare class SplittermondActor extends Actor {
 
     items: Collection<SplittermondItem>;
 
-    async activeDefenseDialog(type?: "defense" | "vtd" | "kw" | "gw"): Promise<void>;
+    system: CharacterDataModel | NpcDataModel;
 
-    get splinterpoints(): { value: number, max: number };
+    async activeDefenseDialog(type?: "defense"|"vtd"|"kw"|"gw"):Promise<void>;
+
+    get splinterpoints(): {value:number, max:number};
 
     get weaknesses(): Record<DamageType, number>;
 
     get resistances(): Record<DamageType, number>;
+    addModifier(item:SplittermondItem,name:string, str:string,type:string,multiplier?:number):void;
 
     get damageReduction(): number;
 

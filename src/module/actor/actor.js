@@ -6,15 +6,16 @@ import * as Chat from "../util/chat.js";
 import Attribute from "./attribute.js";
 import Skill from "./skill.js";
 import DerivedValue from "./derived-value.js";
-import ModifierManager from "./modifier-manager.ts";
+import ModifierManager from "./modifier-manager";
 import Attack from "./attack.js";
 import ActiveDefense from "./active-defense.js";
-import {parseCostString} from "../util/costs/costParser.ts";
-import {initializeSpellCostManagement} from "../util/costs/spellCostManagement.ts";
+import {parseCostString} from "../util/costs/costParser";
+import {initializeSpellCostManagement} from "../util/costs/spellCostManagement";
 import {settings} from "../settings";
 import {splittermond} from "../config.js";
 import {foundryApi} from "../api/foundryApi";
-import {Susceptibilities} from "./modifiers/Susceptibilities.js";
+import {Susceptibilities} from "./modifiers/Susceptibilities";
+import {addModifier} from "./modifiers/modifierAddition";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -369,7 +370,7 @@ export default class SplittermondActor extends Actor {
 
     _prepareAttacks() {
         const attacks = this.attacks || [];
-        const isInjuring = this.items.find(i => i.name ==="Natürliche Waffe");
+        const isInjuring = this.items.find(i => i.name === "Natürliche Waffe");
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
@@ -379,7 +380,7 @@ export default class SplittermondActor extends Actor {
                 attribute1: "agility",
                 attribute2: "strength",
                 weaponSpeed: 5,
-                features: ["Entwaffnend 1", "Umklammern",...(isInjuring ? []:["Stumpf"])].join(", "),
+                features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
                 damage: "1W6",
                 damageType: "physical",
                 costType: isInjuring ? "V" : "E"
@@ -395,157 +396,9 @@ export default class SplittermondActor extends Actor {
         this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", game.i18n.localize(this.skills["endurance"].label), this.skills["endurance"]));
     }
 
+    //this function is used in item.js to add modifiers to the actor
     addModifier(item, name = "", str = "", type = "", multiplier = 1) {
-        if (str == "") return;
-        const data = this.system;
-
-
-        str.split(',').forEach(str => {
-            str = str.trim();
-            let temp = str.match(/(.*)\s+([+\-]?AUS|[+\-]?BEW|[+\-]?INT|[+\-]?KON|[+\-]?MYS|[+\-]?STÄ|[+\-]?VER|[+\-]?WIL|[+\-]?(?:k?[0-9\.]+v?[0-9]*))/i);
-            if (temp) {
-                let modifierLabel = temp[1].trim();
-                let value = temp[2].replaceAll("AUS", this.attributes.charisma.value + "")
-                    .replaceAll("BEW", this.attributes.agility.value + "")
-                    .replaceAll("INT", this.attributes.intuition.value + "")
-                    .replaceAll("KON", this.attributes.constitution.value + "")
-                    .replaceAll("MYS", this.attributes.mystic.value + "")
-                    .replaceAll("STÄ", this.attributes.strength.value + "")
-                    .replaceAll("VER", this.attributes.mind.value + "")
-                    .replaceAll("WIL", this.attributes.willpower.value + "");
-                let emphasis = "";
-                let modifierLabelParts = modifierLabel.split("/");
-                if (modifierLabelParts[1]) {
-                    modifierLabel = modifierLabelParts[0];
-                    if (modifierLabelParts[1]) {
-                        emphasis = modifierLabelParts[1];
-                    }
-                }
-                ;
-
-                let addModifierHelper = (path, emphasis = "") => {
-                    var floatValue = parseFloat(value);
-                    if (floatValue * multiplier != 0) {
-                        if (emphasis) {
-                            this.modifier.add(path, emphasis, floatValue * multiplier, item, type, true);
-                        } else {
-                            this.modifier.add(path, name, floatValue * multiplier, item, type, false);
-                        }
-                    }
-                }
-
-                switch (modifierLabel.toLowerCase()) {
-                    case "bonuscap":
-                        addModifierHelper("bonuscap");
-                        break;
-                    case "speed.multiplier":
-                    case "gsw.mult":
-                        this.derivedValues.speed.multiplier *= Math.pow(parseFloat(value), multiplier);
-                        break;
-                    case "sr":
-                        addModifierHelper("damagereduction");
-                        break;
-                    case "handicap.shield.mod":
-                    case "handicap.shield":
-                        addModifierHelper("handicap.shield");
-                        break;
-                    case "handicap.mod":
-                    case "handicap":
-                        addModifierHelper("handicap");
-                        break;
-                    case "handicap.armor.mod":
-                    case "handicap.armor":
-                        addModifierHelper("handicap.armor");
-                        break;
-                    case "tickmalus.shield.mod":
-                    case "tickmalus.shield":
-                        addModifierHelper("tickmalus.shield");
-                        break;
-                    case "tickmalus.armor.mod":
-                    case "tickmalus.armor":
-                        addModifierHelper("tickmalus.armor");
-                        break;
-                    case "tickmalus.mod":
-                    case "tickmalus":
-                        addModifierHelper("tickmalus");
-                        break;
-                    case "woundmalus.nbrlevels":
-                        data.health.woundMalus.nbrLevels = parseFloat(value) * multiplier;
-                        break;
-                    case "woundmalus.mod":
-                        data.health.woundMalus.mod += parseFloat(value) * multiplier;
-                        break;
-                    case "woundmalus.levelmod":
-                        data.health.woundMalus.levelMod += parseFloat(value) * multiplier;
-                        break;
-                    case "splinterpoints":
-                        data.splinterpoints.max = parseFloat(data.splinterpoints?.max || 3) + parseFloat(value) * multiplier;
-                        break;
-                    case "healthregeneration.multiplier":
-                        data.healthRegeneration.multiplier = parseFloat(value) * multiplier;
-                        break;
-                    case "focusregeneration.multiplier":
-                        data.focusRegeneration.multiplier = parseFloat(value) * multiplier;
-                        break;
-                    case "healthregeneration.bonus":
-                        data.healthRegeneration.bonus += parseFloat(value);
-                        break;
-                    case "focusregeneration.bonus":
-                        data.focusRegeneration.bonus += parseFloat(value);
-                        break;
-                    case "lowerfumbleresult":
-                        let skill = item.system.skill;
-                        if (!skill) {
-                            skill = "*";
-                        }
-                        addModifierHelper(modifierLabel.toLowerCase() + "/" + skill);
-                        break;
-                    case "generalskills":
-                        CONFIG.splittermond.skillGroups.general.forEach((skill) => {
-                            addModifierHelper(skill, emphasis);
-                        });
-                        break;
-                    case "magicskills":
-                        CONFIG.splittermond.skillGroups.magic.forEach((skill) => {
-                            addModifierHelper(skill, emphasis);
-                        });
-                        break;
-                    case "fightingskills":
-                        CONFIG.splittermond.skillGroups.fighting.forEach((skill) => {
-                            addModifierHelper(skill, emphasis);
-                        });
-                        break;
-                    case "damage":
-                        this.modifier.add("damage." + emphasis, name, value, item, type, false);
-                        break;
-                    case "weaponspeed":
-                        this.modifier.add("weaponspeed." + emphasis, name, value, item, type, false);
-                        break;
-                    default:
-                        if (modifierLabel.toLowerCase().startsWith("foreduction")) {
-                            data.spellCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
-                        } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-                            data.spellEnhancedCostReduction.addCostModifier(modifierLabel, value, item.system.skill);
-                            return;
-                        }
-
-                        let element = CONFIG.splittermond.derivedAttributes.find(attr => {
-                            return modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === game.i18n.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
-                        });
-                        if (element) {
-                            modifierLabel = element;
-                        }
-
-                        if (modifierLabel == "initiative") value = -parseInt(value);
-
-                        addModifierHelper(modifierLabel, emphasis);
-
-                        break;
-                }
-            } else {
-                ui?.notifications?.error(`Syntax Error in modifier-string "${str}" in ${name}!`);
-            }
-        });
+        addModifier(this, item, name, str, type, multiplier);
     }
 
     _prepareModifier() {
@@ -596,15 +449,15 @@ export default class SplittermondActor extends Actor {
      * Under certain circumstances the actor can be protected against overriding damage reduction. This value represents the protected amount
      * @return {number} The actor's protected damage reduction
      */
-    get protectedDamageReduction(){
+    get protectedDamageReduction() {
         const itemsWithProtection = this.items
             .filter(i => i.system.features?.toLowerCase().includes("stabil"))
             .filter(i => i.system.equipped ?? false)
-        if(itemsWithProtection.length ===0){
+        if (itemsWithProtection.length === 0) {
             return 0;
-        }else if (getStableProtectsAllReduction()){
+        } else if (getStableProtectsAllReduction()) {
             return this.damageReduction;
-        }else {
+        } else {
             return itemsWithProtection.reduce((acc, item) => acc + item.system.damageReduction, 0);
         }
     }
@@ -989,7 +842,7 @@ export default class SplittermondActor extends Actor {
      * @return {number}
      */
     #getSplinterpointBonus(skillName) {
-        if(skillName === "health"){
+        if (skillName === "health") {
             return 5;
         }
         return 3;

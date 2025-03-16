@@ -1,0 +1,141 @@
+import {expect} from 'chai';
+import sinon, {SinonSandbox, SinonStub, SinonStubbedInstance} from 'sinon';
+import SplittermondActor from "../../../../../module/actor/actor";
+import SplittermondItem from "../../../../../module/item/item";
+import ModifierManager from "../../../../../module/actor/modifier-manager";
+import { foundryApi } from 'module/api/foundryApi';
+import {addModifier} from "../../../../../module/actor/modifiers/modifierAddition";
+import {splittermond} from "../../../../../module/config";
+
+describe('addModifier', () => {
+    let sandbox: SinonSandbox;
+    let actor: SinonStubbedInstance<SplittermondActor>;
+    let item: SinonStubbedInstance<SplittermondItem>;
+    let modifierManager: SinonStubbedInstance<ModifierManager>;
+    let systemData: any;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+
+        systemData = {
+            healthRegeneration: {multiplier: 1, bonus: 0},
+            focusRegeneration: {multiplier: 1, bonus: 0},
+            spellCostReduction: {addCostModifier: sandbox.stub()},
+            spellEnhancedCostReduction: {addCostModifier: sandbox.stub()},
+            health: {woundMalus: {nbrLevels: 0, mod: 0, levelMod: 0}}
+        };
+
+        modifierManager = sandbox.createStubInstance(ModifierManager);
+
+        actor = sandbox.createStubInstance(SplittermondActor);
+        actor.system = systemData;
+        //@ts-expect-error
+        actor.modifier = modifierManager;
+        //@ts-expect-error
+        actor.attributes = {
+            charisma: {value: 2},
+            agility: {value: 3},
+            intuition: {value: 4},
+            constitution: {value: 5},
+            mystic: {value: 6},
+            strength: {value: 7},
+            mind: {value: 8},
+            willpower: {value: 9}
+        };
+        //@ts-expect-error
+        actor.derivedValues = {
+            speed: {multiplier: 1}
+        };
+        item = {
+            system: {}
+        } as unknown as SinonStubbedInstance<SplittermondItem>;
+
+        sandbox.stub(foundryApi, 'reportError');
+        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    it('should add basic modifier', () => {
+        addModifier(actor, item, 'Test', 'BonusCap +2');
+        expect(modifierManager.add.calledWith('bonuscap', 'Test', 2, item, '', false)).to.be.true;
+    });
+
+    it('should handle multiplier modifiers', () => {
+        addModifier(actor, item, '', 'Speed.multiplier 2', '', 2);
+        expect(actor.derivedValues.speed.multiplier).to.equal(4); // 2^2
+    });
+
+    it('should handle regeneration modifiers', () => {
+        addModifier(actor, item, '', 'HealthRegeneration.multiplier 2');
+        expect(systemData.healthRegeneration.multiplier).to.equal(2);
+
+        addModifier(actor, item, '', 'HealthRegeneration.bonus 3');
+        expect(systemData.healthRegeneration.bonus).to.equal(3);
+    });
+
+    it('should handle skill groups', () => {
+        const mockSkills = ['skill1', 'skill2'];
+        sandbox.stub(splittermond, 'skillGroups').value(
+        {
+            general: mockSkills,
+            magic: [],
+            fighting: []
+        });
+
+        addModifier(actor, item, 'Group', 'GeneralSkills/emphasis +2');
+
+        mockSkills.forEach(skill => {
+            expect(modifierManager.add.calledWith(
+                skill,
+                'emphasis',
+                2,
+                item,
+                '',
+                true
+            )).to.be.true;
+        });
+    });
+
+    it('should report error for invalid syntax', () => {
+        addModifier(actor, item, 'Invalid', 'InvalidString');
+        expect((foundryApi.reportError as SinonStub).calledOnce).to.be.true;
+    });
+
+    it('should replace attribute placeholders', () => {
+        addModifier(actor, item, '', 'AUS +1');
+        expect(modifierManager.add.lastCall.args).to.have.members(['AUS', '', 1, item, '', false]);
+    });
+
+    it.skip('should handle selectable modifiers with emphasis', () => {
+        addModifier(actor, item, 'Selectable', 'Handicap.Shield/emphasis +3');
+        expect(modifierManager.add.lastCall.args).to.have.members([
+            'handicap.shield',
+            'emphasis',
+            3,
+            item,
+            '',
+            true
+        ]);
+    });
+
+    it('should handle damage modifiers', () => {
+        addModifier(actor, item, 'Damage', 'Damage/fire +5');
+        expect(modifierManager.add.lastCall.args).to.have.members([
+            'damage.fire',
+            'Damage',
+            "+5",
+            item,
+            '',
+            false
+        ]);
+    });
+
+    it.skip('should handle initiative modifier inversion', () => {
+        addModifier(actor, item, '', 'Initiative +2');
+        expect(modifierManager.add.lastCall.args).to.have.members(['initiative', '', -2, item, '', false]);
+    });
+})
+;
