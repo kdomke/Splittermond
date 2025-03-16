@@ -154,18 +154,18 @@ export default class SplittermondActor extends Actor {
 
         data = initializeSpellCostManagement(data);
 
+        data.focusRegeneration = {
+            multiplier: 2,
+            bonus: 0
+        };
+
+        data.healthRegeneration = {
+            multiplier: 2,
+            bonus: 0
+        };
+
+
         if (this.type === "character") {
-            data.focusRegeneration = {
-                multiplier: 2,
-                bonus: 0
-            };
-
-            data.healthRegeneration = {
-                multiplier: 2,
-                bonus: 0
-            };
-
-
             const heroLevels = calculateHeroLevels();
             data.experience.heroLevel = heroLevels.reduce((acc, minXP) => acc + ((minXP <= data.experience.spent) ? 1 : 0), 0);
             data.experience.nextLevelValue = heroLevels[Math.min(data.experience.heroLevel, 3)];
