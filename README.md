@@ -87,7 +87,7 @@ Der NSC-Bogen bietet für Nicht-Spieler-Charaktere die Möglichkeit *abgeleitete
 Gegnermerkmale wie *Schwächlich* haben aufgrund der einstellbaren Modifikatoren Auswirkungen auf die Anzahl der Wundstufen.
 
 ## Entwicklung
-Das Projekt baut produziert mittels `vite` eine ES6-Webanwendung. Die Anwendung wird in den Ordner `dist` gebaut. Um Änderungen automatisch auf seinem Server zu haben, muss der Order `dist` in Foundry VTT als System-Ordner hinzugefügt werden.
+Das Projekt baut mittels `vite` eine ES6-Webanwendung. Die Anwendung wird in den Ordner `dist` gebaut. Um Änderungen automatisch auf seinem Server zu haben, muss der Order `dist` in Foundry VTT als System-Ordner hinzugefügt werden.
 Bash:
 ```bash
 ln -s /path/to/splittermond-fvtt/dist /path/to/foundryvtt/Data/systems/splittermond
@@ -102,3 +102,12 @@ da der Server die Kompendium-Dateteien offen hält, sodass sie vom Build-Prozess
 Zur Entwicklung empfiehlt es sich deshalb, das Projekt mit `npm run dev` zu starten. Die Anwendung wird dann unter `localhost:30001` bereitgestellt,
 und zwar als Proxy zum eigentlichen Foundry server, von dem erwartet wird, dass er unter `localhost:30000` läuft. Der dev Server lädt 
 automatisch neu, wenn Änderungen gespeichert werden, sodass man immer auf einem aktuellen Stand ist.
+
+### Editieren von Kompendien
+siehe auch [Foundry Wiki - Kompendium (engl.)](https://foundryvtt.wiki/en/development/api/CompendiumCollection)
+
+Wenn ein Kompendium editiert werden soll, so lädt man sijch eine Splittermond Foundry Welt als Gamemaster. Dann entfernt man den Schreibschutz vom Kompendium und editiert es entsprechend den eigenen Wünschen. Um die Änderung dann zu persistieren verlässt man die Welt und speichert sie. Dann navigiert man mit der Konsole seines Vertrauens zu dem Splittermond System ordner im Foundry Data Verzeichnis und führt von dort das sich in diesem Repo befindliche `un-pack.js` Skript aus. 
+```bash
+cd /path/to/foundryvtt/Data/systems/splittermond;
+node /path/to/splittermond-fvtt/scripts/un-pack.js
+```
