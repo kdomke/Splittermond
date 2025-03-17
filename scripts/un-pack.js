@@ -25,7 +25,7 @@ for (const pack of packs) {
  */
 async function unpackLdbCompendium(pack){
     console.log("Unpacking " + pack);
-    const directory = `${SCRIPT_FILE_PATH}/../public/packs/${pack}`;
+    const directory = `${SCRIPT_FILE_PATH}/../src/packs/${pack}`;
     try {
         for (const file of await fs.readdir(directory)) {
             await fs.unlink(path.join(directory, file));
@@ -36,7 +36,7 @@ async function unpackLdbCompendium(pack){
     }
     await extractPack(
         `${MODULE_ID}/packs/${pack}`,
-        `${SCRIPT_FILE_PATH}/../public/packs/${pack}`,
+        `${SCRIPT_FILE_PATH}/../src/packs/${pack}`,
         {
             yaml,
             transformName,
