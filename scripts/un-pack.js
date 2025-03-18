@@ -14,6 +14,7 @@ const packs = await fs.readdir("./packs");
 for (const pack of packs) {
     if((await fs.stat(`./packs/${pack}`)).isFile()) {
             console.debug(`Omitting file ${pack}`);
+            continue;
     }
     await unpackLdbCompendium(pack);
 }
