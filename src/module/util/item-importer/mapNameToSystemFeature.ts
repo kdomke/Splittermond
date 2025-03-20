@@ -1,6 +1,6 @@
 import {NpcFeatureDataModelType} from "../../item";
 import {PartialItemData} from "./types";
-import {LanguageMapper} from "../../item/LanguageMapper";
+import {LanguageMapper} from "../LanguageMapper";
 import {DamageType, damageTypes} from "../../config/damageTypes";
 import {foundryApi} from "../../api/foundryApi";
 
