@@ -1,8 +1,9 @@
 import {ErrorMessage, Value} from "./index";
 
 export function validateAllInputConsumed(modifier: string, pathMatch: null | RegExpMatchArray, attributeMatch: string[], valueMatch: RegExpMatchArray | null): boolean {
+    let valueMatchReplacer = valueMatch ? valueMatch[0].replace("+","\\+") : '';
     let unconsumed = modifier.replace(pathMatch ? pathMatch[0] : '', '').trim()
-        .replace(valueMatch ? `${valueMatch[0]}` : '', '')
+        .replace(new RegExp(`${valueMatchReplacer}(?=\\s*$)`), '').trim();
     attributeMatch.forEach((attribute) => {
         unconsumed = unconsumed.replace(attribute, '').trim();
     });
@@ -26,7 +27,7 @@ export function validateKeys(key: string): ErrorMessage[] {
 }
 
 function validateNotANumber(input: Value, errors: ErrorMessage[]): void {
-    if (typeof input === "number") {
+    if (typeof input === "number"|| /^\d+$/.test(`${input}`)) {
         errors.push(`Input '${input}' should not be a number, but is.`)
     }
 

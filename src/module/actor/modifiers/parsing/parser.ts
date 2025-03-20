@@ -1,23 +1,28 @@
 import {ErrorMessage, ParsedModifier, Value} from "./index";
 import {validateAllInputConsumed, validateKeys} from "./validators";
 
-export function parseModifiers(modifiers: string | null | undefined): ParsedModifier[] {
+type SingleParseResult = ParsedModifier | ErrorMessage
+type AttributeParseResult = { key: string, value: Value } | ErrorMessage
+interface ParseResult {
+    modifiers: ParsedModifier[],
+    errors: ErrorMessage[]
+}
+export function parseModifiers(modifiers: string | null | undefined): ParseResult {
     if (!modifiers) {
-        return [];
+        return {modifiers:[], errors: []};
     }
     const parsedModifiers = modifiers.trim().split(",")
         .map(m => m.trim())
         .filter(m => !!m)
         .map(parseModifier);
-    const errors = parsedModifiers.filter(m => typeof m == "string");
-    if (errors.length > 0) {
-        throw new Error(`Could not parse modifiers, found errors: ${errors.join("\n")}`);
+    return {
+        modifiers: parsedModifiers.filter(m => typeof m !== "string"),
+        errors:  parsedModifiers.filter(m => typeof m == "string")
     }
-    return parsedModifiers.filter(m => typeof m !== "string")
 
 }
 
-function parseModifier(modifier: string): ParseResult {
+function parseModifier(modifier: string): SingleParseResult {
     const pathPattern = /^\S+(?=\s)/;
     const valuePattern = /(?<=\s)[^\s="']+(?=$)/
     const pathMatch = pathPattern.exec(modifier);
@@ -124,8 +129,6 @@ function parseValue(value: string) {
     }
 }
 
-type ParseResult = ParsedModifier | ErrorMessage
-type AttributeParseResult = { key: string, value: Value } | ErrorMessage
 
 
 
