@@ -9,6 +9,20 @@ describe('normalizeModifiers', () => {
 
     beforeEach(() => {
         sandbox = sinon.createSandbox();
+        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
+            switch (key){
+                case "splittermond.derivedAttributes.speed.short":
+                    return "GSW";
+                case "splittermond.attributes.charisma.short":
+                    return "AUS";
+                case "splittermond.attributes.strength.short":
+                    return "STR";
+                case "splittermond.attributes.agility.short":
+                    return "BEW";
+                default:
+                    return key;
+            }
+        });
     });
 
     afterEach(() => {
@@ -16,7 +30,6 @@ describe('normalizeModifiers', () => {
     });
 
     it('should replace attribute strings with property paths', () => {
-        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key === "splittermond.attributes.charisma.short" ? "AUS" : key);
         const input: ParsedModifier[] = [{
             path: 'damage',
             attributes: {
@@ -34,7 +47,6 @@ describe('normalizeModifiers', () => {
     });
 
     it('should replace derived attribute strings in objects', () => {
-        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key === "splittermond.derivedAttributes.speed.short" ? "GSW" : key);
         const input: ParsedModifier[] = [{
             path: 'gsw.mult',
             attributes: {
@@ -49,7 +61,6 @@ describe('normalizeModifiers', () => {
     });
 
     it('should leave numbers and non-matching strings unchanged', () => {
-        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
         const input: ParsedModifier[] = [{
             path: 'generalSkills.melee',
             attributes: {
@@ -65,16 +76,6 @@ describe('normalizeModifiers', () => {
     });
 
     it('should handle mixed value types', () => {
-        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
-            switch (key){
-                case "splittermond.attributes.strength.short":
-                    return "STR";
-                case "splittermond.attributes.agility.short":
-                    return "BEW";
-                default:
-                    return key;
-            }
-        });
         const input: ParsedModifier[] = [{
             path: 'complex',
             attributes: {
