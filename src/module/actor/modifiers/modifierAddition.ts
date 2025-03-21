@@ -176,7 +176,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, na
                         modifierLabel = element;
                     }
 
-                    if (modifierLabel == "initiative") value = -parseInt(value);
+                    if (modifierLabel.toLowerCase() == "initiative") value = -parseInt(value);
 
                     addModifierHelper(modifierLabel, emphasis);
 

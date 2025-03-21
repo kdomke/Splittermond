@@ -133,9 +133,9 @@ describe('addModifier', () => {
         ]);
     });
 
-    it.skip('should handle initiative modifier inversion', () => {
+    it('should handle initiative modifier inversion', () => {
         addModifier(actor, item, '', 'Initiative +2');
-        expect(modifierManager.add.lastCall.args).to.have.members(['initiative', '', -2, item, '', false]);
+        expect(modifierManager.add.lastCall.args).to.have.members(['Initiative', '', -2, item, '', false]);
     });
 })
 ;
