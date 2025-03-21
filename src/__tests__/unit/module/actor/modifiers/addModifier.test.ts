@@ -3,9 +3,12 @@ import sinon, {SinonSandbox, SinonStub, SinonStubbedInstance} from 'sinon';
 import SplittermondActor from "../../../../../module/actor/actor";
 import SplittermondItem from "../../../../../module/item/item";
 import ModifierManager from "../../../../../module/actor/modifier-manager";
-import { foundryApi } from 'module/api/foundryApi';
+import {foundryApi} from 'module/api/foundryApi';
 import {addModifier} from "../../../../../module/actor/modifiers/modifierAddition";
 import {splittermond} from "../../../../../module/config";
+import {CharacterDataModel} from "../../../../../module/actor/dataModel/CharacterDataModel";
+import {CharacterAttribute} from "../../../../../module/actor/dataModel/CharacterAttribute";
+import Attribute from "../../../../../module/actor/attribute";
 
 describe('addModifier', () => {
     let sandbox: SinonSandbox;
@@ -79,11 +82,11 @@ describe('addModifier', () => {
     it('should handle skill groups', () => {
         const mockSkills = ['skill1', 'skill2'];
         sandbox.stub(splittermond, 'skillGroups').value(
-        {
-            general: mockSkills,
-            magic: [],
-            fighting: []
-        });
+            {
+                general: mockSkills,
+                magic: [],
+                fighting: []
+            });
 
         addModifier(actor, item, 'Group', 'GeneralSkills/emphasis +2');
 
@@ -137,5 +140,25 @@ describe('addModifier', () => {
         addModifier(actor, item, '', 'Initiative +2');
         expect(modifierManager.add.lastCall.args).to.have.members(['Initiative', '', -2, item, '', false]);
     });
-})
-;
+
+    ([["+INT", 2], ["-INT", -3], ["INT", 4]] as const).forEach(([placeholder,expected])=> {
+        it('should replace attribute placeholders with their values', () => {
+            const system = sandbox.createStubInstance(CharacterDataModel);
+            actor.attributes.intuition = new Attribute(actor, 'intuition');
+            actor.system = system;
+            const intuition = new CharacterAttribute({initial: 0, advances: Math.abs(expected), species: 0});
+            system.updateSource.callThrough();
+            system.updateSource({attributes: {intuition} as any})
+            actor.system.updateSource({
+                healthRegeneration: {multiplier: 1, bonus: 0},
+                focusRegeneration: {multiplier: 1, bonus: 0},
+                spellCostReduction: {addCostModifier: sandbox.stub()},
+                spellEnhancedCostReduction: {addCostModifier: sandbox.stub()}
+            } as any);
+
+            addModifier(actor, item, '', `generalSkills.stealth ${placeholder}`);
+
+            expect(modifierManager.add.lastCall.args).to.have.members(['generalSkills.stealth', '', expected, item, '', false]);
+        })
+    });
+});
