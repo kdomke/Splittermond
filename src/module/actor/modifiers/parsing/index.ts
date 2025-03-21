@@ -3,7 +3,7 @@ export type ErrorMessage = string;
 
 export interface ParsedModifier {
     path:string
-    attributes: Record<string, string|number|ParsedExpression>
+    attributes: Record<string, Value>
 }
 
 export type Value = ParsedExpression|number|string

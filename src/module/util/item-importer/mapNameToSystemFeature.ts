@@ -1,30 +1,15 @@
 import {NpcFeatureDataModelType} from "../../item";
 import {PartialItemData} from "./types";
-import {LanguageMapper} from "../LanguageMapper";
-import {DamageType, damageTypes} from "../../config/damageTypes";
-import {foundryApi} from "../../api/foundryApi";
+import {initMapper} from "../LanguageMapper";
+import {damageTypes} from "../../config/damageTypes";
 
-
-function initLanguageMapper(localizer: (key: string) => string) {
-    let languageMapper: LanguageMapper<DamageType>;
-
-    function getLanguageMapper() {
-        if (!languageMapper) {
-            const codeToTranslation = new Map<DamageType, string>(damageTypes.map(t => [t, localizer(`splittermond.damageTypes.long.${t}`)]));
-            const additionalTranslations = new Map<string, DamageType>(damageTypes.map(t => [localizer(`splittermond.damageTypes.short.${t}`), t]));
-            additionalTranslations.set("Physischen Schaden", "physical");
-            additionalTranslations.set("Mentalen Schaden", "mental");
-            additionalTranslations.set("Mentalschaden", "mental");
-            languageMapper = new LanguageMapper<DamageType>(codeToTranslation, additionalTranslations);
-        }
-        return languageMapper;
-    }
-
-    return getLanguageMapper;
-}
-
-const languageMapper = initLanguageMapper((s) => foundryApi.localize(s));
-
+const getLanguageMapper = initMapper(damageTypes)
+    .withTranslator((s) => `splittermond.damageTypes.long.${s}`)
+    .andOtherMappers((s) => `splittermond.damageTypes.short.${s}`)
+    .andDirectMap("Physischen Schaden", "physical")
+    .andDirectMap("Mentalen Schaden", "mental")
+    .andDirectMap("Mentalschaden", "mental")
+    .build();
 
 export function mapNameToSystemFeature(data: PartialItemData<NpcFeatureDataModelType>) {
     const modifiers = [...data.system.modifier?.split(",") ?? [],
@@ -69,6 +54,6 @@ function mapSusceptibility(keyword: string, data: PartialItemData<NpcFeatureData
     const translatedDamageType = matchResult.groups?.damageType;
     const translatedDamageValue = matchResult.groups?.modifier ?? "1";
 
-    const code = translatedDamageType ? languageMapper().toCode(translatedDamageType) : undefined;
+    const code = translatedDamageType ? getLanguageMapper().toCode(translatedDamageType) : undefined;
     return {code, translatedDamageValue};
 }
