@@ -3,13 +3,15 @@ import {validateAllInputConsumed, validateKeys} from "./validators";
 
 type SingleParseResult = ParsedModifier | ErrorMessage
 type AttributeParseResult = { key: string, value: Value } | ErrorMessage
+
 interface ParseResult {
     modifiers: ParsedModifier[],
     errors: ErrorMessage[]
 }
+
 export function parseModifiers(modifiers: string | null | undefined): ParseResult {
     if (!modifiers) {
-        return {modifiers:[], errors: []};
+        return {modifiers: [], errors: []};
     }
     const parsedModifiers = modifiers.trim().split(",")
         .map(m => m.trim())
@@ -17,7 +19,7 @@ export function parseModifiers(modifiers: string | null | undefined): ParseResul
         .map(parseModifier);
     return {
         modifiers: parsedModifiers.filter(m => typeof m !== "string"),
-        errors:  parsedModifiers.filter(m => typeof m == "string")
+        errors: parsedModifiers.filter(m => typeof m == "string")
     }
 
 }
@@ -85,10 +87,10 @@ function parseAttributes(attributeMatches: string[]): Record<string, Value> | Er
         if (parseResult.key in attributes) {
             errors.push(`Attribute '${parseResult.key}' exists several times in modifier.`);
         } else {
-            const attributeErrors= [...validateKeys(parseResult.key)];
+            const attributeErrors = [...validateKeys(parseResult.key)];
             if (attributeErrors.length > 0) {
                 errors.push(...attributeErrors);
-            }else {
+            } else {
                 attributes[parseResult.key] = parseResult.value;
             }
         }
@@ -119,7 +121,8 @@ function parseValue(value: string) {
     const numberPattern = /(?<=["']|^)[+-]?\d+(?=["']|$)/
     const quotedStringPattern = /(?<=["']).*(?=["'])/
     if (valueExpressionPattern.test(value)) {
-        return {propertyPath: valueExpressionPattern.exec(value)![0]}
+        const sign: 1 | -1 = (/-(?=\s*\$\{)/.test(value) ? -1 : 1)
+        return {propertyPath: valueExpressionPattern.exec(value)![0], sign}
     } else if (numberPattern.test(value)) {
         return parseFloat(numberPattern.exec(value)![0])
     } else if (quotedStringPattern.test(value)) {

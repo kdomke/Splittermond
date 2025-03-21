@@ -1,7 +1,7 @@
 import {ErrorMessage, Value} from "./index";
 
 export function validateAllInputConsumed(modifier: string, pathMatch: null | RegExpMatchArray, attributeMatch: string[], valueMatch: RegExpMatchArray | null): boolean {
-    let valueMatchReplacer = valueMatch ? valueMatch[0].replace("+","\\+") : '';
+    let valueMatchReplacer = valueMatch ? valueMatch[0].replace("+","\\+").replace("$","\\$") : '';
     let unconsumed = modifier.replace(pathMatch ? pathMatch[0] : '', '').trim()
         .replace(new RegExp(`${valueMatchReplacer}(?=\\s*$)`), '').trim();
     attributeMatch.forEach((attribute) => {

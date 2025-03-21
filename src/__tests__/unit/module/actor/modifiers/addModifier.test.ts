@@ -33,7 +33,7 @@ describe('addModifier', () => {
         actor = sandbox.createStubInstance(SplittermondActor);
         actor.system = systemData;
         //@ts-expect-error
-        actor.modifier = modifierManager;
+        actor.modifier= modifierManager;
         //@ts-expect-error
         actor.attributes = {
             charisma: {value: 2},

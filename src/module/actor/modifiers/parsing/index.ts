@@ -10,6 +10,7 @@ export interface ParsedModifier {
 export type Value = ParsedExpression|number|string
 export interface ParsedExpression {
     propertyPath:string
+    sign: -1|1;
 }
 
 export {parseModifiers,normalizeModifiers};

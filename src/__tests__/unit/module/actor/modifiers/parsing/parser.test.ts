@@ -26,7 +26,12 @@ describe('Modifier Parser', () => {
         });
     });
     ([
-        ["AUS value=${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW"}}}],
+        ["AUS value=${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS value=-${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
+        ["AUS value=+${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS ${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS -${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
+        ["AUS +${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
         ["damage weapon='Fulnisches Doppelschwert' +1", {
             path: "damage",
             attributes: {weapon: "Fulnisches Doppelschwert", value: 1}

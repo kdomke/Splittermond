@@ -22,9 +22,10 @@ function normalizeModifier(modifier: ParsedModifier) {
     for (const key in modifier.attributes) {
         const value = modifier.attributes[key];
         if (typeof value === "string") {
-            const replacement = replacer.tryReplace(value);
+            const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
+            const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
             if (replacement !== value) {
-                modifier.attributes[key] = {propertyPath: replacement};
+                modifier.attributes[key] = {propertyPath: replacement, sign};
             }
         } else if (typeof value === "object") {
             const replacement = replacer.tryReplace(value.propertyPath);
