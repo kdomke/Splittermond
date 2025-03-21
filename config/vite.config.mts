@@ -79,10 +79,10 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 assetFileNames: (chunkInfo) => {
-                    if (chunkInfo.name === 'style.css')
+                    if (chunkInfo.names.includes('style.css'))
                         return 'splittermond.css'
                     else {
-                        return chunkInfo.name ?? ""
+                        return chunkInfo.names?.[0] ?? ""
                     }
                 }
             }
