@@ -1,5 +1,7 @@
 import {parseModifiers} from "./parser";
 import {normalizeModifiers} from "./normalizer";
+import {createExpressions} from "./expressionCreator";
+
 export type ErrorMessage = string;
 
 export interface ParsedModifier {
@@ -13,4 +15,4 @@ export interface ParsedExpression {
     sign: -1|1;
 }
 
-export {parseModifiers,normalizeModifiers};
+export {parseModifiers,normalizeModifiers, createExpressions};
