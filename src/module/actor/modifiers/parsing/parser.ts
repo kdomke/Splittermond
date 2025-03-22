@@ -70,7 +70,7 @@ function findAttributes(modifier: string): string[] {
 function parsePath(path: string): ParsedModifier {
     const pathAndEmphasis = path.split("/");
     return {
-        path: pathAndEmphasis[0].toLowerCase(),
+        path: pathAndEmphasis[0],
         attributes: {...(pathAndEmphasis?.[1] ? {emphasis: pathAndEmphasis?.[1]} : {})}
     }
 }

@@ -5,7 +5,7 @@ import {expect} from "chai";
 describe('Modifier Parser', () => {
 
     ([
-        ["AUS +1", {path: "aus", attributes: {value: 1}}],
+        ["AUS +1", {path: "AUS", attributes: {value: 1}}],
         ["bonuscap -1", {path: "bonuscap", attributes: {value: -1}}],
         ["speed.multiplier 2", {path: "speed.multiplier", attributes: {value: 2}}],
         ["generalskills.firemagic/Schaden +2", {
@@ -18,7 +18,17 @@ describe('Modifier Parser', () => {
                 expect(parseResult.modifiers).to.deep.equal([expected])
             }
         );
+    });
 
+    ([
+        ["AUS +1", {path: "AUS", attributes: {value: 1}}],
+        ["bonuscap -1", {path: "boNuscap", attributes: {value: -1}}],
+        ["speed.multiplier 2", {path: "spEed.multiplier", attributes: {value: 2}}],
+        ["generalskills.firemagic/Schaden +2", {
+            path: "geNeralskills.firemagic",
+            attributes: {emphasis: "Schaden", value: 2}
+        }],
+    ] as const).forEach(([input, expected]) => {
         it(`should parse ${input} with random capitalization`, () => {
             const enlargedPath = input.substring(0, 2) + input[2].toUpperCase() + input.substring(3)
             const parseResult = parseModifiers(enlargedPath)
@@ -26,18 +36,18 @@ describe('Modifier Parser', () => {
         });
     });
     ([
-        ["AUS value=${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS value=-${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
-        ["AUS value=+${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS ${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS -${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
-        ["AUS +${GSW}", {path: "aus", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS value=${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS value=-${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
+        ["AUS value=+${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS ${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS -${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
+        ["AUS +${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
         ["damage weapon='Fulnisches Doppelschwert' +1", {
             path: "damage",
             attributes: {weapon: "Fulnisches Doppelschwert", value: 1}
         }],
         ["generalSkills.firemagic emphasis=Schaden value=2", {
-            path: "generalskills.firemagic",
+            path: "generalSkills.firemagic",
             attributes: {value: 2, emphasis: "Schaden"}
         }],
         ['handicap.shield.mod value="3"', {path: "handicap.shield.mod", attributes: {value: 3}}],
