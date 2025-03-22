@@ -55,7 +55,12 @@ describe('addModifier', () => {
         } as unknown as SinonStubbedInstance<SplittermondItem>;
 
         sandbox.stub(foundryApi, 'reportError');
-        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
+        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
+            switch(key){
+                case 'splittermond.attributes.intuition.short': return 'INT';
+                default: return key;
+            }
+        });
     });
 
     afterEach(() => {
@@ -130,7 +135,7 @@ describe('addModifier', () => {
         expect(modifierManager.add.lastCall.args).to.have.members([
             'damage.fire',
             'Damage',
-            "+5",
+            5,
             item,
             '',
             false
