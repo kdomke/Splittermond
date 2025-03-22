@@ -26,7 +26,7 @@ export class LanguageMapper<T extends string> {
 }
 
 /**
- * Initializes a language mapper that allows to map between an internal representation and a human readable form. Initialization
+ * Initializes a language mapper that allows to map between an internal representation and a human-readable form. Initialization
  * is delayed because we cannot be sure that the localization system is already present when the module loads.
  * @param codeCollection The internal representation of the language keys
  */
@@ -38,7 +38,7 @@ export function initMapper<T extends string>(codeCollection: Readonly<T[]>) {
     let directMaps: Map<string, T> = new Map();
 
     /**
-     * @param codeToTranslation The language keys that allow to localize an internal represenation to a human readable form
+     * @param codeToTranslation The language keys that allow to localize an internal represenation to a human-readable form
      */
     function withTranslator(codeToTranslation: (s: T) => string) {
         translator = codeToTranslation;
@@ -46,7 +46,7 @@ export function initMapper<T extends string>(codeCollection: Readonly<T[]>) {
     }
 
     /**
-     * @param otherMappers Additional mappers that allow to map from humanreadable to internal representation
+     * @param mappers Additional mappers that allow to map from human-readable to internal representation
      */
     function andOtherMappers(...mappers: ((s: T) => string)[]) {
         backTranslations = mappers;
@@ -59,6 +59,7 @@ export function initMapper<T extends string>(codeCollection: Readonly<T[]>) {
     }
 
     function build() {
+        Object.defineProperty(getLanguageMapper, "clear", {value: () => languageMapper = null}); //secret workaround to reset the mapper for tests
         return getLanguageMapper;
     }
 

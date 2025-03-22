@@ -1,16 +1,18 @@
-import { expect } from 'chai';
-import sinon, { SinonSandbox } from 'sinon';
+import {expect} from 'chai';
+import sinon, {SinonSandbox} from 'sinon';
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import {ParsedExpression, ParsedModifier} from "../../../../../../module/actor/modifiers/parsing";
-import {normalizeModifiers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
+import {normalizeModifiers} from "../../../../../../module/actor/modifiers/parsing";
+import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
 
 describe('normalizeModifiers', () => {
     let sandbox: SinonSandbox;
 
     beforeEach(() => {
         sandbox = sinon.createSandbox();
+        clearMappers();
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
-            switch (key){
+            switch (key) {
                 case "splittermond.derivedAttributes.speed.short":
                     return "GSW";
                 case "splittermond.attributes.charisma.short":
@@ -41,7 +43,8 @@ describe('normalizeModifiers', () => {
         const result = normalizeModifiers(input);
 
         expect(result[0].attributes.value).to.deep.equal({
-            propertyPath: 'attributes.charisma.value'
+            propertyPath: 'attributes.charisma.value',
+            sign: 1,
         });
         expect(result[0].attributes.damageType).to.equal('fire');
     });
@@ -50,7 +53,7 @@ describe('normalizeModifiers', () => {
         const input: ParsedModifier[] = [{
             path: 'gsw.mult',
             attributes: {
-                value: { propertyPath: 'GSW' }
+                value: {propertyPath: 'GSW', sign: 1}
             }
         }];
 
@@ -80,7 +83,7 @@ describe('normalizeModifiers', () => {
             path: 'complex',
             attributes: {
                 str: 'STR',
-                dex: { propertyPath: 'BEW' },
+                dex: {propertyPath: 'BEW', sign: 1},
                 int: 5,
                 custom: 'unknown'
             }
@@ -89,7 +92,8 @@ describe('normalizeModifiers', () => {
         const result = normalizeModifiers(input);
 
         expect(result[0].attributes.str).to.deep.equal({
-            propertyPath: 'attributes.strength.value'
+            propertyPath: 'attributes.strength.value',
+            sign:1,
         });
         expect((result[0].attributes.dex as ParsedExpression).propertyPath)
             .to.equal('attributes.agility.value');

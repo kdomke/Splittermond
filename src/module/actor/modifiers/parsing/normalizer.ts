@@ -11,6 +11,14 @@ const derivedAttributeMapper = initMapper(derivedAttributes)
     .andOtherMappers((t) => `splittermond.derivedAttributes.${t}.short`)
     .build();
 
+/**
+ * Only use for testing
+ */
+export function clearMappers(){
+    (attributeMapper as any).clear();
+    (derivedAttributeMapper as any).clear();
+}
+
 export function normalizeModifiers(modifiers: ParsedModifier[]) {
     const normalized = modifiers.map(m => ({...m}))
     normalized.forEach(normalizeModifier);

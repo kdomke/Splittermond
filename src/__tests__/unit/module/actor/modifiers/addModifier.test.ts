@@ -9,6 +9,7 @@ import {splittermond} from "../../../../../module/config";
 import {CharacterDataModel} from "../../../../../module/actor/dataModel/CharacterDataModel";
 import {CharacterAttribute} from "../../../../../module/actor/dataModel/CharacterAttribute";
 import Attribute from "../../../../../module/actor/attribute";
+import {clearMappers} from "../../../../../module/actor/modifiers/parsing/normalizer";
 
 describe('addModifier', () => {
     let sandbox: SinonSandbox;
@@ -19,7 +20,7 @@ describe('addModifier', () => {
 
     beforeEach(() => {
         sandbox = sinon.createSandbox();
-
+        clearMappers();
         systemData = {
             healthRegeneration: {multiplier: 1, bonus: 0},
             focusRegeneration: {multiplier: 1, bonus: 0},
