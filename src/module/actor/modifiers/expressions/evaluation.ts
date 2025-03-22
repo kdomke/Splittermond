@@ -10,19 +10,23 @@ import {
 } from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 
-export function evaluate(expression: Expression): number | null {
+export function evaluate(expression: Expression): number {
+    return doEvaluate(expression) ?? 0
+}
+
+function doEvaluate(expression: Expression): number | null {
     if (expression instanceof AmountExpression) {
         return expression.amount
     } else if (expression instanceof ReferenceExpression) {
         return new PropertyResolver().numberOrNull(expression.propertyPath, expression.source)
     } else if (expression instanceof AddExpression) {
-        return (evaluate(expression.left) ?? 0) + (evaluate(expression.right) ?? 0)
+        return (doEvaluate(expression.left) ?? 0) + (doEvaluate(expression.right) ?? 0)
     } else if (expression instanceof SubtractExpression) {
-        return (evaluate(expression.left) ?? 0) - (evaluate(expression.right) ?? 0)
+        return (doEvaluate(expression.left) ?? 0) - (doEvaluate(expression.right) ?? 0)
     } else if (expression instanceof MultiplyExpression) {
-        return (evaluate(expression.left) ?? 1) * (evaluate(expression.right) ?? 1)
+        return (doEvaluate(expression.left) ?? 1) * (doEvaluate(expression.right) ?? 1)
     } else if (expression instanceof DivideExpression) {
-        return (evaluate(expression.left) ?? 1) / (evaluate(expression.right) ?? 1)
+        return (doEvaluate(expression.left) ?? 1) / (doEvaluate(expression.right) ?? 1)
     }
     exhaustiveMatchGuard(expression)
 }
