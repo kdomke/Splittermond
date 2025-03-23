@@ -1,7 +1,8 @@
-import {ParsedModifier} from "./index";
+import {ParsedModifier, Value} from "./index";
 import {initMapper, LanguageMapper} from "../../../util/LanguageMapper";
 import {attributes, derivedAttributes} from "../../../config/attributes";
 
+const modifierKeys = ["emphasis", "damageType", "value"] as const;
 const attributeMapper = initMapper(attributes)
     .withTranslator((t) => `splittermond.attributes.${t}.long`)
     .andOtherMappers((t) => `splittermond.attributes.${t}.short`)
@@ -10,13 +11,17 @@ const derivedAttributeMapper = initMapper(derivedAttributes)
     .withTranslator((t) => `splittermond.derivedAttributes.${t}.long`)
     .andOtherMappers((t) => `splittermond.derivedAttributes.${t}.short`)
     .build();
+const modifierKeyMapper = initMapper(modifierKeys)
+    .withTranslator((t) => `splittermond.modifiers.keys.${t}`)
+    .build()
 
 /**
  * Only use for testing
  */
-export function clearMappers(){
+export function clearMappers() {
     (attributeMapper as any).clear();
     (derivedAttributeMapper as any).clear();
+    (modifierKeyMapper as any).clear();
 }
 
 export function normalizeModifiers(modifiers: ParsedModifier[]) {
@@ -26,22 +31,41 @@ export function normalizeModifiers(modifiers: ParsedModifier[]) {
 }
 
 function normalizeModifier(modifier: ParsedModifier) {
-    const replacer = new Or(replaceAttribute, replaceDerivedAttribute)
     for (const key in modifier.attributes) {
         const value = modifier.attributes[key];
-        if (typeof value === "string") {
-            const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
-            const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
-            if (replacement !== value) {
-                modifier.attributes[key] = {propertyPath: replacement, sign};
-            }
-        } else if (typeof value === "object") {
-            const replacement = replacer.tryReplace(value.propertyPath);
-            if (replacement !== value.propertyPath) {
-                value.propertyPath = replacement;
-            }
+        modifier.attributes[key] = normalizeValue(value);
+    }
+}
+
+export function normalizeKey(key: string) {
+    const replacer = new Or(replaceModifierKey)
+    const replacement = replacer.tryReplace(key)
+    if (replacement !== key) {
+        return replacement;
+    }
+    return key;
+}
+
+export function normalizeValue(value: Value) {
+    const replacer = new Or(replaceAttribute, replaceDerivedAttribute)
+    if (typeof value === "string") {
+        const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
+        const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
+        if (replacement !== value) {
+            return {propertyPath: replacement, sign};
+        }
+    } else if (typeof value === "object") {
+        const replacement = replacer.tryReplace(value.propertyPath);
+        if (replacement !== value.propertyPath) {
+            value.propertyPath = replacement;
+            return value;
         }
     }
+    return value;
+}
+
+function replaceModifierKey(key:string){
+    return createReplace(modifierKeys, modifierKeyMapper(), (v) => v)(key)
 }
 
 function replaceAttribute(value: string): string {

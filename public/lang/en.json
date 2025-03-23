@@ -2,7 +2,7 @@
   "splittermond": {
     "damageType": "damage type",
     "damageCategory": "damage category",
-    "unknownError":"An unknown error occurred. Please file a bug report.",
+    "unknownError": "An unknown error occurred. Please file a bug report.",
     "chatCard": {
       "noGMConnected": "Action cannot be performed, because no authorized user (GM) is connected",
       "messageNotFound": "Message to update not found in the chat log",
@@ -20,7 +20,7 @@
         "youHaveNoTargets": "You have no targets selected",
         "noUserTargetsFound": "User {user} has no targets selected.",
         "noTargetsFound": "Could not find targets for Damage",
-        "consumptionMessage":"{principalImplement} by {sourceName}"
+        "consumptionMessage": "{principalImplement} by {sourceName}"
       }
     },
     "damageMessage": {
@@ -41,6 +41,15 @@
       "tooltip": {
         "base": "DR",
         "ignored": "ignoring"
+      },
+      "modifiers": {
+        "displayName": "Modifiers",
+        "keys": {
+          "value": "value",
+          "emphasis": "emphasis",
+          "damageType": "damageType"
+        }
+      }
     },
     "message": {
       "itemImported": "The item \"{name}\" was imported as \"{type}\"!",
@@ -66,7 +75,7 @@
       },
       "stableProtectsAllReduction": {
         "name": "Feature 'stable' nullifies all 'Piercing' features",
-        "hint": "If an armor with feature 'stable' is attacked by a piercing weapon, then the effect of 'piercing' on the entire damage reduction is negated. If this option is deactivated, this effect only applies to the damage reduction provided by the armor with the feature.",
+        "hint": "If an armor with feature 'stable' is attacked by a piercing weapon, then the effect of 'piercing' on the entire damage reduction is negated. If this option is deactivated, this effect only applies to the damage reduction provided by the armor with the feature."
       }
     },
     "damageTypes": {

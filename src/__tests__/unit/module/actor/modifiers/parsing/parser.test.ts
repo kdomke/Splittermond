@@ -1,9 +1,23 @@
-import {parseModifiers} from "../../../../../../module/actor/modifiers/parsing/parser";
+import {parseModifiers} from "../../../../../../module/actor/modifiers/parsing";
 import {expect} from "chai";
+import sinon, {SinonSandbox} from "sinon";
+import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
+import {foundryApi} from "../../../../../../module/api/foundryApi";
 
 
 describe('Modifier Parser', () => {
 
+    let sandbox: SinonSandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        clearMappers();
+        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
     ([
         ["AUS +1", {path: "AUS", attributes: {value: 1}}],
         ["bonuscap -1", {path: "bonuscap", attributes: {value: -1}}],
@@ -112,5 +126,62 @@ describe('Modifier Parser', () => {
                 errors.some(e => e.includes("Invalid Key for Attribute"))
             );
         });
+    });
+});
+
+describe('Modifier Normalization', () => {
+    let sandbox: SinonSandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        clearMappers();
+        sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
+            switch (key) {
+                case "splittermond.modifiers.keys.emphasis":
+                    return "Schwerpunkt";
+                case "splittermond.modifiers.keys.value":
+                    return "Wert";
+                default:
+                    return key;
+            }
+        });
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    it ('should normalize emphasis keyword',()=>{
+       const input = "generalSkills.firemagic Schwerpunkt=Schaden value=2";
+
+       const result = parseModifiers(input).modifiers;
+
+       expect(result[0].attributes.emphasis).to.equal("Schaden");
+    });
+
+
+    it ('should normalize value keyword',()=>{
+        const input = "generalSkills.firemagic Wert=2";
+
+        const result = parseModifiers(input).modifiers;
+
+        expect(result[0].attributes.value).to.equal(2);
+    });
+
+    it ('should validate emphasis despite normalization',()=>{
+        const input = "generalSkills/Schaden Schwerpunkt=Schaden value=2";
+
+        const result = parseModifiers(input).errors;
+
+        expect(result[0]).to.equal("Modifier 'generalSkills/Schaden Schwerpunkt=Schaden value=2' contains duplicate declaration of emphasis");
+    });
+
+
+    it ('should valudate value despite normalization',()=>{
+        const input = "generalSkills.firemagic Wert=2 2";
+
+        const result = parseModifiers(input).errors;
+
+        expect(result[0]).to.equal("Modifier 'generalSkills.firemagic Wert=2 2' contains duplicate declaration of value");
     });
 });

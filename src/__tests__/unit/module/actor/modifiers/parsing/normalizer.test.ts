@@ -1,8 +1,7 @@
 import {expect} from 'chai';
 import sinon, {SinonSandbox} from 'sinon';
 import {foundryApi} from "../../../../../../module/api/foundryApi";
-import {ParsedExpression, ParsedModifier} from "../../../../../../module/actor/modifiers/parsing";
-import {normalizeModifiers} from "../../../../../../module/actor/modifiers/parsing";
+import {normalizeModifiers, ParsedExpression, ParsedModifier} from "../../../../../../module/actor/modifiers/parsing";
 import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
 
 describe('normalizeModifiers', () => {

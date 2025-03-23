@@ -34,7 +34,7 @@ export function initMapper<T extends string>(codeCollection: Readonly<T[]>) {
     let languageMapper: LanguageMapper<T> | null = null;
     let localizer = (s: string) => foundryApi.localize(s);
     let translator: (s: T) => string;
-    let backTranslations: ((s: T) => string)[];
+    let backTranslations: ((s: T) => string)[]=[];
     let directMaps: Map<string, T> = new Map();
 
     /**

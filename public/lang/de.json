@@ -120,8 +120,15 @@
     "updateOrOverwriteActor": "Charakterdaten aktualisieren oder überschreiben?",
     "fumble": "Patzer",
     "critical": "Triumph",
+    "modifiers": {
+      "displayName": "Modifikatoren",
+      "keys": {
+        "emphasis": "Schwerpunkt",
+        "value": "Wert",
+        "damageType": "Schadensart"
+      }
+    },
     "modifier": "Modifikator",
-    "modifiers": "Modifikatoren",
     "minStrength": "min. Stärke",
     "generalSkills": "Allgemeine Fertigkeiten",
     "magicSkills": "Magieschulen",

@@ -1,4 +1,5 @@
 import {ErrorMessage, ParsedModifier, Value} from "./index";
+import {normalizeKey} from "./normalizer";
 import {validateAllInputConsumed, validateKeys} from "./validators";
 
 type SingleParseResult = ParsedModifier | ErrorMessage
@@ -113,7 +114,9 @@ function parseAttribute(attribute: string): AttributeParseResult {
         return `Invalid Key for Attribute ${attribute}, found ${validationFailure.join("\n")}`
     }
     const value = parseValue(valueMatch[0])
-    return {key: keyMatch[0], value}
+    //Only normalize keys here. We don't have enough information to reliably normalize values here.
+    const normalizedKey = normalizeKey(keyMatch[0]);
+    return {key: normalizedKey, value}
 }
 
 function parseValue(value: string) {
@@ -122,7 +125,7 @@ function parseValue(value: string) {
     const quotedStringPattern = /(?<=["']).*(?=["'])/
     if (valueExpressionPattern.test(value)) {
         const sign: 1 | -1 = (/-(?=\s*\$\{)/.test(value) ? -1 : 1)
-        return {propertyPath: valueExpressionPattern.exec(value)![0], sign}
+        return {propertyPath: valueExpressionPattern.exec(value)![0], sign};
     } else if (numberPattern.test(value)) {
         return parseFloat(numberPattern.exec(value)![0])
     } else if (quotedStringPattern.test(value)) {
