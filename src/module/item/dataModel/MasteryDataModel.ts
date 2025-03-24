@@ -1,7 +1,7 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondMasteryItem from "../mastery";
 import {getDescriptorFields} from "./commonFields";
-import {migrateFrom0_12_11} from "./migrations";
+import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemMasteryDataModelSchema() {
     return {
@@ -21,6 +21,7 @@ export class MasteryDataModel extends SplittermondDataModel<MasteryDataModelType
 
     static migrateData(source:unknown){
         source = migrateFrom0_12_11(source);
+        source = migrateFrom0_12_13(source);
         return super.migrateData(source);
     }
 }

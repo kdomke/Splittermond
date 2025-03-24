@@ -15,3 +15,22 @@ export function migrateFrom0_12_11(source:unknown){
     }
     return source;
 }
+
+export function migrateFrom0_12_13(source:unknown){
+    if(!!source && typeof source === "object" && ("modifier" in source) && typeof(source.modifier) === "string"){
+        const keep = source.modifier.split(",")
+            .map(mod => mod.trim())
+            .filter(mod => !mod.includes("/"));
+        const change = source.modifier.split(",")
+            .map(mod => mod.trim())
+            .filter(mod => mod.includes("/"))
+            .map(mod => {
+                const path = mod.split("/")?.[0].trim() ?? "";
+                const value = /\S+(?=\s*$)/.exec(mod)?.[0].trim() ?? "";
+                const emphasis = /(?<=\/).*?(?=\S+\s*$)/.exec(mod)?.[0].trim() ?? ""
+                return `${path} emphasis="${emphasis}" ${value}`
+            });
+        source.modifier = [...keep, ...change].join(", ");
+    }
+    return source;
+}

@@ -2,6 +2,7 @@ import {foundryApi} from "../api/foundryApi";
 
 export default class SplittermondItem extends Item {
 
+
     constructor(data, context = {}) {
         if (context?.splittermond?.ready) {
             super(data, context);

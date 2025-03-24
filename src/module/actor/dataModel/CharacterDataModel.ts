@@ -4,6 +4,7 @@ import { fields } from "../../data/SplittermondDataModel";
 import SplittermondActor from "../actor";
 import {HealthDataModel} from "./HealthDataModel";
 import {FocusDataModel} from "./FocusSchemaModel";
+import {CharacterAttribute} from "./CharacterAttribute";
 
 function CharacterDataModelSchema() {
     return {
@@ -27,46 +28,14 @@ function CharacterDataModelSchema() {
         education: new fields.StringField({ required: true, nullable: false }),
         biography: new fields.HTMLField({ required: true, nullable: false }),
         attributes: new fields.SchemaField({
-            charisma: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            agility: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            intuition: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            constitution: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            mystic: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            strength: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            mind: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
-            willpower: new fields.SchemaField({
-                species: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-                initial: new fields.NumberField({ required: true, nullable: false, initial: 2 }),
-                advances: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-            }, { required: true, nullable: false }),
+            charisma: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            agility: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            intuition: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            constitution: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            mystic: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            strength: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            mind: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
+            willpower: new fields.EmbeddedDataField(CharacterAttribute, { required: true, nullable: false }),
         }, { required: true, nullable: false }),
         skills: new fields.SchemaField({
             melee: new fields.SchemaField({

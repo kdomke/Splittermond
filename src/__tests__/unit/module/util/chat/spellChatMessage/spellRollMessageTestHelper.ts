@@ -10,11 +10,12 @@ import {OnAncestorReference} from "module/data/references/OnAncestorReference";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference";
 import SplittermondItem from "../../../../../../module/item/item";
 import {SpellDataModel} from "../../../../../../module/item/dataModel/SpellDataModel";
+import {CharacterDataModel} from "../../../../../../module/actor/dataModel/CharacterDataModel";
 
 export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondActor> {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
     sandbox.stub(foundryApi, "getActor").returns(actorMock);
-    actorMock.system = {}
+    actorMock.system = sandbox.createStubInstance(CharacterDataModel);
     Object.defineProperty(actorMock, "documentName", {value: "Actor", enumerable: true});
     Object.defineProperty(actorMock, "id", {value: "1", enumerable: true});
     return actorMock;

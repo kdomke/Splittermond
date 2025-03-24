@@ -9,6 +9,13 @@ const SCRIPT_FILE_PATH = function() {
     const filePath = path.dirname(new URL(url).pathname);
     return process.platform === "win32" ? filePath.replace(/\//, "") : filePath;
 }();
+
+if(path.basename(path.join(MODULE_ID,"..")) !== "systems"){
+    console.error("This script must be run in the splittermond of the FoundryVTT systems directory");
+    process.exit(1);
+}
+
+
 console.log(`Unpacking compendia of system ${MODULE_ID}`);
 const packs = await fs.readdir("./packs");
 for (const pack of packs) {

@@ -11,19 +11,15 @@ import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancemen
 import {modifiers} from "./config/modifiers";
 import {skillGroups} from "./config/skillGroups";
 import {damageTypeOptions, damageTypes} from "./config/damageTypes";
+import {attributes, derivedAttributes} from "./config/attributes.js";
 
 export const splittermond = {};
 
 splittermond.heroLevel = [0, 100, 300, 600];
 
-splittermond.attributes = ["charisma", "agility", "intuition",
-    "constitution",
-    "mystic",
-    "strength",
-    "mind",
-    "willpower"];
+splittermond.attributes = attributes;
 
-splittermond.derivedAttributes = ["size", "speed", "initiative", "healthpoints", "focuspoints", "defense", "bodyresist", "mindresist"];
+splittermond.derivedAttributes = derivedAttributes;
 splittermond.derivedValues = splittermond.derivedAttributes;
 splittermond.woundMalus = {
     "5": [
