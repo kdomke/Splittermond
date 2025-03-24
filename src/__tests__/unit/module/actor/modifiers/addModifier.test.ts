@@ -118,10 +118,10 @@ describe('addModifier', () => {
         expect(modifierManager.add.lastCall.args).to.have.members(['AUS', '', 1, item, '', false]);
     });
 
-    it.skip('should handle selectable modifiers with emphasis', () => {
-        addModifier(actor, item, 'Selectable', 'Handicap.Shield/emphasis +3');
+    it('should handle selectable modifiers with emphasis', () => {
+        addModifier(actor, item, 'Selectable', 'resistance.fire/emphasis +3');
         expect(modifierManager.add.lastCall.args).to.have.members([
-            'handicap.shield',
+            'resistance.fire',
             'emphasis',
             3,
             item,
