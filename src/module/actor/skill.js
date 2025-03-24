@@ -139,6 +139,7 @@ export default class Skill extends Modifiable {
                     isFumble: rollResult.isFumble,
                     isCrit: rollResult.isCrit,
                     degreeOfSuccess: rollResult.degreeOfSuccess,
+                    degreeOfSuccessMessage: rollResult.degreeOfSuccessMessage,
                     hideDifficulty: hideDifficulty,
                 }
             }

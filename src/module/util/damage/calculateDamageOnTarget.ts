@@ -106,7 +106,7 @@ class AddedDamageCalculator {
 
     private getResistance(damageType: DamageType): CostModifier {
         if (this.remainingReduction.has(damageType)) {
-            console.warn("Splittermond | Registered multiple damage sources of the same type. This is not intended. Calculation will proceed correcly, but reporting might look weird.")
+            console.warn("Splittermond | Registered multiple damage sources of the same type. This is not intended. Calculation will proceed correctly, but reporting might look weird.")
             return this.remainingReduction.get(damageType)!;
         } else {
             return this.costBase.multiply(this.target.resistances[damageType]);

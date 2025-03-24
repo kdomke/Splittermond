@@ -1,4 +1,9 @@
 ## 0.12.13
+### Fixed
+* Resistenzen und Verwundbarkeiten werden jetzt immer beachtet
+* Patzertabelle wird auch bei verpatzen einer Aktiven Abwehr angezeigt
+* Schadensübersicht zeigt auch negative Modifikatoren an.
+* Migration von 0.12.11 nach 0.12.12 fügt keine Leerzeichen mehr ein und übersetzt "Susceptibility" korrekt
 ## 0.12.12 HOTFIX##
 ### Fixed
 * Verwundbarkeiten und Resistenzen werden nun korrekt bei der Schadensberechnung berücksichtigt
