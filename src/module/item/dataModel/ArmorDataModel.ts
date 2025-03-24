@@ -2,7 +2,7 @@ import {DataModelSchemaType, SplittermondDataModel} from "../../data/Splittermon
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondShieldItem from "../shield";
 import {getDefense, getDescriptorFields, getPhysicalProperties} from "./commonFields";
-import {migrateFrom0_12_11} from "./migrations";
+import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemArmorDataModelSchema() {
     return {
@@ -23,6 +23,7 @@ export class ArmorDataModel extends SplittermondDataModel<ArmorDataModelType, Sp
 
     static migrateData(source:unknown){
         source = migrateFrom0_12_11(source);
+        source = migrateFrom0_12_13(source);
         return super.migrateData(source);
     }
 }

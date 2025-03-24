@@ -587,7 +587,7 @@ export default class SplittermondActor extends Actor {
                     if (modifierStr === "" && m.specialization) {
                         let emphasisName = /(.*) [1-9]/.exec(m.name);
                         if (emphasisName) {
-                            modifierStr = `${id}/${emphasisName[1]} +${m.level}`;
+                            modifierStr = `${id} emphasis="${emphasisName[1]}" +${m.level}`;
                         }
                         description = game.i18n.localize(`splittermond.emphasis`);
                     }
