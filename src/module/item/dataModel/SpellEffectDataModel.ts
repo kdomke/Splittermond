@@ -1,7 +1,7 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondItem from "../item";
 import {getDescriptorFields} from "./commonFields";
-import {migrateFrom0_12_10} from "./migrations";
+import {migrateFrom0_12_11} from "./migrations";
 
 function ItemSpellEffectDataModelSchema() {
     return {
@@ -17,7 +17,7 @@ export class SpellEffectDataModel extends SplittermondDataModel<SpellEffectDataM
     static defineSchema = ItemSpellEffectDataModelSchema;
 
     static migrateData(source:unknown){
-        source = migrateFrom0_12_10(source);
+        source = migrateFrom0_12_11(source);
         return super.migrateData(source);
     }
 }

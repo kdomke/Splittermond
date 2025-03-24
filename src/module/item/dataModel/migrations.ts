@@ -1,4 +1,4 @@
-export function migrateFrom0_12_10(source:unknown){
+export function migrateFrom0_12_11(source:unknown){
     if(!!source && typeof source === "object" && ("modifier" in source) && typeof(source.modifier) === "string"){
         const keep = source.modifier.split(",")
             .map(mod => mod.trim())
