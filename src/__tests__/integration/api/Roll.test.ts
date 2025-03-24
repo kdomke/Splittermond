@@ -71,7 +71,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
 
             const tooltip = await rollResult.getTooltip();
             expect(tooltip).to.contain('<span class="part-formula">2d6</span>');
-            expect(tooltip).to.match(/(<li class="roll die d6">[1-6]<\/li>)/);
+            expect(tooltip).to.match(/(<li class="roll die d6(?: min| max)?">[1-6]<\/li>)/);
         });
     });
 

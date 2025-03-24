@@ -161,16 +161,18 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     defenseValue += 1;
 
                 }
-                data.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
+                templateContext.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
                 if (data.degreeOfSuccess === 0) {
                     templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.nearmiss")}</p>`;
                 }
-                if (data.degreeOfSuccess <= -5) {
-                    if (data.itemData._id === "acrobatics") {
+
+                const fumbledFightingSkillCheck =  data.isFumble && !["acrobatics","determination", "endurance"].includes(data.itemData.id)
+                if (data.degreeOfSuccess <= -5 || fumbledFightingSkillCheck) {
+                    if (data.itemData.id === "acrobatics") {
                         templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.devastating.acrobatics")}</p>`;
-                    } else if (data.itemData._id === "determination") {
+                    } else if (data.itemData.id === "determination") {
                         templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.devastating.determination")}</p>`;
-                    } else if (data.itemData._id === "endurance") {
+                    } else if (data.itemData.id === "endurance") {
                         templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.devastating.endurance")}</p>`;
                     } else {
                         templateContext.degreeOfSuccessDescription += `<p>${game.i18n.localize("splittermond.defenseResultDescription.devastating.melee")}</p>`;
