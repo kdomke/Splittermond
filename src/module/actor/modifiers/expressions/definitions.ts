@@ -30,7 +30,7 @@ export class AmountExpression {
 }
 
 export class ReferenceExpression {
-    constructor(public readonly propertyPath: string, public readonly source: object) {
+    constructor(public readonly propertyPath: string, public readonly source: object, public readonly stringRep:string) {
     }
 }
 

@@ -28,6 +28,7 @@ describe('createExpressions', () => {
             attributes: {
                 refAttr: {
                     propertyPath: 'existing.path',
+                    original: 'existing.path',
                     sign: 1
                 }
             }
@@ -38,7 +39,7 @@ describe('createExpressions', () => {
         expect(result.errors).to.have.lengthOf(0);
         const expr = result.modifiers[0].attributes.refAttr as MultiplyExpression;
         expect(expr).to.be.an.instanceOf(MultiplyExpression);
-        expect(expr.right).to.deep.equal({propertyPath: 'existing.path', source:mockSource});
+        expect(expr.right).to.deep.equal({propertyPath: 'existing.path', source:mockSource, stringRep: 'existing.path'});
     });
 
     it('should collect validation errors for invalid references', () => {
@@ -47,7 +48,8 @@ describe('createExpressions', () => {
             attributes: {
                 badRef: {
                     propertyPath: 'non.existing.path',
-                    sign: -1
+                    sign: -1,
+                    original: 'non.existing.path'
                 }
             }
         }];
@@ -66,7 +68,7 @@ describe('createExpressions', () => {
             },
             {
                 path: 'bad.modifier',
-                attributes: { invalid: { propertyPath: 'missing.path', sign: 1 } }
+                attributes: { invalid: { propertyPath: 'missing.path', sign: 1, original:'missing.path' } }
             }
         ];
 
@@ -81,7 +83,7 @@ describe('createExpressions', () => {
             path: 'complex.path',
             attributes: {
                 num: 42,
-                ref: { propertyPath: 'existing.path', sign: -1 },
+                ref: { propertyPath: 'existing.path', sign: -1, original: 'existing.path' },
                 str: 'constant'
             }
         };

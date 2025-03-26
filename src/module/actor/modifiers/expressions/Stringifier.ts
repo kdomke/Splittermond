@@ -24,7 +24,7 @@ function do_toString(expression: Expression): string {
     if(expression instanceof AmountExpression) {
         return `${expression.amount}`;
     } else if (expression instanceof ReferenceExpression) {
-        return `\$\{${expression.propertyPath}}`
+        return `\$\{${expression.stringRep}}`
     } else if(expression instanceof AddExpression) {
         return `(${do_toString(expression.left)} + ${do_toString(expression.right)})`;
     } else if(expression instanceof SubtractExpression) {

@@ -60,35 +60,35 @@ describe("Expressions", () => {
 
     describe("Reference Expressions", () => {
         it("should evaluate to the value of the property", () => {
-            const property = new ReferenceExpression("value", {value: 3});
+            const property = new ReferenceExpression("value", {value: 3}, "value");
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should omit properties of the wrong format when multiplying", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"});
+            const property = new ReferenceExpression("value", {value: "splittermond"},"value");
             const expression = times(plus(of(3),property), minus(of(4),of(3)));
             expect(evaluate(expression)).to.deep.equal(3);
         });
 
         it("should omit properties of the wrong format when adding", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"});
+            const property = new ReferenceExpression("value", {value: "splittermond"},"value");
             const expression = times(property, minus(of(4),of(3)));
             expect(evaluate(expression)).to.deep.equal(1);
         });
 
         it("should evaluate nested properties", () => {
-            const property = new ReferenceExpression("first.second.third", {first: {second:{third:3}}});
+            const property = new ReferenceExpression("first.second.third", {first: {second:{third:3}}},"first.second.third");
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should not condense property ", () => {
-            const property = new ReferenceExpression("value", {value: 3});
+            const property = new ReferenceExpression("value", {value: 3},"value");
             const expression = times(plus(of(3),property), minus(of(4),of(3)));
             expect(condense(expression)).to.deep.equal(times(plus(of(3),property), of(1)));
         });
 
         it("should stringify property ", () => {
-            const property = new ReferenceExpression("value", {value: 3});
+            const property = new ReferenceExpression("value", {value: 3},"value");
             const expression = times(plus(of(3),property), minus(of(4),of(3)));
             expect(asString(expression)).to.equal("(3 + ${value}) * (4 - 3)");
         });

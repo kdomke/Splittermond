@@ -39,7 +39,7 @@ function setUpExpression(expression: Value, source: object): Expression | string
         if(validationFailures.length > 0){
             return validationFailures;
         }
-        const reference = new ReferenceExpression(expression.propertyPath, source);
+        const reference = new ReferenceExpression(expression.propertyPath, source, expression.original);
         return times(of(expression.sign), reference)
     } else {
         return expression;

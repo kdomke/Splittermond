@@ -52,7 +52,7 @@ export function normalizeValue(value: Value) {
         const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
         const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
         if (replacement !== value) {
-            return {propertyPath: replacement, sign};
+            return {propertyPath: replacement, sign, original: value};
         }
     } else if (typeof value === "object") {
         const replacement = replacer.tryReplace(value.propertyPath);

@@ -11,6 +11,7 @@ export interface ParsedModifier {
 
 export type Value = ParsedExpression|number|string
 export interface ParsedExpression {
+    original:string
     propertyPath:string
     sign: -1|1;
 }

@@ -125,7 +125,8 @@ function parseValue(value: string) {
     const quotedStringPattern = /(?<=["']).*(?=["'])/
     if (valueExpressionPattern.test(value)) {
         const sign: 1 | -1 = (/-(?=\s*\$\{)/.test(value) ? -1 : 1)
-        return {propertyPath: valueExpressionPattern.exec(value)![0], sign};
+        const parsedValue = valueExpressionPattern.exec(value)![0];
+        return {propertyPath: parsedValue, sign, original: parsedValue};
     } else if (numberPattern.test(value)) {
         return parseFloat(numberPattern.exec(value)![0])
     } else if (quotedStringPattern.test(value)) {

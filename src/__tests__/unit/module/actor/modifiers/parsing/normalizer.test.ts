@@ -44,6 +44,7 @@ describe('normalizeModifiers', () => {
         expect(result[0].attributes.value).to.deep.equal({
             propertyPath: 'attributes.charisma.value',
             sign: 1,
+            original: "AUS"
         });
         expect(result[0].attributes.damageType).to.equal('fire');
     });
@@ -52,7 +53,7 @@ describe('normalizeModifiers', () => {
         const input: ParsedModifier[] = [{
             path: 'gsw.mult',
             attributes: {
-                value: {propertyPath: 'GSW', sign: 1}
+                value: {propertyPath: 'GSW', sign: 1, original: 'GSW'}
             }
         }];
 
@@ -82,7 +83,7 @@ describe('normalizeModifiers', () => {
             path: 'complex',
             attributes: {
                 str: 'STR',
-                dex: {propertyPath: 'BEW', sign: 1},
+                dex: {propertyPath: 'BEW', sign: 1, original:'BEW'},
                 int: 5,
                 custom: 'unknown'
             }
@@ -93,6 +94,7 @@ describe('normalizeModifiers', () => {
         expect(result[0].attributes.str).to.deep.equal({
             propertyPath: 'attributes.strength.value',
             sign:1,
+            original: 'STR'
         });
         expect((result[0].attributes.dex as ParsedExpression).propertyPath)
             .to.equal('attributes.agility.value');

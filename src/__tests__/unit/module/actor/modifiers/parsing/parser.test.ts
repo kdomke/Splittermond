@@ -50,12 +50,12 @@ describe('Modifier Parser', () => {
         });
     });
     ([
-        ["AUS value=${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS value=-${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
-        ["AUS value=+${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS ${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
-        ["AUS -${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1}}}],
-        ["AUS +${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1}}}],
+        ["AUS value=${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
+        ["AUS value=-${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1,original: "GSW"}}}],
+        ["AUS value=+${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
+        ["AUS ${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
+        ["AUS -${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1, original: "GSW"}}}],
+        ["AUS +${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
         ["damage weapon='Fulnisches Doppelschwert' +1", {
             path: "damage",
             attributes: {weapon: "Fulnisches Doppelschwert", value: 1}
