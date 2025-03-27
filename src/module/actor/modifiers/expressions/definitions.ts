@@ -20,25 +20,28 @@ export function isExpression(value: unknown): value is Expression {
         || value instanceof AbsExpression
 }
 
-export const expressions = {
-    of(amount: number) {
-        return new AmountExpression(amount)
-    },
-    plus(left: Expression, right: Expression) {
-        return new AddExpression(left, right)
-    },
-    minus(left: Expression, right: Expression) {
-        return new SubtractExpression(left, right)
-    },
-    times(left: Expression, right: Expression) {
-        return new MultiplyExpression(left, right)
-    },
-    dividedBy(left: Expression, right: Expression) {
-        return new DivideExpression(left, right)
-    },
-    abs(arg: Expression) {
-        return new AbsExpression(arg)
-    }
+export function of(amount: number) {
+    return new AmountExpression(amount)
+}
+
+export function plus(left: Expression, right: Expression) {
+    return new AddExpression(left, right);
+}
+
+export function minus(left: Expression, right: Expression) {
+    return new SubtractExpression(left, right);
+}
+
+export function times(left: Expression, right: Expression) {
+    return new MultiplyExpression(left, right);
+}
+
+export function dividedBy(left: Expression, right: Expression) {
+    return new DivideExpression(left, right);
+}
+
+export function abs(arg: Expression) {
+    return new AbsExpression(arg);
 }
 
 export class RollExpression {

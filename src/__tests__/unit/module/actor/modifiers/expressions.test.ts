@@ -1,6 +1,6 @@
 import {
     AddExpression,
-    expressions,
+    of,plus,minus,times,dividedBy,abs,
     ReferenceExpression,
     RollExpression
 } from "../../../../../module/actor/modifiers/expressions/definitions";
@@ -10,7 +10,6 @@ import {condense} from "../../../../../module/actor/modifiers/expressions/conden
 import {asString} from "../../../../../module/actor/modifiers/expressions/Stringifier";
 import {createTestRoll} from "../../../RollMock";
 
-const {of, plus, minus, times, dividedBy,abs} = expressions;
 
 describe("Expressions", () => {
 

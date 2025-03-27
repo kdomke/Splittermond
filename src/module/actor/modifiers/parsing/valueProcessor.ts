@@ -1,10 +1,8 @@
 import {ErrorMessage, FocusModifier, ParsedModifier, ScalarModifier, Value} from "./index";
-import {Expression, expressions, ReferenceExpression, RollExpression} from "../expressions/definitions";
+import {Expression, of, times, ReferenceExpression, RollExpression} from "../expressions/definitions";
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
-
-const {of, times} = expressions;
 
 export function processValues(modifiers: ParsedModifier[], refSource: object) {
     const result = {
@@ -52,7 +50,7 @@ function processValue(value: Value, refSource: object): Expression | string | Er
 
 function setUpExpression(expression: Value, source: object): Expression | string | ErrorMessage[] {
     if (typeof expression === "number") {
-        return expressions.of(expression);
+        return of(expression);
     } else if (isRoll(expression)) {
         return new RollExpression(expression);
     } else if (typeof expression === "object") {

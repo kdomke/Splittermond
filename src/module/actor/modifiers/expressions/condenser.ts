@@ -1,13 +1,13 @@
 // noinspection SuspiciousTypeOfGuard
 
-import {AbsExpression, expressions, RollExpression} from "./definitions";
+import {AbsExpression, of, RollExpression} from "./definitions";
 import {AmountExpression, type Expression, ReferenceExpression, AddExpression, SubtractExpression, MultiplyExpression, DivideExpression} from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 import {evaluate} from "./evaluation";
 
 export function condense(expression: Expression): Expression {
     if(canCondense(expression)){
-        return expressions.of(evaluate(expression))
+        return of(evaluate(expression))
     }
     if (expression instanceof AddExpression) {
         return condenseOperands(expression.left, expression.right, AddExpression)

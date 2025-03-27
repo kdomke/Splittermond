@@ -6,12 +6,11 @@ import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
 import {parseModifiers} from "./parsing";
-import {expressions} from "./expressions/definitions";
+import {times, of} from "./expressions/definitions";
 import {evaluate} from "./expressions/evaluation";
 import {processValues} from "./parsing/valueProcessor";
 
 type Regeneration = { multiplier: number, bonus: number };
-const {times, of} = expressions;
 
 interface PreparedSystem {
     spellCostReduction: SpellCostReductionManager,
