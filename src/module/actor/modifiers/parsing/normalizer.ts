@@ -1,4 +1,4 @@
-import {ParsedModifier, Value} from "./index";
+import {Value} from "./index";
 import {initMapper, LanguageMapper} from "../../../util/LanguageMapper";
 import {attributes, derivedAttributes} from "../../../config/attributes";
 import {isRoll} from "../../../api/Roll";
@@ -23,19 +23,6 @@ export function clearMappers() {
     (attributeMapper as any).clear();
     (derivedAttributeMapper as any).clear();
     (modifierKeyMapper as any).clear();
-}
-
-export function normalizeModifiers(modifiers: ParsedModifier[]) {
-    const normalized = modifiers.map(m => ({...m}))
-    normalized.forEach(normalizeModifier);
-    return normalized;
-}
-
-function normalizeModifier(modifier: ParsedModifier) {
-    for (const key in modifier.attributes) {
-        const value = modifier.attributes[key];
-        modifier.attributes[key] = normalizeValue(value);
-    }
 }
 
 export function normalizeKey(key: string) {

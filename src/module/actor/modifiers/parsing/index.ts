@@ -1,8 +1,7 @@
 import {parseModifiers} from "./parser";
-import {normalizeModifiers} from "./normalizer";
-import {createExpressions} from "./expressionCreator";
 import {FoundryRoll} from "../../../api/Roll";
 import {Expression} from "../expressions/definitions";
+import { processValues } from "./valueProcessor";
 
 export type ErrorMessage = string;
 
@@ -21,4 +20,4 @@ export interface ParsedExpression {
 export type ScalarModifier = ParsedModifier & {value:Expression}
 export type FocusModifier = ParsedModifier & {value:string}
 
-export {parseModifiers,normalizeModifiers, createExpressions};
+export {parseModifiers, processValues};

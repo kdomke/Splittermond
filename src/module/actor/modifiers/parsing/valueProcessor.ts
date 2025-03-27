@@ -6,7 +6,7 @@ import {validateReference} from "./validators";
 
 const {of, times} = expressions;
 
-export function processValues(modifiers: ParsedModifier[], actor: Actor) {
+export function processValues(modifiers: ParsedModifier[], refSource: object) {
     const result = {
         scalarModifiers: [] as ScalarModifier[],
         vectorModifiers: [] as FocusModifier[],
@@ -18,7 +18,7 @@ export function processValues(modifiers: ParsedModifier[], actor: Actor) {
             result.errors.push(`Modifier '${modifier.path}' contains no declaration of value`);
             continue;
         }
-        const processedValue = processValue(value, actor);
+        const processedValue = processValue(value, refSource);
         if (Array.isArray(processedValue)) {
             result.errors.push(...processedValue);
             continue;
@@ -45,10 +45,9 @@ export function processValues(modifiers: ParsedModifier[], actor: Actor) {
     return result;
 }
 
-function processValue(value: Value, actor: Actor): Expression | string | ErrorMessage[] {
+function processValue(value: Value, refSource: object): Expression | string | ErrorMessage[] {
     const normalized = normalizeValue(value);
-    const transformed = setUpExpression(normalized, actor);
-    return transformed;
+    return setUpExpression(normalized, refSource);
 }
 
 function setUpExpression(expression: Value, source: object): Expression | string | ErrorMessage[] {
