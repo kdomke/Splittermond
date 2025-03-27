@@ -1,8 +1,8 @@
 /**
  * Will only accept a `never` type thus making the compiler fail if a switch of if statement is not exhaustive
  */
-export function exhaustiveMatchGuard<T extends never>(_:T):never{
-    throw new Error("Exhaustive switches did not exhaust all options");
+export function exhaustiveMatchGuard<T extends never>(remainder:T):never{
+    throw new Error(`Exhaustive switches did not exhaust all options: Remaining for option '${remainder}'`);
 }
 
 export class PropertyResolver {
