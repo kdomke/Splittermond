@@ -2,6 +2,7 @@ import {Susceptibilities} from "../../../../../module/actor/modifiers/Susceptibi
 import ModifierManager from "../../../../../module/actor/modifier-manager";
 import {damageTypes} from "../../../../../module/config/damageTypes";
 import {expect} from "chai";
+import {of} from "../../../../../module/actor/modifiers/expressions/definitions";
 
 
 describe("Susceptibilities", () => {
@@ -10,7 +11,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility",modifierManager);
 
-            modifierManager.add(`susceptibility.${sus}`, "","5");
+            modifierManager.add(`susceptibility.${sus}`, "",of(5));
 
             expect(underTest.calculateSusceptibilities()[sus]).to.equal(5);
         });
@@ -20,7 +21,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility", modifierManager);
 
-            modifierManager.add(`susceptibility.${sus}`,"", "5");
+            modifierManager.add(`susceptibility.${sus}`,"", of(5));
 
             expect(underTest.calculateSusceptibilities()[sus]).to.equal(5);
         });
@@ -31,7 +32,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility", modifierManager);
 
-            modifierManager.add(`susceptibility.light`,"", `${value}`);
+            modifierManager.add(`susceptibility.light`,"", of(value));
 
             expect(underTest.calculateSusceptibilities().light).to.equal(value);
         });

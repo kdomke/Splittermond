@@ -1,9 +1,15 @@
 import SplittermondActor from "./actor";
 import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
+import {Expression} from "./modifiers/expressions/definitions";
+import {evaluate} from "./modifiers/expressions/evaluation";
+import {condense} from "./modifiers/expressions/condenser";
+import {abs} from "./modifiers/expressions/definitions";
+import {asString} from "./modifiers/expressions/Stringifier";
 
-export interface IModifier<T=number> {
-   readonly value:T;
+
+export interface IModifier {
+   readonly value:Expression;
    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string):void;
    readonly groupId:string;
    readonly selectable:boolean;
@@ -13,7 +19,6 @@ export interface IModifier<T=number> {
 }
 
 export default class Modifier implements IModifier {
-    public readonly value:number;
     /**
      * 
      * @param {string} path Modifier Path
@@ -26,11 +31,10 @@ export default class Modifier implements IModifier {
     constructor(
         public readonly path:string,
         public readonly name:string,
-        value:string|number,
+        public readonly value:Expression,
         public readonly origin:SplittermondItem|SplittermondActor|null = null,
         public readonly type:string = "",
         public readonly selectable = false) {
-        this.value = typeof value === "number" ? value :parseInt(value);
         this.selectable = selectable;
         this.name = name;
         this.type = type;
@@ -38,19 +42,21 @@ export default class Modifier implements IModifier {
 
 
     get isMalus() {
-        return this.value < 0;
+        return evaluate(this.value) < 0;
     }
 
     get isBonus() {
-        return this.value > 0;
+        return evaluate(this.value) > 0;
     }
 
     addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
-        let val = Math.abs(this.value);
-        if (this.isBonus) {
-            formula.addBonus(bonusPrefix+val, this.name);
+        let evaluated = evaluate(this.value);
+        if (evaluated > 0) {
+            const term = `${bonusPrefix}${asString(abs(condense(this.value)))}`
+            formula.addBonus(term, this.name);
         } else {
-            formula.addMalus(malusPrefix+val, this.name);
+            const term = `${malusPrefix}${asString(abs(condense(this.value)))}`
+            formula.addMalus(term, this.name);
         }
     }
 
