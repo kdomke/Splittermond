@@ -1,6 +1,7 @@
 import {ParsedModifier, Value} from "./index";
 import {initMapper, LanguageMapper} from "../../../util/LanguageMapper";
 import {attributes, derivedAttributes} from "../../../config/attributes";
+import {isRoll} from "../../../api/Roll";
 
 const modifierKeys = ["emphasis", "damageType", "value"] as const;
 const attributeMapper = initMapper(attributes)
@@ -54,7 +55,7 @@ export function normalizeValue(value: Value) {
         if (replacement !== value) {
             return {propertyPath: replacement, sign, original: value};
         }
-    } else if (typeof value === "object") {
+    } else if (typeof value === "object" && !isRoll(value)) {
         const replacement = replacer.tryReplace(value.propertyPath);
         if (replacement !== value.propertyPath) {
             value.propertyPath = replacement;

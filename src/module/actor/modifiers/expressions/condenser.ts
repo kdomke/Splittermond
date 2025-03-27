@@ -1,13 +1,13 @@
 // noinspection SuspiciousTypeOfGuard
 
-import {expressions} from "./definitions";
+import {expressions, RollExpression} from "./definitions";
 import {AmountExpression, type Expression, ReferenceExpression, AddExpression, SubtractExpression, MultiplyExpression, DivideExpression} from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 import {evaluate} from "./evaluation";
 
 export function condense(expression: Expression): Expression {
     if(canCondense(expression)){
-        return expressions.of(evaluate(expression)??0)
+        return expressions.of(evaluate(expression))
     }
     if (expression instanceof AddExpression) {
         return condenseOperands(expression.left, expression.right, AddExpression)
@@ -18,7 +18,7 @@ export function condense(expression: Expression): Expression {
     }else if (expression instanceof DivideExpression) {
         return condenseOperands(expression.left, expression.right, DivideExpression)
     }else {
-        if (expression instanceof ReferenceExpression || expression instanceof AmountExpression) {
+        if (expression instanceof ReferenceExpression || expression instanceof AmountExpression || expression instanceof RollExpression) {
                 return expression;
             }
     }
@@ -33,7 +33,7 @@ function condenseOperands(left: Expression, right: Expression, constructor:new (
 function canCondense(expression: Expression): boolean {
     if (expression instanceof AmountExpression) {
         return true;
-    } else if (expression instanceof ReferenceExpression) {
+    } else if (expression instanceof ReferenceExpression || expression instanceof RollExpression) {
         return false;
     } else {
         return canCondense(expression.left) && canCondense(expression.right);

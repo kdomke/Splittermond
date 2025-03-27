@@ -1,6 +1,7 @@
 import {ErrorMessage, ParsedModifier, Value} from "./index";
-import {Expression, expressions, ReferenceExpression} from "../expressions/definitions";
+import {Expression, expressions, ReferenceExpression, RollExpression} from "../expressions/definitions";
 import {validateReference} from "./validators";
+import {isRoll} from "../../../api/Roll";
 
 const {of, times} = expressions;
 
@@ -31,9 +32,11 @@ function createExpression(modifier: ParsedModifier, source: object): EvaluatedMo
     return {path: modifier.path, attributes};
 }
 
-function setUpExpression(expression: Value, source: object): Expression | string |ErrorMessage[]{
+function setUpExpression(expression: Value, source: object): Expression | string |ErrorMessage[] {
     if (typeof expression === "number") {
         return expressions.of(expression);
+    } else if (isRoll(expression)) {
+        return new RollExpression(expression);
     } else if (typeof expression === "object") {
         const validationFailures = validateReference(expression.propertyPath,source);
         if(validationFailures.length > 0){

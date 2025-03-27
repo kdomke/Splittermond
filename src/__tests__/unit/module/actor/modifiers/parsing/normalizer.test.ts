@@ -3,6 +3,7 @@ import sinon, {SinonSandbox} from 'sinon';
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import {normalizeModifiers, ParsedExpression, ParsedModifier} from "../../../../../../module/actor/modifiers/parsing";
 import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
+import {createTestRoll} from "../../../../RollMock";
 
 describe('normalizeModifiers', () => {
     let sandbox: SinonSandbox;
@@ -64,10 +65,12 @@ describe('normalizeModifiers', () => {
     });
 
     it('should leave numbers and non-matching strings unchanged', () => {
+        const testRoll = createTestRoll("1d2",[1]);
         const input: ParsedModifier[] = [{
             path: 'generalSkills.melee',
             attributes: {
                 value: 2,
+                roll: testRoll,
                 bonus: 'unknownAttribute'
             }
         }];
@@ -75,6 +78,7 @@ describe('normalizeModifiers', () => {
         const result = normalizeModifiers(input);
 
         expect(result[0].attributes.value).to.equal(2);
+        expect(result[0].attributes.roll).to.equal(testRoll);
         expect(result[0].attributes.bonus).to.equal('unknownAttribute');
     });
 

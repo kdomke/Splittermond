@@ -1,5 +1,8 @@
+import {FoundryRoll} from "../../../api/Roll";
+
 export type Expression =
     AmountExpression
+    | RollExpression
     | AddExpression
     | SubtractExpression
     | MultiplyExpression
@@ -22,6 +25,11 @@ export const expressions = {
     dividedBy(left:Expression, right:Expression){
         return new DivideExpression(left, right)
     },
+}
+
+export class RollExpression {
+    constructor(public readonly value: FoundryRoll) {
+    }
 }
 
 export class AmountExpression {

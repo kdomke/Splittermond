@@ -1,8 +1,14 @@
-import {expressions, ReferenceExpression} from "../../../../../module/actor/modifiers/expressions/definitions";
+import {
+    AddExpression,
+    expressions,
+    ReferenceExpression,
+    RollExpression
+} from "../../../../../module/actor/modifiers/expressions/definitions";
 import {expect} from "chai";
 import {evaluate} from "../../../../../module/actor/modifiers/expressions/evaluation";
 import {condense} from "../../../../../module/actor/modifiers/expressions/condenser";
 import {asString} from "../../../../../module/actor/modifiers/expressions/Stringifier";
+import {createTestRoll} from "../../../RollMock";
 
 const {of, plus, minus, times, dividedBy} = expressions;
 
@@ -56,6 +62,27 @@ describe("Expressions", () => {
         it(`braced expression ${stringRepresentation} should be duly represented`, () => {
             expect(asString(input)).to.equal(stringRepresentation);
         });
+    });
+
+    describe ("Roll Expressions", () => {
+        it("should evaluate to the value of the property", () => {
+            const property = new RollExpression(createTestRoll("1d6",[3]));
+            expect(evaluate(property)).to.equal(3);
+        });
+
+        it("should not condense property ", () => {
+            const property = plus(of(3),new RollExpression(createTestRoll("1d6",[3])));
+
+            const result = condense(property);
+
+            expect(result).to.be.instanceOf(AddExpression);
+        });
+
+        it("should stringify property to formula", () => {
+            const property = new RollExpression(createTestRoll("1d6",[3]));
+            expect(asString(property)).to.equal("1d6");
+        });
+
     });
 
     describe("Reference Expressions", () => {
