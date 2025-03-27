@@ -1,6 +1,6 @@
 import {
     AddExpression,
-    of,plus,minus,times,dividedBy,abs,
+    of, plus, minus, times, dividedBy, abs,
     ReferenceExpression,
     RollExpression
 } from "../../../../../module/actor/modifiers/expressions/definitions";
@@ -12,9 +12,8 @@ import {createTestRoll} from "../../../RollMock";
 
 
 describe("Expressions", () => {
-
     ([
-        [abs(of(-3)),3,of(3),"3"],
+        [abs(of(-3)), 3, of(3), "3"],
         [of(3), 3, of(3), "3"],
         [of(-3), -3, of(-3), "-3"],
         [plus(of(3), of(3)), 6, of(6), "3 + 3"],
@@ -37,6 +36,9 @@ describe("Expressions", () => {
     });
 
     ([
+        [times(plus(of(1), of(0)), of(1)), 1, of(1), "1"],
+        [times(minus(of(1), of(0)), of(1)), 1, of(1), "1"],
+        [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1"],
         [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) * 3"],
         [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) * 3"],
         [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) * 3"],
@@ -67,14 +69,14 @@ describe("Expressions", () => {
         });
     });
 
-    describe ("Roll Expressions", () => {
+    describe("Roll Expressions", () => {
         it("should evaluate to the value of the property", () => {
-            const property = new RollExpression(createTestRoll("1d6",[3]));
+            const property = new RollExpression(createTestRoll("1d6", [3]));
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should not condense property ", () => {
-            const property = plus(of(3),new RollExpression(createTestRoll("1d6",[3])));
+            const property = plus(of(3), new RollExpression(createTestRoll("1d6", [3])));
 
             const result = condense(property);
 
@@ -82,7 +84,7 @@ describe("Expressions", () => {
         });
 
         it("should stringify property to formula", () => {
-            const property = new RollExpression(createTestRoll("1d6",[3]));
+            const property = new RollExpression(createTestRoll("1d6", [3]));
             expect(asString(property)).to.equal("1d6");
         });
 
@@ -95,32 +97,79 @@ describe("Expressions", () => {
         });
 
         it("should omit properties of the wrong format when multiplying", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"},"value");
-            const expression = times(plus(of(3),property), minus(of(4),of(3)));
+            const property = new ReferenceExpression("value", {value: "splittermond"}, "value");
+            const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(evaluate(expression)).to.deep.equal(3);
         });
 
         it("should omit properties of the wrong format when adding", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"},"value");
-            const expression = times(property, minus(of(4),of(3)));
+            const property = new ReferenceExpression("value", {value: "splittermond"}, "value");
+            const expression = times(property, minus(of(4), of(3)));
             expect(evaluate(expression)).to.deep.equal(1);
         });
 
         it("should evaluate nested properties", () => {
-            const property = new ReferenceExpression("first.second.third", {first: {second:{third:3}}},"first.second.third");
+            const property = new ReferenceExpression("first.second.third", {first: {second: {third: 3}}}, "first.second.third");
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should not condense property ", () => {
-            const property = new ReferenceExpression("value", {value: 3},"value");
-            const expression = times(plus(of(3),property), minus(of(4),of(3)));
-            expect(condense(expression)).to.deep.equal(times(plus(of(3),property), of(1)));
+            const property = new ReferenceExpression("value", {value: 3}, "value");
+            const expression = times(plus(of(3), property), minus(of(4), of(3)));
+            expect(condense(expression)).to.deep.equal(times(plus(of(3), property), of(1)));
         });
 
         it("should stringify property ", () => {
-            const property = new ReferenceExpression("value", {value: 3},"value");
-            const expression = times(plus(of(3),property), minus(of(4),of(3)));
+            const property = new ReferenceExpression("value", {value: 3}, "value");
+            const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(asString(expression)).to.equal("(3 + ${value}) * (4 - 3)");
         });
     });
 });
+
+describe("Smart constructors", () => {
+    it("should not multiply if left-hand-side is 0", () => {
+        const result = times(of(0), of(3));
+        expect(result).to.deep.equal(of(0));
+    });
+
+    it("should not multiply if right-hand-side is 0", () => {
+        const result = times(of(3), of(0));
+        expect(result).to.deep.equal(of(0));
+    });
+
+    it("should simplify identity multiplication left-hand-side", () => {
+        const result = times(of(1), of(3));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should simplify identity multiplication right -hand-side", () => {
+        const result = times(of(3), of(1));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should simplify identity addition left-hand-side", () => {
+        const result = plus(of(0), of(3));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should simplify identity addition right-hand-side", () => {
+        const result = plus(of(3), of(0));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should simplify identity subtraction", () => {
+        const result = plus(of(3), of(0));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should simplify division by one", () => {
+        const result = dividedBy(of(3), of(1));
+        expect(result).to.deep.equal(of(3));
+    });
+
+    it("should throw for division by zero", ()=>{
+        expect(() => dividedBy(of(3), of(0))).to.throw();
+    })
+});
+

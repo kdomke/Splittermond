@@ -1,7 +1,11 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
 import {ParsedModifier, processValues} from "../../../../../../module/actor/modifiers/parsing";
-import {AmountExpression, MultiplyExpression} from "../../../../../../module/actor/modifiers/expressions/definitions";
+import {
+    AmountExpression,
+    MultiplyExpression,
+    ReferenceExpression
+} from "../../../../../../module/actor/modifiers/expressions/definitions";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import sinon, {type SinonSandbox} from "sinon";
 import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
@@ -49,9 +53,9 @@ describe('Value Processor', () => {
         const result = processValues(modifiers, mockSource);
 
         expect(result.errors).to.have.lengthOf(0);
-        const expr = result.scalarModifiers[0].value as MultiplyExpression;
-        expect(expr).to.be.an.instanceOf(MultiplyExpression);
-        expect(expr.right).to.deep.equal({
+        const expr = result.scalarModifiers[0].value as ReferenceExpression;
+        expect(expr).to.be.an.instanceOf(ReferenceExpression);
+        expect(expr).to.deep.equal({
             propertyPath: 'existing.path',
             source: mockSource,
             stringRep: 'existing.path'
@@ -130,6 +134,5 @@ describe('Value Processor', () => {
         expect(result.scalarModifiers).to.have.lengthOf(0);
         expect(result.vectorModifiers).to.have.lengthOf(1);
         expect(result.vectorModifiers[0].value).to.equal(complexModifier.attributes.value);
-
     });
 });

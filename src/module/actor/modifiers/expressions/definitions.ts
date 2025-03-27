@@ -25,20 +25,51 @@ export function of(amount: number) {
 }
 
 export function plus(left: Expression, right: Expression) {
-    return new AddExpression(left, right);
+    if (left instanceof AmountExpression && left.amount == 0) {
+        return right;
+    } else if (right instanceof AmountExpression && right.amount == 0) {
+        return left;
+    } else {
+        return new AddExpression(left, right);
+    }
 }
 
 export function minus(left: Expression, right: Expression) {
-    return new SubtractExpression(left, right);
+    if (left instanceof AmountExpression && left.amount == 0) {
+        return times(of(-1),right);
+    } else if (right instanceof AmountExpression && right.amount == 0) {
+        return left;
+    } else {
+        return new SubtractExpression(left, right);
+    }
 }
 
 export function times(left: Expression, right: Expression) {
-    return new MultiplyExpression(left, right);
+    if (left instanceof AmountExpression && left.amount == 0) {
+        return of(0)
+    } else if (left instanceof AmountExpression && left.amount == 1) {
+        return right;
+    } else if (right instanceof AmountExpression && right.amount == 0) {
+        return of(0)
+    } else if (right instanceof AmountExpression && right.amount == 1) {
+        return left;
+    } else {
+        return new MultiplyExpression(left, right);
+    }
 }
 
 export function dividedBy(left: Expression, right: Expression) {
-    return new DivideExpression(left, right);
+    if (right instanceof AmountExpression && right.amount == 0) {
+        throw new Error("Division by zero")
+    } else if (left instanceof AmountExpression && left.amount == 0) {
+        return of(0)
+    } else if (right instanceof AmountExpression && right.amount == 1) {
+        return left;
+    } else {
+        return new DivideExpression(left, right);
+    }
 }
+
 
 export function abs(arg: Expression) {
     return new AbsExpression(arg);

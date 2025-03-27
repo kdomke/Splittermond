@@ -33,7 +33,7 @@ function do_toString(expression: Expression): string {
     } else if(expression instanceof SubtractExpression) {
         return `(${do_toString(expression.left)} - ${do_toString(expression.right)})`;
     } else if(expression instanceof MultiplyExpression) {
-        return stringify(expression, "*");
+        return asMultiplicationString(expression)
     } else if(expression instanceof DivideExpression) {
         return stringify(expression, "/");
     } else if (expression instanceof AbsExpression) {
@@ -42,6 +42,17 @@ function do_toString(expression: Expression): string {
             `|${do_toString(expression.arg)}|`
     }
     exhaustiveMatchGuard(expression);
+}
+
+function asMultiplicationString(expression: MultiplyExpression): string {
+    if(expression.left instanceof AmountExpression && expression.left.amount == -1) {
+        return `-${asString(expression.right)}`;
+    }else if (expression.right instanceof AmountExpression && expression.right.amount == -1){
+        return `-${asString(expression.right)}`;
+    }else {
+       return stringify(expression, "*");
+    }
+
 }
 
 function stringify(expression: {left:Expression, right:Expression}, operator:string): string {
