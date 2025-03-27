@@ -1,6 +1,7 @@
 // noinspection SuspiciousTypeOfGuard
 
 import {
+    AbsExpression,
     AddExpression,
     AmountExpression,
     DivideExpression,
@@ -35,6 +36,10 @@ function do_toString(expression: Expression): string {
         return stringify(expression, "*");
     } else if(expression instanceof DivideExpression) {
         return stringify(expression, "/");
+    } else if (expression instanceof AbsExpression) {
+        return expression.arg instanceof AmountExpression ?
+            do_toString(expression.arg).replace(/^-/,"") :
+            `|${do_toString(expression.arg)}|`
     }
     exhaustiveMatchGuard(expression);
 }

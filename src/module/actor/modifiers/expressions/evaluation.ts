@@ -1,6 +1,7 @@
 // noinspection SuspiciousTypeOfGuard
 
 import {
+    AbsExpression,
     AddExpression,
     AmountExpression, DivideExpression,
     Expression,
@@ -29,6 +30,8 @@ function doEvaluate(expression: Expression): number | null {
         return (doEvaluate(expression.left) ?? 1) / (doEvaluate(expression.right) ?? 1)
     } else if (expression instanceof RollExpression) {
         return expression.value.evaluateSync().total
+    } else if (expression instanceof AbsExpression) {
+        return Math.abs(evaluate(expression.arg))
     }
     exhaustiveMatchGuard(expression)
 }

@@ -10,12 +10,14 @@ import {condense} from "../../../../../module/actor/modifiers/expressions/conden
 import {asString} from "../../../../../module/actor/modifiers/expressions/Stringifier";
 import {createTestRoll} from "../../../RollMock";
 
-const {of, plus, minus, times, dividedBy} = expressions;
+const {of, plus, minus, times, dividedBy,abs} = expressions;
 
 describe("Expressions", () => {
 
     ([
+        [abs(of(-3)),3,of(3),"3"],
         [of(3), 3, of(3), "3"],
+        [of(-3), -3, of(-3), "-3"],
         [plus(of(3), of(3)), 6, of(6), "3 + 3"],
         [minus(of(3), of(3)), 0, of(0), "3 - 3"],
         [times(of(3), of(3)), 9, of(9), "3 * 3"],
@@ -38,6 +40,8 @@ describe("Expressions", () => {
     ([
         [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) * 3"],
         [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) * 3"],
+        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) * 3"],
+        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| * 3"],
         [dividedBy(
             times(
                 of(2),
