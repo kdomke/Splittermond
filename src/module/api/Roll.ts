@@ -17,6 +17,7 @@ export interface NumericTerm {
 
 export declare class Roll {
     evaluate: () => Promise<Roll>;
+    evaluateSync: () => Roll;
     /** Will contain all definite (evaluated and constant) components of the roll*/
     readonly result: string;
     readonly formula: string
@@ -39,6 +40,17 @@ export declare class Roll {
 }
 
 export type FoundryRoll = InstanceType<typeof Roll>
+
+export function isRoll(value: unknown): value is FoundryRoll {
+    //We're not using instanceof, because the Roll class is only available when we have foundry
+    return !!value && typeof value === "object" &&
+        "result" in value &&  typeof value.result === "string" &&
+        "formula" in value &&  typeof value.formula === "string" &&
+        "total" in value && typeof value.total === "number" &&
+        "evaluate" in value && typeof value.evaluate === "function" &&
+        "evaluateSync" in value && typeof value.evaluateSync === "function" &&
+        "getTooltip" in value && typeof value.getTooltip === "function";
+}
 
 
 export function addRolls(one: Roll, other: Roll): Roll {
