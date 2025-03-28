@@ -39,13 +39,15 @@ export class TooltipFormula {
     }
 
     addMalus(value, description) {
-        this.addOperator("-")
-        this.addPart(value, description, "malus");
+        const strippedValue = preventOperatorDuplication("-", value);
+        this.addOperator("-");
+        this.addPart(strippedValue, description, "malus");
     }
 
     addBonus(value, description) {
+        const strippedValue = preventOperatorDuplication("+", value);
         this.addOperator("+")
-        this.addPart(value, description, "bonus");
+        this.addPart(strippedValue, description, "bonus");
     }
 
     /**
@@ -57,7 +59,7 @@ export class TooltipFormula {
                 type: `${p.type}`,
                 classes: p.classes.join(" "),
                 value: p.value ? foundryApi.localize(`${p.value}`) : "",
-                description: p.description ? foundryApi.localize(`${p.description}`): ""
+                description: p.description ? foundryApi.localize(`${p.description}`) : ""
 
             }));
     }
@@ -74,5 +76,21 @@ export class TooltipFormula {
         });
         result += "</span>";
         return result;
+    }
+}
+
+/**
+ * For some weird reason, we allow modifiers to add an additional bonus and malus prefix
+ * This may lead to ugly duplication. Since I don't know, what it was good for and if there is any
+ * edge case where they are actually helpful, I'll remove it with this method.
+ * @param {string} operator
+ * @param {string|*}value
+ * @return {string}
+ */
+function preventOperatorDuplication(operator, value) {
+    if (typeof value === "string" && new RegExp(`^\\s*[${operator}]`).test(value)) {
+        return value.trim().replace(operator, "")
+    } else {
+        return value;
     }
 }
