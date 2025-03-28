@@ -1,4 +1,5 @@
 import Skill from "./skill.js";
+import {of} from "./modifiers/expressions/definitions";
 
 export default class Attack {
     /**
@@ -44,16 +45,16 @@ export default class Attack {
         this.skill.addModifierPath(`skill.${this.id}`);
 
         if (minAttributeMalus) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.minAttributes"), minAttributeMalus, this);
-            this.actor.modifier.addOld(`weaponspeed.${this.id}`, game.i18n.localize("splittermond.minAttributes"), minAttributeMalus, this);
+            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.minAttributes"), of(minAttributeMalus), this);
+            this.actor.modifier.addOld(`weaponspeed.${this.id}`, game.i18n.localize("splittermond.minAttributes"), of(minAttributeMalus), this);
         }
 
         if (parseInt(attackData.skillMod)) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.skillMod"), parseInt(attackData.skillMod), this);
+            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.skillMod"), of(parseInt(attackData.skillMod)), this);
         }
 
         if ((this.item?.systemData?.().damageLevel || 0) > 2) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.damageLevel"), -3, this);
+            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.damageLevel"), of(-3), this);
         }
 
         this.range = attackData.range || 0;

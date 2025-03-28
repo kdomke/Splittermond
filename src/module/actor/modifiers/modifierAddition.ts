@@ -40,7 +40,7 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 //this function is used in item.js to add modifiers to the actor
 export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
 
-    function addModifierHelper(path: string, emphasis = "", value: Expression) {
+    function addModifierHelper(path: string, value: Expression, emphasis = "")  {
         if (!isZero(value)) {
             if (emphasis) {
                 actor.modifier.addOld(path, emphasis, condense(value), type, item, true);
@@ -83,38 +83,38 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         const emphasis = (modifier.attributes.emphasis ?? "") as string;
         switch (modifierLabel) {
             case "bonuscap":
-                addModifierHelper("bonuscap", "", times(of(multiplier), modifier.value));
+                addModifierHelper("bonuscap", times(of(multiplier), modifier.value),"");
                 break;
             case "speed.multiplier":
             case "gsw.mult":
                 actor.derivedValues.speed.multiplier *= Math.pow(evaluate(modifier.value), multiplier);
                 break;
             case "sr":
-                addModifierHelper("damagereduction", "", times(of(multiplier), modifier.value));
+                addModifierHelper("damagereduction", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.shield.mod":
             case "handicap.shield":
-                addModifierHelper("handicap.shield", "", times(of(multiplier), modifier.value));
+                addModifierHelper("handicap.shield", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.mod":
             case "handicap":
-                addModifierHelper("handicap", "", times(of(multiplier), modifier.value));
+                addModifierHelper("handicap", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.armor.mod":
             case "handicap.armor":
-                addModifierHelper("handicap.armor", "", times(of(multiplier), modifier.value));
+                addModifierHelper("handicap.armor", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.shield.mod":
             case "tickmalus.shield":
-                addModifierHelper("tickmalus.shield", "", times(of(multiplier), modifier.value));
+                addModifierHelper("tickmalus.shield", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.armor.mod":
             case "tickmalus.armor":
-                addModifierHelper("tickmalus.armor", "", times(of(multiplier), modifier.value));
+                addModifierHelper("tickmalus.armor", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.mod":
             case "tickmalus":
-                addModifierHelper("tickmalus", "", times(of(multiplier), modifier.value));
+                addModifierHelper("tickmalus", times(of(multiplier), modifier.value),"");
                 break;
             case "woundmalus.nbrlevels":
                 data.health.woundMalus.nbrLevels = evaluate(times(of(multiplier), modifier.value));
@@ -144,21 +144,21 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 break;
             case "lowerfumbleresult":
                 let skill = "skill" in item.system && item.system.skill ? item.system?.skill : "*";
-                addModifierHelper(modifier.path + "/" + skill, "", times(of(multiplier), modifier.value));
+                addModifierHelper(modifier.path + "/" + skill, times(of(multiplier), modifier.value), "");
                 break;
             case "generalskills":
                 splittermond.skillGroups.general.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, times(of(multiplier), modifier.value));
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), emphasis);
                 });
                 break;
             case "magicskills":
                 splittermond.skillGroups.magic.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, times(of(multiplier), modifier.value));
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), emphasis);
                 });
                 break;
             case "fightingskills":
                 splittermond.skillGroups.fighting.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, times(of(multiplier), modifier.value));
+                    addModifierHelper(skill, times(of(multiplier), modifier.value),"");
                 });
                 break;
             case "damage":
@@ -176,7 +176,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                     element = modifier.path;
                 }
                 let adjustedValue = times(times(of(multiplier), modifier.value), of(element.toLowerCase() === "initiative" ? -1 : 1));
-                addModifierHelper(element, emphasis, adjustedValue);
+                addModifierHelper(element, adjustedValue, emphasis);
 
                 break;
         }
