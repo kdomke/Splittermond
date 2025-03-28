@@ -8,16 +8,16 @@ export default class SplittermondArmorItem extends SplittermondPhysicalItem {
         super.prepareActorData();
         if (!this.system.equipped) return
         if (this.system.defenseBonus)
-            this.actor.modifier.add("defense", this.name, this.system.defenseBonus, this, "equipment");
+            this.actor.modifier.addOld("defense", this.name, this.system.defenseBonus, this, "equipment");
         let handicap = this.handicap;
         let tickMalus = this.tickMalus;
         let damageReduction = parseInt(this.system.damageReduction);
         if (handicap)
-            this.actor.modifier.add("handicap.armor", this.name, handicap, this, "equipment");
+            this.actor.modifier.addOld("handicap.armor", this.name, handicap, this, "equipment");
         if (tickMalus)
-            this.actor.modifier.add("tickmalus.armor", this.name, tickMalus, this, "equipment");
+            this.actor.modifier.addOld("tickmalus.armor", this.name, tickMalus, this, "equipment");
         if (damageReduction)
-            this.actor.modifier.add("damagereduction", this.name, damageReduction, this, "equipment");
+            this.actor.modifier.addOld("damagereduction", this.name, damageReduction, this, "equipment");
     }
 
     get attributeMalus() {

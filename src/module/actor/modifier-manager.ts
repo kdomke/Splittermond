@@ -16,7 +16,8 @@ export default class ModifierManager {
     constructor() {
     }
 
-    add(path: string, name: string, value: Expression, type: ModifierType, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+
+    addOld(path: string, name: string, value: Expression, type: ModifierType, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
         const attributes = {name, type};
         const newModifier = new Modifier(path, value, attributes, origin, selectable);
         this.addModifier(newModifier);

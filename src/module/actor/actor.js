@@ -185,7 +185,7 @@ export default class SplittermondActor extends Actor {
 
         if (this.type === "npc") {
             if (parseInt(this.system.damageReduction.value) != 0) {
-                this.modifier.add("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), this.system.damageReduction.value);
+                this.modifier.addOld("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), this.system.damageReduction.value);
             }
 
         }
@@ -353,7 +353,7 @@ export default class SplittermondActor extends Actor {
         data.health.woundMalus.value = woundMalusValue?.value ?? 0;
 
         if (data.health.woundMalus.value) {
-            this.modifier.add("woundmalus", game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
+            this.modifier.addOld("woundmalus", game.i18n.localize("splittermond.woundMalus"), data.health.woundMalus.value, this);
         }
 
 
@@ -406,24 +406,24 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             if (data.experience.heroLevel > 1) {
                 ["defense", "mindresist", "bodyresist"].forEach(d => {
-                    this.modifier.add(d, game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), 2 * (data.experience.heroLevel - 1), this);
+                    this.modifier.addOld(d, game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), 2 * (data.experience.heroLevel - 1), this);
                 });
-                this.modifier.add("splinterpoints", game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), data.experience.heroLevel - 1);
+                this.modifier.addOld("splinterpoints", game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), data.experience.heroLevel - 1);
             }
         }
 
         let stealthModifier = 5 - this.derivedValues.size.value;
         if (stealthModifier) {
-            this.modifier.add("stealth", game.i18n.localize("splittermond.derivedAttribute.size.short"), stealthModifier);
+            this.modifier.addOld("stealth", game.i18n.localize("splittermond.derivedAttribute.size.short"), stealthModifier);
         }
 
         let handicap = this.handicap;
         if (handicap) {
             let label = game.i18n.localize("splittermond.handicap");
             ["athletics", "acrobatics", "dexterity", "stealth", "locksntraps", "seafaring", "animals"].forEach(skill => {
-                this.modifier.add(skill, label, -handicap, this, "equipment");
+                this.modifier.addOld(skill, label, -handicap, this, "equipment");
             });
-            this.modifier.add("speed", label, -Math.floor(handicap / 2));
+            this.modifier.addOld("speed", label, -Math.floor(handicap / 2));
         }
 
 

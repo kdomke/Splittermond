@@ -43,9 +43,9 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
     function addModifierHelper(path: string, emphasis = "", value: Expression) {
         if (!isZero(value)) {
             if (emphasis) {
-                actor.modifier.add(path, emphasis, condense(value), type, item, true);
+                actor.modifier.addOld(path, emphasis, condense(value), type, item, true);
             } else {
-                actor.modifier.add(path, emphasisFromName, condense(value), type, item, false);
+                actor.modifier.addOld(path, emphasisFromName, condense(value), type, item, false);
             }
         }
     }
@@ -162,10 +162,10 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
-                actor.modifier.add("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
+                actor.modifier.addOld("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             case "weaponspeed":
-                actor.modifier.add("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
+                actor.modifier.addOld("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             default:
 

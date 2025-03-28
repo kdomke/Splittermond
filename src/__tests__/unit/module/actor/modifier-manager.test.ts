@@ -13,25 +13,25 @@ describe("ModifierManager", () => {
     });
 
     it("should aggregate static modifiers", () => {
-        manager.add("AUS", "Base", of(2), "innate");
-        manager.add("AUS", "Item Bonus", of(1), "equipment", mockItem);
-        manager.add("bonuscap", "Cap", of(3), "innate", null, true);
+        manager.addOld("AUS", "Base", of(2), "innate");
+        manager.addOld("AUS", "Item Bonus", of(1), "equipment", mockItem);
+        manager.addOld("bonuscap", "Cap", of(3), "innate", null, true);
 
         expect(manager.value("AUS")).to.equal(3);
         expect(manager.value("bonuscap")).to.equal(0);
     });
 
     it("should handle selectable modifiers", () => {
-        manager.add("speed.multiplier", "Boots", of(2), "equipment", null, true);
-        manager.add("speed.multiplier", "Haste", of(1), "magic", null, true);
+        manager.addOld("speed.multiplier", "Boots", of(2), "equipment", null, true);
+        manager.addOld("speed.multiplier", "Haste", of(1), "magic", null, true);
 
         const result = manager.selectable("speed.multiplier");
         expect(result).to.deep.equal({"Boots": of(2), "Haste": of(1)});
     });
 
     it("should merge multiple paths", () => {
-        manager.add("damage.physical", "Sword", of(3), "equipment");
-        manager.add("damage.fire", "Enchantment", of(2), "magic");
+        manager.addOld("damage.physical", "Sword", of(3), "equipment");
+        manager.addOld("damage.fire", "Enchantment", of(2), "magic");
 
         const result = manager.static(["damage.physical", "damage.fire"]);
         expect(result.length).to.equal(2);
@@ -44,8 +44,8 @@ describe("ModifierManager", () => {
     });
 
     it("should combine modifiers with same groupId", () => {
-        manager.add("melee", "Spell", of(1), "magic");
-        manager.add("melee", "Trait", of(2), "innate");
+        manager.addOld("melee", "Spell", of(1), "magic");
+        manager.addOld("melee", "Trait", of(2), "innate");
 
         expect(manager.value("melee")).to.equal(3);
     });
