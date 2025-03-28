@@ -70,11 +70,11 @@ describe('addModifier', () => {
 
     it('should add basic modifier', () => {
         addModifier(actor, item, 'Test', 'BonusCap +2');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['bonuscap', 'Test', of(2), item, '', false]);
+        expect(modifierManager.add.lastCall.args).to.have.deep.members(['bonuscap', 'Test', of(2), item, null, false]);
     });
 
     it('should handle multiplier modifiers', () => {
-        addModifier(actor, item, '', 'Speed.multiplier 2', '', 2);
+        addModifier(actor, item, '', 'Speed.multiplier 2', 'innate', 2);
         expect(actor.derivedValues.speed.multiplier).to.equal(4); // 2^2
     });
 
@@ -97,15 +97,15 @@ describe('addModifier', () => {
 
         addModifier(actor, item, 'Group', 'GeneralSkills/emphasis +2');
 
-        mockSkills.forEach(skill => {
-            expect(modifierManager.add.calledWith(
+        mockSkills.forEach((skill,index) => {
+            expect(modifierManager.add.getCalls()[index].args).to.have.deep.members([
                 skill,
                 'emphasis',
                 of(2),
+                null,
                 item,
-                '',
                 true
-            )).to.be.true;
+            ]);
         });
     });
 
@@ -116,7 +116,7 @@ describe('addModifier', () => {
 
     it('should replace attribute placeholders', () => {
         addModifier(actor, item, '', 'AUS +1');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['AUS', '', of(1), item, '', false]);
+        expect(modifierManager.add.lastCall.args).to.have.deep.members(['AUS', '', of(1), item, null, false]);
     });
 
     it('should handle selectable modifiers with emphasis', () => {
@@ -126,7 +126,7 @@ describe('addModifier', () => {
             'emphasis',
             of(3),
             item,
-            '',
+            null,
             true
         ]);
     });
@@ -138,14 +138,14 @@ describe('addModifier', () => {
             'Damage',
             of(5),
             item,
-            '',
+            null,
             false
         ]);
     });
 
     it('should handle initiative modifier inversion', () => {
         addModifier(actor, item, '', 'Initiative +2');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['Initiative', '', of(-2), item, '', false]);
+        expect(modifierManager.add.lastCall.args).to.have.deep.members(['Initiative', '', of(-2), item, null, false]);
     });
 
     ([["+INT", 2], ["-INT", -3], ["INT", 4]] as const).forEach(([placeholder,expected])=> {
@@ -167,7 +167,7 @@ describe('addModifier', () => {
 
             const callArgs =modifierManager.add.lastCall.args;
             expect(callArgs.slice(0,2)).to.have.deep.members(['generalSkills.stealth', '']);
-            expect(callArgs.slice(3,6)).to.have.deep.members([item, '', false]);
+            expect(callArgs.slice(3,6)).to.have.deep.members([item, null, false]);
             expect(evaluate(callArgs[2])).to.equal(expected);
         })
     });

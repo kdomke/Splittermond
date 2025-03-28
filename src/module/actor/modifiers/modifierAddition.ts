@@ -9,6 +9,7 @@ import {parseModifiers, processValues} from "./parsing";
 import {Expression, of, times} from "./expressions/definitions";
 import {evaluate} from "./expressions/evaluation";
 import {condense, isZero} from "./expressions/condenser";
+import {ModifierType} from "../modifier";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -37,17 +38,18 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 }
 
 //this function is used in item.js to add modifiers to the actor
-export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type = "", multiplier = 1) {
+export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
 
     function addModifierHelper(path: string, emphasis = "", value: Expression) {
         if (!isZero(value)) {
             if (emphasis) {
-                actor.modifier.add(path, emphasis, condense(value), item, type, true);
+                actor.modifier.add(path, emphasis, condense(value), type, item, true);
             } else {
-                actor.modifier.add(path, emphasisFromName, condense(value), item, type, false);
+                actor.modifier.add(path, emphasisFromName, condense(value), type, item, false);
             }
         }
     }
+
     if (str == "") {
         return;
     }
@@ -59,7 +61,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
 
     const allErrors = [...parsedResult.errors, ...normalizedModifiers.errors];
 
-    normalizedModifiers.vectorModifiers.forEach((mod)=> {
+    normalizedModifiers.vectorModifiers.forEach((mod) => {
         const modifierLabel = mod.path.toLowerCase();
         const itemSkill = "skill" in item.system ? item.system.skill : undefined;
         if (modifierLabel.startsWith("foreduction")) {
@@ -78,7 +80,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         if (modifier.attributes.emphasis && typeof (modifier.attributes.emphasis) !== "string") {
             allErrors.push("Emphasis attributes must be strings");
         }
-        const emphasis = (modifier.attributes.emphasis ?? "")as string;
+        const emphasis = (modifier.attributes.emphasis ?? "") as string;
         switch (modifierLabel) {
             case "bonuscap":
                 addModifierHelper("bonuscap", "", times(of(multiplier), modifier.value));
@@ -160,10 +162,10 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
-                actor.modifier.add("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), item, type, false);
+                actor.modifier.add("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             case "weaponspeed":
-                actor.modifier.add("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), item, type, false);
+                actor.modifier.add("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             default:
 
@@ -179,7 +181,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 break;
         }
     });
-    if(allErrors.length > 0) {
+    if (allErrors.length > 0) {
         foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${item.name}!\n${allErrors.join("\n")}`);
     }
 }
