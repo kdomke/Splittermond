@@ -2,6 +2,8 @@ import {FoundryRoll} from "../../../api/Roll";
 
 export type Expression =
     AmountExpression
+    | ZeroExpression
+    | OneExpression
     | RollExpression
     | AddExpression
     | SubtractExpression
@@ -21,13 +23,19 @@ export function isExpression(value: unknown): value is Expression {
 }
 
 export function of(amount: number) {
-    return new AmountExpression(amount)
+    if(amount === 0){
+        return new ZeroExpression()
+    }else if (amount === 1){
+        return new OneExpression();
+    }else{
+        return new AmountExpression(amount)
+    }
 }
 
 export function plus(left: Expression, right: Expression) {
-    if (left instanceof AmountExpression && left.amount == 0) {
+    if (left instanceof ZeroExpression) {
         return right;
-    } else if (right instanceof AmountExpression && right.amount == 0) {
+    } else if (right instanceof ZeroExpression) {
         return left;
     } else {
         return new AddExpression(left, right);
@@ -35,9 +43,9 @@ export function plus(left: Expression, right: Expression) {
 }
 
 export function minus(left: Expression, right: Expression) {
-    if (left instanceof AmountExpression && left.amount == 0) {
+    if (left instanceof ZeroExpression) {
         return times(of(-1),right);
-    } else if (right instanceof AmountExpression && right.amount == 0) {
+    } else if (right instanceof ZeroExpression) {
         return left;
     } else {
         return new SubtractExpression(left, right);
@@ -45,13 +53,13 @@ export function minus(left: Expression, right: Expression) {
 }
 
 export function times(left: Expression, right: Expression) {
-    if (left instanceof AmountExpression && left.amount == 0) {
+    if (left instanceof ZeroExpression) {
         return of(0)
-    } else if (left instanceof AmountExpression && left.amount == 1) {
+    } else if (left instanceof OneExpression) {
         return right;
-    } else if (right instanceof AmountExpression && right.amount == 0) {
+    } else if (right instanceof ZeroExpression) {
         return of(0)
-    } else if (right instanceof AmountExpression && right.amount == 1) {
+    } else if (right instanceof OneExpression) {
         return left;
     } else {
         return new MultiplyExpression(left, right);
@@ -59,11 +67,11 @@ export function times(left: Expression, right: Expression) {
 }
 
 export function dividedBy(left: Expression, right: Expression) {
-    if (right instanceof AmountExpression && right.amount == 0) {
+    if (right instanceof ZeroExpression) {
         throw new Error("Division by zero")
-    } else if (left instanceof AmountExpression && left.amount == 0) {
+    } else if (left instanceof ZeroExpression) {
         return of(0)
-    } else if (right instanceof AmountExpression && right.amount == 1) {
+    } else if (right instanceof OneExpression) {
         return left;
     } else {
         return new DivideExpression(left, right);
@@ -82,6 +90,18 @@ export class RollExpression {
 
 export class AmountExpression {
     constructor(public readonly amount: number) {
+    }
+}
+
+class ZeroExpression extends AmountExpression{
+    constructor() {
+        super(0);
+    }
+}
+
+class OneExpression extends AmountExpression{
+    constructor() {
+        super(1);
     }
 }
 
