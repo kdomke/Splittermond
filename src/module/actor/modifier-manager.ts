@@ -30,12 +30,26 @@ export default class ModifierManager {
         this._modifier.get(modifier.groupId)!.push(modifier)
     }
 
-    value(groupId: string, attributeSelectors: AttributeSelector[] = []) {
+
+    /**
+     * @deprecated
+     */
+    public value(groupId:string|string[], attributeSelectors: AttributeSelector[] = []) {
+        if (!Array.isArray(groupId)) {
+            groupId = [groupId];
+        }
+
+        return groupId.map(id => this.singleValue(id, attributeSelectors))
+            .reduce((acc, value) => acc + value, 0);
+    }
+
+    private singleValue(groupId: string, attributeSelectors: AttributeSelector[] = []) {
         const sum = this.getModifiers(groupId, attributeSelectors,false)
             .map(mod => mod.value)
             .reduce((acc, value) => plus(acc, value), of(0))
         return evaluate(sum)
     }
+
 
     selectable(groupId: string | string[], attributeSelectors: AttributeSelector[] = []) {
         if (!Array.isArray(groupId)) {
