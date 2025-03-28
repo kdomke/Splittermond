@@ -58,7 +58,7 @@ describe('addModifier', () => {
         sandbox.stub(foundryApi, 'reportError');
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
             switch(key){
-                case 'splittermond.attributes.intuition.short': return 'INT';
+                case 'splittermond.attribute.intuition.short': return 'INT';
                 default: return key;
             }
         });

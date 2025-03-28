@@ -17,13 +17,13 @@ describe('normalizeModifiers', () => {
                     return "Schadensart";
                 case "splittermond.modifiers.keys.value":
                     return "Wert";
-                case "splittermond.derivedAttributes.speed.short":
+                case "splittermond.derivedAttribute.speed.short":
                     return "GSW";
-                case "splittermond.attributes.charisma.short":
+                case "splittermond.attribute.charisma.short":
                     return "AUS";
-                case "splittermond.attributes.strength.short":
+                case "splittermond.attribute.strength.short":
                     return "STR";
-                case "splittermond.attributes.agility.short":
+                case "splittermond.attribute.agility.short":
                     return "BEW";
                 default:
                     return key;

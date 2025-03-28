@@ -5,12 +5,12 @@ import {isRoll} from "../../../api/Roll";
 
 const modifierKeys = ["emphasis", "damageType", "value"] as const;
 const attributeMapper = initMapper(attributes)
-    .withTranslator((t) => `splittermond.attributes.${t}.long`)
-    .andOtherMappers((t) => `splittermond.attributes.${t}.short`)
+    .withTranslator((t) => `splittermond.attribute.${t}.long`)
+    .andOtherMappers((t) => `splittermond.attribute.${t}.short`)
     .build();
 const derivedAttributeMapper = initMapper(derivedAttributes)
-    .withTranslator((t) => `splittermond.derivedAttributes.${t}.long`)
-    .andOtherMappers((t) => `splittermond.derivedAttributes.${t}.short`)
+    .withTranslator((t) => `splittermond.derivedAttribute.${t}.long`)
+    .andOtherMappers((t) => `splittermond.derivedAttribute.${t}.short`)
     .build();
 const modifierKeyMapper = initMapper(modifierKeys)
     .withTranslator((t) => `splittermond.modifiers.keys.${t}`)
