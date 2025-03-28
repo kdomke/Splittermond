@@ -50,9 +50,8 @@ function asMultiplicationString(expression: MultiplyExpression): string {
     }else if (expression.right instanceof AmountExpression && expression.right.amount == -1){
         return `-${asString(expression.right)}`;
     }else {
-       return stringify(expression, "*");
+       return stringify(expression, "\u00D7");//use unicode multiplication sign
     }
-
 }
 
 function stringify(expression: {left:Expression, right:Expression}, operator:string): string {

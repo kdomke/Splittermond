@@ -18,7 +18,7 @@ describe("Expressions", () => {
         [of(-3), -3, of(-3), "-3"],
         [plus(of(3), of(3)), 6, of(6), "3 + 3"],
         [minus(of(3), of(3)), 0, of(0), "3 - 3"],
-        [times(of(3), of(3)), 9, of(9), "3 * 3"],
+        [times(of(3), of(3)), 9, of(9), "3 \u00D7 3"],
         [dividedBy(of(3), of(3)), 1, of(1), "3 / 3"],
     ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
 
@@ -39,10 +39,10 @@ describe("Expressions", () => {
         [times(plus(of(1), of(0)), of(1)), 1, of(1), "1"],
         [times(minus(of(1), of(0)), of(1)), 1, of(1), "1"],
         [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1"],
-        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) * 3"],
-        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) * 3"],
-        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) * 3"],
-        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| * 3"],
+        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) \u00D7 3"],
+        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) \u00D7 3"],
+        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) \u00D7 3"],
+        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| \u00D7 3"],
         [dividedBy(
             times(
                 of(2),
@@ -52,7 +52,7 @@ describe("Expressions", () => {
                 of(3),
                 minus(of(4), of(3))
             )
-        ), 2, of(2), "(2 * (1 + 2)) / (3 * (4 - 3))"],
+        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))"],
 
     ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
 
@@ -122,7 +122,7 @@ describe("Expressions", () => {
         it("should stringify property ", () => {
             const property = new ReferenceExpression("value", {value: 3}, "value");
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
-            expect(asString(expression)).to.equal("(3 + ${value}) * (4 - 3)");
+            expect(asString(expression)).to.equal("(3 + ${value}) \u00D7 (4 - 3)");
         });
     });
 });
