@@ -37,14 +37,14 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 }
 
 //this function is used in item.js to add modifiers to the actor
-export function addModifier(actor: SplittermondActor, item: SplittermondItem, name = "", str = "", type = "", multiplier = 1) {
+export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type = "", multiplier = 1) {
 
     function addModifierHelper(path: string, emphasis = "", value: Expression) {
         if (!isZero(value)) {
             if (emphasis) {
                 actor.modifier.add(path, emphasis, condense(value), item, type, true);
             } else {
-                actor.modifier.add(path, name, condense(value), item, type, false);
+                actor.modifier.add(path, emphasisFromName, condense(value), item, type, false);
             }
         }
     }
@@ -160,10 +160,10 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, na
                 });
                 break;
             case "damage":
-                actor.modifier.add("damage." + emphasis, name, times(of(multiplier), modifier.value), item, type, false);
+                actor.modifier.add("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), item, type, false);
                 break;
             case "weaponspeed":
-                actor.modifier.add("weaponspeed." + emphasis, name, times(of(multiplier), modifier.value), item, type, false);
+                actor.modifier.add("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), item, type, false);
                 break;
             default:
 
@@ -180,7 +180,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, na
         }
     });
     if(allErrors.length > 0) {
-        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${name}!\n${allErrors.join("\n")}`);
+        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${item.name}!\n${allErrors.join("\n")}`);
     }
 }
 
