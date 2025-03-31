@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondSpellItem from "../spell";
-import {damage, getDescriptorFields} from "./commonFields";
+import {damage, getDescriptorFields, validatedBoolean} from "./commonFields";
 
 function SpellDataModelSchema() {
     return {
@@ -20,14 +20,14 @@ function SpellDataModelSchema() {
         enhancementCosts: new fields.StringField({ required: true, nullable:true }),
         features: new fields.StringField({ required: true, nullable:true }),
         degreeOfSuccessOptions: new fields.SchemaField({
-            castDuration: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            consumedFocus: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            exhaustedFocus: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            channelizedFocus: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            effectDuration: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            damage: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            range: new fields.BooleanField({ required: true, nullable:true, initial: false }),
-            effectArea: new fields.BooleanField({ required: true, nullable:true, initial: false }),
+            castDuration: validatedBoolean(),
+            consumedFocus: validatedBoolean(),
+            exhaustedFocus: validatedBoolean(),
+            channelizedFocus: validatedBoolean(),
+            effectDuration: validatedBoolean(),
+            damage: validatedBoolean(),
+            range: validatedBoolean(),
+            effectArea: validatedBoolean(),
         }, { required: true, nullable:false}),
     };
 }

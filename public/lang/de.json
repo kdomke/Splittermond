@@ -407,7 +407,9 @@
         "bleeding": "Blutung",
         "disease": "Krankheit",
         "light": "Licht",
-        "shadow": "Schatten"
+        "shadow": "Schatten",
+        "wind": "Wind",
+        "water": "Wasser"
       },
       "long": {
         "physical": "Physischer Schaden",
@@ -422,7 +424,9 @@
         "bleeding": "Blutungsschaden",
         "disease": "Krankheitsschaden",
         "light": "Lichtschaden",
-        "shadow": "Schattenschaden"
+        "shadow": "Schattenschaden",
+        "wind": "Windschaden",
+        "water": "Wasserschaden"
       }
     },
     "skillAbbreviation": {

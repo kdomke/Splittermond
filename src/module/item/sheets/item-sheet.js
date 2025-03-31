@@ -71,6 +71,11 @@ export default class SplittermondItemSheet extends ItemSheet {
         sheetProperties.forEach(grp => {
             grp.properties.forEach(async /** @type {InputItemProperty|ItemSheetPropertyDisplayProperty}*/prop => {
                 prop.value = this.propertyResolver.getProperty(this.item, prop.field);
+                /*
+                 * These type guards exist because our multiselects cannot handle an undefined or null option well.
+                 * However,Foundry seems to like to use null for nullable boolean values. If that is the case
+                 * This guard will convert all falsy to truthy values.
+                 */
                 if (prop.value === undefined) {
                     prop.value = "undefined";
                 }

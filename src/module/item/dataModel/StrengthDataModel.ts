@@ -2,6 +2,7 @@ import { DataModelSchemaType, SplittermondDataModel } from "../../data/Splitterm
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondItem from "../item";
 import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
+import {validatedBoolean} from "./commonFields";
 
 function ItemStrengthDataModelSchema() {
     return {
@@ -11,8 +12,8 @@ function ItemStrengthDataModelSchema() {
         origin: new fields.StringField({ required: true, nullable: true }),
         level: new fields.NumberField({ required: true, nullable: true, initial: 1 }),
         quantity: new fields.NumberField({ required: true, nullable: true, initial: 1 }),
-        multiSelectable: new fields.BooleanField({ required: true, nullable: true, initial: false }),
-        onCreationOnly: new fields.BooleanField({ required: true, nullable: true, initial: false }),
+        multiSelectable: validatedBoolean(),
+        onCreationOnly: validatedBoolean(),
     };
 }
 

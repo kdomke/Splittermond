@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondMasteryItem from "../mastery";
-import {getDescriptorFields} from "./commonFields";
+import {getDescriptorFields, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemMasteryDataModelSchema() {
@@ -9,8 +9,8 @@ function ItemMasteryDataModelSchema() {
         availableIn: new fields.StringField({ required: true, nullable:true }),
         modifier: new fields.StringField({ required: true, nullable: true}),
         skill: new fields.StringField({ required: true, nullable: false }),
-        isGrandmaster: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-        isManeuver: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+        isGrandmaster: validatedBoolean(),
+        isManeuver: validatedBoolean(),
         level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     };
 }

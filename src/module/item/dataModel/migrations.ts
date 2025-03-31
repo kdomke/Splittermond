@@ -32,5 +32,28 @@ export function migrateFrom0_12_13(source:unknown){
             });
         source.modifier = [...keep, ...change].join(", ");
     }
+
+    //We need to enforce that boolean values are actually boolean values. Otherwise they might behave weirdly when displayed
+    if(!!source && typeof source === "object" && "equipped" in source){
+        source.equipped = !!source.equipped;
+    }
+    if(!!source && typeof source === "object" && "multiSelectable" in source){
+        source.multiSelectable= !!source.multiSelectable;
+    }
+    if(!!source && typeof source === "object" && "onCreationOnly" in source){
+        source.onCreationOnly= !!source.onCreationOnly;
+    }
+    if(!!source && typeof source === "object" && "isGrandmaster" in source){
+        source.isGrandmaster= !!source.isGrandmaster;
+    }
+    if(!!source && typeof source === "object" && "isManeuver" in source){
+        source.isManeuver= !!source.isManeuver;
+    }
+    if(!!source && typeof source === "object" && "prepared" in source){
+        source.prepared= !!source.prepared;
+    }
+    if(!!source && typeof source === "object" && "active" in source){
+        source.active= !!source.active;
+    }
     return source;
 }
