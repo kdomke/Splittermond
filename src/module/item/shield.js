@@ -2,6 +2,7 @@ import SplittermondPhysicalItem from "./physical.js";
 import AttackableItem from "./attackable-item.ts";
 import ActiveDefense from "../actor/active-defense.js";
 import Skill from "../actor/skill.js";
+import {of} from "../actor/modifiers/expressions/definitions";
 
 export default class SplittermondShieldItem extends AttackableItem(SplittermondPhysicalItem) {
 
@@ -17,13 +18,13 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
         this.prepareActiveDefense();
         if (!this.system.equipped) return;
         if (this.system.defenseBonus)
-            this.actor.modifier.add("defense", this.name, this.system.defenseBonus, this, "equipment");
+            this.actor.modifier.addOld("defense", this.name, of(this.system.defenseBonus), this, "equipment");
         let handicap = this.handicap;
         let tickMalus = this.tickMalus;
         if (handicap)
-            this.actor.modifier.add("handicap.shield", this.name, handicap, this, "equipment");
+            this.actor.modifier.addOld("handicap.shield", this.name, of(handicap), this, "equipment");
         if (tickMalus)
-            this.actor.modifier.add("tickmalus.shield", this.name, tickMalus, this, "equipment");
+            this.actor.modifier.addOld("tickmalus.shield", this.name, of(tickMalus), this, "equipment");
     }
 
 

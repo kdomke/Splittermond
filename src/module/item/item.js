@@ -8,7 +8,7 @@ export default class SplittermondItem extends Item {
             super(data, context);
         } else {
             //In my opinion, this line shouldn't do anything, However, I don't have the time to test.
-            foundryApi.mergeObject(context, { splittermond: { ready: true } });
+            foundryApi.mergeObject(context, {splittermond: {ready: true}});
             const ItemConstructor = CONFIG.splittermond.Item.documentClasses[data.type];
             return ItemConstructor ? new ItemConstructor(data, context) : new SplittermondItem(data, context);
         }
@@ -20,7 +20,6 @@ export default class SplittermondItem extends Item {
         super.prepareBaseData();
 
         const data = this.system;
-
 
 
         if (data.id) {
@@ -78,7 +77,7 @@ export default class SplittermondItem extends Item {
                 this.actor.addModifier(this, this.name, data.modifier, "equipment");
                 break;
             case "strength":
-                this.actor.addModifier(this, this.name, data.modifier, "strength", data.quantity)
+                this.actor.addModifier(this, this.name, data.modifier, "innate", data.quantity)
                 break;
             case "statuseffect":
                 this.actor.addModifier(this, this.name, data.modifier, "statuseffect", data.level);
@@ -94,14 +93,14 @@ export default class SplittermondItem extends Item {
                 if (name.startsWith("Schwerpunkt")) {
                     name = this.name.substring(12).trim();
                 }
-                modifier = modifier.replaceAll("${name}", name);
+                modifier = modifier.replaceAll("${name}", name, "innate");
                 this.actor.addModifier(this, name, modifier);
                 break;
+            case "npcfeature":
+                this.actor.addModifier(this, this.name, data.modifier, "innate");
+                break;
             default:
-                if (data.modifier) {
-                    this.actor.addModifier(this, this.name, data.modifier);
-                }
-
+                this.actor.addModifier(this, this.name, data.modifier);
                 break;
         }
 

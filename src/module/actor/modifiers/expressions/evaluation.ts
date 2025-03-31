@@ -1,11 +1,12 @@
 // noinspection SuspiciousTypeOfGuard
 
 import {
+    AbsExpression,
     AddExpression,
     AmountExpression, DivideExpression,
     Expression,
     MultiplyExpression,
-    ReferenceExpression,
+    ReferenceExpression, RollExpression,
     SubtractExpression
 } from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
@@ -27,9 +28,14 @@ function doEvaluate(expression: Expression): number | null {
         return (doEvaluate(expression.left) ?? 1) * (doEvaluate(expression.right) ?? 1)
     } else if (expression instanceof DivideExpression) {
         return (doEvaluate(expression.left) ?? 1) / (doEvaluate(expression.right) ?? 1)
+    } else if (expression instanceof RollExpression) {
+        return expression.value.evaluateSync().total
+    } else if (expression instanceof AbsExpression) {
+        return Math.abs(evaluate(expression.arg))
     }
     exhaustiveMatchGuard(expression)
 }
+
 class PropertyResolver {
     numberOrNull(propertyPath: string | null | undefined, source: object): number | null {
         const value = this.resolve(propertyPath, source);

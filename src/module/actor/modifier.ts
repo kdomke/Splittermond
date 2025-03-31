@@ -1,56 +1,71 @@
 import SplittermondActor from "./actor";
 import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
+import {Expression} from "./modifiers/expressions/definitions";
+import {evaluate} from "./modifiers/expressions/evaluation";
+import {condense} from "./modifiers/expressions/condenser";
+import {abs} from "./modifiers/expressions/definitions";
+import {asString} from "./modifiers/expressions/Stringifier";
 
-export interface IModifier<T=number> {
-   readonly value:T;
+interface ModifierAttributes {
+    name:string;
+    type:ModifierType
+    [x:string]: string|undefined|null;
+};
+
+/**
+ * The type of item from which the modifier stems. Use
+ * <ul>
+ *     <li><code>magic</code> for spells, their effects and temporary enchantments</li>
+ *     <li><code>equipment</code> for arms, armor and any personal effects</li>
+ *     <li><code>innate</code> for strengths, masteries and other permanent effects</li>
+ * </ul>
+ */
+export type ModifierType = "magic"|"equipment"|"innate"|null;
+export interface IModifier {
+   readonly value:Expression;
    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string):void;
    readonly groupId:string;
    readonly selectable:boolean;
-   readonly type:string;
+   readonly attributes: ModifierAttributes
    readonly origin:SplittermondItem|SplittermondActor|null;
-   readonly name:string;
 }
 
 export default class Modifier implements IModifier {
-    public readonly value:number;
     /**
-     * 
+     *
      * @param {string} path Modifier Path
-     * @param {string} name name of modification
-     * @param {(numeric | string)} value 
-     * @param {(Item | Actor)=null} origin 
-     * @param {string=""} type "equipment", "magic" etc.
+     * @param {(numeric | string)} value
+     * @param attributes secondary selection characteristics of this modifier
+     * @param {(Item | Actor)=null} origin
      * @param {boolean=false} selectable is the modifier selectable as a roll option
      */
     constructor(
         public readonly path:string,
-        public readonly name:string,
-        value:string|number,
+        public readonly value:Expression,
+        public readonly attributes:ModifierAttributes,
         public readonly origin:SplittermondItem|SplittermondActor|null = null,
-        public readonly type:string = "",
         public readonly selectable = false) {
-        this.value = typeof value === "number" ? value :parseInt(value);
         this.selectable = selectable;
-        this.name = name;
-        this.type = type;
     }
 
 
     get isMalus() {
-        return this.value < 0;
+        return evaluate(this.value) < 0;
     }
 
     get isBonus() {
-        return this.value > 0;
+        return evaluate(this.value) > 0;
     }
 
     addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
-        let val = Math.abs(this.value);
-        if (this.isBonus) {
-            formula.addBonus(bonusPrefix+val, this.name);
+        let evaluated = evaluate(this.value);
+        if (evaluated > 0) {
+            const term = `${bonusPrefix}${asString(abs(condense(this.value)))}`
+            formula.addBonus(term, this.name);
         } else {
-            formula.addMalus(malusPrefix+val, this.name);
+            const term = `${malusPrefix}${asString(abs(condense(this.value)))}`
+            formula.addMalus(term, this.name);
         }
     }
 
@@ -58,10 +73,22 @@ export default class Modifier implements IModifier {
         return this.path === other.path;
     }
 
-
-
     get groupId(){
         return this.path
+    }
+
+    /**
+     * @deprecated use attribute filters to access these
+     */
+    get name(){
+        return this.attributes.name;
+    }
+
+    /**
+     * @deprecated use attribute filters to access these
+     */
+    get type(){
+        return this.attributes.type;
     }
 
 }

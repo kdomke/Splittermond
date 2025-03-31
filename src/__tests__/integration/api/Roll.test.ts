@@ -73,6 +73,12 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(tooltip).to.contain('<span class="part-formula">2d6</span>');
             expect(tooltip).to.match(/(<li class="roll die d6(?: min| max)?">[1-6]<\/li>)/);
         });
+
+        ["1W6", "leerzeichen", "+K2V3", null, undefined].forEach((input) => {
+            it(`should fail if '${input}' is not a roll formula`,()=>{
+               expect(() => foundryApi.roll(input as string).evaluateSync()).to.throw();
+            });
+        })
     });
 
     describe("Roll addition", () => {

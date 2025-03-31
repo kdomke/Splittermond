@@ -1,15 +1,16 @@
-import {ParsedModifier, Value} from "./index";
+import {Value} from "./index";
 import {initMapper, LanguageMapper} from "../../../util/LanguageMapper";
 import {attributes, derivedAttributes} from "../../../config/attributes";
+import {isRoll} from "../../../api/Roll";
 
 const modifierKeys = ["emphasis", "damageType", "value"] as const;
 const attributeMapper = initMapper(attributes)
-    .withTranslator((t) => `splittermond.attributes.${t}.long`)
-    .andOtherMappers((t) => `splittermond.attributes.${t}.short`)
+    .withTranslator((t) => `splittermond.attribute.${t}.long`)
+    .andOtherMappers((t) => `splittermond.attribute.${t}.short`)
     .build();
 const derivedAttributeMapper = initMapper(derivedAttributes)
-    .withTranslator((t) => `splittermond.derivedAttributes.${t}.long`)
-    .andOtherMappers((t) => `splittermond.derivedAttributes.${t}.short`)
+    .withTranslator((t) => `splittermond.derivedAttribute.${t}.long`)
+    .andOtherMappers((t) => `splittermond.derivedAttribute.${t}.short`)
     .build();
 const modifierKeyMapper = initMapper(modifierKeys)
     .withTranslator((t) => `splittermond.modifiers.keys.${t}`)
@@ -22,19 +23,6 @@ export function clearMappers() {
     (attributeMapper as any).clear();
     (derivedAttributeMapper as any).clear();
     (modifierKeyMapper as any).clear();
-}
-
-export function normalizeModifiers(modifiers: ParsedModifier[]) {
-    const normalized = modifiers.map(m => ({...m}))
-    normalized.forEach(normalizeModifier);
-    return normalized;
-}
-
-function normalizeModifier(modifier: ParsedModifier) {
-    for (const key in modifier.attributes) {
-        const value = modifier.attributes[key];
-        modifier.attributes[key] = normalizeValue(value);
-    }
 }
 
 export function normalizeKey(key: string) {
@@ -52,9 +40,9 @@ export function normalizeValue(value: Value) {
         const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
         const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
         if (replacement !== value) {
-            return {propertyPath: replacement, sign};
+            return {propertyPath: replacement, sign, original: value};
         }
-    } else if (typeof value === "object") {
+    } else if (typeof value === "object" && !isRoll(value)) {
         const replacement = replacer.tryReplace(value.propertyPath);
         if (replacement !== value.propertyPath) {
             value.propertyPath = replacement;

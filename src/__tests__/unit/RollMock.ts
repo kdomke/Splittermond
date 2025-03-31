@@ -82,6 +82,10 @@ export class MockRoll implements FoundryRoll{
     }
 
     async evaluate(): Promise<MockRoll> {
+        return Promise.resolve(this.evaluateSync());
+    }
+
+    evaluateSync(){
         if (!this._evaluated) {
             this._total = this.terms.reduce((sum, term) => {
                 if ('results' in term) {

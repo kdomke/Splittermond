@@ -5,11 +5,13 @@ import {DamageType} from "../config/damageTypes";
 import {CharacterDataModel} from "./dataModel/CharacterDataModel";
 import {NpcDataModel} from "./dataModel/NpcDataModel";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
+import ModifierManager from "./modifier-manager";
 
 declare class SplittermondActor extends Actor {
 
     private _resistances: Susceptibilities;
     private _weaknesses: Susceptibilities;
+    public readonly modifier: ModifierManager
 
     items: Collection<SplittermondItem>;
 

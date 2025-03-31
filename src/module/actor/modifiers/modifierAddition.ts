@@ -5,12 +5,13 @@ import {foundryApi} from "../../api/foundryApi";
 import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
-import {createExpressions, normalizeModifiers, parseModifiers} from "./parsing";
-import {expressions} from "./expressions/definitions";
+import {parseModifiers, processValues} from "./parsing";
+import {Expression, of, times} from "./expressions/definitions";
 import {evaluate} from "./expressions/evaluation";
+import {condense, isZero} from "./expressions/condenser";
+import {ModifierType} from "../modifier";
 
 type Regeneration = { multiplier: number, bonus: number };
-const {times, of} = expressions;
 
 interface PreparedSystem {
     spellCostReduction: SpellCostReductionManager,
@@ -37,17 +38,18 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 }
 
 //this function is used in item.js to add modifiers to the actor
-export function addModifier(actor: SplittermondActor, item: SplittermondItem, name = "", str = "", type = "", multiplier = 1) {
+export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
 
-    function addModifierHelper(path: string, emphasis = "", value: number) {
-        if (value != 0) {
+    function addModifierHelper(path: string, value: Expression, emphasis = "")  {
+        if (!isZero(value)) {
             if (emphasis) {
-                actor.modifier.add(path, emphasis, value, item, type, true);
+                actor.modifier.addOld(path, emphasis, condense(value), type, item, true);
             } else {
-                actor.modifier.add(path, name, value * multiplier, item, type, false);
+                actor.modifier.addOld(path, emphasisFromName, condense(value), type, item, false);
             }
         }
     }
+
     if (str == "") {
         return;
     }
@@ -55,118 +57,115 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, na
     const data = asPreparedData(actor.system);
 
     const parsedResult = parseModifiers(str);
-    const normalizedModifiers = normalizeModifiers(parsedResult.modifiers);
-    const expressionResult = createExpressions(normalizedModifiers, data);
+    const normalizedModifiers = processValues(parsedResult.modifiers, actor);
 
-    const allErrors = [...parsedResult.errors, ...expressionResult.errors];
+    const allErrors = [...parsedResult.errors, ...normalizedModifiers.errors];
 
-    expressionResult.modifiers.forEach(modifier => {
-        const value = typeof modifier.attributes.value === "string" ?
-            modifier.attributes.value :
-            evaluate(times(of(multiplier), modifier.attributes.value));
+    normalizedModifiers.vectorModifiers.forEach((mod) => {
+        const modifierLabel = mod.path.toLowerCase();
+        const itemSkill = "skill" in item.system ? item.system.skill : undefined;
+        if (modifierLabel.startsWith("foreduction")) {
+            data.spellCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+        } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
+            data.spellEnhancedCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+        } else {
+            allErrors.push("Cannot have a string value in a non-foreduction modifier");
+        }
+        return;
+    })
+
+    normalizedModifiers.scalarModifiers.forEach(modifier => {
         const modifierLabel = modifier.path.toLowerCase();
 
         if (modifier.attributes.emphasis && typeof (modifier.attributes.emphasis) !== "string") {
             allErrors.push("Emphasis attributes must be strings");
         }
-        const emphasis = (modifier.attributes.emphasis ?? "")as string;
-        if (typeof value === "string") {
-            const itemSkill = "skill" in item.system ? item.system.skill : undefined;
-            if (modifierLabel.startsWith("foreduction")) {
-                data.spellCostReduction.addCostModifier(modifier.path, value, itemSkill);
-            } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-                data.spellEnhancedCostReduction.addCostModifier(modifier.path, value, itemSkill);
-            } else {
-                allErrors.push("Cannot have a string value in a non-foreduction modifier");
-            }
-            return;
-        }
-
+        const emphasis = (modifier.attributes.emphasis ?? "") as string;
         switch (modifierLabel) {
             case "bonuscap":
-                addModifierHelper("bonuscap", "", value);
+                addModifierHelper("bonuscap", times(of(multiplier), modifier.value),"");
                 break;
             case "speed.multiplier":
             case "gsw.mult":
-                actor.derivedValues.speed.multiplier *= Math.pow(value / multiplier, multiplier);
+                actor.derivedValues.speed.multiplier *= Math.pow(evaluate(modifier.value), multiplier);
                 break;
             case "sr":
-                addModifierHelper("damagereduction", "", value);
+                addModifierHelper("damagereduction", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.shield.mod":
             case "handicap.shield":
-                addModifierHelper("handicap.shield", "", value);
+                addModifierHelper("handicap.shield", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.mod":
             case "handicap":
-                addModifierHelper("handicap", "", value);
+                addModifierHelper("handicap", times(of(multiplier), modifier.value),"");
                 break;
             case "handicap.armor.mod":
             case "handicap.armor":
-                addModifierHelper("handicap.armor", "", value);
+                addModifierHelper("handicap.armor", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.shield.mod":
             case "tickmalus.shield":
-                addModifierHelper("tickmalus.shield", "", value);
+                addModifierHelper("tickmalus.shield", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.armor.mod":
             case "tickmalus.armor":
-                addModifierHelper("tickmalus.armor", "", value);
+                addModifierHelper("tickmalus.armor", times(of(multiplier), modifier.value),"");
                 break;
             case "tickmalus.mod":
             case "tickmalus":
-                addModifierHelper("tickmalus", "", value);
+                addModifierHelper("tickmalus", times(of(multiplier), modifier.value),"");
                 break;
             case "woundmalus.nbrlevels":
-                data.health.woundMalus.nbrLevels = value;
+                data.health.woundMalus.nbrLevels = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "woundmalus.mod":
-                data.health.woundMalus.mod += value;
+                data.health.woundMalus.mod += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "woundmalus.levelmod":
-                data.health.woundMalus.levelMod += value;
+                data.health.woundMalus.levelMod += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "splinterpoints":
                 if ("splinterpoints" in data) {
-                    data.splinterpoints.max = (data.splinterpoints?.max || 3) + value;
+                    data.splinterpoints.max = (data.splinterpoints?.max || 3) + evaluate(times(of(multiplier), modifier.value));
                 }
                 break;
             case "healthregeneration.multiplier":
-                data.healthRegeneration.multiplier = value;
+                data.healthRegeneration.multiplier = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "focusregeneration.multiplier":
-                data.focusRegeneration.multiplier = value;
+                data.focusRegeneration.multiplier = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "healthregeneration.bonus":
-                data.healthRegeneration.bonus += value;
+                data.healthRegeneration.bonus += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "focusregeneration.bonus":
-                data.focusRegeneration.bonus += value;
+                data.focusRegeneration.bonus += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "lowerfumbleresult":
                 let skill = "skill" in item.system && item.system.skill ? item.system?.skill : "*";
-                addModifierHelper(modifier.path + "/" + skill, "", value);
+                addModifierHelper(modifier.path + "/" + skill, times(of(multiplier), modifier.value), "");
                 break;
             case "generalskills":
                 splittermond.skillGroups.general.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, value);
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), emphasis);
                 });
                 break;
             case "magicskills":
                 splittermond.skillGroups.magic.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, value);
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), emphasis);
                 });
                 break;
             case "fightingskills":
                 splittermond.skillGroups.fighting.forEach((skill) => {
-                    addModifierHelper(skill, emphasis, value);
+                    addModifierHelper(skill, times(of(multiplier), modifier.value),"");
                 });
                 break;
             case "damage":
-                actor.modifier.add("damage." + emphasis, name, value, item, type, false);
+                actor.modifier.addOld("damage." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             case "weaponspeed":
-                actor.modifier.add("weaponspeed." + emphasis, name, value, item, type, false);
+                actor.modifier.addOld("weaponspeed." + emphasis, emphasisFromName, times(of(multiplier), modifier.value), type, item, false);
                 break;
             default:
 
@@ -176,14 +175,14 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, na
                 if (!element) {
                     element = modifier.path;
                 }
-                let adjustedValue = value * (element.toLowerCase() === "initiative" ? -1 : 1);
-                addModifierHelper(element, emphasis, adjustedValue);
+                let adjustedValue = times(times(of(multiplier), modifier.value), of(element.toLowerCase() === "initiative" ? -1 : 1));
+                addModifierHelper(element, adjustedValue, emphasis);
 
                 break;
         }
     });
-    if(allErrors.length > 0) {
-        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${name}!\n${allErrors.join("\n")}`);
+    if (allErrors.length > 0) {
+        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${item.name}!\n${allErrors.join("\n")}`);
     }
 }
 

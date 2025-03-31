@@ -1,6 +1,7 @@
 import {ErrorMessage, ParsedModifier, Value} from "./index";
 import {normalizeKey} from "./normalizer";
 import {validateAllInputConsumed, validateKeys} from "./validators";
+import {foundryApi} from "../../../api/foundryApi";
 
 type SingleParseResult = ParsedModifier | ErrorMessage
 type AttributeParseResult = { key: string, value: Value } | ErrorMessage
@@ -125,16 +126,27 @@ function parseValue(value: string) {
     const quotedStringPattern = /(?<=["']).*(?=["'])/
     if (valueExpressionPattern.test(value)) {
         const sign: 1 | -1 = (/-(?=\s*\$\{)/.test(value) ? -1 : 1)
-        return {propertyPath: valueExpressionPattern.exec(value)![0], sign};
+        const parsedValue = valueExpressionPattern.exec(value)![0];
+        return {propertyPath: parsedValue, sign, original: parsedValue};
     } else if (numberPattern.test(value)) {
         return parseFloat(numberPattern.exec(value)![0])
     } else if (quotedStringPattern.test(value)) {
         return quotedStringPattern.exec(value)![0]
-    } else {
+    } else if(isRoll(value)){
+            return foundryApi.roll(value);
+    }else {
         return value;
     }
 }
 
+function isRoll(value: string): boolean {
+    try{
+        foundryApi.roll(value).evaluateSync();
+        return true;
+    } catch(e){
+        return false;
+    }
+}
 
 
 
