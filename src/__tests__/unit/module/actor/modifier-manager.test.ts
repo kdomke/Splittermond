@@ -13,25 +13,25 @@ describe("ModifierManager", () => {
     });
 
     it("should aggregate static modifiers", () => {
-        manager.addOld("AUS", "Base", of(2), "innate");
-        manager.addOld("AUS", "Item Bonus", of(1), "equipment", mockItem);
-        manager.addOld("bonuscap", "Cap", of(3), "innate", null, true);
+        manager.add("AUS", {name:"Base",type:"innate"}, of(2));
+        manager.add("AUS", {name:"Item Bonus",type:"equipment"}, of(1), mockItem);
+        manager.add("bonuscap", {name: "Cap", type:"innate"}, of(3), null, true);
 
         expect(manager.value("AUS")).to.equal(3);
-        expect(manager.value("bonuscap")).to.equal(0);
+        expect(manager.value("bonuscap")).to.equal(3);
     });
 
     it("should handle selectable modifiers", () => {
-        manager.addOld("speed.multiplier", "Boots", of(2), "equipment", null, true);
-        manager.addOld("speed.multiplier", "Haste", of(1), "magic", null, true);
+        manager.add("speed.multiplier", {name:"Boots", type:"equipment"}, of(2), null,  true);
+        manager.add("speed.multiplier", {name: "Haste",type:"magic"}, of(1), null, true);
 
         const result = manager.selectable("speed.multiplier");
         expect(result).to.deep.equal({"Boots": of(2), "Haste": of(1)});
     });
 
     it("should merge multiple paths", () => {
-        manager.addOld("damage.physical", "Sword", of(3), "equipment");
-        manager.addOld("damage.fire", "Enchantment", of(2), "magic");
+        manager.add("damage.physical", {name: "Sword", type: "equipment"}, of(3));
+        manager.add("damage.fire", {name: "Enchantment", type: "magic"}, of(2) );
 
         const result = manager.static(["damage.physical", "damage.fire"]);
         expect(result.length).to.equal(2);
@@ -44,8 +44,8 @@ describe("ModifierManager", () => {
     });
 
     it("should combine modifiers with same groupId", () => {
-        manager.addOld("melee", "Spell", of(1), "magic");
-        manager.addOld("melee", "Trait", of(2), "innate");
+        manager.add("melee", {name:"Spell", type:"magic"}, of(1));
+        manager.add("melee", {name:"Trait", type:"innate"}, of(2));
 
         expect(manager.value("melee")).to.equal(3);
     });
