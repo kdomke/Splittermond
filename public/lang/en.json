@@ -92,10 +92,12 @@
         "bleeding": "bleed",
         "disease": "disease",
         "light": "light",
-        "shadow": "shadow"
+        "shadow": "shadow",
+        "wind": "wind",
+        "water": "water",
       },
       "long": {
-        "physical": "pyhsical damage",
+        "physical": "physical damage",
         "mental": "mental damage",
         "electric": "electric damage",
         "acid": "acid damage",
@@ -107,7 +109,9 @@
         "bleeding": "bleeding damage",
         "disease": "disease damage",
         "light": "light damage",
-        "shadow": "shadow damage"
+        "shadow": "shadow damage",
+        "wind": "wind damage",
+        "water": "water damage",
       }
     }
   }

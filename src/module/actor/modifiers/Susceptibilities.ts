@@ -18,6 +18,8 @@ export class Susceptibilities {
         disease: 0,
         light: 0,
         shadow: 0,
+        wind: 0,
+        water: 0
     };
 
     constructor(private keyword:string,private modifierManager: ModifierManager) {
