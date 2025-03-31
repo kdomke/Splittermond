@@ -18,13 +18,37 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
         this.prepareActiveDefense();
         if (!this.system.equipped) return;
         if (this.system.defenseBonus)
-            this.actor.modifier.addOld("defense", this.name, of(this.system.defenseBonus), this, "equipment");
+            this.actor.modifier.add(
+                "defense",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(this.system.defenseBonus),
+                this
+            )
         let handicap = this.handicap;
         let tickMalus = this.tickMalus;
         if (handicap)
-            this.actor.modifier.addOld("handicap.shield", this.name, of(handicap), this, "equipment");
+            this.actor.modifier.add(
+                "handicap.shield",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(handicap),
+                this
+            )
         if (tickMalus)
-            this.actor.modifier.addOld("tickmalus.shield", this.name, of(tickMalus), this, "equipment");
+            this.actor.modifier.add(
+                "tickmalus.shield",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(tickMalus),
+                this
+            )
     }
 
 

@@ -1,5 +1,6 @@
 import Skill from "./skill.js";
 import {of} from "./modifiers/expressions/definitions";
+import {foundryApi} from "../api/foundryApi.js";
 
 export default class Attack {
     /**
@@ -45,16 +46,48 @@ export default class Attack {
         this.skill.addModifierPath(`skill.${this.id}`);
 
         if (minAttributeMalus) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.minAttributes"), of(minAttributeMalus), this);
-            this.actor.modifier.addOld(`weaponspeed.${this.id}`, game.i18n.localize("splittermond.minAttributes"), of(minAttributeMalus), this);
+            this.actor.modifier.add(
+                `skill.${this.id}`,
+                {
+                    name: foundryApi.localize("splittermond.minAttributes"),
+                    type: "innate",
+                },
+                of(minAttributeMalus),
+                this
+            );
+            this.actor.modifier.add(
+                `weaponspeed.${this.id}`,
+                {
+                    name: foundryApi.localize("splittermond.minAttributes"),
+                    type: "innate",
+                },
+                of(minAttributeMalus),
+                this
+            );
         }
 
         if (parseInt(attackData.skillMod)) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.skillMod"), of(parseInt(attackData.skillMod)), this);
+            this.actor.modifier.add(
+                `skill.${this.id}`,
+                {
+                    name: foundryApi.localize("splittermond.skillMod"),
+                    type: "innate",
+                },
+                of(parseInt(attackData.skillMod)),
+                this
+            );
         }
 
         if ((this.item?.systemData?.().damageLevel || 0) > 2) {
-            this.actor.modifier.addOld(`skill.${this.id}`, game.i18n.localize("splittermond.damageLevel"), of(-3), this);
+            this.actor.modifier.add(
+                `skill.${this.id}`,
+                {
+                    name: foundryApi.localize("splittermond.damageLevel"),
+                    type: "innate"
+                },
+                of(-3),
+                this
+            );
         }
 
         this.range = attackData.range || 0;

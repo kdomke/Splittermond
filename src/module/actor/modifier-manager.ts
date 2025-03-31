@@ -1,4 +1,4 @@
-import Modifier, {IModifier, ModifierType} from "./modifier";
+import Modifier, {IModifier, ModifierAttributes} from "./modifier";
 import SplittermondItem from "../item/item";
 import SplittermondActor from "./actor";
 import {Expression, of, plus} from "./modifiers/expressions/definitions";
@@ -16,11 +16,8 @@ export default class ModifierManager {
     constructor() {
     }
 
-
-    addOld(path: string, name: string, value: Expression, type: ModifierType, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
-        const attributes = {name, type};
-        const newModifier = new Modifier(path, value, attributes, origin, selectable);
-        this.addModifier(newModifier);
+    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+        this.addModifier(new Modifier(path, value, attributes, origin, selectable));
     }
 
     addModifier(modifier: IModifier) {
