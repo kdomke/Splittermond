@@ -1,6 +1,9 @@
 ## 0.12.14
 ### Fixed
 *  Zaubererfolgsgradoptionen können jetzt wieder individuell ausgewählt werden
+*  Alle anderen checkboxen uns schalter sollten auch gehen
+### Breaking changes
+* Bei Modifikatoren können Schwerpunkte mit Leerzeichen nur als emphasis="Name mit Leerzeichen" angegeben werden
 ## 0.12.13
 ### Fixed
 * Resistenzen und Verwundbarkeiten werden jetzt immer beachtet
