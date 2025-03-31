@@ -1,13 +1,13 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondItem from "../item";
-import {getDescriptorFields} from "./commonFields";
+import {getDescriptorFields, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemSpellEffectDataModelSchema() {
     return {
         ...getDescriptorFields(),
         modifier: new fields.StringField({ required: true, nullable: true }),
-        active: new fields.BooleanField({ required: true, nullable: true, initial: true }),
+        active: validatedBoolean()
     };
 }
 

@@ -1,3 +1,6 @@
+## 0.12.14
+### Fixed
+*  Zaubererfolgsgradoptionen können jetzt wieder individuell ausgewählt werden
 ## 0.12.13
 ### Fixed
 * Resistenzen und Verwundbarkeiten werden jetzt immer beachtet
