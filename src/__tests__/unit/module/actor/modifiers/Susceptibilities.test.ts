@@ -11,7 +11,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility",modifierManager);
 
-            modifierManager.addOld(`susceptibility.${sus}`, "",of(5),"innate");
+            modifierManager.add(`susceptibility.${sus}`,{name: "",type: "innate"}, of(5));
 
             expect(underTest.calculateSusceptibilities()[sus]).to.equal(5);
         });
@@ -21,7 +21,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility", modifierManager);
 
-            modifierManager.addOld(`susceptibility.${sus}`,"", of(5), "innate");
+            modifierManager.add(`susceptibility.${sus}`,{name: "",type: "innate"}, of(5));
 
             expect(underTest.calculateSusceptibilities()[sus]).to.equal(5);
         });
@@ -32,7 +32,7 @@ describe("Susceptibilities", () => {
             const modifierManager = new ModifierManager();
             const underTest = new Susceptibilities("susceptibility", modifierManager);
 
-            modifierManager.addOld(`susceptibility.light`,"", of(value),"innate");
+            modifierManager.add(`susceptibility.light`,{name:"", type: "innate"}, of(value));
 
             expect(underTest.calculateSusceptibilities().light).to.equal(value);
         });
