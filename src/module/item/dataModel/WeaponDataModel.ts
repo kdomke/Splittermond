@@ -1,6 +1,6 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondWeaponItem from "../weapon";
-import {damage, getDescriptorFields, getPhysicalProperties} from "./commonFields";
+import {damage, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemWeaponDataModelSchema() {
@@ -17,8 +17,8 @@ function ItemWeaponDataModelSchema() {
         attribute1: new fields.StringField({required: true, nullable: false}),
         attribute2: new fields.StringField({required: true, nullable: false}),
         minAttributes: new fields.StringField({required: true, nullable: false}),
-        prepared: new fields.BooleanField({required: true, nullable: false, initial: false}),
-        equipped: new fields.BooleanField({required: true, nullable: false, initial: false}),
+        prepared: validatedBoolean(),
+        equipped: validatedBoolean(),
         secondaryAttack: new fields.SchemaField({
             skill: new fields.StringField({required: true, nullable: true, initial: "none"}),
             skillMod: new fields.NumberField({required: true, nullable: true, initial: 0}),

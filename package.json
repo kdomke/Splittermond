@@ -1,6 +1,6 @@
 {
   "name": "@SplittermondFoundry/splittermond",
-  "version": "0.12.13",
+  "version": "0.12.14",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
   "main": "src/splittermond.js",
   "type": "module",
@@ -45,7 +45,7 @@
     "jsdom": "^26.0.0",
     "less": "^4.2.0",
     "mocha": "^11.0.0",
-    "sinon": "^19.0.0",
+    "sinon": "^20.0.0",
     "tsx": "^4.17.0",
     "typescript": "^5.6.3",
     "vite": "^6.0.3"

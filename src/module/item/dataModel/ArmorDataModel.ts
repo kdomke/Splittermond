@@ -1,7 +1,7 @@
 import {DataModelSchemaType, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondShieldItem from "../shield";
-import {getDefense, getDescriptorFields, getPhysicalProperties} from "./commonFields";
+import {getDefense, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
 
 function ItemArmorDataModelSchema() {
@@ -13,7 +13,7 @@ function ItemArmorDataModelSchema() {
         minStr: new fields.NumberField({ required: true, nullable: true}),
         damageReduction: new fields.NumberField({ required: true, nullable: true}),
         features: new fields.StringField({ required: true, nullable: true}),
-        equipped: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+        equipped: validatedBoolean()
     };
 }
 export type ArmorDataModelType = DataModelSchemaType<typeof ItemArmorDataModelSchema>
