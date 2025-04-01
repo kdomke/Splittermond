@@ -92,7 +92,7 @@ describe("ModifierManager", () => {
             expect(result[0].attributes.name).to.equal("Hellebarde");
         });
 
-        it("should filter attributes for non-selectable modifiers", ()=> {
+        it("should filter attributes for non-selectable modifiers", () => {
             manager.add("melee", {name: "Talent", type: "innate"}, of(4), null, false);
             manager.add("melee", {name: "Hellebarde", type: "innate"}, of(1), null, true);
 
@@ -100,5 +100,55 @@ describe("ModifierManager", () => {
             expect(result[0].value).to.deep.equal(of(4));
             expect(result[0].attributes.name).to.equal("Talent");
         });
-    })
+
+        it("should find several group ids at once", () => {
+            manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
+            manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
+
+            const result = manager.getForIds("AUS", "bonuscap").getModifiers();
+
+            expect(result.length).to.equal(2);
+            expect(result[0].value).to.deep.equal(of(2));
+            expect(result[0].attributes.name).to.deep.equal("Base");
+            expect(result[1].value).to.deep.equal(of(3));
+            expect(result[1].attributes.name).to.deep.equal("Cap");
+        });
+
+        it("should deliver the value of several group ids at once", () => {
+            manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
+            manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
+
+            const result = manager.getForIds("AUS", "bonuscap").value();
+
+            expect(result).to.deep.equal(5);
+        });
+
+        it("should filter mass group search for non-selectable items", () => {
+
+            manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
+            manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
+            manager.add("AUS", {name: "MaybeBase", type: "innate"}, of(2), null, true);
+            manager.add("bonuscap", {name: "MaybeCap", type: "innate"}, of(3), null, true);
+
+            const result = manager.getForIds("AUS", "bonuscap").notSelectable().getModifiers();
+
+            expect(result.length).to.equal(2);
+            expect(result[0].attributes.name).to.deep.equal("Base");
+            expect(result[1].attributes.name).to.deep.equal("Cap");
+        });
+    });
+
+    it("should filter mass group search for non-selectable items", () => {
+
+        manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
+        manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
+        manager.add("AUS", {name: "MaybeBase", type: "innate"}, of(2), null, true);
+        manager.add("bonuscap", {name: "MaybeCap", type: "innate"}, of(3), null, true);
+
+        const result = manager.getForIds("AUS", "bonuscap").selectable().getModifiers();
+
+        expect(result.length).to.equal(2);
+        expect(result[0].attributes.name).to.deep.equal("MaybeBase");
+        expect(result[1].attributes.name).to.deep.equal("MaybeCap");
+    });
 });

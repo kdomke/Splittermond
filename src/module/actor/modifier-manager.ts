@@ -74,7 +74,7 @@ export default class ModifierManager {
         }, [] as IModifier[]);
     }
 
-    getForIds(groupIds: string[]) {
+    getForIds(...groupIds: string[]) {
         return new MassExtractor(groupIds, this);
     }
     getForId(groupId: string) {
