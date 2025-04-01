@@ -1,5 +1,6 @@
 import SplittermondWizard from "./wizard.js";
 import {foundryApi} from "../../api/foundryApi";
+import {splittermond} from "../../config";
 
 export default class SplittermondSpeciesWizard extends SplittermondWizard {
     constructor(actor, item) {
@@ -21,7 +22,7 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
             translator[game.i18n.localize(`splittermond.attribute.${attr}.short`).toLowerCase()] = attr;
         });
 
-        item.data.attributeMod.split(',').forEach(elem => {
+        item.system.attributeMod.split(',').forEach(elem => {
             let elemParts = elem.trim().split(" ");
             let attribute = translator[elemParts[0].toLowerCase()];
             let value = parseInt(elemParts[1]);
@@ -96,20 +97,17 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
             attributes: {},
             species: {
                 value: this.species.name,
-                size: this.species.data.size
+                size: this.species.system.size
             }
         };
 
-        CONFIG.splittermond.attributes.forEach(attr => {
+        splittermond.attributes.forEach(attr => {
             actorData.attributes[attr] = {
                 species: this.attributeModifiers[attr].value
             };
         });
 
-        this.actor.update({
-            "data": actorData
-        });
-
+        this.actor.update({system:actorData});
     }
 
 

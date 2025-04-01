@@ -1,3 +1,7 @@
+## 0.12.15
+### Fixed
+ * Hinzufügen von Kompendium Spezies zu Charakteren funktioniert jetzt wieder
+ * 
 ## 0.12.14
 ### Fixed
 *  Zaubererfolgsgradoptionen können jetzt wieder individuell ausgewählt werden
