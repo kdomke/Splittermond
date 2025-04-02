@@ -361,7 +361,7 @@ export default class SplittermondActor extends Actor {
         data.health.woundMalus.value = woundMalusValue?.value ?? 0;
 
         if (data.health.woundMalus.value) {
-            this.add(
+            this.modifier.add(
                 "woundmalus",
                 {
                     name: foundryApi.localize("splittermond.woundMalus"),
