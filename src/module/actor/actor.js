@@ -1,6 +1,4 @@
 import * as Dice from "../util/dice.js"
-
-import CheckDialog from "../apps/dialog/check-dialog.js";
 import * as Chat from "../util/chat.js";
 
 import Attribute from "./attribute.js";
@@ -354,8 +352,12 @@ export default class SplittermondActor extends Actor {
                 }
             }
         });
-
-        data.health.woundMalus.level = Math.max(Math.min(data.health.woundMalus.nbrLevels - (Math.floor(data.health.total.value / this.derivedValues.healthpoints.value) + 1) + data.health.woundMalus.levelMod, data.health.woundMalus.nbrLevels - 1), 0);
+        const currentLevel = Math.floor(data.health.total.value / this.derivedValues.healthpoints.value);
+        const baseLevel = Math.max(data.health.woundMalus.nbrLevels - currentLevel - 1,0);
+        data.health.woundMalus.level = Math.min(
+            baseLevel + data.health.woundMalus.levelMod,
+            data.health.woundMalus.nbrLevels -1
+        );
 
         let woundMalusValue = data.health.woundMalus.levels[data.health.woundMalus.level];
         data.health.woundMalus.value = woundMalusValue?.value ?? 0;
