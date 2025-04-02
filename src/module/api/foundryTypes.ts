@@ -108,6 +108,8 @@ declare global {
         readonly parent: FoundryDocument|undefined
         updateSource(data: object): void;
 
+        update(data: object, context?:any): Promise<FoundryDocument>;
+
         prepareBaseData(): void;
 
         static deleteDocuments(documentId: string[]): Promise<void>

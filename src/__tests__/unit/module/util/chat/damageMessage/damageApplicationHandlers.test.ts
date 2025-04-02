@@ -211,6 +211,9 @@ function* createMockTarget(sandbox: SinonSandbox, targetSize: number): Generator
                 toObject: function () {
                 },
                 getFlag: function () {
+                },
+                update(): Promise<FoundryDocument> {
+                    return Promise.resolve(this);
                 }
             }
         };

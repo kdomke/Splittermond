@@ -1311,7 +1311,7 @@ export default class SplittermondActor extends Actor {
         subData.exhausted.value += costData.exhausted;
         subData.consumed.value += costData.consumed;
 
-        this.update({
+        return this.update({
             "system": {
                 [type]: subData
             }

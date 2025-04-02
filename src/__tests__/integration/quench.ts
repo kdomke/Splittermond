@@ -9,6 +9,7 @@ import {actorTest} from "./actor.test";
 import type {Quench} from "@ethaks/fvtt-quench";
 import {settingsTest} from "./settings.test";
 import {foundryRollTest} from "./api/Roll.test";
+import {modifierTest} from "./modifier.test";
 
 declare const Hooks: any;
 
@@ -23,6 +24,7 @@ function registerQuenchTests(quench: Quench) {
     quench.registerBatch("splittermond.foundryTypes", foundryTypeDeclarationsTest);
     quench.registerBatch("splittermond.mergeObjects", mergeObjectTest);
     quench.registerBatch("splittermond.SettingsModule", settingsTest);
+    quench.registerBatch("splittermond.modifier", modifierTest);
 }
 
 export function init() {
