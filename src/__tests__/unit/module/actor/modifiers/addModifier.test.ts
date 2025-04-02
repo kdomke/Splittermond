@@ -59,6 +59,8 @@ describe('addModifier', () => {
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
             switch(key){
                 case 'splittermond.attribute.intuition.short': return 'INT';
+                case 'splittermond.derivedAttribute.initiative.short': return 'INI';
+                case 'splittermond.derivedAttribute.initiative.long': return 'Initiative';
                 default: return key;
             }
         });
@@ -140,9 +142,14 @@ describe('addModifier', () => {
         ]);
     });
 
-    it('should handle initiative modifier inversion', () => {
-        addModifier(actor, item, '', 'Initiative +2');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['Initiative', {name:'', type:null}, of(-2), item, false]);
+    ["Initiative", "INI"].forEach(iniRepresentation=> {
+        it(`should handle initiative modifier inversion for ${iniRepresentation}`, () => {
+            addModifier(actor, item, '', `${iniRepresentation} +2`);
+            expect(modifierManager.add.lastCall.args).to.have.deep.members(['initiative', {
+                name: '',
+                type: null
+            }, of(2), item, false]);
+        });
     });
 
     ([["+INT", 2], ["-INT", -3], ["INT", 4]] as const).forEach(([placeholder,expected])=> {

@@ -190,7 +190,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 if (!element) {
                     element = modifier.path;
                 }
-                let adjustedValue = times(times(of(multiplier), modifier.value), of(element.toLowerCase() === "initiative" ? -1 : 1));
+                let adjustedValue = times(of(multiplier), modifier.value);
                 addModifierHelper(element, adjustedValue, modifier.attributes);
 
                 break;

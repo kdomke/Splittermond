@@ -147,11 +147,6 @@ export default class DerivedValue extends Modifiable {
         return value;
     }
 
-    get mod() {
-        if (this.id == "initiative") return -super.mod;
-        return super.mod;
-    }
-
     enableCaching() {
         this._cache.enabled = true;
     }
