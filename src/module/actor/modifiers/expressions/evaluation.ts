@@ -29,7 +29,7 @@ function doEvaluate(expression: Expression): number | null {
     } else if (expression instanceof DivideExpression) {
         return (doEvaluate(expression.left) ?? 1) / (doEvaluate(expression.right) ?? 1)
     } else if (expression instanceof RollExpression) {
-        return expression.value.evaluateSync().total
+        return expression.evaluate()
     } else if (expression instanceof AbsExpression) {
         return Math.abs(evaluate(expression.arg))
     }
@@ -37,6 +37,7 @@ function doEvaluate(expression: Expression): number | null {
 }
 
 class PropertyResolver {
+
     numberOrNull(propertyPath: string | null | undefined, source: object): number | null {
         const value = this.resolve(propertyPath, source);
         if (typeof value === "number") {
@@ -62,6 +63,7 @@ class PropertyResolver {
         }
         return current;
     }
+
     private hasPart(current: unknown, part: string): current is Record<string,unknown> {
         return current !== null && typeof current === "object" && part in current;
     }

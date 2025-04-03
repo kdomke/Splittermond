@@ -132,8 +132,8 @@ function parseValue(value: string) {
         return parseFloat(numberPattern.exec(value)![0])
     } else if (quotedStringPattern.test(value)) {
         return quotedStringPattern.exec(value)![0]
-    } else if(isRoll(value)){
-            return foundryApi.roll(value);
+    } else if(isRoll(value.replace(/[Ww]/g,"d"))){
+            return foundryApi.roll(value.replace(/[Ww]/g,"d"));
     }else {
         return value;
     }
@@ -141,7 +141,7 @@ function parseValue(value: string) {
 
 function isRoll(value: string): boolean {
     try{
-        foundryApi.roll(value).evaluateSync();
+        foundryApi.roll(value).evaluateSync({strict:false});
         return true;
     } catch(e){
         return false;

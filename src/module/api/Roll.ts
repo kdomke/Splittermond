@@ -17,7 +17,11 @@ export interface NumericTerm {
 
 export declare class Roll {
     evaluate: () => Promise<Roll>;
-    evaluateSync: () => Roll;
+    /** Can only be used to evaluate deterministic roll will otherwise it throws an error
+     * or returns 0 if not strict.
+     */
+    evaluateSync: (options?:{strict:boolean}) => Roll;
+    clone(): Roll;
     /** Will contain all definite (evaluated and constant) components of the roll*/
     readonly result: string;
     readonly formula: string
