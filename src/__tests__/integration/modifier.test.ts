@@ -190,7 +190,74 @@ export function modifierTest(context: QuenchBatchContext) {
     });
 
     describe("Parsed Modifiers", () => {
+        async function defaultActor(name:string, modifier:string) {
+            const subject = await createActor(name)
+            subject.updateSource({
+                system: {
+                    attributes: {
+                        constitution: {initial: 2, advances: 0},
+                        intuition: {initial: 2, advances: 0},
+                        mind: {initial: 3, advances: 0}
+                    }
+                }
+            });
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "strength",
+                name: "DerivedValueEnhancer",
+                system: {modifier}
+            }]);
+            return subject;
+        }
 
+        it("should add a constant value to a skill", async () => {
+            const subject = await defaultActor("Empath", "empathy +1");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(6);
+        });
+
+        it("should add a roll to a skill", async () => {
+            const subject = await defaultActor("Empath", "empathy 2W6");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.be.above(6).below(18);
+        });
+
+        it("should add a attribute value to a skill", async () => {
+            const subject = await defaultActor("Empath", "empathy ${Intuition}");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(7);
+        });
+
+        it("should add a skill value to a skill", async () => {
+            const subject = await defaultActor("DoubleEmpath", "empathy ${Jagdkunst}");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(10);
+        });
+
+        it("should add a random numeric attribute to", async () => {
+            const subject = await defaultActor("WeirdEmpath", "empathy ${system.health.max}");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(40);
+        });
     });
 }
 
