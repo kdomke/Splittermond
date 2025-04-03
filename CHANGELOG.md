@@ -1,7 +1,8 @@
 ## 0.12.15
 ### Fixed
  * Hinzufügen von Kompendium Spezies zu Charakteren funktioniert jetzt wieder
- * 
+ * Wundstufen aus dem Zustand 'Verwundet' werden jetzt bei vollen LP korrekt berechnet
+ * Modifikatoren werden jetzt wieder korrekt berechnet und angezeigt
 ## 0.12.14
 ### Fixed
 *  Zaubererfolgsgradoptionen können jetzt wieder individuell ausgewählt werden
