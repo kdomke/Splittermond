@@ -1,4 +1,3 @@
-import SplittermondItem from "./item.js";
 import SplittermondPhysicalItem from "./physical.js";
 import {of} from "../actor/modifiers/expressions/definitions";
 
@@ -9,16 +8,55 @@ export default class SplittermondArmorItem extends SplittermondPhysicalItem {
         super.prepareActorData();
         if (!this.system.equipped) return
         if (this.system.defenseBonus)
-            this.actor.modifier.addOld("defense", this.name, of(this.system.defenseBonus), this, "equipment");
+            this.actor.modifier.add(
+                "defense",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(this.system.defenseBonus),
+                this
+            )
+            this.actor.modifier.add(
+                "defense",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(this.system.defenseBonus),
+                "equipment"
+
+            )
         let handicap = this.handicap;
         let tickMalus = this.tickMalus;
         let damageReduction = parseInt(this.system.damageReduction);
         if (handicap)
-            this.actor.modifier.addOld("handicap.armor", this.name, of(handicap), this, "equipment");
+            this.actor.modifier.add("handicap.armor",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(handicap),
+                this
+            )
         if (tickMalus)
-            this.actor.modifier.addOld("tickmalus.armor", this.name, of(tickMalus), this, "equipment");
+            this.actor.modifier.add("tickMalus.armor",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(tickMalus),
+                this
+            )
         if (damageReduction)
-            this.actor.modifier.addOld("damagereduction", this.name, of(damageReduction), this, "equipment");
+            this.actor.modifier.add("damageReduction",
+                {
+                    name: this.name,
+                    type: "equipment"
+                },
+                of(damageReduction),
+                this
+            )
     }
 
     get attributeMalus() {
@@ -38,7 +76,7 @@ export default class SplittermondArmorItem extends SplittermondPhysicalItem {
 
     get featuresList() {
         if (Array.isArray(this.system.features)) return [];
-        if (this.system.features.trim() == "" || this.system.features.trim() == "-") return [];
+        if (this.system.features.trim() === "" || this.system.features.trim() === "-") return [];
         return this.system.features?.split(",").map(str => str.trim());
     }
 }

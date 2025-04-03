@@ -36,7 +36,7 @@ declare class SplittermondActor extends Actor {
 
     async addTicks(value: number, message?: string, askPlayer?: boolean): Promise<void>;
 
-    consumeCost(type: "health" | "focus", valueStr: string, description: unknown): void;
+    consumeCost(type: "health" | "focus", valueStr: string, description: unknown): Promise<void>;
 
     importFromJSON(json: string, overwriteData?): Promise<unknown>;
 

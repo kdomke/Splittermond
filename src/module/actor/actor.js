@@ -1,6 +1,4 @@
 import * as Dice from "../util/dice.js"
-
-import CheckDialog from "../apps/dialog/check-dialog.js";
 import * as Chat from "../util/chat.js";
 
 import Attribute from "./attribute.js";
@@ -185,8 +183,15 @@ export default class SplittermondActor extends Actor {
         }
 
         if (this.type === "npc") {
-            if (parseInt(this.system.damageReduction.value) != 0) {
-                this.modifier.addOld("damagereduction", game.i18n.localize("splittermond.damageReductionAbbrev"), of(this.system.damageReduction.value));
+            if (parseInt(this.system.damageReduction.value) !== 0) {
+                this.modifier.add(
+                    "damagereduction",
+                    {
+                        name: foundryApi.localize("splittermond.damageReductionAbbrev"),
+                        type: "innate"
+                    },
+                    of(this.system.damageReduction)
+                )
             }
 
         }
@@ -309,7 +314,7 @@ export default class SplittermondActor extends Actor {
             }
 
             data[type].consumed.value = parseInt(data[type].consumed.value);
-            if (type == "health") {
+            if (type === "health") {
                 data[type].available = {
                     value: Math.max(Math.min(data.health.woundMalus.nbrLevels * this.derivedValues[type + "points"].value - data[type].channeled.value - data[type].exhausted.value - data[type].consumed.value, data.health.woundMalus.nbrLevels * this.derivedValues[type + "points"].value), 0)
                 }
@@ -347,14 +352,26 @@ export default class SplittermondActor extends Actor {
                 }
             }
         });
-
-        data.health.woundMalus.level = Math.max(Math.min(data.health.woundMalus.nbrLevels - (Math.floor(data.health.total.value / this.derivedValues.healthpoints.value) + 1) + data.health.woundMalus.levelMod, data.health.woundMalus.nbrLevels - 1), 0);
+        const currentLevel = Math.floor(data.health.total.value / this.derivedValues.healthpoints.value);
+        const baseLevel = Math.max(data.health.woundMalus.nbrLevels - currentLevel - 1,0);
+        data.health.woundMalus.level = Math.min(
+            baseLevel + data.health.woundMalus.levelMod,
+            data.health.woundMalus.nbrLevels -1
+        );
 
         let woundMalusValue = data.health.woundMalus.levels[data.health.woundMalus.level];
         data.health.woundMalus.value = woundMalusValue?.value ?? 0;
 
         if (data.health.woundMalus.value) {
-            this.modifier.addOld("woundmalus", game.i18n.localize("splittermond.woundMalus"), of(data.health.woundMalus.value), this);
+            this.modifier.add(
+                "woundmalus",
+                {
+                    name: foundryApi.localize("splittermond.woundMalus"),
+                    type: "innate",
+                },
+                of(data.health.woundMalus.value),
+                this
+            )
         }
 
 
@@ -407,27 +424,63 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             if (data.experience.heroLevel > 1) {
                 ["defense", "mindresist", "bodyresist"].forEach(d => {
-                    this.modifier.addOld(d, game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), of(2 * (data.experience.heroLevel - 1)), this);
+                    this.modifier.add(
+                        d,
+                        {
+                            name: foundryApi.localize(`splittermond.heroLevels.${data.experience.heroLevel}`),
+                            type: "innate",
+                        },
+                        of(2 * (data.experience.heroLevel - 1)),
+                        this
+                    )
                 });
-                this.modifier.addOld("splinterpoints", game.i18n.localize(`splittermond.heroLevels.${data.experience.heroLevel}`), of(data.experience.heroLevel - 1));
+                this.modifier.add(
+                    "splinterpoints",
+                    {
+                        name: foundryApi.localize(`splittermond.heroLevels.${data.experience.heroLevel}`),
+                        type: "innate",
+                    },
+                    of(data.experience.heroLevel - 1),
+                    this
+                )
             }
         }
 
         let stealthModifier = 5 - this.derivedValues.size.value;
         if (stealthModifier) {
-            this.modifier.addOld("stealth", game.i18n.localize("splittermond.derivedAttribute.size.short"), of(stealthModifier));
+            this.modifier.add(
+                "stealth",
+                {
+                    name: foundryApi.localize("splittermond.derivedAttribute.size.short"),
+                    type: "innate",
+                },
+                of(stealthModifier),
+                this
+            );
         }
 
         let handicap = this.handicap;
         if (handicap) {
             let label = game.i18n.localize("splittermond.handicap");
             ["athletics", "acrobatics", "dexterity", "stealth", "locksntraps", "seafaring", "animals"].forEach(skill => {
-                this.modifier.addOld(skill, label, of(-handicap), this, "equipment");
+                this.modifier.add(skill,
+                    {
+                        name: label,
+                        type: "equipment"
+                    },
+                    of(-handicap),
+                    this
+                );
             });
-            this.modifier.addOld("speed", label, of(-Math.floor(handicap / 2)));
+            this.modifier.add("speed",
+                {
+                    name: label,
+                    type: "innate",
+                },
+                of(-Math.floor(handicap / 2)),
+                this
+                );
         }
-
-
     }
 
     get tickMalus() {
@@ -1260,7 +1313,7 @@ export default class SplittermondActor extends Actor {
         subData.exhausted.value += costData.exhausted;
         subData.consumed.value += costData.consumed;
 
-        this.update({
+        return this.update({
             "system": {
                 [type]: subData
             }

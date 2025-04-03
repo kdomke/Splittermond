@@ -25,6 +25,8 @@ describe('normalizeModifiers', () => {
                     return "STR";
                 case "splittermond.attribute.agility.short":
                     return "BEW";
+                case "splittermond.skillLabel.history":
+                    return "Geschichte und Mythen";
                 default:
                     return key;
             }
@@ -55,6 +57,7 @@ describe('normalizeModifiers', () => {
         }],
         ["+AUS", {propertyPath: "attributes.charisma.value", sign: 1, original: "+AUS"}],
         ["-AUS", {propertyPath: "attributes.charisma.value", sign: -1, original: "-AUS"}],
+        ["Geschichte und Mythen", {propertyPath: "skills.history.value", sign: 1, original:"Geschichte und Mythen"}],
     ] as const).forEach(([value, expected]) => {
         it(`should replace value'${value}'`, () => {
             expect(normalizeValue(value)).to.deep.equal(expected);

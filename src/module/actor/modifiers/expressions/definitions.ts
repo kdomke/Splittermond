@@ -84,7 +84,17 @@ export function abs(arg: Expression) {
 }
 
 export class RollExpression {
+    private result: number|null = null;
     constructor(public readonly value: FoundryRoll) {
+        value.evaluate().then(result => {this.result = result.total});
+    }
+
+
+    evaluate(): number {
+       if (this.result === null) {
+           return this.value.clone().evaluateSync({strict: false}).total;
+       }
+         return this.result;
     }
 }
 

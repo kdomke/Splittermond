@@ -1,4 +1,4 @@
-import Modifier, {IModifier, ModifierType} from "./modifier";
+import Modifier, {IModifier, ModifierAttributes} from "./modifier";
 import SplittermondItem from "../item/item";
 import SplittermondActor from "./actor";
 import {Expression, of, plus} from "./modifiers/expressions/definitions";
@@ -16,11 +16,8 @@ export default class ModifierManager {
     constructor() {
     }
 
-
-    addOld(path: string, name: string, value: Expression, type: ModifierType, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
-        const attributes = {name, type};
-        const newModifier = new Modifier(path, value, attributes, origin, selectable);
-        this.addModifier(newModifier);
+    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+        this.addModifier(new Modifier(path, value, attributes, origin, selectable));
     }
 
     addModifier(modifier: IModifier) {
@@ -32,19 +29,19 @@ export default class ModifierManager {
 
 
     /**
-     * @deprecated
+     * @deprecated Do not use with multiple values
      */
-    public value(groupId:string|string[], attributeSelectors: AttributeSelector[] = []) {
+    public value(groupId:string|string[], attributeSelectors: AttributeSelector[] = [], selectable: boolean | null = null) {
         if (!Array.isArray(groupId)) {
             groupId = [groupId];
         }
 
-        return groupId.map(id => this.singleValue(id, attributeSelectors))
+        return groupId.map(id => this.singleValue(id, attributeSelectors, selectable))
             .reduce((acc, value) => acc + value, 0);
     }
 
-    private singleValue(groupId: string, attributeSelectors: AttributeSelector[] = []) {
-        const sum = this.getModifiers(groupId, attributeSelectors,false)
+    private singleValue(groupId: string, attributeSelectors: AttributeSelector[] = [],selectable: boolean | null = null) {
+        const sum = this.getModifiers(groupId, attributeSelectors, selectable)
             .map(mod => mod.value)
             .reduce((acc, value) => plus(acc, value), of(0))
         return evaluate(sum)
@@ -77,6 +74,9 @@ export default class ModifierManager {
         }, [] as IModifier[]);
     }
 
+    getForIds(...groupIds: string[]) {
+        return new MassExtractor(groupIds, this);
+    }
     getForId(groupId: string) {
         return new AttributeBuilder(groupId, this);
     }
@@ -94,7 +94,7 @@ function passesAttributeFilter(modifier: IModifier, attributes: AttributeSelecto
         if (attribute.key in modifier.attributes) {
             const value = modifier.attributes[attribute.key];
             const isPermittedAbsence = !!attribute.allowAbsent && [undefined, null].includes(value as any);
-            if (attribute.values.includes(value as any) && !isPermittedAbsence) {
+            if (!attribute.values.includes(value as any) && !isPermittedAbsence) {
                 return false;
             }
         } else if (!attribute.allowAbsent) {
@@ -111,11 +111,20 @@ class AttributeBuilder {
     constructor(private readonly groupId: string, private manager: ModifierManager) {
     }
 
+    /**
+     * Will only select modifiers that have the attribute key with one of the values
+     * @see withAttributeValuesOrAbsent
+     */
     withAttributeValues(key: string, ...values: string[]) {
         this._attributes.push({key, values, allowAbsent: false});
         return this;
     }
 
+    /**
+     * Will select modifiers that have the attribute key with one of the values or modifiers
+     * that don't have the attribute key at all
+     * @see withAttributeValues
+     */
     withAttributeValuesOrAbsent(key: string, ...values: string[]) {
         this._attributes.push({key, values, allowAbsent: true});
         return this;
@@ -123,13 +132,44 @@ class AttributeBuilder {
 
     selectable() {
         this._selectable = true;
+        return this;
     }
 
     notSelectable() {
         this._selectable = false;
+        return this;
     }
 
     getModifiers() {
         return this.manager.getModifiers(this.groupId, this._attributes, this._selectable)
+    }
+
+    value(){
+        return this.manager.value(this.groupId, this._attributes, this._selectable);
+    }
+}
+
+class MassExtractor {
+    private _selectable: boolean | null = null;
+    constructor(private readonly groupIds:string[], private readonly manager:ModifierManager) {
+    }
+
+    selectable() {
+        this._selectable = true;
+        return this;
+    }
+
+    notSelectable() {
+        this._selectable = false;
+        return this;
+    }
+
+    getModifiers() {
+        return this.groupIds.flatMap(id => this.manager.getModifiers(id, [], this._selectable));
+    }
+
+    value():number{
+        return this.groupIds.flatMap(id => this.manager.value(id, [], this._selectable))
+            .reduce((acc, value) => acc + value, 0);
     }
 }

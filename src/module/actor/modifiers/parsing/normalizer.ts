@@ -2,6 +2,7 @@ import {Value} from "./index";
 import {initMapper, LanguageMapper} from "../../../util/LanguageMapper";
 import {attributes, derivedAttributes} from "../../../config/attributes";
 import {isRoll} from "../../../api/Roll";
+import {splittermond} from "../../../config";
 
 const modifierKeys = ["emphasis", "damageType", "value"] as const;
 const attributeMapper = initMapper(attributes)
@@ -15,6 +16,10 @@ const derivedAttributeMapper = initMapper(derivedAttributes)
 const modifierKeyMapper = initMapper(modifierKeys)
     .withTranslator((t) => `splittermond.modifiers.keys.${t}`)
     .build()
+const skillMapper = initMapper(splittermond.skillGroups.all)
+    .withTranslator((t) => `splittermond.skillLabel.${t}`)
+    .andOtherMappers((t) => `splittermond.skillAbbreviation.${t}`)
+    .build();
 
 /**
  * Only use for testing
@@ -23,6 +28,7 @@ export function clearMappers() {
     (attributeMapper as any).clear();
     (derivedAttributeMapper as any).clear();
     (modifierKeyMapper as any).clear();
+    (skillMapper as any).clear();
 }
 
 export function normalizeKey(key: string) {
@@ -35,7 +41,7 @@ export function normalizeKey(key: string) {
 }
 
 export function normalizeValue(value: Value) {
-    const replacer = new Or(replaceAttribute, replaceDerivedAttribute)
+    const replacer = new Or(replaceAttribute, replaceDerivedAttribute, replaceSkill);
     if (typeof value === "string") {
         const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
         const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
@@ -66,6 +72,15 @@ function replaceDerivedAttribute(value: string): string {
         derivedAttributeMapper(),
         (v) => `derivedAttributes.${v}.value`
     )(value)
+}
+
+function replaceSkill(value: string): string {
+    return createReplace(
+        splittermond.skillGroups.all,
+        skillMapper(),
+        (v) => `skills.${v}.value`
+    )(value)
+
 }
 
 function createReplace<T extends string>(collection: Readonly<T[]>, mapper: LanguageMapper<T>, path: (v: string) => string) {

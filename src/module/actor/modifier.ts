@@ -7,11 +7,11 @@ import {condense} from "./modifiers/expressions/condenser";
 import {abs} from "./modifiers/expressions/definitions";
 import {asString} from "./modifiers/expressions/Stringifier";
 
-interface ModifierAttributes {
+export interface ModifierAttributes {
     name:string;
     type:ModifierType
     [x:string]: string|undefined|null;
-};
+}
 
 /**
  * The type of item from which the modifier stems. Use

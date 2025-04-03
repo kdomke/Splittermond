@@ -29,7 +29,7 @@ export function validateKeys(key: string): ErrorMessage[] {
 
 export function validateReference(propertyPath:string, source:object):ErrorMessage[] {
     const resolvedProperty = new PropertyResolver().resolve(propertyPath, source);
-    if(!["string", "number","boolean"].includes(typeof resolvedProperty)){
+    if(!["string", "number","boolean"].includes(typeof resolvedProperty)&& resolvedProperty !== null){
         return [`${propertyPath} does not resolve to a primitive on ${source}`];
     }
     return [];
