@@ -28,7 +28,7 @@ export function parseModifiers(modifiers: string | null | undefined): ParseResul
 
 function parseModifier(modifier: string): SingleParseResult {
     const pathPattern = /^\S+(?=\s)/;
-    const valuePattern = /(?<=\s)[^\s="']+(?=$)/
+    const valuePattern = /(?<=\s)([^\s=}"']|\${[^}]+})+(?=$)/
     const pathMatch = pathPattern.exec(modifier);
     const attributeMatch = findAttributes(modifier);
     const valueMatch = valuePattern.exec(modifier);
@@ -60,7 +60,7 @@ function parseModifier(modifier: string): SingleParseResult {
 }
 
 function findAttributes(modifier: string): string[] {
-    const attributePattern = /(?<=\s)[^\s=]+=(?:"[^="]+"|[^\s'"=]+|'[^=']+')(?=\s|$)/g
+    const attributePattern = /(?<=\s)[^\s=]+=(?:"[^="]+"|'[^=']+'|[^\s=]*\${[^}=]+}[^\s=]*|[^\s'"=]+)(?=\s|$)/g
     const attributeMatches = [];
     let match;
     while ((match = attributePattern.exec(modifier)) !== null) {
@@ -121,7 +121,7 @@ function parseAttribute(attribute: string): AttributeParseResult {
 }
 
 function parseValue(value: string) {
-    const valueExpressionPattern = /(?<=\$\{)\S+(?=})/
+    const valueExpressionPattern = /(?<=\$\{)[^}]+(?=})/
     const numberPattern = /(?<=["']|^)[+-]?\d+(?=["']|$)/
     const quotedStringPattern = /(?<=["']).*(?=["'])/
     if (valueExpressionPattern.test(value)) {

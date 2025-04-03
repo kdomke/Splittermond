@@ -51,11 +51,23 @@ describe('Modifier Parser', () => {
     });
     ([
         ["AUS value=${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
-        ["AUS value=-${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1,original: "GSW"}}}],
+        ["AUS value=-${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1, original: "GSW"}}}],
         ["AUS value=+${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
         ["AUS ${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
         ["AUS -${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: -1, original: "GSW"}}}],
         ["AUS +${GSW}", {path: "AUS", attributes: {value: {propertyPath: "GSW", sign: 1, original: "GSW"}}}],
+        ["AUS +${Geschichte und Mythen}", {
+            path: "AUS",
+            attributes: {value: {propertyPath: "Geschichte und Mythen", sign: 1, original: "Geschichte und Mythen"}}
+        }],
+        ["AUS value=-${Geschichte und Mythen}", {
+            path: "AUS",
+            attributes: {value: {propertyPath: "Geschichte und Mythen", sign: -1, original: "Geschichte und Mythen"}}
+        }],
+        ["AUS value='-${Geschichte und Mythen}'", {
+            path: "AUS",
+            attributes: {value: {propertyPath: "Geschichte und Mythen", sign: -1, original: "Geschichte und Mythen"}}
+        }],
         ["damage weapon='Fulnisches Doppelschwert' +1", {
             path: "damage",
             attributes: {weapon: "Fulnisches Doppelschwert", value: 1}
@@ -151,16 +163,16 @@ describe('Modifier Normalization', () => {
         sandbox.restore();
     });
 
-    it ('should normalize emphasis keyword',()=>{
-       const input = "generalSkills.firemagic Schwerpunkt=Schaden value=2";
+    it('should normalize emphasis keyword', () => {
+        const input = "generalSkills.firemagic Schwerpunkt=Schaden value=2";
 
-       const result = parseModifiers(input).modifiers;
+        const result = parseModifiers(input).modifiers;
 
-       expect(result[0].attributes.emphasis).to.equal("Schaden");
+        expect(result[0].attributes.emphasis).to.equal("Schaden");
     });
 
 
-    it ('should normalize value keyword',()=>{
+    it('should normalize value keyword', () => {
         const input = "generalSkills.firemagic Wert=2";
 
         const result = parseModifiers(input).modifiers;
@@ -168,7 +180,7 @@ describe('Modifier Normalization', () => {
         expect(result[0].attributes.value).to.equal(2);
     });
 
-    it ('should validate emphasis despite normalization',()=>{
+    it('should validate emphasis despite normalization', () => {
         const input = "generalSkills/Schaden Schwerpunkt=Schaden value=2";
 
         const result = parseModifiers(input).errors;
@@ -177,7 +189,7 @@ describe('Modifier Normalization', () => {
     });
 
 
-    it ('should valudate value despite normalization',()=>{
+    it('should valudate value despite normalization', () => {
         const input = "generalSkills.firemagic Wert=2 2";
 
         const result = parseModifiers(input).errors;
