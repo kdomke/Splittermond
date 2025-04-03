@@ -101,6 +101,40 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.derivedValues.defense.value).to.equal(17);
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
         });
+
+        it("should account for modifications from armor", async () => {
+            const subject = await createActor("ShieldedCharacter");
+            (subject.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).updateSource({
+                    skills: {
+                        ...subject.system.skills,
+                        acrobatics: {points: 2, value: 6}
+                    }
+                }
+            );
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "armor",
+                name: "Fat Shield",
+                system: {
+                    skill: "blades",
+                    tickMalus: 1,
+                    defenseBonus: 1,
+                    damageReduction: 1,
+                    handicap: 1,
+                    equipped: true,
+                }
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.acrobatics.value).to.equal(5);
+            expect(subject.derivedValues.defense.value).to.equal(17);
+            expect(subject.damageReduction).to.equal(1);
+            expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
+        });
     });
 
     describe("Wound malus", () => {
