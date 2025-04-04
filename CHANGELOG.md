@@ -1,3 +1,21 @@
+## 0.12.16
+### New features
+ * Würfelmodifikatoren (BETA)
+   * Würfelwerte die Foundry lesen kann, können als Modifikatorwerte eingesetzt werden
+   * Würfelwürfe werden unter Umständen von einem minderwertigen Ersatzalgorithmus errechnet (wenn das vom Server errechnete Ergebnis noch nicht vorliegt)
+   * Die Auswertung des Würfelausdrucks steht in keinem Verhältnis zu einer Probe (z.B. wird er schon beim Anzeigen von Modifikatoren mehrfach ausgewertet). Bei einer Auswertung wird manchmal ein alter, manchmal ein neuer Wert zurückgegeben.
+   * Der zurückgegebene Wert bewegt sich immer in dem bereich den die Würfelformel vorgibt (d.h. für 1W6 liegt er zwischen 1 und 6)
+
+ * Splitterpunkt boni können mittels Meisterschaften gesetzt werden
+    * Bonus kann mit dem Attribut `Fertigkeit=<name>` auf eine Fertigkeit eingeschränkt werden
+    * Alternativ kann die interne Darstellung `skill=<skillId>` verwendet werden
+    * Als Wert kann eine Referenz auf einen anderen Wert des Charakters angegeben wereden
+        * Attribute können mit `${<code>}` z.B. `${AUS}` referenziert werden.
+    * Der Minimale Bonus ist immer 3 und eine Warnung wird auf die Console geschrieben, wenn ein Modifikator einen niedrigeren Wert vorschlägt.
+ * Modifikatorparser fehler sind übersetzt
+### Fixed
+ * Modifikatoren von Rüstungen werden jetzt wieder korrekt berechnet
+ * Korrekte Darstellung von auswählbaren Modifikatoren
 ## 0.12.15
 ### Fixed
  * Hinzufügen von Kompendium Spezies zu Charakteren funktioniert jetzt wieder

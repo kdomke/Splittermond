@@ -56,6 +56,7 @@ describe('addModifier', () => {
         } as unknown as SinonStubbedInstance<SplittermondItem>;
 
         sandbox.stub(foundryApi, 'reportError');
+        sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
             switch(key){
                 case 'splittermond.attribute.intuition.short': return 'INT';

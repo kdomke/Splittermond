@@ -47,13 +47,30 @@
         "keys": {
           "value": "value",
           "emphasis": "emphasis",
-          "damageType": "damageType"
+          "damageType": "damageType",
+          "skill": "skill"
+        },
+        "parseMessages": {
+          "notAModifier": "Modifier '{modifier}' is not of a modifier format.",
+          "duplicateEmphasis": "Duplicate emphasis in '{modifier}'.",
+          "duplicateValue": "Modifier '{modifier}' contains duplicate declaration of value",
+          "noValue": "Modifier '{modifier}' contains no declaration of value",
+          "duplicateAttribute": "Attribute '{attribute}' exists several times in modifier.",
+          "noAttributeKey": "Could not identify key for Attribute '{attribute}'.",
+          "noAttributeValue": "Could not identify value for Attribute '{attribute}'.",
+          "invalidAttributeKey": "Invalid key for Attribute '{attribute}', found:",
+          "keyHasExpressionFormat": "Key should not have expression format",
+          "shouldNotBeNumber": "Input '{input}' is should not be a number.",
+          "shouldNotBeAnExpression": "Input '{input}' should not be an expression.",
+          "referenceNotPrimitive": "'{propertyPath}' does not resolve to a primitve on '{objectName}'.",
+          "unknownObject": "unknown",
+          "allErrorMessage": "Syntax error in modifier string '{str}' in '{objectName}'!"
         }
       }
     },
     "message": {
       "itemImported": "The item \"{name}\" was imported as \"{type}\"!",
-      "mangledTableData": "Tabellendata is corrupted. Please check attributes and derived values."
+      "mangledTableData": "table data is corrupted. Please check attributes and derived values."
     },
     "settings": {
       "reducibleEnhancementCosts": {
@@ -94,7 +111,7 @@
         "light": "light",
         "shadow": "shadow",
         "wind": "wind",
-        "water": "water",
+        "water": "water"
       },
       "long": {
         "physical": "physical damage",
@@ -111,7 +128,7 @@
         "light": "light damage",
         "shadow": "shadow damage",
         "wind": "wind damage",
-        "water": "water damage",
+        "water": "water damage"
       }
     }
   }

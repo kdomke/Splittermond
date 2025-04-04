@@ -11,6 +11,7 @@ import {evaluate} from "./expressions/evaluation";
 import {condense, isZero} from "./expressions/condenser";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
+import {normalizeDescriptor} from "./parsing/normalizer";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -129,6 +130,14 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
             case "woundmalus.levelmod":
                 data.health.woundMalus.levelMod += evaluate(times(of(multiplier), modifier.value));
                 break;
+            case "splinterpoints.bonus":
+                if(!("skill" in modifier.attributes)){
+                    console.warn("Encountered a splinterpoint bonus modifier without a skill. This may be uninteded by the user.")
+                }else{
+                    modifier.attributes.skill = normalizeDescriptor(modifier.attributes.skill).usingMappers("skills").do();
+                }
+                actor.modifier.add("splinterpoints.bonus", {name:item.name,type}, times(of(multiplier), modifier.value), item, false);
+                break;
             case "splinterpoints":
                 if ("splinterpoints" in data) {
                     data.splinterpoints.max = (data.splinterpoints?.max || 3) + evaluate(times(of(multiplier), modifier.value));
@@ -197,7 +206,8 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         }
     });
     if (allErrors.length > 0) {
-        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${item.name}!\n${allErrors.join("\n")}`);
+        const introMessage = foundryApi.format("splittermond.modifiers.parseMessages.allErrorMessage",{str,objectName: item.name});
+        foundryApi.reportError(`${introMessage}\n${allErrors.join("\n")}`);
     }
 }
 

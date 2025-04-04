@@ -34,7 +34,7 @@ function parseModifier(modifier: string): SingleParseResult {
     const valueMatch = valuePattern.exec(modifier);
     const allInputConsumed = validateAllInputConsumed(modifier, pathMatch, attributeMatch, valueMatch);
     if (!allInputConsumed || !pathMatch || !(attributeMatch.length > 0 || valueMatch)) {
-        return `Modifier '${modifier}' is not of a modifier format`;
+        return foundryApi.format("splittermond.modifiers.parseMessages.notAModifier",{modifier});
     }
 
     const parseResult = parsePath(pathMatch[0]);
@@ -44,15 +44,15 @@ function parseModifier(modifier: string): SingleParseResult {
         return attributeParseResult;
     }
     if (parseResult.attributes.emphasis && attributeParseResult.emphasis) {
-        return `Modifier '${modifier}' contains duplicate declaration of emphasis`;
+        return foundryApi.format("splittermond.modifiers.parseMessages.duplicateEmphasis",{modifier});
     }
     parseResult.attributes = {...parseResult.attributes, ...attributeParseResult};
 
     const value = valueMatch ? parseValue(valueMatch[0]) : null;
     if (value && attributeParseResult.value) {
-        return `Modifier '${modifier}' contains duplicate declaration of value`;
+        return foundryApi.format("splittermond.modifiers.parseMessages.duplicateValue",{modifier});
     } else if (!value && !attributeParseResult.value) {
-        return `Modifier '${modifier}' contains no declaration of value`;
+        return foundryApi.format("splittermond.modifiers.parseMessages.noValue",{modifier});
     } else if (value) {
         parseResult.attributes.value = value;
     }
@@ -87,7 +87,7 @@ function parseAttributes(attributeMatches: string[]): Record<string, Value> | Er
             continue;
         }
         if (parseResult.key in attributes) {
-            errors.push(`Attribute '${parseResult.key}' exists several times in modifier.`);
+            errors.push(foundryApi.format("splittermond.modifiers.parseMessages.duplicateAttribute", {attribute: parseResult.key}));
         } else {
             const attributeErrors = [...validateKeys(parseResult.key)];
             if (attributeErrors.length > 0) {
@@ -105,14 +105,14 @@ function parseAttribute(attribute: string): AttributeParseResult {
     const keyMatch = /\S+(?==)/.exec(attribute);
     const valueMatch = /(?<==).+/.exec(attribute);
     if (!keyMatch) {
-        return `Could not identify key for Attribute ${attribute}`
+        return foundryApi.format("splittermond.modifiers.parseMessages.noAttributeKey",{attribute});
     }
     if (!valueMatch) {
-        return `Could not identify value for Attribute ${attribute}`
+        return foundryApi.format("splittermond.modifiers.parseMessages.noAttributeValue",{attribute});
     }
     const validationFailure = validateKeys(keyMatch[0]);
     if (validationFailure.length > 0) {
-        return `Invalid Key for Attribute ${attribute}, found ${validationFailure.join("\n")}`
+        return foundryApi.format("splittermond.modifiers.parseMessages.invalidAttributeKey",{attribute});
     }
     const value = parseValue(valueMatch[0])
     //Only normalize keys here. We don't have enough information to reliably normalize values here.

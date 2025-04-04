@@ -5,6 +5,7 @@ import sinon, {SinonSandbox} from "sinon";
 // roll.mock.ts
 class MockDie implements Die {
     constructor(
+        public number:number,
         public faces: number,
         public results: Array<{ active: boolean; result: number }>,
         public _evaluated = false
@@ -23,6 +24,14 @@ class MockNumericTerm implements NumericTerm {
         public number: number,
         public _evaluated = false
     ) {}
+
+    get total(){
+        return this.number;
+    }
+
+    get expression(){
+        return `${this.number}`
+    }
 }
 
 export class MockRoll implements FoundryRoll{
@@ -54,7 +63,7 @@ export class MockRoll implements FoundryRoll{
                 result: Math.floor(Math.random() * faces) + 1
             }));
 
-            const die = new MockDie(faces, dieResults);
+            const die = new MockDie(diceCount, faces, dieResults);
             this.terms.push(die);
             this.dice.push(die);
 
@@ -133,6 +142,7 @@ export function createTestRoll(
 
     if (results.length > 0) {
         const die = new MockDie(
+            results.length,
             Math.max(...results),
             results.map(result => ({ active: true, result })),
             true

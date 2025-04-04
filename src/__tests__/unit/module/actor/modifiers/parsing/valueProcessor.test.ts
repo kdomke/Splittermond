@@ -14,6 +14,7 @@ describe('Value Processor', () => {
     let sandbox: SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
+        sandbox.stub(foundryApi, "format").callsFake(key => key)
         sandbox.stub(foundryApi, "localize").callsFake(key => key)
     })
     afterEach(() => {

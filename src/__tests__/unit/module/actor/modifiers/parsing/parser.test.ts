@@ -12,6 +12,7 @@ describe('Modifier Parser', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
     });
 
@@ -94,7 +95,7 @@ describe('Modifier Parser', () => {
     ["AUS a='b\" 1", "AUS a='=' 1", "AUS ==1 1", "AUS", "AUS=1", 'damage/Sehr gute Handschuhe damageType="fire" value=1'].forEach(input => {
         it(`should return error for invalid modifier format ${input}`, () => {
             const result = parseModifiers(input);
-            expect(result.errors).to.deep.equal([`Modifier '${input}' is not of a modifier format`]);
+            expect(result.errors).to.deep.equal(["splittermond.modifiers.parseMessages.notAModifier"]);
             expect(result.modifiers).to.be.empty;
         });
     });
@@ -102,40 +103,32 @@ describe('Modifier Parser', () => {
     it('should return error for duplicate emphasis declaration', () => {
         const input = 'AUS/Schaden emphasis="Schaden" +1';
         const result = parseModifiers(input);
-        expect(result.errors).to.deep.equal([
-            "Modifier 'AUS/Schaden emphasis=\"Schaden\" +1' contains duplicate declaration of emphasis"
-        ]);
+        expect(result.errors).to.deep.equal(["splittermond.modifiers.parseMessages.duplicateEmphasis"]);
     });
 
     it('should return error for duplicate attribute declaration', () => {
         const input = 'damage damageType="fire" damageType=\'light\' +1';
         const result = parseModifiers(input);
-        expect(result.errors).to.deep.equal([
-            "Attribute 'damageType' exists several times in modifier."
-        ]);
+        expect(result.errors).to.deep.equal(["splittermond.modifiers.parseMessages.duplicateAttribute"]);
     });
 
     it('should return error for duplicate value declaration', () => {
         const input = 'AUS value=2 -1';
         const result = parseModifiers(input);
-        expect(result.errors).to.deep.equal([
-            "Modifier 'AUS value=2 -1' contains duplicate declaration of value"
-        ]);
+        expect(result.errors).to.deep.equal(["splittermond.modifiers.parseMessages.duplicateValue"]);
     });
 
     it('should return error for missing value declaration', () => {
         const input = 'AUS emphasis=Schaden';
         const result = parseModifiers(input);
-        expect(result.errors).to.deep.equal([
-            "Modifier 'AUS emphasis=Schaden' contains no declaration of value"
-        ]);
+        expect(result.errors).to.deep.equal(["splittermond.modifiers.parseMessages.noValue"]);
     });
 
     ["AUS 1='a' 1"].forEach(input => {
         it(`should return error for invalid key ${input}`, () => {
             const result = parseModifiers(input);
             expect(result.errors).to.satisfy((errors: string[]) =>
-                errors.some(e => e.includes("Invalid Key for Attribute"))
+                errors.some(e => e.includes("splittermond.modifiers.parseMessages.invalidAttributeKey"))
             );
         });
     });
@@ -147,6 +140,7 @@ describe('Modifier Normalization', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
             switch (key) {
                 case "splittermond.modifiers.keys.emphasis":
@@ -185,15 +179,15 @@ describe('Modifier Normalization', () => {
 
         const result = parseModifiers(input).errors;
 
-        expect(result[0]).to.equal("Modifier 'generalSkills/Schaden Schwerpunkt=Schaden value=2' contains duplicate declaration of emphasis");
+        expect(result[0]).to.equal("splittermond.modifiers.parseMessages.duplicateEmphasis");
     });
 
 
-    it('should valudate value despite normalization', () => {
+    it('should validate value despite normalization', () => {
         const input = "generalSkills.firemagic Wert=2 2";
 
         const result = parseModifiers(input).errors;
 
-        expect(result[0]).to.equal("Modifier 'generalSkills.firemagic Wert=2 2' contains duplicate declaration of value");
+        expect(result[0]).to.equal("splittermond.modifiers.parseMessages.duplicateValue");
     });
 });

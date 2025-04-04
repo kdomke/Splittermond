@@ -4,7 +4,7 @@ import {attributes, derivedAttributes} from "../../../config/attributes";
 import {isRoll} from "../../../api/Roll";
 import {splittermond} from "../../../config";
 
-const modifierKeys = ["emphasis", "damageType", "value"] as const;
+const modifierKeys = ["emphasis", "damageType", "value", "skill"] as const;
 const attributeMapper = initMapper(attributes)
     .withTranslator((t) => `splittermond.attribute.${t}.long`)
     .andOtherMappers((t) => `splittermond.attribute.${t}.short`)
@@ -32,12 +32,11 @@ export function clearMappers() {
 }
 
 export function normalizeKey(key: string) {
-    const replacer = new Or(replaceModifierKey)
-    const replacement = replacer.tryReplace(key)
-    if (replacement !== key) {
-        return replacement;
-    }
-    return key;
+    return new NoValueAdornmentNormalizer(key).usingMappers("modifiers").do()
+}
+
+export function normalizeDescriptor(descriptor:string){
+    return new NoValueAdornmentNormalizer(descriptor);
 }
 
 export function normalizeValue(value: Value) {
@@ -56,10 +55,6 @@ export function normalizeValue(value: Value) {
         }
     }
     return value;
-}
-
-function replaceModifierKey(key:string){
-    return createReplace(modifierKeys, modifierKeyMapper(), (v) => v)(key)
 }
 
 function replaceAttribute(value: string): string {
@@ -108,5 +103,31 @@ class Or {
             }
         }
         return value;
+    }
+}
+
+
+type MapperSelection = (keyof typeof NoValueAdornmentNormalizer["mappers"])
+class NoValueAdornmentNormalizer {
+    private selectedMappers: MapperSelection[] =[];
+    static mappers = {
+        attributes: {collection:splittermond.attributes, mapper:attributeMapper},
+        derivedAttributes:{collection: splittermond.attributes, mapper:derivedAttributeMapper},
+        skills: {collection: splittermond.skillGroups.all, mapper:skillMapper},
+        modifiers: {collection: modifierKeys, mapper: modifierKeyMapper},
+    } as const;
+    constructor(private readonly descriptor: string) {
+    }
+
+    usingMappers(...mapper: MapperSelection[]) {
+        this.selectedMappers = mapper;
+        return this;
+    }
+
+    do() {
+       const replacers = this.selectedMappers
+           .map(m=> NoValueAdornmentNormalizer.mappers[m])
+           .map(m=> createReplace(m.collection, m.mapper(), v=>v))
+       return  new Or(...replacers).tryReplace(this.descriptor);
     }
 }

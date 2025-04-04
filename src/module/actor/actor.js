@@ -15,6 +15,7 @@ import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
 import {of} from "./modifiers/expressions/definitions";
+import {evaluate} from "./modifiers/expressions/evaluation.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -353,10 +354,10 @@ export default class SplittermondActor extends Actor {
             }
         });
         const currentLevel = Math.floor(data.health.total.value / this.derivedValues.healthpoints.value);
-        const baseLevel = Math.max(data.health.woundMalus.nbrLevels - currentLevel - 1,0);
+        const baseLevel = Math.max(data.health.woundMalus.nbrLevels - currentLevel - 1, 0);
         data.health.woundMalus.level = Math.min(
             baseLevel + data.health.woundMalus.levelMod,
-            data.health.woundMalus.nbrLevels -1
+            data.health.woundMalus.nbrLevels - 1
         );
 
         let woundMalusValue = data.health.woundMalus.levels[data.health.woundMalus.level];
@@ -479,7 +480,7 @@ export default class SplittermondActor extends Actor {
                 },
                 of(-Math.floor(handicap / 2)),
                 this
-                );
+            );
         }
     }
 
@@ -899,7 +900,17 @@ export default class SplittermondActor extends Actor {
         if (skillName === "health") {
             return 5;
         }
-        return 3;
+        const bonusFromModifiers = this.modifier.getForId("splinterpoints.bonus")
+            .withAttributeValuesOrAbsent("skill", skillName)
+            .notSelectable()
+            .getModifiers()
+            .map(m => evaluate(m.value))
+        const highestValue = Math.max(3, ...bonusFromModifiers);
+        //Issue a warning when someone added a modifier that does not actually benefit them
+        if(bonusFromModifiers.length > 0 && highestValue === 3){
+           console.warn("Splittermond | Handed out minimum Splinterpoint bonus despite modifiers present");
+        }
+        return  highestValue
     }
 
     async useSplinterpointBonus(message) {

@@ -1,9 +1,10 @@
-import Modifiable from "./modifiable.js";
-import CheckDialog from "../apps/dialog/check-dialog.js"
-import * as Dice from "../util/dice.js"
-import * as Chat from "../util/chat.js";
-import * as Tooltip from "../util/tooltip.js";
-import {parseRollDifficulty} from "../util/rollDifficultyParser.js";
+import Modifiable from "./modifiable";
+import CheckDialog from "../apps/dialog/check-dialog"
+import * as Dice from "../util/dice"
+import * as Chat from "../util/chat";
+import * as Tooltip from "../util/tooltip";
+import {parseRollDifficulty} from "../util/rollDifficultyParser";
+import {asString} from "module/actor/modifiers/expressions/Stringifier";
 
 
 export default class Skill extends Modifiable {
@@ -58,8 +59,11 @@ export default class Skill extends Modifiable {
         return value;
     }
 
+    /**
+     * @returns {IModifier[]}
+     */
     get selectableModifier() {
-        return this.actor.modifier.selectable(this._modifierPath);
+        return this.actor.modifier.getForIds(...this._modifierPath).selectable().getModifiers();
     }
 
     get isGrandmaster() {
@@ -189,10 +193,14 @@ export default class Skill extends Modifiable {
         let selectableModifier = this.selectableModifier;
         selectedModifiers = selectedModifiers.map(s => s.trim().toLowerCase());
         if (selectableModifier) {
-            emphasisData = Object.entries(selectableModifier).map(([key, value]) => {
+            emphasisData = selectableModifier
+                .map(mod => [mod.attributes.name,asString(mod.value)])
+                .map(([key, value]) => {
+                    const operator = /(?<=^\s*)[+-]/.exec(value)?.[0] ?? "+";
+                    const cleanedValue = value.replace(/^\s*[+-]/, "").trim();
                 return {
                     name: key,
-                    label: key + (value > 0 ? " +" : " ") + value,
+                    label: `${key} ${operator} ${cleanedValue}`,
                     value: value,
                     active: selectedModifiers.includes(key.trim().toLowerCase())
                 };

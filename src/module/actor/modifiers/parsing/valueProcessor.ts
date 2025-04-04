@@ -3,6 +3,7 @@ import {Expression, of, times, ReferenceExpression, RollExpression} from "../exp
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
+import {foundryApi} from "../../../api/foundryApi";
 
 export function processValues(modifiers: ParsedModifier[], refSource: object) {
     const result = {
@@ -13,7 +14,7 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
     for (const modifier of [...modifiers]) {
         const value = modifier.attributes.value;
         if (!value) {
-            result.errors.push(`Modifier '${modifier.path}' contains no declaration of value`);
+            result.errors.push(foundryApi.format("splittermond.modifiers.parseMessages.noValue", {modifier: modifier.path}));
             continue;
         }
         const processedValue = processValue(value, refSource);

@@ -125,7 +125,24 @@
       "keys": {
         "emphasis": "Schwerpunkt",
         "value": "Wert",
-        "damageType": "Schadensart"
+        "damageType": "Schadensart",
+        "skill": "Fertigkeit"
+      },
+      "parseMessages": {
+        "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",
+        "duplicateEmphasis": "Modifikator '{modifier}' deklariert mehrere Schwerpunkte.",
+        "duplicateValue": "Modifikator '{modifier}' deklariert mehrere Modifikatorwerte.",
+        "noValue": "Modifikator '{modifier}' deklariert keinen Modifikatorwert.",
+        "duplicateAttribute": "Das Attribut '{attribute}' ist mehrfach deklariert.",
+        "noAttributeKey": "Der Schlüssel des Attributes '{attribute}' konnte nicht bestimmt werden.",
+        "noAttributeValue": "Der Wert des Attributs '{attribute}' konnte nicht bestimmt werden.",
+        "invalidAttributeKey": "Ungültiger Schlüssel für Attribut '{attribute}': ",
+        "keyHasExpressionFormat": "Ein Schlüssel sollte nicht das Format eines evaluierbaren Ausdrucks haben.",
+        "shouldNotBeNumber": "Eingabe '{input}' sollte keine Zahl sein.",
+        "shouldNotBeAnExpression": "Eingabe '{input}' sollte kein evaluierbarer Ausdruck sein.",
+        "referenceNotPrimitive": "'{propertyPath}' ist kein primitiver Wert auf '{objectName}'.",
+        "unknownObject": "unbekannt",
+        "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!"
       }
     },
     "modifier": "Modifikator",

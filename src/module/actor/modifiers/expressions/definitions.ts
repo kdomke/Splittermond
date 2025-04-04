@@ -1,4 +1,5 @@
 import {FoundryRoll} from "../../../api/Roll";
+import {foundryApi} from "../../../api/foundryApi";
 
 export type Expression =
     AmountExpression
@@ -23,11 +24,11 @@ export function isExpression(value: unknown): value is Expression {
 }
 
 export function of(amount: number) {
-    if(amount === 0){
+    if (amount === 0) {
         return new ZeroExpression()
-    }else if (amount === 1){
+    } else if (amount === 1) {
         return new OneExpression();
-    }else{
+    } else {
         return new AmountExpression(amount)
     }
 }
@@ -44,7 +45,7 @@ export function plus(left: Expression, right: Expression) {
 
 export function minus(left: Expression, right: Expression) {
     if (left instanceof ZeroExpression) {
-        return times(of(-1),right);
+        return times(of(-1), right);
     } else if (right instanceof ZeroExpression) {
         return left;
     } else {
@@ -83,18 +84,53 @@ export function abs(arg: Expression) {
     return new AbsExpression(arg);
 }
 
+/**
+ * Masks the time it actually takes to evaluate a roll, by returning a cheap intermediary, or
+ * the last value when that current roll has not yet finished.
+ */
 export class RollExpression {
-    private result: number|null = null;
+    private result: number | null = null;
+    private evaluating:boolean = false;
+
     constructor(public readonly value: FoundryRoll) {
-        value.evaluate().then(result => {this.result = result.total});
+        this.requestProperEvaluation();
     }
 
 
     evaluate(): number {
-       if (this.result === null) {
-           return this.value.clone().evaluateSync({strict: false}).total;
-       }
-         return this.result;
+        if (this.result === null) {
+            return this.cheapPreliminaryValue();
+        }
+        const lastResult = this.result;
+        this.requestProperEvaluation();
+        return lastResult;
+    }
+    private requestProperEvaluation(){
+        if (this.evaluating){
+            return;
+        }
+        this.evaluating = true;
+        this.value.clone().evaluate().then(result => {
+            this.result = result.total
+            this.evaluating = false;
+        });
+    }
+
+    private cheapPreliminaryValue() {
+        const preEvaluatedRoll = this.value.clone().terms.map(term => {
+            if ("faces" in term && "number" in term) {
+                const cheapResult = Array.from({length: term.number}, (_, __) => this.cheapDiceThrow(term.faces))
+                    .reduce((a, b) => a + b, 0);
+                return foundryApi.rollInfra.numericTerm(cheapResult);
+            }
+            return term;
+        });
+        return foundryApi.rollInfra.rollFromTerms(preEvaluatedRoll).evaluateSync().total;
+    }
+
+    private cheapDiceThrow(faces: number) {
+        const minDiceValue = 1
+        return Math.floor(Math.random() * (faces - minDiceValue + 1)) + minDiceValue;
     }
 }
 
@@ -103,13 +139,13 @@ export class AmountExpression {
     }
 }
 
-class ZeroExpression extends AmountExpression{
+class ZeroExpression extends AmountExpression {
     constructor() {
         super(0);
     }
 }
 
-class OneExpression extends AmountExpression{
+class OneExpression extends AmountExpression {
     constructor() {
         super(1);
     }
