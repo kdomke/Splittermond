@@ -1,6 +1,7 @@
 ## 0.12.16
 ### Fixed
  * Modifikatoren von Rüstungen werden jetzt wieder korrekt berechnet
+ * Korrekte Darstellung von auswählbaren Modifikatoren
 ## 0.12.15
 ### Fixed
  * Hinzufügen von Kompendium Spezies zu Charakteren funktioniert jetzt wieder
