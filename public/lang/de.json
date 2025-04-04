@@ -138,6 +138,7 @@
         "invalidAttributeKey": "Ungültiger Schlüssel für Attribut '{attribute}': ",
         "keyHasExpressionFormat": "Ein Schlüssel sollte nicht das Format eines evaluierbaren Ausdrucks haben.",
         "shouldNotBeNumber": "Eingabe '{input}' sollte keine Zahl sein.",
+        "shouldNotBeAnExpression": "Eingabe '{input}' sollte kein evaluierbarer Ausdruck sein.",
         "referenceNotPrimitive": "'{propertyPath}' ist kein primitiver Wert auf '{objectName}'.",
         "unknownObject": "unbekannt",
         "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!"

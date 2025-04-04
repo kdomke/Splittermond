@@ -15,6 +15,7 @@ export function validateAllInputConsumed(modifier: string, pathMatch: null | Reg
 export function validateDescriptors(value: Value): ErrorMessage[] {
     const errors: ErrorMessage[] = [];
     validateNotANumber(value, errors)
+    validateNotAnExpression(value, errors)
 
     return errors;
 }
@@ -42,6 +43,12 @@ export function validateReference(propertyPath: string, source: object): ErrorMe
 function validateNotANumber(input: Value, errors: ErrorMessage[]): void {
     if (typeof input === "number" || /^\d+$/.test(`${input}`)) {
         errors.push(foundryApi.format("splittermond.modifiers.parseMessages.shouldNotBeANumber", {input: `${input}`}));
+    }
+}
+
+function validateNotAnExpression(input: Value, errors: ErrorMessage[]): void {
+    if (typeof input === "object") {
+        errors.push(foundryApi.format("splittermond.modifiers.parseMessages.shouldNotBeAnExpression", {input: `${input}`}));
     }
 }
 
