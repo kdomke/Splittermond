@@ -197,7 +197,8 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         }
     });
     if (allErrors.length > 0) {
-        foundryApi.reportError(`Syntax Error in modifier-string "${str}" in ${item.name}!\n${allErrors.join("\n")}`);
+        const introMessage = foundryApi.format("splittermond.modifiers.parseMessages.allErrorMessage",{str,objectName: item.name});
+        foundryApi.reportError(`${introMessage}\n${allErrors.join("\n")}`);
     }
 }
 

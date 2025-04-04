@@ -53,7 +53,7 @@
     },
     "message": {
       "itemImported": "The item \"{name}\" was imported as \"{type}\"!",
-      "mangledTableData": "Tabellendata is corrupted. Please check attributes and derived values."
+      "mangledTableData": "table data is corrupted. Please check attributes and derived values."
     },
     "settings": {
       "reducibleEnhancementCosts": {
@@ -94,7 +94,7 @@
         "light": "light",
         "shadow": "shadow",
         "wind": "wind",
-        "water": "water",
+        "water": "water"
       },
       "long": {
         "physical": "physical damage",
@@ -111,7 +111,7 @@
         "light": "light damage",
         "shadow": "shadow damage",
         "wind": "wind damage",
-        "water": "water damage",
+        "water": "water damage"
       }
     }
   }
