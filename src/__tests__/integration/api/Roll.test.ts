@@ -2,11 +2,17 @@ import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 import {foundryApi} from "module/api/foundryApi";
 import {addRolls, sumRolls} from "module/api/Roll";
 
-declare class Die{
+declare class Die {
     results: any;
 }
-declare class OperatorTerm{ operator:string}
-declare class NumericTerm{ number:number}
+
+declare class OperatorTerm {
+    operator: string
+}
+
+declare class NumericTerm {
+    number: number
+}
 
 export function foundryRollTest(context: QuenchBatchContext) {
     const {describe, it, expect} = context;
@@ -27,9 +33,11 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(rollResult.terms).to.have.length(3);
             expect(rollResult.terms[0]).to.have.property("results");
             expect(rollResult.terms[0]).to.have.property("faces");
-            const firstTerm = rollResult.terms[0] as { results: any, faces: any };
+            expect(rollResult.terms[0]).to.have.property("number");
+            const firstTerm = rollResult.terms[0] as { results: any, faces: any, number: any };
             expect(firstTerm.results).to.be.instanceOf(Array);
             expect(firstTerm.faces).to.equal(6);
+            expect(firstTerm.number).to.equal(2);
 
             expect(firstTerm).to.be.instanceOf(Die);
             expect(firstTerm.results).to.have.length(2);
@@ -56,7 +64,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(foundryApi.roll("1d6+3").result).to.contain("+ 3");
         })
 
-        it("should not produce a total if not evaluated",()=>{
+        it("should not produce a total if not evaluated", () => {
             expect(foundryApi.roll("1d6+3").total).to.equal(0);
         });
 
@@ -75,10 +83,24 @@ export function foundryRollTest(context: QuenchBatchContext) {
         });
 
         ["1W6", "leerzeichen", "+K2V3", null, undefined].forEach((input) => {
-            it(`should fail if '${input}' is not a roll formula`,()=>{
-               expect(() => foundryApi.roll(input as string).evaluateSync()).to.throw();
+            it(`should fail if '${input}' is not a roll formula`, () => {
+                expect(() => foundryApi.roll(input as string).evaluateSync()).to.throw();
             });
-        })
+        });
+
+        it("should create a numeric term", () => {
+            const numericTerm = foundryApi.rollInfra.numericTerm(3);
+            expect(numericTerm.number).to.equal(3);
+            expect(numericTerm.total).to.equal(3);
+            expect(numericTerm.expression).to.equal("3");
+        });
+
+        it("should consume a numeric term", () => {
+            const numericTerm = foundryApi.rollInfra.numericTerm(3);
+
+            const roll = foundryApi.rollInfra.rollFromTerms([numericTerm]).evaluateSync();
+            expect(roll.total).to.equal(3);
+        });
     });
 
     describe("Roll addition", () => {

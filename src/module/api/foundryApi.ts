@@ -7,7 +7,7 @@ import type {
     Socket, Speaker,
     User
 } from "./foundryTypes";
-import type {FoundryRoll, Roll} from "./Roll";
+import type {FoundryRoll, NumericTerm, Roll} from "./Roll";
 
 export const foundryApi = new class FoundryApi {
 
@@ -139,6 +139,18 @@ export const foundryApi = new class FoundryApi {
     roll(damageFormula: string, data:Record<string,string>={}, context: object = {}): FoundryRoll{
         //@ts-ignore
         return new Roll(damageFormula, data, context)
+    }
+    get rollInfra(){
+        return {
+            rollFromTerms(terms: FoundryRoll["terms"]) {
+                //@ts-ignore
+                return Roll.fromTerms(terms);
+            },
+            numericTerm(number:number):NumericTerm{
+                //@ts-ignore
+                return new foundry.dice.terms.NumericTerm({number})
+            }
+        }
     }
 
     mergeObject<T extends object, U extends object>(original: T, other?: U, options?:MergeObjectOptions): Partial<T> & Partial<U>{

@@ -1,4 +1,5 @@
 export interface Die {
+    number: number;
     faces: number;
     /**@internal*/_evaluated: boolean;
     results: { active: boolean, result: number }[]
@@ -13,6 +14,8 @@ export interface OperatorTerm {
 export interface NumericTerm {
     number: number;
     /**@internal*/_evaluated: boolean;
+    readonly expression:string;
+    readonly total:number;
 }
 
 export declare class Roll {
