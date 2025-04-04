@@ -103,7 +103,7 @@ export function modifierTest(context: QuenchBatchContext) {
         });
 
         it("should account for modifications from armor", async () => {
-            const subject = await createActor("ShieldedCharacter");
+            const subject = await createActor("ArmoredCharacter");
             (subject.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
             (subject.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
             (subject.system as CharacterDataModel).updateSource({
@@ -115,9 +115,8 @@ export function modifierTest(context: QuenchBatchContext) {
             );
             await subject.createEmbeddedDocuments("Item", [{
                 type: "armor",
-                name: "Fat Shield",
+                name: "Fat Armor",
                 system: {
-                    skill: "blades",
                     tickMalus: 1,
                     defenseBonus: 1,
                     damageReduction: 1,
@@ -135,10 +134,82 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.damageReduction).to.equal(1);
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
         });
+
+    });
+
+    describe("Modifiable splinterpoint bonus", () => {
+        async function getActorWithMasteryModifying(modifier:string){
+            const subject = await createActor("SplinterpointBonusCharacter");
+            (subject.system as CharacterDataModel).attributes.intuition.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).attributes.charisma.updateSource({initial: 6, advances: 0});
+            (subject.system as CharacterDataModel).updateSource({splinterpoints: {value: 3, max: 3}});
+            (subject.system as CharacterDataModel).updateSource({
+                    skills: {
+                        ...subject.system.skills,
+                        eloquence: {points: 9, value: 17}
+                    }
+                }
+            );
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "mastery",
+                name: "Begabter Lügner",
+                system: {
+                    skill: "eloquence",
+                    level: 2,
+                    modifier,
+                }
+            }]);
+            return subject;
+        }
+        it("should process a splinterpoint modifier correctly", async () => {
+            const subject = await getActorWithMasteryModifying("splinterpoints.bonus Fertigkeit='Redegewandtheit' +${AUS}");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            const splinterpointSpender = subject.spendSplinterpoint();
+            expect(splinterpointSpender.pointSpent).to.be.true;
+            expect(splinterpointSpender.getBonus("eloquence")).to.equal(subject.attributes.charisma.value)
+        });
+
+        it("should account for a global bonus modifier", async () => {
+            const subject = await getActorWithMasteryModifying("splinterpoints.bonus 4");
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            const splinterpointSpender = subject.spendSplinterpoint();
+            expect(splinterpointSpender.pointSpent).to.be.true;
+            expect(splinterpointSpender.getBonus("eloquence")).to.equal(4)
+        });
+
+
+        it("should only use the highest splinterpoint bonus", async ()=>{
+            const subject = await getActorWithMasteryModifying("splinterpoints.bonus Fertigkeit='Redegewandtheit' ${AUS}");
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "mastery",
+                name: "Begabter Redner",
+                system: {
+                    skill: "eloquence",
+                    level: 2,
+                    modifier: "splinterpoints.bonus skill='eloquence' 7",
+                }
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            const splinterpointSpender = subject.spendSplinterpoint();
+            expect(splinterpointSpender.pointSpent).to.be.true;
+            expect(splinterpointSpender.getBonus("eloquence")).to.equal(7);
+        });
     });
 
     describe("Wound malus", () => {
-        async function setUpActor(){
+        async function setUpActor() {
             const actor = await createActor("WoundedCharacter");
             (actor.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
             (actor.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
@@ -151,7 +222,7 @@ export function modifierTest(context: QuenchBatchContext) {
             return actor;
         }
 
-        async function addWoundedEffect(actor:SplittermondActor, level:number){
+        async function addWoundedEffect(actor: SplittermondActor, level: number) {
             return await actor.createEmbeddedDocuments("Item", [{
                 type: "statuseffect",
                 name: "Verwundung",
@@ -165,7 +236,7 @@ export function modifierTest(context: QuenchBatchContext) {
         it("should apply wound malus effect with more than full bar missing", async () => {
             const subject = await setUpActor();
             await addWoundedEffect(subject, 1);
-            await subject.consumeCost("health",`8V8`, "");
+            await subject.consumeCost("health", `8V8`, "");
 
             subject.prepareBaseData();
             await subject.prepareEmbeddedDocuments();
@@ -176,7 +247,7 @@ export function modifierTest(context: QuenchBatchContext) {
 
         it("should apply LP wound malus when more than full bar missing", async () => {
             const subject = await setUpActor();
-            await subject.consumeCost("health",`8V8`, "");
+            await subject.consumeCost("health", `8V8`, "");
 
             subject.prepareBaseData();
             await subject.prepareEmbeddedDocuments();
@@ -185,7 +256,7 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.skills.acrobatics.value).to.equal(6 - 1);
         });
 
-        [[0,0],[1,1],[2,2],[3,4],[4,8],[5,8]].forEach(([level,reduction]) => {
+        [[0, 0], [1, 1], [2, 2], [3, 4], [4, 8], [5, 8]].forEach(([level, reduction]) => {
             it(`should apply wound malus of ${level} at perfect health`, async () => {
                 const subject = await setUpActor();
                 await addWoundedEffect(subject, level);
@@ -200,7 +271,7 @@ export function modifierTest(context: QuenchBatchContext) {
             it(`should apply wound malus of ${level} with 1hp missing`, async () => {
                 const subject = await setUpActor();
                 await addWoundedEffect(subject, level);
-                await subject.consumeCost("health","1V1", "");
+                await subject.consumeCost("health", "1V1", "");
 
                 subject.prepareBaseData();
                 await subject.prepareEmbeddedDocuments();
@@ -212,7 +283,7 @@ export function modifierTest(context: QuenchBatchContext) {
             it(`should apply wound malus of ${level} with full bar missing`, async () => {
                 const subject = await setUpActor();
                 await addWoundedEffect(subject, level);
-                await subject.consumeCost("health",`7V7`, "");
+                await subject.consumeCost("health", `7V7`, "");
 
                 subject.prepareBaseData();
                 await subject.prepareEmbeddedDocuments();
@@ -224,7 +295,7 @@ export function modifierTest(context: QuenchBatchContext) {
     });
 
     describe("Parsed Modifiers", () => {
-        async function defaultActor(name:string, modifier:string) {
+        async function defaultActor(name: string, modifier: string) {
             const subject = await createActor(name)
             subject.updateSource({
                 system: {

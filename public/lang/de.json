@@ -125,7 +125,8 @@
       "keys": {
         "emphasis": "Schwerpunkt",
         "value": "Wert",
-        "damageType": "Schadensart"
+        "damageType": "Schadensart",
+        "skill": "Fertigkeit"
       },
       "parseMessages": {
         "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",

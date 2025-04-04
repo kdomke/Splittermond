@@ -1,4 +1,12 @@
 ## 0.12.16
+### New features
+ * Splitterpunkt boni können mittels Meisterschaften gesetzt werden
+    * Bonus kann mit dem Attribut `Fertigkeit=<name>` auf eine Fertigkeit eingeschränkt werden
+    * Alternativ kann die interne Darstellung `skill=<skillId>` verwendet werden
+    * Als Wert kann eine Referenz auf einen anderen Wert des Charakters angegeben wereden
+        * Attribute können mit `${<code>}` z.B. `${AUS}` referenziert werden.
+    * Der Minimale Bonus ist immer 3 und eine Warnung wird auf die Console geschrieben, wenn ein Modifikator einen niedrigeren Wert vorschlägt.
+ * Modifikatorparser fehler sind übersetzt
 ### Fixed
  * Modifikatoren von Rüstungen werden jetzt wieder korrekt berechnet
  * Korrekte Darstellung von auswählbaren Modifikatoren

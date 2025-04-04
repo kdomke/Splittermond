@@ -11,6 +11,7 @@ import {evaluate} from "./expressions/evaluation";
 import {condense, isZero} from "./expressions/condenser";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
+import {normalizeDescriptor} from "./parsing/normalizer";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -128,6 +129,14 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 break;
             case "woundmalus.levelmod":
                 data.health.woundMalus.levelMod += evaluate(times(of(multiplier), modifier.value));
+                break;
+            case "splinterpoints.bonus":
+                if(!("skill" in modifier.attributes)){
+                    console.warn("Encountered a splinterpoint bonus modifier without a skill. This may be uninteded by the user.")
+                }else{
+                    modifier.attributes.skill = normalizeDescriptor(modifier.attributes.skill).usingMappers("skills").do();
+                }
+                actor.modifier.add("splinterpoints.bonus", {name:item.name,type}, times(of(multiplier), modifier.value), item, false);
                 break;
             case "splinterpoints":
                 if ("splinterpoints" in data) {
