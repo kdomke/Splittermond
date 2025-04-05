@@ -4,6 +4,7 @@ import {foundryApi} from "../../module/api/foundryApi";
 import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "../../module/actor/actor";
 import {splittermond} from "../../module/config";
+import {NpcDataModel} from "../../module/actor/dataModel/NpcDataModel";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -15,6 +16,12 @@ export function modifierTest(context: QuenchBatchContext) {
 
     async function createActor(name: string) {
         const actor = await actorCreator.createCharacter({type: "character", name, system: {}})
+        actors.push(actor)
+        return actor;
+    }
+
+    async function createNpc(name: string) {
+        const actor = await actorCreator.createNpc({type: "npc", name, system: {}},)
         actors.push(actor)
         return actor;
     }
@@ -133,6 +140,27 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.derivedValues.defense.value).to.equal(17);
             expect(subject.damageReduction).to.equal(1);
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
+        });
+
+        it ("should account for modifications from mpc features", async () => {
+            const subject = await createNpc("NpcWithFeature");
+            (subject.system as NpcDataModel).attributes.agility.updateSource({value:3});
+            (subject.system as NpcDataModel).attributes.strength.updateSource({value:5});
+            (subject.system as NpcDataModel).updateSource({damageReduction:{value:2}});
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "npcfeature",
+                name: "Elefant Skin",
+                system: {
+                    modifier: "SR +2",
+                }
+            }]);
+
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.damageReduction).to.equal(4);
         });
 
     });

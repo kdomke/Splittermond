@@ -191,7 +191,7 @@ export default class SplittermondActor extends Actor {
                         name: foundryApi.localize("splittermond.damageReductionAbbrev"),
                         type: "innate"
                     },
-                    of(this.system.damageReduction)
+                    of(this.system.damageReduction.value)
                 )
             }
 
