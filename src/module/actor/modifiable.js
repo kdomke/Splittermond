@@ -1,3 +1,5 @@
+import {evaluate} from "./modifiers/expressions/evaluation.js";
+
 export default class Modifiable {
     /**
      * 
@@ -13,14 +15,14 @@ export default class Modifiable {
     }
 
     get mod() {
-        let total = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().value();
-        let bonusEquipment = parseInt(this.actor.modifier.static(this._modifierPath).filter(mod => mod.type == "equipment" && mod.isBonus).reduce((acc, mod) => acc + mod.value, 0));
-        let bonusMagic = parseInt(this.actor.modifier.static(this._modifierPath).filter(mod => mod.type == "magic" && mod.isBonus).reduce((acc, mod) => acc + mod.value, 0));
+        const grandTotal = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().value();
+        const bonusEquipment = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
+            .filter(mod => mod.type === "equipment" && mod.isBonus).reduce((acc, mod) => acc + evaluate(mod.value), 0);
+        const bonusMagic = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
+            .filter(mod => mod.type === "magic" && mod.isBonus).reduce((acc, mod) => acc + evaluate(mod.value), 0);
 
-        total -= Math.max(0, bonusEquipment - this.actor.bonusCap);
-        total -= Math.max(0, bonusMagic - this.actor.bonusCap);
-
-        return total;
+        const cappedEquipment = grandTotal - Math.max(0, bonusEquipment - this.actor.bonusCap);
+        return cappedEquipment - Math.max(0, bonusMagic - this.actor.bonusCap);
     }
 
     addModifierPath(path) {

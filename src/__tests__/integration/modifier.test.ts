@@ -41,7 +41,7 @@ export function modifierTest(context: QuenchBatchContext) {
                         agility: {initial: 3, advances: 0}
                     }
                 }
-            })
+            });
 
             subject.prepareBaseData();
             await subject.prepareEmbeddedDocuments();
@@ -145,7 +145,7 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
         });
 
-        it ("should account for modifications from mpc features", async () => {
+        it ("should account for modifications from npc features", async () => {
             const subject = await createNpc("NpcWithFeature");
             (subject.system as NpcDataModel).attributes.agility.updateSource({value:3});
             (subject.system as NpcDataModel).attributes.strength.updateSource({value:5});
@@ -165,6 +165,34 @@ export function modifierTest(context: QuenchBatchContext) {
 
             expect(subject.damageReduction).to.equal(4);
         });
+
+        it ("should cap modifiers for skills", async ()=>{
+            const subject = await createActor("Overmagiced")
+            subject.updateSource({
+                system: {
+                    attributes: {
+                        intuition: {initial: 2, advances: 0},
+                        mind: {initial: 3, advances: 0}
+                    }
+                }
+            });
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "spelleffect",
+                name: "Superempathy",
+                system: {active: true, modifier: "empathy +1"}
+            }]);
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "spelleffect",
+                name: "MegaEmpathy",
+                system: {active: true, modifier: "empathy +3"}
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(8);
+        })
 
     });
 
