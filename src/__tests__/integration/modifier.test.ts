@@ -6,8 +6,8 @@ import SplittermondActor from "../../module/actor/actor";
 import {splittermond} from "../../module/config";
 import {NpcDataModel} from "../../module/actor/dataModel/NpcDataModel";
 import {isGreaterZero, isLessThanZero} from "../../module/actor/modifiers/expressions/Comparator";
-import {RollExpression} from "../../module/actor/modifiers/expressions/definitions";
 import {evaluate} from "../../module/actor/modifiers/expressions/evaluation";
+import {roll} from "../../module/actor/modifiers/expressions/definitions";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -459,17 +459,17 @@ export function modifierTest(context: QuenchBatchContext) {
     describe("Roll expressions",() => {
 
         it("should be able to predict parenthetical expressions correctly", async () => {
-            expect(isLessThanZero(new RollExpression(foundryApi.roll("-2d6")))).to.be.true;
-            expect(isGreaterZero(new RollExpression(foundryApi.roll("-2d6")))).to.be.false;
+            expect(isLessThanZero(roll(foundryApi.roll("-2d6")))).to.be.true;
+            expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         })
 
         it("should be able to evaluate parenthetical expressions correctly", async () => {
-            expect(evaluate(new RollExpression(foundryApi.roll("-2d6")))).to.be.above(-13).below(0);
+            expect(evaluate(roll(foundryApi.roll("-2d6")))).to.be.above(-13).below(0);
         })
 
         it("should be able to predict nested expressions correctly ", async () => {
-            expect(isLessThanZero(new RollExpression(foundryApi.roll("2 + -1 * 3d6")))).to.be.true;
-            expect(isGreaterZero(new RollExpression(foundryApi.roll("-2d6")))).to.be.false;
+            expect(isLessThanZero(roll(foundryApi.roll("2 + -1 * 3d6")))).to.be.true;
+            expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         });
     });
 }

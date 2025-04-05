@@ -4,9 +4,11 @@ import {
     AbsExpression,
     AddExpression,
     AmountExpression,
+    DieExpression,
     DivideExpression,
     Expression,
-    MultiplyExpression, ReferenceExpression, RollExpression,
+    MultiplyExpression,
+    ReferenceExpression,
     SubtractExpression
 } from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
@@ -26,7 +28,7 @@ function do_toString(expression: Expression): string {
         return `${expression.amount}`;
     } else if (expression instanceof ReferenceExpression) {
         return `\$\{${expression.stringRep}}`
-    } else if (expression instanceof RollExpression) {
+    } else if (expression instanceof DieExpression) {
         return expression.value.formula
     } else if(expression instanceof AddExpression) {
         return `(${do_toString(expression.left)} + ${do_toString(expression.right)})`;

@@ -4,7 +4,7 @@ import {TooltipFormula} from "../util/tooltip";
 import {abs, Expression} from "./modifiers/expressions/definitions";
 import {condense} from "./modifiers/expressions/condenser";
 import {asString} from "./modifiers/expressions/Stringifier";
-import {isGreaterZero} from "./modifiers/expressions/Comparator";
+import {isGreaterZero, isLessThanZero} from "./modifiers/expressions/Comparator";
 
 export interface ModifierAttributes {
     name:string;
@@ -32,6 +32,7 @@ export interface IModifier {
 
 export default class Modifier implements IModifier {
     private _isBonus:boolean;
+    private _isMalus:boolean;
     /**
      *
      * @param {string} path Modifier Path
@@ -47,12 +48,13 @@ export default class Modifier implements IModifier {
         public readonly origin:SplittermondItem|SplittermondActor|null = null,
         public readonly selectable = false) {
         this.selectable = selectable;
-        this._isBonus = isGreaterZero(value) ?? true; //Assume a bonus if no statement can be made
+        this._isBonus = isGreaterZero(value) ?? true; //Assume a bonus if result is unknown
+        this._isMalus= isLessThanZero(value) ?? false;
     }
 
 
     get isMalus() {
-        return !this._isBonus;
+        return this._isMalus
     }
 
     get isBonus() {

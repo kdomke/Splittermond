@@ -42,8 +42,6 @@ export class MockRoll implements FoundryRoll{
 
     constructor(
         public formula: string,
-        public data?: Record<string, string>,
-        public options?: Record<string, any>
     ) {
         this._evaluated = false;
         this._total = 0;
@@ -112,7 +110,7 @@ export class MockRoll implements FoundryRoll{
         return this;
     }
     clone(){
-        const roll = new MockRoll(this.formula, this.data, this.options);
+        const roll = new MockRoll(this.formula);
         roll.terms = this.terms;
         roll.dice = this.dice;
         roll._total = this._total
@@ -127,18 +125,21 @@ export class MockRoll implements FoundryRoll{
     static fromTerms(terms: Array<Die | OperatorTerm | NumericTerm>): MockRoll {
         const formula = terms
             .map(term => {
-                if ('faces' in term) return `${term.results.length}d${term.faces}`;
+                if ('faces' in term) return `${term.number}d${term.faces}`;
                 if ('operator' in term) return term.operator;
                 return term.number.toString();
             })
             .join(' ');
-        return new MockRoll(formula);
+        const roll = new MockRoll(formula);
+        roll.terms = terms;
+        roll.dice = terms.filter(term => "faces" in term);
+        return roll;
     }
 }
 
 // Test utility functions
 export function createTestRoll(
-    formula: string,
+    formula: `${number}d${number}`|`${number}d${number}+${number}`,
     results: number[],
     modifier = 0
 ): FoundryRoll{
@@ -148,7 +149,7 @@ export function createTestRoll(
     if (results.length > 0) {
         const die = new MockDie(
             results.length,
-            Math.max(...results),
+            parseInt(/(?<=d)\d/.exec(formula)![0]),
             results.map(result => ({ active: true, result })),
             true
         );

@@ -1,5 +1,5 @@
 import {ErrorMessage, FocusModifier, ParsedModifier, ScalarModifier, Value} from "./index";
-import {Expression, of, times, ReferenceExpression, RollExpression} from "../expressions/definitions";
+import {Expression, of, ref, roll, times} from "../expressions/definitions";
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
@@ -53,13 +53,13 @@ function setUpExpression(expression: Value, source: object): Expression | string
     if (typeof expression === "number") {
         return of(expression);
     } else if (isRoll(expression)) {
-        return new RollExpression(expression);
+        return roll(expression);
     } else if (typeof expression === "object") {
         const validationFailures = validateReference(expression.propertyPath, source);
         if (validationFailures.length > 0) {
             return validationFailures;
         }
-        const reference = new ReferenceExpression(expression.propertyPath, source, expression.original);
+        const reference = ref(expression.propertyPath, source, expression.original);
         return times(of(expression.sign), reference)
     } else {
         return expression;
