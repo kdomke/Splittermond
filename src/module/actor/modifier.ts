@@ -1,11 +1,10 @@
 import SplittermondActor from "./actor";
 import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
-import {Expression} from "./modifiers/expressions/definitions";
-import {evaluate} from "./modifiers/expressions/evaluation";
+import {abs, Expression} from "./modifiers/expressions/definitions";
 import {condense} from "./modifiers/expressions/condenser";
-import {abs} from "./modifiers/expressions/definitions";
 import {asString} from "./modifiers/expressions/Stringifier";
+import {isGreaterZero} from "./modifiers/expressions/Comparator";
 
 export interface ModifierAttributes {
     name:string;
@@ -32,6 +31,7 @@ export interface IModifier {
 }
 
 export default class Modifier implements IModifier {
+    private _isBonus:boolean;
     /**
      *
      * @param {string} path Modifier Path
@@ -47,20 +47,20 @@ export default class Modifier implements IModifier {
         public readonly origin:SplittermondItem|SplittermondActor|null = null,
         public readonly selectable = false) {
         this.selectable = selectable;
+        this._isBonus = isGreaterZero(value) ?? true; //Assume a bonus if no statement can be made
     }
 
 
     get isMalus() {
-        return evaluate(this.value) < 0;
+        return !this._isBonus;
     }
 
     get isBonus() {
-        return evaluate(this.value) > 0;
+        return this._isBonus;
     }
 
     addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
-        let evaluated = evaluate(this.value);
-        if (evaluated > 0) {
+        if (this.isBonus) {
             const term = `${bonusPrefix}${asString(abs(condense(this.value)))}`
             formula.addBonus(term, this.name);
         } else {
