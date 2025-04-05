@@ -112,7 +112,12 @@ export class MockRoll implements FoundryRoll{
         return this;
     }
     clone(){
-        return new MockRoll(this.formula, this.data, this.options);
+        const roll = new MockRoll(this.formula, this.data, this.options);
+        roll.terms = this.terms;
+        roll.dice = this.dice;
+        roll._total = this._total
+        roll._evaluated = this._evaluated;
+        return roll;
     }
 
     async getTooltip(): Promise<string> {

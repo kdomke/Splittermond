@@ -13,7 +13,7 @@ export default class Modifiable {
     }
 
     get mod() {
-        let total = parseInt(this.actor.modifier.value(this._modifierPath));
+        let total = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().value();
         let bonusEquipment = parseInt(this.actor.modifier.static(this._modifierPath).filter(mod => mod.type == "equipment" && mod.isBonus).reduce((acc, mod) => acc + mod.value, 0));
         let bonusMagic = parseInt(this.actor.modifier.static(this._modifierPath).filter(mod => mod.type == "magic" && mod.isBonus).reduce((acc, mod) => acc + mod.value, 0));
 

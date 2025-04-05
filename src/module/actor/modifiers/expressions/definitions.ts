@@ -1,4 +1,4 @@
-import {FoundryRoll} from "../../../api/Roll";
+import {FoundryRoll, isRoll, RollTerm} from "../../../api/Roll";
 import {foundryApi} from "../../../api/foundryApi";
 
 export type Expression =
@@ -90,7 +90,7 @@ export function abs(arg: Expression) {
  */
 export class RollExpression {
     private result: number | null = null;
-    private evaluating:boolean = false;
+    private evaluating: boolean = false;
 
     constructor(public readonly value: FoundryRoll) {
         this.requestProperEvaluation();
@@ -105,27 +105,52 @@ export class RollExpression {
         this.requestProperEvaluation();
         return lastResult;
     }
-    private requestProperEvaluation(){
-        if (this.evaluating){
+
+    private requestProperEvaluation() {
+        if (this.evaluating) {
             return;
         }
+
         this.evaluating = true;
-        this.value.clone().evaluate().then(result => {
-            this.result = result.total
+        const result = this.trySyncEvaluate();
+        if (result.success) {
+            this.result = result.result;
             this.evaluating = false;
-        });
+            return;
+        } else {
+            this.value.clone().evaluate().then(result => {
+                this.result = result.total
+                this.evaluating = false;
+            });
+        }
+    }
+
+    private trySyncEvaluate() {
+        try {
+            const result = this.value.clone().evaluateSync({strict: true});
+            return {result: result.total, success: true};
+        } catch (e) {
+            return {result: null, success: false};
+        }
     }
 
     private cheapPreliminaryValue() {
-        const preEvaluatedRoll = this.value.clone().terms.map(term => {
-            if ("faces" in term && "number" in term) {
-                const cheapResult = Array.from({length: term.number}, (_, __) => this.cheapDiceThrow(term.faces))
-                    .reduce((a, b) => a + b, 0);
-                return foundryApi.rollInfra.numericTerm(cheapResult);
-            }
-            return term;
-        });
+        const preEvaluatedRoll = this.value.clone().terms
+            .map(term => this.evaluateDiceTerm(term));
         return foundryApi.rollInfra.rollFromTerms(preEvaluatedRoll).evaluateSync().total;
+    }
+
+    private evaluateDiceTerm(term: RollTerm){
+        if("roll" in term && isRoll(term.roll)) {
+           const simplifiedRoll = foundryApi.rollInfra.rollFromTerms(term.roll.clone().terms.map(t => this.evaluateDiceTerm(t)));
+           return foundryApi.rollInfra.numericTerm(simplifiedRoll.evaluateSync().total);
+        }
+        if ("faces" in term && "number" in term) {
+            const cheapResult = Array.from({length: term.number}, (_, __) => this.cheapDiceThrow(term.faces))
+                .reduce((a, b) => a + b, 0);
+            return foundryApi.rollInfra.numericTerm(cheapResult);
+        }
+        return term;
     }
 
     private cheapDiceThrow(faces: number) {

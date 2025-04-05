@@ -11,6 +11,7 @@ import {
 } from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 
+
 export function evaluate(expression: Expression): number {
     return doEvaluate(expression) ?? 0
 }

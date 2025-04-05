@@ -1,3 +1,4 @@
+export type RollTerm = Die | OperatorTerm | NumericTerm | ParentheticTerm
 export interface Die {
     number: number;
     faces: number;
@@ -9,6 +10,11 @@ export interface OperatorTerm {
     operator: string;
     /**@internal*/_evaluated: boolean;
 
+}
+
+export interface ParentheticTerm {
+    roll: FoundryRoll;
+    /**@internal*/_evaluated: boolean;
 }
 
 export interface NumericTerm {
@@ -32,11 +38,11 @@ export declare class Roll {
     /**@internal*/_total: number
     readonly total: number
     dice: Die[]
-    terms: (Die | OperatorTerm | NumericTerm)[]
+    terms: (Die | OperatorTerm | NumericTerm|ParentheticTerm)[]
 
     getTooltip(): Promise<string>;
 
-    static fromTerms(terms: (Die | OperatorTerm | NumericTerm)[]): Roll;
+    static fromTerms(terms: RollTerm[]): Roll;
 
     /**
      * @param formula a roll formula. Supports named parameters with @
@@ -88,7 +94,7 @@ export function sumRolls(rolls: Roll[]): Roll {
     const isEvaluated = rolls.some(r => r._evaluated);
     const addTerm = isEvaluated ? Terms.getEvaluatedAddTerm() : Terms.getUnevaluatedAddTerm();
 
-    const terms: (Die | OperatorTerm | NumericTerm)[] = []
+    const terms: (Die | OperatorTerm | NumericTerm|ParentheticTerm)[] = []
     rolls.map(r => r.terms)
         .forEach(r => {
             terms.push(...r);
