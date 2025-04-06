@@ -4,6 +4,7 @@ import sinon, {SinonSandbox} from "sinon";
 
 // roll.mock.ts
 class MockDie implements Die {
+    modifier:string[]=[]
     constructor(
         public number:number,
         public faces: number,

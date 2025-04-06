@@ -2,6 +2,10 @@ export type RollTerm = Die | OperatorTerm | NumericTerm | ParentheticTerm
 export interface Die {
     number: number;
     faces: number;
+    /**
+     * Contains dice postprocessing, like keep lowest or similar
+     */
+    modifier:string[]
     /**@internal*/_evaluated: boolean;
     results: { active: boolean, result: number }[]
 }

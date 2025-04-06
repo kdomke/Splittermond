@@ -67,6 +67,10 @@ function tentativeEvaluate(expression: Expression): { min: number, max: number }
 //We are ignoring foundry dice modifiers for now
 function evalDies(expression: DieExpression): Range {
     const term = expression.value.terms[0];
+    if(term.modifier && term.modifier.length > 0){
+        console.warn("Splittermond | Value estimation for dice with modifiers is not supported. will assume any range")
+        return {min:Number.NaN, max:Number.NaN}
+    }
     return {min: term.number, max: term.number * term.faces};
 }
 

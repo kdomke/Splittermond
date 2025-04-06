@@ -1,18 +1,19 @@
 import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "../../../api/Roll";
 import {AmountExpression, DieExpression, dividedBy, Expression, minus, plus, times} from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
+import {foundryApi} from "../../../api/foundryApi";
 
 type NoOperatorTerm = Exclude<RollTerm, OperatorTerm>;
 
 export function mapRoll(roll:FoundryRoll):Expression {
-    const termIterator = roll.terms[Symbol.iterator]()
+    const terms = groupTermsByOperator(roll.terms);
+    const termIterator = terms[Symbol.iterator]()
     let leftTerm=termIterator.next();
-    if(leftTerm.done || !isNoOperator(leftTerm.value)){
+    if(leftTerm.done || isOperator(leftTerm.value)){
        throw new Error("Foundry Roll appears invalid, cannot map to expression");
     }
-    let leftExpression:Expression;
-    do {
-        leftExpression = termToExpression(asNoOperator(leftTerm.value));
+    let leftExpression:Expression=termToExpression(asNoOperator(leftTerm.value));
+    while(true){
         const operator = termIterator.next();
         const rightTerm = termIterator.next();
 
@@ -29,20 +30,52 @@ export function mapRoll(roll:FoundryRoll):Expression {
         }else if (asOperator(operator.value).operator === "/"){
             leftExpression = dividedBy(leftExpression, termToExpression(asNoOperator(rightTerm.value)));
         }
-        leftTerm = termIterator.next();
-    }while(!leftTerm.done);
-    return leftExpression;
+    }
 }
-function asOperator(term:RollTerm){
-    if(!isNoOperator(term)){
+
+function groupTermsByOperator(terms:RollTerm[]):RollTerm[] {
+    const operators = terms.filter(isOperator);
+    if (operators.length <= 1 || operators.every(t => ["*","/"].includes(t.operator))){
+        return terms;
+    }
+
+    const termIterator = terms[Symbol.iterator]()
+    let leftTerm = termIterator.next();
+    if (leftTerm.done || isOperator(leftTerm.value)) {
+        throw new Error("Foundry Roll appears invalid, cannot map to expression");
+    }
+    let groupedTerms:RollTerm[] = [leftTerm.value]
+    while (true) {
+        const operator = termIterator.next();
+        const rightTerm = termIterator.next();
+
+        if (operator.done && rightTerm.done) {
+            return groupedTerms;
+        } else if (operator.done || rightTerm.done) {
+            throw new Error("Not enough terms to be a correct roll formula")
+        } else if (["*", "/"].includes(asOperator(operator.value).operator)) {
+            const lastTerm = groupedTerms.pop()!;/*array cannot be empty here*/
+            const newRoll = foundryApi.rollInfra.rollFromTerms([lastTerm, operator.value, rightTerm.value]);
+            const hierarchicalTerm = {
+                roll: newRoll,
+                _evaluated: newRoll._evaluated
+            }
+            groupedTerms.push(hierarchicalTerm);
+        }else{
+            groupedTerms.push(operator.value,rightTerm.value)
+        }
+    }
+}
+function asOperator(term:RollTerm):OperatorTerm {
+    if(isOperator(term)){
        return term;
     } else{
         throw new Error(`Expected ${term} to be an operator but it was not`)
     }
 }
 
-function asNoOperator(term:RollTerm){
-    if(isNoOperator(term)){
+function asNoOperator(term:RollTerm):NoOperatorTerm {
+    if(!isOperator(term)){
         return term;
     } else{
         throw new Error(`Expected ${term} not to be an operator but it was`)
@@ -50,8 +83,8 @@ function asNoOperator(term:RollTerm){
 
 }
 
-function isNoOperator(term:RollTerm):term is NoOperatorTerm{
-    return !("operator" in term);
+function isOperator(term:RollTerm):term is OperatorTerm{
+    return ("operator" in term);
 }
 
 function termToExpression(term:NoOperatorTerm):Expression {
@@ -60,7 +93,7 @@ function termToExpression(term:NoOperatorTerm):Expression {
     } else if ("number" in term){
         return new AmountExpression(term.number);
     } else if ("roll" in term){
-        if(!isRoll(term)){
+        if(!isRoll(term.roll)){
             throw new Error("Found a term with a roll expression that was not a parenthetic expression")
         }
         return mapRoll(term.roll);
