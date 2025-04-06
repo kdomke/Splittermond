@@ -58,7 +58,11 @@ export class RollExpression {
 
     private cheapPreliminaryValue() {
         if (this.value.terms.length == 1 && "faces" in this.value.terms[0]) {
-            return this.evaluateDiceTerm(this.value.terms[0])
+            const term = this.value.terms[0];
+            if(term.modifier && term.modifier.length > 0){
+                console.debug("Splittermond | Encountered Dice modifiers. These are ignored for preliminary evaluations.")
+            }
+            return this.evaluateDiceTerm(term)
         }
         const mappedRoll = mapRoll(this.value);
         return evaluate(mappedRoll);
