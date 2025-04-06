@@ -1,14 +1,23 @@
 import {
+    abs,
     AddExpression,
-    of, plus, minus, times, dividedBy, abs,
-    ReferenceExpression,
-    RollExpression
+    dividedBy,
+    minus,
+    of,
+    plus,
+    ref,
+    roll,
+    times
 } from "../../../../../module/actor/modifiers/expressions/definitions";
 import {expect} from "chai";
 import {evaluate} from "../../../../../module/actor/modifiers/expressions/evaluation";
 import {condense} from "../../../../../module/actor/modifiers/expressions/condenser";
 import {asString} from "../../../../../module/actor/modifiers/expressions/Stringifier";
-import {createTestRoll} from "../../../RollMock";
+import {createTestRoll, MockRoll} from "../../../RollMock";
+import {isGreaterZero, isLessThanZero} from "../../../../../module/actor/modifiers/expressions/Comparator";
+import sinon from "sinon";
+import {foundryApi} from "../../../../../module/api/foundryApi";
+import {NumericTerm, OperatorTerm} from "module/api/Roll";
 
 
 describe("Expressions", () => {
@@ -32,6 +41,14 @@ describe("Expressions", () => {
 
         it(`simple expression ${stringRepresentation} should be duly represented`, () => {
             expect(asString(input)).to.equal(stringRepresentation);
+        });
+
+        it(`should correctly estimate ${stringRepresentation} greater than zero`, () => {
+            expect(isGreaterZero(input)).to.equal(evaluated > 0);
+        });
+
+        it(`should correctly estimate ${stringRepresentation} less than zero`, () => {
+            expect(isLessThanZero(input)).to.equal(evaluated < 0);
         });
     });
 
@@ -70,13 +87,35 @@ describe("Expressions", () => {
     });
 
     describe("Roll Expressions", () => {
+        let sandbox: sinon.SinonSandbox;
+        beforeEach(() => {
+            sandbox = sinon.createSandbox();
+            sandbox.stub(foundryApi, "rollInfra").get(() => {
+                return {
+                    numericTerm(value: number) {
+                        return {
+                            number: value,
+                            _evaluated: false,
+                            total: value,
+                        }
+                    },
+                    rollFromTerms(terms: (OperatorTerm|NumericTerm)[]) {
+                        return MockRoll.fromTerms(terms);
+                    }
+
+                }
+            });
+
+        });
+        afterEach(() => sandbox.restore());
+
         it("should evaluate to the value of the property", () => {
-            const property = new RollExpression(createTestRoll("1d6", [3]));
+            const property = roll(createTestRoll("1d6", [3]));
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should not condense property ", () => {
-            const property = plus(of(3), new RollExpression(createTestRoll("1d6", [3])));
+            const property = plus(of(3), roll(createTestRoll("1d6", [3])));
 
             const result = condense(property);
 
@@ -84,43 +123,60 @@ describe("Expressions", () => {
         });
 
         it("should stringify property to formula", () => {
-            const property = new RollExpression(createTestRoll("1d6", [3]));
+            const property = roll(createTestRoll("1d6", [3]));
             expect(asString(property)).to.equal("1d6");
         });
 
+        it("should expect a simple roll to be positive", () => {
+            const property = roll(createTestRoll("1d6", [3]));
+            expect(isGreaterZero(property)).to.be.true;
+            expect(isLessThanZero(property)).to.be.false;
+        });
+
+        it("should expect a large negative modifier to be negative", () => {
+            const property = roll(new MockRoll("1d6 - 10"));
+            expect(isGreaterZero(property)).to.be.false;
+            expect(isLessThanZero(property)).to.be.true;
+        });
+
+        it("return null if it cannot safely predict value", () => {
+            const property = roll(new MockRoll("2d6 - 10"));
+            expect(isGreaterZero(property)).to.be.null;
+            expect(isLessThanZero(property)).to.be.null;
+        });
     });
 
     describe("Reference Expressions", () => {
         it("should evaluate to the value of the property", () => {
-            const property = new ReferenceExpression("value", {value: 3}, "value");
+            const property = ref("value", {value: 3}, "value");
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should omit properties of the wrong format when multiplying", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"}, "value");
+            const property = ref("value", {value: "splittermond"}, "value");
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(evaluate(expression)).to.deep.equal(3);
         });
 
         it("should omit properties of the wrong format when adding", () => {
-            const property = new ReferenceExpression("value", {value: "splittermond"}, "value");
+            const property = ref("value", {value: "splittermond"}, "value");
             const expression = times(property, minus(of(4), of(3)));
             expect(evaluate(expression)).to.deep.equal(1);
         });
 
         it("should evaluate nested properties", () => {
-            const property = new ReferenceExpression("first.second.third", {first: {second: {third: 3}}}, "first.second.third");
+            const property = ref("first.second.third", {first: {second: {third: 3}}}, "first.second.third");
             expect(evaluate(property)).to.equal(3);
         });
 
         it("should not condense property ", () => {
-            const property = new ReferenceExpression("value", {value: 3}, "value");
+            const property = ref("value", {value: 3}, "value");
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(condense(expression)).to.deep.equal(times(plus(of(3), property), of(1)));
         });
 
         it("should stringify property ", () => {
-            const property = new ReferenceExpression("value", {value: 3}, "value");
+            const property = ref("value", {value: 3}, "value");
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(asString(expression)).to.equal("(3 + ${value}) \u00D7 (4 - 3)");
         });
@@ -168,7 +224,7 @@ describe("Smart constructors", () => {
         expect(result).to.deep.equal(of(3));
     });
 
-    it("should throw for division by zero", ()=>{
+    it("should throw for division by zero", () => {
         expect(() => dividedBy(of(3), of(0))).to.throw();
     })
 });

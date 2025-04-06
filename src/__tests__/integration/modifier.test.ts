@@ -4,6 +4,10 @@ import {foundryApi} from "../../module/api/foundryApi";
 import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "../../module/actor/actor";
 import {splittermond} from "../../module/config";
+import {NpcDataModel} from "../../module/actor/dataModel/NpcDataModel";
+import {isGreaterZero, isLessThanZero} from "../../module/actor/modifiers/expressions/Comparator";
+import {evaluate} from "../../module/actor/modifiers/expressions/evaluation";
+import {roll} from "../../module/actor/modifiers/expressions/definitions";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -15,6 +19,12 @@ export function modifierTest(context: QuenchBatchContext) {
 
     async function createActor(name: string) {
         const actor = await actorCreator.createCharacter({type: "character", name, system: {}})
+        actors.push(actor)
+        return actor;
+    }
+
+    async function createNpc(name: string) {
+        const actor = await actorCreator.createNpc({type: "npc", name, system: {}},)
         actors.push(actor)
         return actor;
     }
@@ -31,7 +41,7 @@ export function modifierTest(context: QuenchBatchContext) {
                         agility: {initial: 3, advances: 0}
                     }
                 }
-            })
+            });
 
             subject.prepareBaseData();
             await subject.prepareEmbeddedDocuments();
@@ -134,6 +144,55 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.damageReduction).to.equal(1);
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
         });
+
+        it ("should account for modifications from npc features", async () => {
+            const subject = await createNpc("NpcWithFeature");
+            (subject.system as NpcDataModel).attributes.agility.updateSource({value:3});
+            (subject.system as NpcDataModel).attributes.strength.updateSource({value:5});
+            (subject.system as NpcDataModel).updateSource({damageReduction:{value:2}});
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "npcfeature",
+                name: "Elefant Skin",
+                system: {
+                    modifier: "SR +2",
+                }
+            }]);
+
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.damageReduction).to.equal(4);
+        });
+
+        it ("should cap modifiers for skills", async ()=>{
+            const subject = await createActor("Overmagiced")
+            subject.updateSource({
+                system: {
+                    attributes: {
+                        intuition: {initial: 2, advances: 0},
+                        mind: {initial: 3, advances: 0}
+                    }
+                }
+            });
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "spelleffect",
+                name: "Superempathy",
+                system: {active: true, modifier: "empathy +1"}
+            }]);
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "spelleffect",
+                name: "MegaEmpathy",
+                system: {active: true, modifier: "empathy +3"}
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.skills.empathy.value).to.equal(8);
+        })
 
     });
 
@@ -364,7 +423,7 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.skills.empathy.value).to.equal(40);
         });
 
-        it("should handle foreduction correctly", async () => {
+        it("should handle foreduction correctly for a reduction of 2V1", async () => {
             const subject = await defaultActor("SpellMaster", "");
             const spellDefinition = {
                 type: "spell",
@@ -395,6 +454,54 @@ export function modifierTest(context: QuenchBatchContext) {
                 .to.equal("2V1")
         });
 
+        it("should handle foreduction correctly for a reduction of 1", async () => {
+            const subject = await defaultActor("SpellMaster", "");
+            const spellDefinition = {
+                type: "spell",
+                name: "Pseudotodeszauber",
+                system: {
+                    skill: "deathmagic",
+                    level: 1,
+                    costs: "4V2",
+                    difficulty: "18"
+                }
+            };
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "mastery",
+                name: "Sparsamer Zauberer",
+                system: {
+                    skill: "deathmagic",
+                    level: 1,
+                    modifier: "foreduction.deathmagic 1"
+                }
+            }]);
+            await subject.createEmbeddedDocuments("Item", [spellDefinition]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.items.find(i => i.name == spellDefinition.name)?.costs)
+                .to.equal("3V2")
+        });
+
+    });
+
+    describe("Roll expressions",() => {
+
+        it("should be able to predict parenthetical expressions correctly", async () => {
+            expect(isLessThanZero(roll(foundryApi.roll("-2d6")))).to.be.true;
+            expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
+        })
+
+        it("should be able to evaluate parenthetical expressions correctly", async () => {
+            expect(evaluate(roll(foundryApi.roll("-2d6")))).to.be.above(-13).below(0);
+        })
+
+        it("should be able to predict nested expressions correctly ", async () => {
+            expect(isLessThanZero(roll(foundryApi.roll("2 + -1 * 3d6")))).to.be.true;
+            expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
+        });
     });
 }
 

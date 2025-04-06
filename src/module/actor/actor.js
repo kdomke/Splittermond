@@ -191,7 +191,7 @@ export default class SplittermondActor extends Actor {
                         name: foundryApi.localize("splittermond.damageReductionAbbrev"),
                         type: "innate"
                     },
-                    of(this.system.damageReduction)
+                    of(this.system.damageReduction.value)
                 )
             }
 
@@ -952,6 +952,11 @@ export default class SplittermondActor extends Actor {
         })
     }
 
+    /**
+     * @param {SplittermondSkill|*} skillId
+     * @param options
+     * @returns {Promise<*>}
+     */
     async rollSkill(skillId, options = {}) {
         let skill = this.skills[skillId];
         if (!skill) return;
@@ -965,7 +970,7 @@ export default class SplittermondActor extends Actor {
     }
 
     async rollSpell(spellId, options = {}) {
-        let spell = this.spells.find((s) => s.id == spellId);
+        let spell = this.spells.find((s) => s.id === spellId);
         if (!spell) return;
         return spell.roll(options);
     }

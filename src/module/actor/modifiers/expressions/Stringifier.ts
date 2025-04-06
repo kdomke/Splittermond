@@ -6,8 +6,10 @@ import {
     AmountExpression,
     DivideExpression,
     Expression,
-    MultiplyExpression, ReferenceExpression, RollExpression,
-    SubtractExpression
+    MultiplyExpression,
+    ReferenceExpression,
+    SubtractExpression,
+    RollExpression
 } from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 

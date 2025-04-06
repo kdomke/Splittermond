@@ -3,13 +3,15 @@
 import {
     AbsExpression,
     AddExpression,
-    AmountExpression, DivideExpression,
+    AmountExpression,
+    DivideExpression,
     Expression,
     MultiplyExpression,
     ReferenceExpression, RollExpression,
     SubtractExpression
 } from "./definitions";
-import {exhaustiveMatchGuard} from "./util";
+import {exhaustiveMatchGuard, PropertyResolver} from "./util";
+
 
 export function evaluate(expression: Expression): number {
     return doEvaluate(expression) ?? 0
@@ -34,37 +36,4 @@ function doEvaluate(expression: Expression): number | null {
         return Math.abs(evaluate(expression.arg))
     }
     exhaustiveMatchGuard(expression)
-}
-
-class PropertyResolver {
-
-    numberOrNull(propertyPath: string | null | undefined, source: object): number | null {
-        const value = this.resolve(propertyPath, source);
-        if (typeof value === "number") {
-            return value;
-        }
-        return null;
-    }
-
-    resolve(propertyPath: string | null | undefined, source: object): unknown {
-        if (!propertyPath) {
-            return source;
-        }
-
-        const individualParts = propertyPath.split(".");
-        let current: unknown = source;
-        for (const part of individualParts) {
-            if (this.hasPart(current, part)) {
-                const compilerDeconfuser:Record<string,unknown> =current;
-                current = compilerDeconfuser[part]
-            } else {
-                return undefined;
-            }
-        }
-        return current;
-    }
-
-    private hasPart(current: unknown, part: string): current is Record<string,unknown> {
-        return current !== null && typeof current === "object" && part in current;
-    }
 }

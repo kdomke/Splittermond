@@ -1,7 +1,21 @@
 // noinspection SuspiciousTypeOfGuard
 
-import {AbsExpression, dividedBy, minus, of, plus, RollExpression, times} from "./definitions";
-import {AmountExpression, type Expression, ReferenceExpression, AddExpression, SubtractExpression, MultiplyExpression, DivideExpression} from "./definitions";
+import {
+    AbsExpression,
+    AddExpression,
+    AmountExpression,
+    dividedBy,
+    DivideExpression,
+    type Expression,
+    minus,
+    MultiplyExpression,
+    of,
+    plus,
+    ReferenceExpression,
+    RollExpression,
+    SubtractExpression,
+    times
+} from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 import {evaluate} from "./evaluation";
 

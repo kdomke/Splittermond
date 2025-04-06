@@ -12,6 +12,7 @@ import {condense, isZero} from "./expressions/condenser";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
+import {asString} from "./expressions/Stringifier";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -42,7 +43,7 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 //this function is used in item.js to add modifiers to the actor
 export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
 
-    function addModifierHelper(path: string, value: Expression, attributes: Record<string, string>, emphasisOverride?:string) {
+    function addModifierHelper(path: string, value: Expression, attributes: Record<string, string>, emphasisOverride?: string) {
         if (isZero(value)) {
             return;
         }
@@ -82,7 +83,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
     normalizedModifiers.scalarModifiers.forEach(modifier => {
         const modifierLabel = modifier.path.toLowerCase();
 
-        if(!validateAllDescriptors(modifier.attributes, allErrors)){
+        if (!validateAllDescriptors(modifier.attributes, allErrors)) {
             return;
         }
 
@@ -131,12 +132,15 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 data.health.woundMalus.levelMod += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "splinterpoints.bonus":
-                if(!("skill" in modifier.attributes)){
+                if (!("skill" in modifier.attributes)) {
                     console.warn("Encountered a splinterpoint bonus modifier without a skill. This may be uninteded by the user.")
-                }else{
+                } else {
                     modifier.attributes.skill = normalizeDescriptor(modifier.attributes.skill).usingMappers("skills").do();
                 }
-                actor.modifier.add("splinterpoints.bonus", {name:item.name,type}, times(of(multiplier), modifier.value), item, false);
+                actor.modifier.add("splinterpoints.bonus", {
+                    name: item.name,
+                    type
+                }, times(of(multiplier), modifier.value), item, false);
                 break;
             case "splinterpoints":
                 if ("splinterpoints" in data) {
@@ -168,7 +172,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "magicskills":
-                const magicSkillAttributes= modifier.attributes;
+                const magicSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.magic.forEach((skill) => {
                     addModifierHelper(skill, times(of(multiplier), modifier.value), magicSkillAttributes, "");
                 });
@@ -192,6 +196,14 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 }, times(of(multiplier), modifier.value), item, false);
                 break;
             default:
+                //We still need to catch FO-Reduction cases where the parser managed to convert the value to an expression
+                if (modifierLabel.startsWith("foreduction")){
+                    const itemSkill = "skill" in item.system ? item.system.skill : undefined;
+                    data.spellCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemSkill);
+                } else if (modifierLabel.startsWith("foenhancedreduction")){
+                    const itemEnhancedSkill = "skill" in item.system ? item.system.skill : undefined;
+                    data.spellEnhancedCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemEnhancedSkill);
+                }
 
                 let element: string | undefined = splittermond.derivedAttributes.find(attr => {
                     return modifierLabel === foundryApi.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === foundryApi.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
@@ -206,7 +218,10 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         }
     });
     if (allErrors.length > 0) {
-        const introMessage = foundryApi.format("splittermond.modifiers.parseMessages.allErrorMessage",{str,objectName: item.name});
+        const introMessage = foundryApi.format("splittermond.modifiers.parseMessages.allErrorMessage", {
+            str,
+            objectName: item.name
+        });
         foundryApi.reportError(`${introMessage}\n${allErrors.join("\n")}`);
     }
 }
@@ -219,7 +234,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
  * @param attributes The attributes to validate
  * @param allErrors The array to which report validation failures
  */
-function validateAllDescriptors(attributes: Record<string, Value>, allErrors:string[]): attributes is Record<string, string> {
+function validateAllDescriptors(attributes: Record<string, Value>, allErrors: string[]): attributes is Record<string, string> {
     const validationErrors = Object.values(attributes).flatMap(v => validateDescriptors(v));
     if (validationErrors.length > 0) {
         allErrors.push(...validationErrors);
@@ -227,4 +242,5 @@ function validateAllDescriptors(attributes: Record<string, Value>, allErrors:str
     }
     return true;
 }
+
 

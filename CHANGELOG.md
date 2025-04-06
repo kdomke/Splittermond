@@ -1,3 +1,13 @@
+## 0.12.17
+### New features
+ * Würfelmodifikatoren:
+   * Auswertungsinterval sollte jetzt besser mit Proben kongruieren
+   * Beherrscht jetzt tatsächlich auch komplexere Würfelausdrücke
+### Fixed
+ * Auswählbare Modifikatoren werden nicht mehr doppelt berechnet
+ * NSC Schadensreduktion ist wieder korrekt
+ * Fokusreduktionen die nur Zahlen sind, werden wieder korrekt berechnet
+ 
 ## 0.12.16
 ### New features
  * Würfelmodifikatoren (BETA)
