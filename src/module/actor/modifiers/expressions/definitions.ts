@@ -1,12 +1,13 @@
-import {Die, FoundryRoll} from "../../../api/Roll";
-import {foundryApi} from "../../../api/foundryApi";
-import {mapRoll} from "./rollTermMapper";
+import {FoundryRoll} from "../../../api/Roll";
+import {RollExpression} from "./rollExpressions";
+
+export * from './rollExpressions'
 
 export type Expression =
     AmountExpression
     | ZeroExpression
     | OneExpression
-    | DieExpression
+    | RollExpression
     | AddExpression
     | SubtractExpression
     | MultiplyExpression
@@ -21,7 +22,7 @@ export function isExpression(value: unknown): value is Expression {
         || value instanceof MultiplyExpression
         || value instanceof DivideExpression
         || value instanceof ReferenceExpression
-        || value instanceof DieExpression
+        || value instanceof RollExpression
         || value instanceof AbsExpression
 }
 
@@ -86,86 +87,11 @@ export function abs(arg: Expression) {
 }
 
 export function roll(roll: FoundryRoll) {
-    return mapRoll(roll);
+        return new RollExpression(roll);
 }
 
 export function ref(propertyPath:string, source:object, stringRepresentation:string){
     return new ReferenceExpression(propertyPath,source,stringRepresentation);
-}
-
-type OneDieRoll = Omit<FoundryRoll, "terms"|"clone"> & { terms: [Die], clone:()=>OneDieRoll }
-
-/**
- * Masks the time it actually takes to evaluate a roll, by returning a cheap intermediary, or
- * the last value when that current roll has not yet finished.
- */
-
-export class DieExpression {
-    public readonly value: OneDieRoll;
-    private result: number | null = null;
-    private evaluating: boolean = false;
-
-    constructor(value: Die) {
-        this.value = foundryApi.rollInfra.rollFromTerms([value]) as OneDieRoll;
-        this.requestProperEvaluation();
-    }
-
-    evaluate(): number {
-        if (this.result === null) {
-            return this.cheapPreliminaryValue();
-        }
-        const lastResult = this.result;
-        this.requestProperEvaluation();
-        return lastResult;
-    }
-
-    private requestProperEvaluation() {
-        if (this.evaluating) {
-            return;
-        }
-
-        this.evaluating = true;
-        const result = this.trySyncEvaluate();
-        if (result.success) {
-            this.result = result.result;
-            this.evaluating = false;
-            return;
-        } else {
-            this.value.clone().evaluate().then(result => {
-                this.result = result.total
-                this.evaluating = false;
-            });
-        }
-    }
-
-    private trySyncEvaluate() {
-        try {
-            const result = this.value.clone().evaluateSync({strict: true});
-            return {result: result.total, success: true};
-        } catch (e) {
-            return {result: null, success: false};
-        }
-    }
-
-    private cheapPreliminaryValue() {
-        const term = this.value.clone().terms[0]
-        const preEvaluatedTerm= this.evaluateDiceTerm(term);
-        return foundryApi.rollInfra.rollFromTerms([preEvaluatedTerm]).evaluateSync().total;
-    }
-
-    /**
-     * @param term A Die term. We will ignore extras like exploding dice or a keep expression
-     */
-    private evaluateDiceTerm(term: Die) {
-        const cheapResult = Array.from({length: term.number}, (_, __) => this.cheapDiceThrow(term.faces))
-            .reduce((a, b) => a + b, 0);
-        return foundryApi.rollInfra.numericTerm(cheapResult);
-    }
-
-    private cheapDiceThrow(faces: number) {
-        const minDiceValue = 1
-        return Math.floor(Math.random() * (faces - minDiceValue + 1)) + minDiceValue;
-    }
 }
 
 export class AmountExpression {

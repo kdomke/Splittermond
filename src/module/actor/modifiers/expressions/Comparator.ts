@@ -4,16 +4,18 @@ import {
     AbsExpression,
     AddExpression,
     AmountExpression,
-    DieExpression,
     DivideExpression,
     Expression,
     MultiplyExpression,
     ReferenceExpression,
+    RollExpression,
     SubtractExpression
 } from "./definitions";
 import {condense} from "./condenser";
 import {evaluate} from "./evaluation";
 import {exhaustiveMatchGuard} from "./util";
+import {mapRoll} from "./rollTermMapper";
+import {Die} from "../../../api/Roll";
 
 interface Range {
     min: number;
@@ -47,8 +49,8 @@ function tentativeEvaluate(expression: Expression): { min: number, max: number }
     if (condensed instanceof AmountExpression) {
         const val = evaluate(condensed);
         return {min: val, max: val}
-    } else if (condensed instanceof DieExpression) {
-        return evalDies(condensed);
+    }else if (condensed instanceof RollExpression){
+        return evalRolls(condensed);
     } else if (condensed instanceof ReferenceExpression) {
         return {min: Number.NaN, max: Number.NaN}
     } else if (condensed instanceof AddExpression) {
@@ -64,9 +66,16 @@ function tentativeEvaluate(expression: Expression): { min: number, max: number }
     }
     exhaustiveMatchGuard(condensed);
 }
+
+function evalRolls(expression: RollExpression){
+    if(expression.value.terms.length === 1 && "faces" in expression.value.terms[0]){
+        return evalDies(expression.value.terms[0])
+    }else {
+        return tentativeEvaluate(mapRoll(expression.value));
+    }
+}
 //We are ignoring foundry dice modifiers for now
-function evalDies(expression: DieExpression): Range {
-    const term = expression.value.terms[0];
+function evalDies(term:Die): Range {
     if(term.modifier && term.modifier.length > 0){
         console.warn("Splittermond | Value estimation for dice with modifiers is not supported. will assume any range")
         return {min:Number.NaN, max:Number.NaN}

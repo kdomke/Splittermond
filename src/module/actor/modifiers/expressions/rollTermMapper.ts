@@ -1,5 +1,13 @@
 import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "../../../api/Roll";
-import {AmountExpression, DieExpression, dividedBy, Expression, minus, plus, times} from "./definitions";
+import {
+    AmountExpression,
+    dividedBy,
+    Expression,
+    minus,
+    plus,
+    RollExpression,
+    times
+} from "./definitions";
 import {exhaustiveMatchGuard} from "./util";
 import {foundryApi} from "../../../api/foundryApi";
 
@@ -89,7 +97,7 @@ function isOperator(term:RollTerm):term is OperatorTerm{
 
 function termToExpression(term:NoOperatorTerm):Expression {
     if("faces" in term){
-        return new DieExpression(term);
+        return new RollExpression(foundryApi.rollInfra.rollFromTerms([term]));
     } else if ("number" in term){
         return new AmountExpression(term.number);
     } else if ("roll" in term){

@@ -4,7 +4,6 @@ import {
     AbsExpression,
     AddExpression,
     AmountExpression,
-    DieExpression,
     dividedBy,
     DivideExpression,
     type Expression,
@@ -13,6 +12,7 @@ import {
     of,
     plus,
     ReferenceExpression,
+    RollExpression,
     SubtractExpression,
     times
 } from "./definitions";
@@ -39,7 +39,7 @@ export function condense(expression: Expression): Expression {
         return expression;
     }else if (expression instanceof AmountExpression) {
         return expression;
-    }else if (expression instanceof DieExpression) {
+    }else if (expression instanceof RollExpression) {
         return expression;
     }else if (expression instanceof AbsExpression) {
         return expression;
@@ -55,7 +55,7 @@ function condenseOperands(left: Expression, right: Expression, constructor:(left
 function canCondense(expression: Expression): boolean {
     if (expression instanceof AmountExpression) {
         return true;
-    } else if (expression instanceof ReferenceExpression || expression instanceof DieExpression) {
+    } else if (expression instanceof ReferenceExpression || expression instanceof RollExpression) {
         return false;
     } else if (expression instanceof AbsExpression) {
        return canCondense(expression.arg);
