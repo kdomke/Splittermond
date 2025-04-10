@@ -2,7 +2,7 @@ import {Susceptibilities} from "../../../../../module/actor/modifiers/Susceptibi
 import ModifierManager from "../../../../../module/actor/modifier-manager";
 import {damageTypes} from "../../../../../module/config/damageTypes";
 import {expect} from "chai";
-import {of} from "../../../../../module/actor/modifiers/expressions/definitions";
+import {of} from "../../../../../module/actor/modifiers/expressions";
 
 
 describe("Susceptibilities", () => {

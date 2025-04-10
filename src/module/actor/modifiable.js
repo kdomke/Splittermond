@@ -1,4 +1,4 @@
-import {evaluate} from "./modifiers/expressions/evaluation.js";
+import {evaluate} from "./modifiers/expressions";
 
 export default class Modifiable {
     /**

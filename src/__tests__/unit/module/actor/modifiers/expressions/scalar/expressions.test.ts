@@ -1,22 +1,23 @@
 import {
     abs,
     AddExpression,
+    asString,
+    condense,
     dividedBy,
+    evaluate,
+    isGreaterZero,
+    isLessThanZero,
     minus,
     of,
     plus,
     ref,
     roll,
     times
-} from "../../../../../module/actor/modifiers/expressions/definitions";
+} from "module/actor/modifiers/expressions";
 import {expect} from "chai";
-import {evaluate} from "../../../../../module/actor/modifiers/expressions/evaluation";
-import {condense} from "../../../../../module/actor/modifiers/expressions/condenser";
-import {asString} from "../../../../../module/actor/modifiers/expressions/Stringifier";
-import {createTestRoll, MockRoll} from "../../../RollMock";
-import {isGreaterZero, isLessThanZero} from "../../../../../module/actor/modifiers/expressions/Comparator";
+import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
 import sinon from "sinon";
-import {foundryApi} from "../../../../../module/api/foundryApi";
+import {foundryApi} from "module/api/foundryApi";
 import {NumericTerm, OperatorTerm} from "module/api/Roll";
 
 

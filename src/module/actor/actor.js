@@ -14,8 +14,7 @@ import {splittermond} from "../config.js";
 import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
-import {of} from "./modifiers/expressions/definitions";
-import {evaluate} from "./modifiers/expressions/evaluation.js";
+import {of, evaluate} from "./modifiers/expressions";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;

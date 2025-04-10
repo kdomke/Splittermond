@@ -1,4 +1,4 @@
-import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "../../../api/Roll";
+import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "module/api/Roll";
 import {
     AmountExpression,
     dividedBy,
@@ -8,8 +8,8 @@ import {
     RollExpression,
     times
 } from "./definitions";
-import {exhaustiveMatchGuard} from "./util";
-import {foundryApi} from "../../../api/foundryApi";
+import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
+import {foundryApi} from "module/api/foundryApi";
 
 type NoOperatorTerm = Exclude<RollTerm, OperatorTerm>;
 

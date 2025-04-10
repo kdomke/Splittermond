@@ -1,5 +1,5 @@
 import {ErrorMessage, FocusModifier, ParsedModifier, ScalarModifier, Value} from "./index";
-import {Expression, of, ref, roll, times} from "../expressions/definitions";
+import {Expression, of, ref, roll, times} from "module/actor/modifiers/expressions/scalar/definitions";
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";

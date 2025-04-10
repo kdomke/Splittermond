@@ -1,8 +1,7 @@
 import Modifier, {IModifier, ModifierAttributes} from "./modifier";
 import SplittermondItem from "../item/item";
 import SplittermondActor from "./actor";
-import {Expression, of, plus} from "./modifiers/expressions/definitions";
-import {evaluate} from "./modifiers/expressions/evaluation";
+import {Expression, of, plus, evaluate} from "./modifiers/expressions";
 
 interface AttributeSelector {
     key: string,

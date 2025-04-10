@@ -2,7 +2,7 @@
  * Masks the time it actually takes to evaluate a roll, by returning a cheap intermediary, or
  * the last value when that current roll has not yet finished.
  */
-import {Die, FoundryRoll} from "../../../api/Roll";
+import {Die, FoundryRoll} from "module/api/Roll";
 import {mapRoll} from "./rollTermMapper";
 import {evaluate} from "./evaluation";
 

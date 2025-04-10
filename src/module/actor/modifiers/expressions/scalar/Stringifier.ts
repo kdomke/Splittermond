@@ -11,7 +11,7 @@ import {
     SubtractExpression,
     RollExpression
 } from "./definitions";
-import {exhaustiveMatchGuard} from "./util";
+import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
 
 
 export function asString(expression: Expression): string {

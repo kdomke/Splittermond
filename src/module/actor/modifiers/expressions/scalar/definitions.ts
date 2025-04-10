@@ -1,4 +1,4 @@
-import {FoundryRoll} from "../../../api/Roll";
+import {FoundryRoll} from "module/api/Roll";
 import {RollExpression} from "./rollExpressions";
 
 export * from './rollExpressions'

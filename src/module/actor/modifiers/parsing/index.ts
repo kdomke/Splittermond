@@ -1,6 +1,6 @@
 import {parseModifiers} from "./parser";
 import {FoundryRoll} from "../../../api/Roll";
-import {Expression} from "../expressions/definitions";
+import {Expression} from "../expressions";
 import { processValues } from "./valueProcessor";
 
 export type ErrorMessage = string;

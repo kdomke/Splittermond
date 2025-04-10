@@ -4,7 +4,7 @@ import sinon from "sinon";
 import Modifier from "module/actor/modifier.js";
 import SplittermondItem from "../../../../module/item/item";
 import {TooltipFormula} from "../../../../module/util/tooltip";
-import {of} from "module/actor/modifiers/expressions/definitions";
+import {of} from "module/actor/modifiers/expressions";
 
 describe("Modifier", () => {
     let sandbox: sinon.SinonSandbox;

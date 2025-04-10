@@ -16,7 +16,7 @@ import {
     SubtractExpression,
     times
 } from "./definitions";
-import {exhaustiveMatchGuard} from "./util";
+import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
 import {evaluate} from "./evaluation";
 
 export function isZero(expression: Expression): boolean {

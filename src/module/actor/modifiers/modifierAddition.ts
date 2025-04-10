@@ -6,13 +6,10 @@ import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
 import {parseModifiers, processValues, Value} from "./parsing";
-import {Expression, of, times} from "./expressions/definitions";
-import {evaluate} from "./expressions/evaluation";
-import {condense, isZero} from "./expressions/condenser";
+import {asString, condense, evaluate, Expression, isZero, of, times} from "./expressions";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
-import {asString} from "./expressions/Stringifier";
 
 type Regeneration = { multiplier: number, bonus: number };
 

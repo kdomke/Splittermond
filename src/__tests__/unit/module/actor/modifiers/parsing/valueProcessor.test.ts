@@ -1,14 +1,14 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {ParsedModifier, processValues} from "../../../../../../module/actor/modifiers/parsing";
+import {ParsedModifier, processValues} from "module/actor/modifiers/parsing";
 import {
     AmountExpression,
     MultiplyExpression,
     ReferenceExpression
-} from "../../../../../../module/actor/modifiers/expressions/definitions";
-import {foundryApi} from "../../../../../../module/api/foundryApi";
+} from "module/actor/modifiers/expressions/";
+import {foundryApi} from "module/api/foundryApi";
 import sinon, {type SinonSandbox} from "sinon";
-import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
+import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 
 describe('Value Processor', () => {
     let sandbox: SinonSandbox;

@@ -4,7 +4,7 @@ import * as Dice from "../util/dice"
 import * as Chat from "../util/chat";
 import * as Tooltip from "../util/tooltip";
 import {parseRollDifficulty} from "../util/rollDifficultyParser";
-import {asString} from "module/actor/modifiers/expressions/Stringifier";
+import {asString} from "module/actor/modifiers/expressions";
 
 
 export default class Skill extends Modifiable {

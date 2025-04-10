@@ -1,10 +1,7 @@
 import SplittermondActor from "./actor";
 import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
-import {abs, Expression} from "./modifiers/expressions/definitions";
-import {condense} from "./modifiers/expressions/condenser";
-import {asString} from "./modifiers/expressions/Stringifier";
-import {isGreaterZero, isLessThanZero} from "./modifiers/expressions/Comparator";
+import {abs, asString, condense, Expression, isGreaterZero, isLessThanZero} from "./modifiers/expressions";
 
 export interface ModifierAttributes {
     name:string;
