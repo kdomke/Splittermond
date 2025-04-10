@@ -63,6 +63,26 @@ describe("DamageReportDialog", () => {
         expect(dialogStub.getUserAdjustments().wasAdjusted).to.be.true;
     });
 
+    it("should record two increments", async () => {
+        const {dialogStub, dom} = await getDomUnderTest(sandbox);
+        dom.querySelector("button.button-inline[data-action='inc-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+        dom.querySelector("button.button-inline[data-action='inc-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+
+        expect(dialogStub.getUserAdjustments().damageAdjustment).to.equal(2);
+        expect(dialogStub.getUserAdjustments().wasAdjusted).to.be.true;
+    });
+
+    it("should record a complex chain of increments", async () => {
+        const {dialogStub, dom} = await getDomUnderTest(sandbox);
+        dom.querySelector("button.button-inline[data-action='inc-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+        dom.querySelector("button.button-inline[data-action='inc-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+        dom.querySelector("button.button-inline[data-action='dec-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+        dom.querySelector("button.button-inline[data-action='inc-value']")?.dispatchEvent(newClickEvent(dialogStub.window))
+
+        expect(dialogStub.getUserAdjustments().damageAdjustment).to.equal(2);
+        expect(dialogStub.getUserAdjustments().wasAdjusted).to.be.true;
+    });
+
     it("should record decrements", async () => {
         const {dialogStub, dom} = await getDomUnderTest(sandbox);
 

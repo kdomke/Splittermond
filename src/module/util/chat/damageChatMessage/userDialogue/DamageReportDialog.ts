@@ -15,7 +15,7 @@ export class DamageReportDialog extends FoundryDialog {
     private selectedAction: UserAction = null;
     private splinterpointBonus = 0;
     private usedSplinterpointBonus = false;
-    private previousValue: number;
+    private originalDamage: number;
 
     static async create(userReport: UserReport): Promise<DamageReportDialog> {
         const renderedContent = new Renderer(userReport);
@@ -55,7 +55,7 @@ export class DamageReportDialog extends FoundryDialog {
 
     constructor(options: DialogV2ConstructorInput, originalDamage: number, private currentCostType: CostType, private target: SplittermondActor) {
         super(options);
-        this.previousValue = originalDamage;
+        this.originalDamage = originalDamage;
     }
 
     getUserAdjustments() {
@@ -88,8 +88,7 @@ export class DamageReportDialog extends FoundryDialog {
         result.element.querySelector("input[name='damage']")?.addEventListener("change", () => {
             const newValue = this.getInputValue();
             if (newValue !== null) {
-                this.currentUserAdjustment = newValue - this.previousValue;
-                this.previousValue = newValue;
+                this.currentUserAdjustment = newValue - this.originalDamage;
             }
         });
         result.element.querySelector("button.dialog-buttons[data-action='useSplinterpoint']")?.addEventListener("click", () => {
