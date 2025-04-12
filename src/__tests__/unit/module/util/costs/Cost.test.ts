@@ -131,7 +131,7 @@ describe("Cost object operation", () => {
         });
     ([
         [new Cost(4, 2, false), {_exhausted: -4, _consumed: -2, _channeled: -4, _channeledConsumed: -2}],
-        [new Cost(0, 5, true), {_exhausted: -0, _consumed: -5, _channeled: -0, _channeledConsumed: -5}],
+        [new Cost(0, 5, true), {_exhausted: 0, _consumed: -5, _channeled: 0, _channeledConsumed: -5}],
     ]as const).forEach(
         ([costs, expected]) => it(`should negate ${costs} correctly`, () => {
             const result = costs.asModifier().negate();

@@ -39,6 +39,9 @@ export class Cost {
     }
 
     asModifier() {
+        if (this.nonConsumed === 0 && this._consumed === 0) {
+            return CostModifier.zero;
+        }
         return new CostModifier({
             _channeled: (this.isChanneled || !this.strict) ? this.nonConsumed : 0,
             _channeledConsumed: (this.isChanneled || !this.strict) ? this._consumed : 0,
@@ -77,10 +80,10 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
     static zero = new CostModifier({_channeled: 0, _channeledConsumed: 0, _exhausted: 0, _consumed: 0});
 
     add(costs: CostModifier): CostModifier {
-        const newChanneled = this._channeled + costs._channeled;
-        const newChanneledConsumed = this._channeledConsumed + costs._channeledConsumed;
-        const newExhausted = this._exhausted + costs._exhausted;
-        const newConsumed = this._consumed + costs._consumed;
+        const newChanneled = positiveZero(this._channeled + costs._channeled);
+        const newChanneledConsumed = positiveZero(this._channeledConsumed + costs._channeledConsumed);
+        const newExhausted = positiveZero(this._exhausted + costs._exhausted);
+        const newConsumed = positiveZero(this._consumed + costs._consumed);
         return new (this.constructor as typeof CostModifier)({
                 _channeled: newChanneled,
                 _channeledConsumed: newChanneledConsumed,
@@ -92,10 +95,10 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
 
     multiply(factor: number): CostModifier {
         return new (this.constructor as typeof CostModifier)({
-            _channeled: factor * this._channeled,
-            _channeledConsumed: factor * this._channeledConsumed,
-            _exhausted: factor * this._exhausted,
-            _consumed: factor * this._consumed,
+            _channeled: positiveZero(factor * this._channeled),
+            _channeledConsumed: positiveZero(factor * this._channeledConsumed),
+            _exhausted: positiveZero(factor * this._exhausted),
+            _consumed: positiveZero(factor * this._consumed),
         })
     }
 
@@ -145,6 +148,10 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
             return `${channeled} + ${nonChanneled}`;
         }
     }
+}
+
+function positiveZero(value: number) {
+    return value === 0 ? 0 : value;
 }
 
 function strigifyPortion(nonConsumed: number, consumed: number, channeled: boolean) {
