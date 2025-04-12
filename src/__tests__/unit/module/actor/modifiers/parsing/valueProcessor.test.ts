@@ -5,7 +5,7 @@ import {
     AmountExpression,
     MultiplyExpression,
     ReferenceExpression
-} from "module/actor/modifiers/expressions/";
+} from "module/actor/modifiers/expressions/scalar/definitions";
 import {foundryApi} from "module/api/foundryApi";
 import sinon, {type SinonSandbox} from "sinon";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
