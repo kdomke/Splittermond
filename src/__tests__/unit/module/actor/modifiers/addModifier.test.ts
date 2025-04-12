@@ -1,15 +1,15 @@
 import {expect} from 'chai';
 import sinon, {SinonSandbox, SinonStub, SinonStubbedInstance} from 'sinon';
-import SplittermondActor from "../../../../../module/actor/actor";
-import SplittermondItem from "../../../../../module/item/item";
-import ModifierManager from "../../../../../module/actor/modifier-manager";
+import SplittermondActor from "module/actor/actor";
+import SplittermondItem from "module/item/item";
+import ModifierManager from "module/actor/modifier-manager";
 import {foundryApi} from 'module/api/foundryApi';
-import {addModifier} from "../../../../../module/actor/modifiers/modifierAddition";
-import {splittermond} from "../../../../../module/config";
-import {CharacterDataModel} from "../../../../../module/actor/dataModel/CharacterDataModel";
-import {CharacterAttribute} from "../../../../../module/actor/dataModel/CharacterAttribute";
-import Attribute from "../../../../../module/actor/attribute";
-import {clearMappers} from "../../../../../module/actor/modifiers/parsing/normalizer";
+import {addModifier} from "module/actor/modifiers/modifierAddition";
+import {splittermond} from "module/config";
+import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
+import {CharacterAttribute} from "module/actor/dataModel/CharacterAttribute";
+import Attribute from "module/actor/attribute";
+import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 import {evaluate, of} from "module/actor/modifiers/expressions";
 
 describe('addModifier', () => {
