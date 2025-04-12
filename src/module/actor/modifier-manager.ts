@@ -1,7 +1,7 @@
 import Modifier, {IModifier, ModifierAttributes} from "./modifier";
 import SplittermondItem from "../item/item";
 import SplittermondActor from "./actor";
-import {of, plus, evaluate, ScalarExpression} from "./modifiers/expressions";
+import {of, plus, evaluate, Expression} from "./modifiers/expressions/scalar";
 
 interface AttributeSelector {
     key: string,
@@ -15,7 +15,7 @@ export default class ModifierManager {
     constructor() {
     }
 
-    add(path:string, attributes:  ModifierAttributes, value: ScalarExpression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
         this.addModifier(new Modifier(path, value, attributes, origin, selectable));
     }
 
@@ -56,7 +56,7 @@ export default class ModifierManager {
             .reduce((acc, mod) => {
                 acc[mod.attributes.name] = plus((acc[mod.attributes.name] || of(0)), mod.value);
                 return acc;
-            }, {} as Record<string, ScalarExpression>);
+            }, {} as Record<string, Expression>);
     }
 
     /**

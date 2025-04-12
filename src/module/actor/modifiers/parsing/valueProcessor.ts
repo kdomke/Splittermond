@@ -5,7 +5,8 @@ import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
 import {foundryApi} from "../../../api/foundryApi";
 import {parseCostString} from "../../../util/costs/costParser";
-import {asString, CostExpression, of, ScalarExpression} from "../expressions";
+import {asString, Expression as ScalarExpression, of} from "../expressions/scalar";
+import {CostExpression, of as ofCost} from "../expressions/cost";
 import {Cost} from "../../../util/costs/Cost";
 
 export function processValues(modifiers: ParsedModifier[], refSource: object) {
@@ -30,7 +31,7 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
             const valueProcessedModifier: FocusModifier = {
                 path: modifier.path,
                 attributes: {...modifier.attributes},
-                value: of(parseCostString(processedValue).asModifier()),
+                value: ofCost(parseCostString(processedValue).asModifier()),
             };
             delete valueProcessedModifier.attributes.value;
             result.vectorModifiers.push(valueProcessedModifier);
@@ -38,7 +39,7 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
             const mappedValue = mapScalarToVector(processedValue);
             if (typeof mappedValue === "string") {
                 result.errors.push(mappedValue);
-            }else {
+            } else {
                 const valueProcessedModifier: FocusModifier = {
                     path: modifier.path,
                     attributes: {...modifier.attributes},
@@ -84,7 +85,7 @@ function setUpExpression(expression: Value, source: object): Expression | string
 
 function mapScalarToVector(expression: ScalarExpression): CostExpression | ErrorMessage {
     if (expression instanceof AmountExpression) {
-        return of(new Cost(expression.amount, 0, false).asModifier());
+        return ofCost(new Cost(expression.amount, 0, false).asModifier());
     }
     return foundryApi.format("splittermond.modifiers.parseMessages.foNoCost", {expression: asString(expression)});
 

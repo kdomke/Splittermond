@@ -5,7 +5,7 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "module/actor/actor";
 import {splittermond} from "module/config";
 import {NpcDataModel} from "module/actor/dataModel/NpcDataModel";
-import {evaluate, isGreaterZero, isLessThanZero, roll} from "../../module/actor/modifiers/expressions";
+import {evaluate, isGreaterZero, isLessThanZero, roll} from "../../module/actor/modifiers/expressions/scalar";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;

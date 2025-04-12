@@ -6,7 +6,8 @@ import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
 import {parseModifiers, processValues, Value} from "./parsing";
-import {condense, evaluate, isZero, of, ScalarExpression, times} from "./expressions";
+import {condense, evaluate, Expression as ScalarExpression, isZero, of, times} from "./expressions/scalar";
+import {evaluate as evaluateCost, times as timesCost} from "./expressions/cost";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
@@ -68,9 +69,9 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         const modifierLabel = mod.path.toLowerCase();
         const itemSkill = "skill" in item.system ? item.system.skill : undefined;
         if (modifierLabel.startsWith("foreduction")) {
-            data.spellCostReduction.addCostModifier(mod.path, evaluate(times(of(multiplier), mod.value)), itemSkill);
+            data.spellCostReduction.addCostModifier(mod.path, evaluateCost(timesCost(of(multiplier), mod.value)), itemSkill);
         } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-            data.spellEnhancedCostReduction.addCostModifier(mod.path, evaluate(times(of(multiplier), mod.value)), itemSkill);
+            data.spellEnhancedCostReduction.addCostModifier(mod.path, evaluateCost(timesCost(of(multiplier), mod.value)), itemSkill);
         } else {
             allErrors.push("Cannot have a string value in a non-foreduction modifier");
         }

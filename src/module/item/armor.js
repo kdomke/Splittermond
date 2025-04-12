@@ -1,5 +1,5 @@
 import SplittermondPhysicalItem from "./physical.js";
-import {of} from "../actor/modifiers/expressions";
+import {of} from "../actor/modifiers/expressions/scalar";
 
 
 export default class SplittermondArmorItem extends SplittermondPhysicalItem {

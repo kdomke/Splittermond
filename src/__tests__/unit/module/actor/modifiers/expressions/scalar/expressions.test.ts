@@ -10,9 +10,9 @@ import {
     of,
     plus,
     roll,
-    scalarRef as ref,
+    ref,
     times
-} from "module/actor/modifiers/expressions";
+} from "module/actor/modifiers/expressions/scalar";
 import {expect} from "chai";
 import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
 import sinon from "sinon";

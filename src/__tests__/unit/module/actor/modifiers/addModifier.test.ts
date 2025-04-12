@@ -10,7 +10,7 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import {CharacterAttribute} from "module/actor/dataModel/CharacterAttribute";
 import Attribute from "module/actor/attribute";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
-import {evaluate, of} from "module/actor/modifiers/expressions";
+import {evaluate, of} from "module/actor/modifiers/expressions/scalar";
 
 describe('addModifier', () => {
     let sandbox: SinonSandbox;

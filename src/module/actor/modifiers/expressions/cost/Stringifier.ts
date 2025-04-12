@@ -9,7 +9,7 @@ import {
     SubtractExpression
 } from "./definitions";
 import {AmountExpression as ScalarAmount} from "../scalar/definitions";
-import {asString as scalarAsString} from "module/actor/modifiers/expressions";
+import {asString as scalarAsString} from "module/actor/modifiers/expressions/scalar";
 import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
 
 

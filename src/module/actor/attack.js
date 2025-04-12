@@ -1,5 +1,5 @@
 import Skill from "./skill.js";
-import {of} from "./modifiers/expressions";
+import {of} from "./modifiers/expressions/scalar";
 import {foundryApi} from "../api/foundryApi.js";
 
 export default class Attack {

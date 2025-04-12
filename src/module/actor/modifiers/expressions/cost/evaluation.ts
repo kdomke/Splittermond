@@ -9,7 +9,7 @@ import {
     SubtractExpression
 } from "./definitions";
 import {exhaustiveMatchGuard, PropertyResolver} from "module/actor/modifiers/expressions/util";
-import {evaluate as scalarEvaluate} from "module/actor/modifiers/expressions";
+import {evaluate as scalarEvaluate} from "module/actor/modifiers/expressions/scalar";
 import {CostModifier} from "../../../../util/costs/Cost";
 
 
