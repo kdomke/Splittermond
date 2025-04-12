@@ -1,7 +1,8 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
 import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement";
-import {Cost} from "module/util/costs/Cost";
+import {Cost, CostModifier} from "module/util/costs/Cost";
+import {parseCostString} from "../../../../../module/util/costs/costParser";
 
 describe("Spell cost Management initialization", () => {
     const management = initializeSpellCostManagement({});
@@ -19,14 +20,14 @@ describe("Spell cost Management addition of reductions", () => {
     ] as const).forEach(([title, managerKey]) => {
         it(`should be able to add a global cost modifier for ${title}`, () => {
             const manager= initializeSpellCostManagement({})[managerKey];
-            manager.addCostModifier("foreduction", "K2V1", null);
+            manager.addCostModifier("foreduction", mod("K2V1"), null);
             const reductions = manager.getCostModifiers("deathmagic", "conjuration");
             expect(reductions).to.deep.contain(new Cost(1, 1, true).asModifier());
         });
 
         it(`should be able to add a skill specific cost modifier for ${title} for a skilled item`, () => {
             const manager= initializeSpellCostManagement({})[managerKey];
-            manager.addCostModifier("foreduction", "K2V1", "deathmagic");
+            manager.addCostModifier("foreduction", mod("K2V1"), "deathmagic");
             const reductions = manager.getCostModifiers("deathmagic", "");
             expect(reductions).to.deep.contain(new Cost(1, 1, true).asModifier());
             expect(manager.getCostModifiers("", "")).to.be.empty;
@@ -34,21 +35,21 @@ describe("Spell cost Management addition of reductions", () => {
 
         it(`should be able to add a skill specific cost modifier for ${title}`, () => {
             const manager= initializeSpellCostManagement({})[managerKey];
-            manager.addCostModifier("foreduction.deathmagic", "4V2", "deathmagic");
+            manager.addCostModifier("foreduction.deathmagic", mod("4V2"), "deathmagic");
             const reductions = manager.getCostModifiers("deathmagic", "conjuration");
             expect(reductions).to.deep.contain(new Cost(2, 2, false).asModifier());
         });
 
         it(`should be able to add a skill & type specific cost modifier for ${title}`, () => {
             const manager= initializeSpellCostManagement({})[managerKey];
-            manager.addCostModifier("foreduction.deathmagic.conjuration", "6V3", "deathmagic");
+            manager.addCostModifier("foreduction.deathmagic.conjuration", mod("6V3"), "deathmagic");
             const reductions = manager.getCostModifiers("deathmagic", "conjuration");
             expect(reductions).to.deep.contain(new Cost(3, 3, false).asModifier());
         });
 
         it(`should be use the skill as group if no group is given for ${title}`, () => {
             const manager= initializeSpellCostManagement({})[managerKey];
-            manager.addCostModifier("foreduction", "8V4", "deathmagic");
+            manager.addCostModifier("foreduction", mod("8V4"), "deathmagic");
             const reductions = manager.getCostModifiers("deathmagic", "conjuration");
             expect(reductions).to.deep.contain(new Cost(4, 4, false).asModifier());
         });
@@ -63,7 +64,7 @@ describe("Spell cost Management multiple reductions", () => {
             it(`should return all global reductions for ${title}`, () => {
                 const manager = initializeSpellCostManagement({})[managerKey];
                 const zero = new Cost(0, 0, true).asModifier();
-                manager.addCostModifier("foreduction", "K2V1", null);
+                manager.addCostModifier("foreduction", mod("K2V1"), null);
                 manager.modifiers.put(new Cost(2, 2, true).asModifier(), null, null);
 
                 expect(manager.getCostModifiers("", "")).to.have.length(2);
@@ -168,3 +169,7 @@ describe("Spell cost Management selection of reductions", () => {
             });
         });
 });
+
+function mod(input: string):CostModifier {
+    return parseCostString(input).asModifier();
+}

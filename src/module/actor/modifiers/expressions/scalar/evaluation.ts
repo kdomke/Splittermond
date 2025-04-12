@@ -10,7 +10,7 @@ import {
     ReferenceExpression, RollExpression,
     SubtractExpression
 } from "./definitions";
-import {exhaustiveMatchGuard, PropertyResolver} from "./util";
+import {exhaustiveMatchGuard, PropertyResolver} from "module/actor/modifiers/expressions/util";
 
 
 export function evaluate(expression: Expression): number {

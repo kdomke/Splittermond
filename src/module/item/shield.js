@@ -2,7 +2,7 @@ import SplittermondPhysicalItem from "./physical.js";
 import AttackableItem from "./attackable-item.ts";
 import ActiveDefense from "../actor/active-defense.js";
 import Skill from "../actor/skill.js";
-import {of} from "../actor/modifiers/expressions/definitions";
+import {of} from "../actor/modifiers/expressions/scalar";
 
 export default class SplittermondShieldItem extends AttackableItem(SplittermondPhysicalItem) {
 

@@ -163,7 +163,6 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
     }
 
     renderActions(): ValuedAction[] {
-        if (this.consumed.isOption || this.channeled.isOption || this.exhausted.isOption) {
             return [
                 {
                     type: "consumeCosts",
@@ -172,9 +171,6 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
                     isLocal: false
                 }
             ]
-        } else {
-            return [];
-        }
     }
 
     useAction(actionData: ActionInput): Promise<void> {

@@ -448,6 +448,24 @@ describe("FocusCostActionHandler", () => {
             // Console should have warned
             expect(consoleWarnStub.calledWith("Attempt to use a used action")).to.be.true;
         });
+
+        it("should always render action if", () => {
+            const underTest = setUpFocusActionHandler(sandbox);
+            underTest.consumed.updateSource({isOption : false});
+            underTest.exhausted.updateSource({isOption : false});
+            underTest.channeled.updateSource({isOption : false});
+            underTest.spellReference.getItem().getCostsForFinishedRoll.returns(new Cost(0, 0, false).asPrimaryCost())
+
+            const actions = underTest.renderActions();
+
+            expect(actions).to.have.lengthOf(1);
+            expect(actions[0]).to.deep.equal({
+                "disabled": false,
+                "isLocal": false,
+                "type": "consumeCosts",
+                "value": "1"
+            });
+        });
     });
 
     describe("Cost calculation", () => {

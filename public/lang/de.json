@@ -142,7 +142,9 @@
         "shouldNotBeAnExpression": "Eingabe '{input}' sollte kein evaluierbarer Ausdruck sein.",
         "referenceNotPrimitive": "'{propertyPath}' ist kein primitiver Wert auf '{objectName}'.",
         "unknownObject": "unbekannt",
-        "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!"
+        "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!",
+        "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln.",
+        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln."
       }
     },
     "modifier": "Modifikator",
@@ -426,7 +428,8 @@
         "light": "Licht",
         "shadow": "Schatten",
         "wind": "Wind",
-        "water": "Wasser"
+        "water": "Wasser",
+        "nature": "Natur"
       },
       "long": {
         "physical": "Physischer Schaden",
@@ -443,7 +446,8 @@
         "light": "Lichtschaden",
         "shadow": "Schattenschaden",
         "wind": "Windschaden",
-        "water": "Wasserschaden"
+        "water": "Wasserschaden",
+        "nature": "Naturschaden"
       }
     },
     "skillAbbreviation": {

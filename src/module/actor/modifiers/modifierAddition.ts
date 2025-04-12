@@ -6,13 +6,11 @@ import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
 import {parseModifiers, processValues, Value} from "./parsing";
-import {Expression, of, times} from "./expressions/definitions";
-import {evaluate} from "./expressions/evaluation";
-import {condense, isZero} from "./expressions/condenser";
+import {condense, evaluate, Expression as ScalarExpression, isZero, of, times} from "./expressions/scalar";
+import {evaluate as evaluateCost, times as timesCost} from "./expressions/cost";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
-import {asString} from "./expressions/Stringifier";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -43,7 +41,7 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 //this function is used in item.js to add modifiers to the actor
 export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
 
-    function addModifierHelper(path: string, value: Expression, attributes: Record<string, string>, emphasisOverride?: string) {
+    function addModifierHelper(path: string, value: ScalarExpression, attributes: Record<string, string>, emphasisOverride?: string) {
         if (isZero(value)) {
             return;
         }
@@ -71,9 +69,9 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         const modifierLabel = mod.path.toLowerCase();
         const itemSkill = "skill" in item.system ? item.system.skill : undefined;
         if (modifierLabel.startsWith("foreduction")) {
-            data.spellCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+            data.spellCostReduction.addCostModifier(mod.path, evaluateCost(timesCost(of(multiplier), mod.value)), itemSkill);
         } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-            data.spellEnhancedCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+            data.spellEnhancedCostReduction.addCostModifier(mod.path, evaluateCost(timesCost(of(multiplier), mod.value)), itemSkill);
         } else {
             allErrors.push("Cannot have a string value in a non-foreduction modifier");
         }
@@ -196,15 +194,6 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 }, times(of(multiplier), modifier.value), item, false);
                 break;
             default:
-                //We still need to catch FO-Reduction cases where the parser managed to convert the value to an expression
-                if (modifierLabel.startsWith("foreduction")){
-                    const itemSkill = "skill" in item.system ? item.system.skill : undefined;
-                    data.spellCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemSkill);
-                } else if (modifierLabel.startsWith("foenhancedreduction")){
-                    const itemEnhancedSkill = "skill" in item.system ? item.system.skill : undefined;
-                    data.spellEnhancedCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemEnhancedSkill);
-                }
-
                 let element: string | undefined = splittermond.derivedAttributes.find(attr => {
                     return modifierLabel === foundryApi.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === foundryApi.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
                 });
@@ -242,5 +231,3 @@ function validateAllDescriptors(attributes: Record<string, Value>, allErrors: st
     }
     return true;
 }
-
-

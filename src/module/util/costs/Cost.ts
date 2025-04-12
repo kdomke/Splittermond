@@ -77,10 +77,10 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
     static zero = new CostModifier({_channeled: 0, _channeledConsumed: 0, _exhausted: 0, _consumed: 0});
 
     add(costs: CostModifier): CostModifier {
-        const newChanneled = this._channeled + costs._channeled;
-        const newChanneledConsumed = this._channeledConsumed + costs._channeledConsumed;
-        const newExhausted = this._exhausted + costs._exhausted;
-        const newConsumed = this._consumed + costs._consumed;
+        const newChanneled = positiveZero(this._channeled + costs._channeled);
+        const newChanneledConsumed = positiveZero(this._channeledConsumed + costs._channeledConsumed);
+        const newExhausted = positiveZero(this._exhausted + costs._exhausted);
+        const newConsumed = positiveZero(this._consumed + costs._consumed);
         return new (this.constructor as typeof CostModifier)({
                 _channeled: newChanneled,
                 _channeledConsumed: newChanneledConsumed,
@@ -92,10 +92,10 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
 
     multiply(factor: number): CostModifier {
         return new (this.constructor as typeof CostModifier)({
-            _channeled: factor * this._channeled,
-            _channeledConsumed: factor * this._channeledConsumed,
-            _exhausted: factor * this._exhausted,
-            _consumed: factor * this._consumed,
+            _channeled: positiveZero(factor * this._channeled),
+            _channeledConsumed: positiveZero(factor * this._channeledConsumed),
+            _exhausted: positiveZero(factor * this._exhausted),
+            _consumed: positiveZero(factor * this._consumed),
         })
     }
 
@@ -129,4 +129,49 @@ export class CostModifier extends SplittermondDataModel<CostModifierType> {
     getNonConsumed(primaryCost: PrimaryCost): number {
         return primaryCost.isChanneled ? this._channeled : this._exhausted;
     }
+
+    toString() {
+        const channeled = strigifyPortion(this._channeled, this._channeledConsumed, true);
+        const nonChanneled = strigifyPortion(this._exhausted, this._consumed, false);
+        if (channeled === "" && nonChanneled === "") {
+            return "0";
+        } else if (channeled === "") {
+            return nonChanneled;
+        } else if (nonChanneled === "") {
+            return channeled;
+        } else if (nonChanneled !== "" && nonChanneled.startsWith("-")) {
+            return `${channeled} - ${nonChanneled.replace("-", "")}`;
+        } else {
+            return `${channeled} + ${nonChanneled}`;
+        }
+    }
+}
+
+function positiveZero(value: number) {
+    return value === 0 ? 0 : value;
+}
+
+function strigifyPortion(nonConsumed: number, consumed: number, channeled: boolean) {
+    const absNonConsumed = Math.abs(nonConsumed);
+    const absConsumed = Math.abs(consumed);
+
+    if (Math.sign(consumed) === Math.sign(nonConsumed)) {
+        const rep = singleTerm(absNonConsumed, absConsumed, channeled)
+        return formatSingleTerm(nonConsumed, rep, false);
+    } else {
+        const ncTerm = singleTerm(absNonConsumed, 0, channeled)
+        const ncString = formatSingleTerm(nonConsumed, ncTerm, false);
+        const cTerm = singleTerm(0, absConsumed, channeled)
+        const cString = formatSingleTerm(consumed, cTerm, ncString !== "");
+        return `${ncString} ${cString}`.trim();
+    }
+}
+
+function singleTerm(nonConsumed: number, consumed: number, channeled: boolean) {
+    return new PrimaryCost({_nonConsumed: nonConsumed, _consumed: consumed, _isChanneled: channeled}).render();
+}
+
+function formatSingleTerm(value: number, term: string, addPlus: boolean) {
+    const sign = value < 0 ? "-" : `${addPlus ? "+" : ""}`;
+    return term === "0" ? "" : `${sign}${addPlus ? " " : ""}${term}`;
 }

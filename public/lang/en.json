@@ -64,7 +64,9 @@
           "shouldNotBeAnExpression": "Input '{input}' should not be an expression.",
           "referenceNotPrimitive": "'{propertyPath}' does not resolve to a primitve on '{objectName}'.",
           "unknownObject": "unknown",
-          "allErrorMessage": "Syntax error in modifier string '{str}' in '{objectName}'!"
+          "allErrorMessage": "Syntax error in modifier string '{str}' in '{objectName}'!",
+          "foNoCost": "Expression '{expression}' is not convertible to focus costs.",
+          "notANumber": "Expression '{expression}' is not convertible to a number."
         }
       }
     },
@@ -111,7 +113,8 @@
         "light": "light",
         "shadow": "shadow",
         "wind": "wind",
-        "water": "water"
+        "water": "water",
+        "nature": "nature",
       },
       "long": {
         "physical": "physical damage",
@@ -128,7 +131,8 @@
         "light": "light damage",
         "shadow": "shadow damage",
         "wind": "wind damage",
-        "water": "water damage"
+        "water": "water damage",
+        "nature": "nature damage"
       }
     }
   }

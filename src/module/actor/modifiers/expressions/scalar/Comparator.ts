@@ -13,9 +13,9 @@ import {
 } from "./definitions";
 import {condense} from "./condenser";
 import {evaluate} from "./evaluation";
-import {exhaustiveMatchGuard} from "./util";
+import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
 import {mapRoll} from "./rollTermMapper";
-import {Die} from "../../../api/Roll";
+import {Die} from "module/api/Roll";
 
 interface Range {
     min: number;

@@ -1,9 +1,13 @@
 import {ErrorMessage, FocusModifier, ParsedModifier, ScalarModifier, Value} from "./index";
-import {Expression, of, ref, roll, times} from "../expressions/definitions";
+import {Expression, ref as scalarRef, roll, times} from "module/actor/modifiers/expressions/scalar/definitions";
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
 import {foundryApi} from "../../../api/foundryApi";
+import {parseCostString} from "../../../util/costs/costParser";
+import {of} from "../expressions/scalar";
+import {CostExpression, of as ofCost, ref as costRef, times as timesCost} from "../expressions/cost";
+import {Cost} from "../../../util/costs/Cost";
 
 export function processValues(modifiers: ParsedModifier[], refSource: object) {
     const result = {
@@ -17,13 +21,12 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
             result.errors.push(foundryApi.format("splittermond.modifiers.parseMessages.noValue", {modifier: modifier.path}));
             continue;
         }
-        const processedValue = processValue(value, refSource);
-        if (Array.isArray(processedValue)) {
-            result.errors.push(...processedValue);
-            continue;
-        }
-        //I have no clue why I have to duplicate the obj
-        if (typeof processedValue === "string") {
+        if (modifiesFocus(modifier.path))  {
+            const processedValue = processCost(value, refSource);
+            if (Array.isArray(processedValue)) {
+                result.errors.push(...processedValue);
+                continue;
+            }
             const valueProcessedModifier: FocusModifier = {
                 path: modifier.path,
                 attributes: {...modifier.attributes},
@@ -31,7 +34,13 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
             };
             delete valueProcessedModifier.attributes.value;
             result.vectorModifiers.push(valueProcessedModifier);
+
         } else {
+            const processedValue = processValue(value, refSource);
+            if (Array.isArray(processedValue)) {
+                result.errors.push(...processedValue);
+                continue;
+            }
             const valueProcessedModifier: ScalarModifier = {
                 path: modifier.path,
                 attributes: {...modifier.attributes},
@@ -44,12 +53,17 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
     return result;
 }
 
-function processValue(value: Value, refSource: object): Expression | string | ErrorMessage[] {
+function processValue(value: Value, refSource: object): Expression | ErrorMessage[] {
     const normalized = normalizeValue(value);
     return setUpExpression(normalized, refSource);
 }
 
-function setUpExpression(expression: Value, source: object): Expression | string | ErrorMessage[] {
+function processCost(value: Value, refSource: object): CostExpression | ErrorMessage[] {
+    const normalized = normalizeValue(value);
+    return setUpCostExpression(normalized, refSource);
+}
+
+function setUpExpression(expression: Value, source: object): Expression | ErrorMessage[] {
     if (typeof expression === "number") {
         return of(expression);
     } else if (isRoll(expression)) {
@@ -59,9 +73,30 @@ function setUpExpression(expression: Value, source: object): Expression | string
         if (validationFailures.length > 0) {
             return validationFailures;
         }
-        const reference = ref(expression.propertyPath, source, expression.original);
+        const reference = scalarRef(expression.propertyPath, source, expression.original);
         return times(of(expression.sign), reference)
     } else {
-        return expression;
+        return [foundryApi.format("splittermond.modifiers.parseMessages.notANumber", {expression})];
     }
+}
+
+function setUpCostExpression(expression: Value, source: object): CostExpression | ErrorMessage[] {
+    if (typeof expression === "number") {
+        return ofCost(new Cost(expression, 0, false).asModifier());
+    } else if (isRoll(expression)) {
+        return [foundryApi.format("splittermond.modifiers.parseMessages.foNoCost", {expression: expression.formula})];
+    } else if (typeof expression === "object") {
+        const validationFailures = validateReference(expression.propertyPath, source);
+        if (validationFailures.length > 0) {
+            return validationFailures;
+        }
+        const reference = costRef(expression.propertyPath, source, expression.original);
+        return timesCost(of(expression.sign), reference)
+    } else {
+        return ofCost(parseCostString(expression).asModifier());
+    }
+}
+
+function modifiesFocus(modifierId: string){
+    return modifierId.toLowerCase().startsWith("foreduction")|| modifierId.toLowerCase().startsWith("foenhancedreduction")
 }

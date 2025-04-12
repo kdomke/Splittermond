@@ -1,14 +1,12 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {ParsedModifier, processValues} from "../../../../../../module/actor/modifiers/parsing";
-import {
-    AmountExpression,
-    MultiplyExpression,
-    ReferenceExpression
-} from "../../../../../../module/actor/modifiers/expressions/definitions";
-import {foundryApi} from "../../../../../../module/api/foundryApi";
+import {ParsedModifier, processValues} from "module/actor/modifiers/parsing";
+import {AmountExpression, MultiplyExpression, ReferenceExpression} from "module/actor/modifiers/expressions/scalar";
+import {evaluate, of as ofCost} from "module/actor/modifiers/expressions/cost";
+import {foundryApi} from "module/api/foundryApi";
 import sinon, {type SinonSandbox} from "sinon";
-import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
+import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
+import {Cost} from "module/util/costs/Cost";
 
 describe('Value Processor', () => {
     let sandbox: SinonSandbox;
@@ -123,7 +121,7 @@ describe('Value Processor', () => {
     //Because the only strings that are valid after processing are focus cost modifier strings
     it('should count string values as vector expressions', () => {
         const complexModifier: ParsedModifier = {
-            path: 'complex.path',
+            path: 'foreduction.path',
             attributes: {
                 value: 'K7V5'
             }
@@ -134,6 +132,25 @@ describe('Value Processor', () => {
         expect(result.errors).to.have.lengthOf(0);
         expect(result.scalarModifiers).to.have.lengthOf(0);
         expect(result.vectorModifiers).to.have.lengthOf(1);
-        expect(result.vectorModifiers[0].value).to.equal(complexModifier.attributes.value);
+        expect(result.vectorModifiers[0].value).to.deep.equal(ofCost(new Cost(2, 5, true).asModifier()));
+    });
+
+    it('should provide references for cost expressions', () => {
+        const focusSource = {existing: {path: "1"}}
+        const complexModifier: ParsedModifier = {
+            path: 'foenhancedreduction.path',
+            attributes: {
+                value: {
+                    propertyPath: 'existing.path',
+                    sign: -1,
+                    original: 'existing.path'
+                }
+            }
+        }
+
+        const result = processValues([complexModifier], focusSource);
+
+        expect(result.vectorModifiers).to.have.lengthOf(1);
+        expect(evaluate(result.vectorModifiers[0].value)).deep.equal(new Cost(-1,0,false).asModifier())
     });
 });

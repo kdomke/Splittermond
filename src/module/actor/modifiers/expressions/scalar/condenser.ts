@@ -16,7 +16,7 @@ import {
     SubtractExpression,
     times
 } from "./definitions";
-import {exhaustiveMatchGuard} from "./util";
+import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
 import {evaluate} from "./evaluation";
 
 export function isZero(expression: Expression): boolean {
@@ -52,7 +52,7 @@ function condenseOperands(left: Expression, right: Expression, constructor:(left
     return constructor(condensedLeft, condensedRight);
 }
 
-function canCondense(expression: Expression): boolean {
+export function canCondense(expression: Expression): boolean {
     if (expression instanceof AmountExpression) {
         return true;
     } else if (expression instanceof ReferenceExpression || expression instanceof RollExpression) {
