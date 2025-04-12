@@ -1,5 +1,9 @@
 ## 0.12.18
+### New features
  * Schadensarten beinhalten jetzt Naturschaden
+ * Fokusreduktionen werden jetzt mit der Zustandsstufe multipliziert
+ * Fokusmodifikatoren unterstützen jetzt Verweise
+    * hat zurzeit vermutlich keine praktische Anwendung 
 ## 0.12.17
 ### New features
  * Würfelmodifikatoren:

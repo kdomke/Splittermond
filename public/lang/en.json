@@ -65,7 +65,8 @@
           "referenceNotPrimitive": "'{propertyPath}' does not resolve to a primitve on '{objectName}'.",
           "unknownObject": "unknown",
           "allErrorMessage": "Syntax error in modifier string '{str}' in '{objectName}'!",
-          "foNoCost": "Expression '{expression}' is not convertible to focus costs."
+          "foNoCost": "Expression '{expression}' is not convertible to focus costs.",
+          "notANumber": "Expression '{expression}' is not convertible to a number."
         }
       }
     },

@@ -143,7 +143,8 @@
         "referenceNotPrimitive": "'{propertyPath}' ist kein primitiver Wert auf '{objectName}'.",
         "unknownObject": "unbekannt",
         "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!",
-        "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln."
+        "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln.",
+        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln."
       }
     },
     "modifier": "Modifikator",
