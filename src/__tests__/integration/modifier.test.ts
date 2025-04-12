@@ -1,10 +1,10 @@
 import {QuenchBatchContext} from "@ethaks/fvtt-quench";
 import {actorCreator} from "module/data/EntityCreator"
 import {foundryApi} from "../../module/api/foundryApi";
-import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataModel";
-import SplittermondActor from "../../module/actor/actor";
-import {splittermond} from "../../module/config";
-import {NpcDataModel} from "../../module/actor/dataModel/NpcDataModel";
+import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
+import SplittermondActor from "module/actor/actor";
+import {splittermond} from "module/config";
+import {NpcDataModel} from "module/actor/dataModel/NpcDataModel";
 import {evaluate, isGreaterZero, isLessThanZero, roll} from "../../module/actor/modifiers/expressions";
 
 export function modifierTest(context: QuenchBatchContext) {

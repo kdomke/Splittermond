@@ -14,6 +14,7 @@ export type Expression =
     | DivideExpression
     | ReferenceExpression
     | AbsExpression
+;
 
 export function isExpression(value: unknown): value is Expression {
     return value instanceof AmountExpression
@@ -140,4 +141,3 @@ export class AbsExpression {
     constructor(public readonly arg: Expression) {
     }
 }
-

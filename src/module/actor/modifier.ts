@@ -1,7 +1,7 @@
 import SplittermondActor from "./actor";
 import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
-import {abs, asString, condense, Expression, isGreaterZero, isLessThanZero} from "./modifiers/expressions";
+import {abs, asString, condense, isGreaterZero, isLessThanZero, ScalarExpression} from "./modifiers/expressions";
 
 export interface ModifierAttributes {
     name:string;
@@ -19,7 +19,7 @@ export interface ModifierAttributes {
  */
 export type ModifierType = "magic"|"equipment"|"innate"|null;
 export interface IModifier {
-   readonly value:Expression;
+   readonly value:ScalarExpression;
    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string):void;
    readonly groupId:string;
    readonly selectable:boolean;
@@ -40,7 +40,7 @@ export default class Modifier implements IModifier {
      */
     constructor(
         public readonly path:string,
-        public readonly value:Expression,
+        public readonly value:ScalarExpression,
         public readonly attributes:ModifierAttributes,
         public readonly origin:SplittermondItem|SplittermondActor|null = null,
         public readonly selectable = false) {

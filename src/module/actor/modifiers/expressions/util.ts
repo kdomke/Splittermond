@@ -1,3 +1,6 @@
+import {CostModifier} from "../../../util/costs/Cost";
+import {parseCostString} from "../../../util/costs/costParser";
+
 /**
  * Will only accept a `never` type thus making the compiler fail if a switch of if statement is not exhaustive
  */
@@ -12,6 +15,15 @@ export class PropertyResolver {
             return value;
         }
         return null;
+    }
+
+    costModifier(propertyPath: string | null | undefined, source: object): CostModifier {
+        const value = this.resolve(propertyPath, source);
+        if (typeof value === "string") {
+            return parseCostString(value).asModifier();
+        }
+        return CostModifier.zero
+
     }
 
     resolve(propertyPath: string | null | undefined, source: object): unknown {

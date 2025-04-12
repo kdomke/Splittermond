@@ -2,8 +2,8 @@ import {describe, it} from "mocha";
 import {expect} from "chai";
 import sinon from "sinon";
 import Modifier from "module/actor/modifier.js";
-import SplittermondItem from "../../../../module/item/item";
-import {TooltipFormula} from "../../../../module/util/tooltip";
+import SplittermondItem from "module/item/item";
+import {TooltipFormula} from "module/util/tooltip";
 import {of} from "module/actor/modifiers/expressions";
 
 describe("Modifier", () => {

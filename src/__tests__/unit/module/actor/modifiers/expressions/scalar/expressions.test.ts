@@ -1,6 +1,5 @@
 import {
     abs,
-    AddExpression,
     asString,
     condense,
     dividedBy,
@@ -10,8 +9,8 @@ import {
     minus,
     of,
     plus,
-    ref,
     roll,
+    scalarRef as ref,
     times
 } from "module/actor/modifiers/expressions";
 import {expect} from "chai";
@@ -19,6 +18,7 @@ import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
 import sinon from "sinon";
 import {foundryApi} from "module/api/foundryApi";
 import {NumericTerm, OperatorTerm} from "module/api/Roll";
+import {AddExpression} from "module/actor/modifiers/expressions/scalar/definitions";
 
 
 describe("Expressions", () => {
