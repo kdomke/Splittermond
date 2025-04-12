@@ -1,5 +1,6 @@
 ## 0.12.18
-### New features
+### Fixed 
+ * Fokuskostenabrechnung wird jetzt auch angezeigt, wenn Fokuskostenreduktion nicht als Option gewählt ist.
  * Schadensarten beinhalten jetzt Naturschaden
  * Fokusreduktionen werden jetzt mit der Zustandsstufe multipliziert
  * Fokusmodifikatoren unterstützen jetzt Verweise
