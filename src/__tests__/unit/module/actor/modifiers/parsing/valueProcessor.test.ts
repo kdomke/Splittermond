@@ -9,6 +9,8 @@ import {
 import {foundryApi} from "module/api/foundryApi";
 import sinon, {type SinonSandbox} from "sinon";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
+import {Cost} from "module/util/costs/Cost";
+import {of} from "module/actor/modifiers/expressions";
 
 describe('Value Processor', () => {
     let sandbox: SinonSandbox;
@@ -134,6 +136,6 @@ describe('Value Processor', () => {
         expect(result.errors).to.have.lengthOf(0);
         expect(result.scalarModifiers).to.have.lengthOf(0);
         expect(result.vectorModifiers).to.have.lengthOf(1);
-        expect(result.vectorModifiers[0].value).to.equal(complexModifier.attributes.value);
+        expect(result.vectorModifiers[0].value).to.deep.equal(of(new Cost(2, 5, true).asModifier()));
     });
 });

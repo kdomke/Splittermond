@@ -142,7 +142,8 @@
         "shouldNotBeAnExpression": "Eingabe '{input}' sollte kein evaluierbarer Ausdruck sein.",
         "referenceNotPrimitive": "'{propertyPath}' ist kein primitiver Wert auf '{objectName}'.",
         "unknownObject": "unbekannt",
-        "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!"
+        "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!",
+        "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln."
       }
     },
     "modifier": "Modifikator",

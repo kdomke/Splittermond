@@ -18,7 +18,7 @@ export function isExpression(value: unknown): value is CostExpression {
 }
 
 export function of(amount: CostModifier) {
-    if (amount === CostModifier.zero) {
+    if (amount.length === 0) {
         return new ZeroExpression()
     } else {
         return new AmountExpression(amount)

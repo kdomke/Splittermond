@@ -39,9 +39,6 @@ export class Cost {
     }
 
     asModifier() {
-        if (this.nonConsumed === 0 && this._consumed === 0) {
-            return CostModifier.zero;
-        }
         return new CostModifier({
             _channeled: (this.isChanneled || !this.strict) ? this.nonConsumed : 0,
             _channeledConsumed: (this.isChanneled || !this.strict) ? this._consumed : 0,

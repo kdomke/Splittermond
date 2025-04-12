@@ -6,17 +6,7 @@ import {NpcDataModel} from "../dataModel/NpcDataModel";
 import {CharacterDataModel} from "../dataModel/CharacterDataModel";
 import {SpellCostReductionManager} from "../../util/costs/spellCostManagement";
 import {parseModifiers, processValues, Value} from "./parsing";
-import {
-    asString,
-    condense,
-    evaluate,
-    Expression,
-    isZero,
-    of,
-    ScalarExpression,
-    times,
-    isScalarExpression
-} from "./expressions";
+import {condense, evaluate, isZero, of, ScalarExpression, times} from "./expressions";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
@@ -78,9 +68,9 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         const modifierLabel = mod.path.toLowerCase();
         const itemSkill = "skill" in item.system ? item.system.skill : undefined;
         if (modifierLabel.startsWith("foreduction")) {
-            data.spellCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+            data.spellCostReduction.addCostModifier(mod.path, evaluate(times(of(multiplier), mod.value)), itemSkill);
         } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
-            data.spellEnhancedCostReduction.addCostModifier(mod.path, mod.value, itemSkill);
+            data.spellEnhancedCostReduction.addCostModifier(mod.path, evaluate(times(of(multiplier), mod.value)), itemSkill);
         } else {
             allErrors.push("Cannot have a string value in a non-foreduction modifier");
         }
@@ -96,47 +86,47 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
 
         switch (modifierLabel) {
             case "bonuscap":
-                addModifierHelper("bonuscap", scalar(times(of(multiplier), modifier.value), allErrors), modifier.attributes, "");
+                addModifierHelper("bonuscap", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "speed.multiplier":
             case "gsw.mult":
-                actor.derivedValues.speed.multiplier *= Math.pow(evaluate(scalar(modifier.value, allErrors)), multiplier);
+                actor.derivedValues.speed.multiplier *= Math.pow(evaluate(modifier.value), multiplier);
                 break;
             case "sr":
-                addModifierHelper("damagereduction", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("damagereduction", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "handicap.shield.mod":
             case "handicap.shield":
-                addModifierHelper("handicap.shield", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("handicap.shield", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "handicap.mod":
             case "handicap":
-                addModifierHelper("handicap", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("handicap", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "handicap.armor.mod":
             case "handicap.armor":
-                addModifierHelper("handicap.armor", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("handicap.armor", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "tickmalus.shield.mod":
             case "tickmalus.shield":
-                addModifierHelper("tickmalus.shield", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("tickmalus.shield", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "tickmalus.armor.mod":
             case "tickmalus.armor":
-                addModifierHelper("tickmalus.armor", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("tickmalus.armor", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "tickmalus.mod":
             case "tickmalus":
-                addModifierHelper("tickmalus", times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper("tickmalus", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "woundmalus.nbrlevels":
-                data.health.woundMalus.nbrLevels = evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.health.woundMalus.nbrLevels = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "woundmalus.mod":
-                data.health.woundMalus.mod += evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.health.woundMalus.mod += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "woundmalus.levelmod":
-                data.health.woundMalus.levelMod += evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.health.woundMalus.levelMod += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "splinterpoints.bonus":
                 if (!("skill" in modifier.attributes)) {
@@ -147,78 +137,69 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 actor.modifier.add("splinterpoints.bonus", {
                     name: item.name,
                     type
-                }, times(of(multiplier), scalar(modifier.value, allErrors)), item, false);
+                }, times(of(multiplier), modifier.value), item, false);
                 break;
             case "splinterpoints":
                 if ("splinterpoints" in data) {
-                    data.splinterpoints.max = (data.splinterpoints?.max || 3) + evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                    data.splinterpoints.max = (data.splinterpoints?.max || 3) + evaluate(times(of(multiplier), modifier.value));
                 }
                 break;
             case "healthregeneration.multiplier":
-                data.healthRegeneration.multiplier = evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.healthRegeneration.multiplier = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "focusregeneration.multiplier":
-                data.focusRegeneration.multiplier = evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.focusRegeneration.multiplier = evaluate(times(of(multiplier), modifier.value));
                 break;
             case "healthregeneration.bonus":
-                data.healthRegeneration.bonus += evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.healthRegeneration.bonus += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "focusregeneration.bonus":
-                data.focusRegeneration.bonus += evaluate(times(of(multiplier), scalar(modifier.value, allErrors)));
+                data.focusRegeneration.bonus += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "lowerfumbleresult":
                 let skill = "skill" in item.system && item.system.skill ? item.system?.skill : "*";
-                addModifierHelper(modifier.path + "/" + skill, times(of(multiplier), scalar(modifier.value, allErrors)), modifier.attributes, "");
+                addModifierHelper(modifier.path + "/" + skill, times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "generalskills":
                 //Within the foreach function the compiler cannot figure out that the type guard happens first and complains
                 //Therefore, we assign attributes to a new variable so that the order of operations is obvious.
                 const generalSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.general.forEach((skill) => {
-                    addModifierHelper(skill, times(of(multiplier), scalar(modifier.value, allErrors)), generalSkillAttributes);
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), generalSkillAttributes);
                 });
                 break;
             case "magicskills":
                 const magicSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.magic.forEach((skill) => {
-                    addModifierHelper(skill, times(of(multiplier), scalar(modifier.value, allErrors)), magicSkillAttributes, "");
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), magicSkillAttributes, "");
                 });
                 break;
             case "fightingskills":
                 const fightingSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.fighting.forEach((skill) => {
-                    addModifierHelper(skill, times(of(multiplier), scalar(modifier.value, allErrors)), fightingSkillAttributes, "");
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), fightingSkillAttributes, "");
                 });
                 break;
             case "damage":
                 actor.modifier.add(`damage.${modifier.attributes.emphasis}`, {
                     name: emphasisFromName,
                     type
-                }, times(of(multiplier), scalar(modifier.value, allErrors)), item, false);
+                }, times(of(multiplier), modifier.value), item, false);
                 break;
             case "weaponspeed":
                 actor.modifier.add(`weaponspeed.${modifier.attributes.emphasis}`, {
                     name: emphasisFromName,
                     type
-                }, times(of(multiplier),scalar(modifier.value, allErrors)), item, false);
+                }, times(of(multiplier), modifier.value), item, false);
                 break;
             default:
-                //We still need to catch FO-Reduction cases where the parser managed to convert the value to an expression
-                if (modifierLabel.startsWith("foreduction")) {
-                    const itemSkill = "skill" in item.system ? item.system.skill : undefined;
-                    data.spellCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemSkill);
-                } else if (modifierLabel.startsWith("foenhancedreduction")) {
-                    const itemEnhancedSkill = "skill" in item.system ? item.system.skill : undefined;
-                    data.spellEnhancedCostReduction.addCostModifier(modifier.path, asString(modifier.value), itemEnhancedSkill);
-                }
-
                 let element: string | undefined = splittermond.derivedAttributes.find(attr => {
                     return modifierLabel === foundryApi.localize(`splittermond.derivedAttribute.${attr}.short`).toLowerCase() || modifierLabel.toLowerCase() === foundryApi.localize(`splittermond.derivedAttribute.${attr}.long`).toLowerCase()
                 });
                 if (!element) {
                     element = modifier.path;
                 }
-                let adjustedValue = times(of(multiplier), scalar(modifier.value, allErrors));
+                let adjustedValue = times(of(multiplier), modifier.value);
                 addModifierHelper(element, adjustedValue, modifier.attributes);
 
                 break;
@@ -248,13 +229,4 @@ function validateAllDescriptors(attributes: Record<string, Value>, allErrors: st
         return false;
     }
     return true;
-}
-
-function scalar(expression: Expression, allErrors: string[]): ScalarExpression {
-    if (isScalarExpression(expression)) {
-        return expression;
-    }
-    allErrors.push(`Expression ${asString(expression)} does not resolve to a scalar `); //TODO german translation
-    return of(0);
-
 }

@@ -1,4 +1,3 @@
-import {parseCostString} from "./costParser";
 import {CostModifier} from "./Cost";
 
 interface SpellCostReductionManagement {
@@ -36,7 +35,7 @@ class SpellCostReductionManager {
      * @param modifierValue the unparsed splittermond spell cost reduction formula
      * @param skill the skill that is attached to the item that carries the modifier label. Global reductions on skilled items will be assumed to apply to that skill only.
      */
-    addCostModifier(modifierLabel: string, modifierValue: string, skill?: string | null) {
+    addCostModifier(modifierLabel: string, modifierValue: CostModifier, skill?: string | null) {
         let group = null;
         let type = null;
         let labelParts = modifierLabel.split(".");
@@ -54,7 +53,7 @@ class SpellCostReductionManager {
             group = skill;
         }
 
-        this.modifiersMap.put(parseCostString(modifierValue).asModifier(), group, type);
+        this.modifiersMap.put(modifierValue,group, type);
     }
 
     /**

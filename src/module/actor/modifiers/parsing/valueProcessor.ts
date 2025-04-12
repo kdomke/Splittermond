@@ -1,9 +1,12 @@
 import {ErrorMessage, FocusModifier, ParsedModifier, ScalarModifier, Value} from "./index";
-import {Expression, of, ref, roll, times} from "module/actor/modifiers/expressions/scalar/definitions";
+import {AmountExpression, Expression, ref, roll, times} from "module/actor/modifiers/expressions/scalar/definitions";
 import {normalizeValue} from "./normalizer";
 import {isRoll} from "../../../api/Roll";
 import {validateReference} from "./validators";
 import {foundryApi} from "../../../api/foundryApi";
+import {parseCostString} from "../../../util/costs/costParser";
+import {asString, CostExpression, of, ScalarExpression} from "../expressions";
+import {Cost} from "../../../util/costs/Cost";
 
 export function processValues(modifiers: ParsedModifier[], refSource: object) {
     const result = {
@@ -27,10 +30,23 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
             const valueProcessedModifier: FocusModifier = {
                 path: modifier.path,
                 attributes: {...modifier.attributes},
-                value: processedValue
+                value: of(parseCostString(processedValue).asModifier()),
             };
             delete valueProcessedModifier.attributes.value;
             result.vectorModifiers.push(valueProcessedModifier);
+        } else if (modifier.path.toLowerCase().startsWith("foreduction")) {
+            const mappedValue = mapScalarToVector(processedValue);
+            if (typeof mappedValue === "string") {
+                result.errors.push(mappedValue);
+            }else {
+                const valueProcessedModifier: FocusModifier = {
+                    path: modifier.path,
+                    attributes: {...modifier.attributes},
+                    value: mappedValue,
+                };
+                delete valueProcessedModifier.attributes.value;
+                result.vectorModifiers.push(valueProcessedModifier);
+            }
         } else {
             const valueProcessedModifier: ScalarModifier = {
                 path: modifier.path,
@@ -64,4 +80,12 @@ function setUpExpression(expression: Value, source: object): Expression | string
     } else {
         return expression;
     }
+}
+
+function mapScalarToVector(expression: ScalarExpression): CostExpression | ErrorMessage {
+    if (expression instanceof AmountExpression) {
+        return of(new Cost(expression.amount, 0, false).asModifier());
+    }
+    return foundryApi.format("splittermond.modifiers.parseMessages.foNoCost", {expression: asString(expression)});
+
 }
