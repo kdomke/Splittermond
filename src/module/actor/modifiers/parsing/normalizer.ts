@@ -43,8 +43,10 @@ export function normalizeValue(value: Value) {
     const replacer = new Or(replaceAttribute, replaceDerivedAttribute, replaceSkill);
     if (typeof value === "string") {
         const sign: 1 | -1 = /^-/.test(value) ? -1 : 1;
-        const replacement = replacer.tryReplace(value.replace(/^[-+]/, ""));
-        if (replacement !== value) {
+        const unsignedValue = value.replace(/^[-+]/, "");
+        const replacement = replacer.tryReplace(unsignedValue);
+        //Assume the string is a reference only if we managed to replace it! (It could, for instance, also be focus.)
+        if (replacement !== unsignedValue) {
             return {propertyPath: replacement, sign, original: value};
         }
     } else if (typeof value === "object" && !isRoll(value)) {

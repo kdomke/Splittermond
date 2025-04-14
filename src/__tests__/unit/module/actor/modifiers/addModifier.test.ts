@@ -4,6 +4,8 @@ import SplittermondActor from "module/actor/actor";
 import SplittermondItem from "module/item/item";
 import ModifierManager from "module/actor/modifier-manager";
 import {foundryApi} from 'module/api/foundryApi';
+import {SpellCostReductionManager} from "module/util/costs/spellCostManagement";
+import {Cost} from 'module/util/costs/Cost';
 import {addModifier} from "module/actor/modifiers/modifierAddition";
 import {splittermond} from "module/config";
 import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
@@ -11,6 +13,14 @@ import {CharacterAttribute} from "module/actor/dataModel/CharacterAttribute";
 import Attribute from "module/actor/attribute";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 import {evaluate, of} from "module/actor/modifiers/expressions/scalar";
+
+//Duplicated, because I don't want to export the original type definition
+interface PreparedSystem {
+    spellCostReduction: SpellCostReductionManager,
+    spellEnhancedCostReduction: SpellCostReductionManager,
+    healthRegeneration: unknown,
+    focusRegeneration: unknown,
+}
 
 describe('addModifier', () => {
     let sandbox: SinonSandbox;
@@ -34,7 +44,12 @@ describe('addModifier', () => {
 
         actor = sandbox.createStubInstance(SplittermondActor);
         actor.system = systemData;
-        Object.defineProperty(actor,"modifier",{value: modifierManager, enumerable: true, writable: false, configurable: true});
+        Object.defineProperty(actor, "modifier", {
+            value: modifierManager,
+            enumerable: true,
+            writable: false,
+            configurable: true
+        });
         //@ts-expect-error
         actor.attributes = {
             charisma: {value: 2},
@@ -57,11 +72,15 @@ describe('addModifier', () => {
         sandbox.stub(foundryApi, 'reportError');
         sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
-            switch(key){
-                case 'splittermond.attribute.intuition.short': return 'INT';
-                case 'splittermond.derivedAttribute.initiative.short': return 'INI';
-                case 'splittermond.derivedAttribute.initiative.long': return 'Initiative';
-                default: return key;
+            switch (key) {
+                case 'splittermond.attribute.intuition.short':
+                    return 'INT';
+                case 'splittermond.derivedAttribute.initiative.short':
+                    return 'INI';
+                case 'splittermond.derivedAttribute.initiative.long':
+                    return 'Initiative';
+                default:
+                    return key;
             }
         });
     });
@@ -72,7 +91,10 @@ describe('addModifier', () => {
 
     it('should add basic modifier', () => {
         addModifier(actor, item, 'Test', 'BonusCap +2');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['bonuscap', {name:'Test', type:null}, of(2), item, false]);
+        expect(modifierManager.add.lastCall.args).to.have.deep.members(['bonuscap', {
+            name: 'Test',
+            type: null
+        }, of(2), item, false]);
     });
 
     it('should handle multiplier modifiers', () => {
@@ -99,10 +121,10 @@ describe('addModifier', () => {
 
         addModifier(actor, item, 'Group', 'GeneralSkills/emphasis +2');
 
-        mockSkills.forEach((skill,index) => {
+        mockSkills.forEach((skill, index) => {
             expect(modifierManager.add.getCalls()[index].args).to.have.deep.members([
                 skill,
-                {emphasis:'emphasis', name:'emphasis',type:null},
+                {emphasis: 'emphasis', name: 'emphasis', type: null},
                 of(2),
                 item,
                 true
@@ -117,14 +139,17 @@ describe('addModifier', () => {
 
     it('should replace attribute placeholders', () => {
         addModifier(actor, item, '', 'AUS +1');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members(['AUS', {name:'', type:null}, of(1), item, false]);
+        expect(modifierManager.add.lastCall.args).to.have.deep.members(['AUS', {
+            name: '',
+            type: null
+        }, of(1), item, false]);
     });
 
     it('should handle selectable modifiers with emphasis', () => {
         addModifier(actor, item, 'Selectable', 'resistance.fire/emphasis +3');
         expect(modifierManager.add.lastCall.args).to.have.deep.members([
             'resistance.fire',
-            {emphasis: 'emphasis', name:'emphasis',type:null},
+            {emphasis: 'emphasis', name: 'emphasis', type: null},
             of(3),
             item,
             true
@@ -135,14 +160,14 @@ describe('addModifier', () => {
         addModifier(actor, item, 'Damage', 'Damage/fire +5');
         expect(modifierManager.add.lastCall.args).to.have.deep.members([
             'damage.fire',
-            {name:'Damage', type:null},
+            {name: 'Damage', type: null},
             of(5),
             item,
             false
         ]);
     });
 
-    ["Initiative", "INI"].forEach(iniRepresentation=> {
+    ["Initiative", "INI"].forEach(iniRepresentation => {
         it(`should handle initiative modifier inversion for ${iniRepresentation}`, () => {
             addModifier(actor, item, '', `${iniRepresentation} +2`);
             expect(modifierManager.add.lastCall.args).to.have.deep.members(['initiative', {
@@ -152,7 +177,7 @@ describe('addModifier', () => {
         });
     });
 
-    ([["+INT", 2], ["-INT", -3], ["INT", 4]] as const).forEach(([placeholder,expected])=> {
+    ([["+INT", 2], ["-INT", -3], ["INT", 4]] as const).forEach(([placeholder, expected]) => {
         it('should replace attribute placeholders with their values', () => {
             const system = sandbox.createStubInstance(CharacterDataModel);
             actor.attributes.intuition = new Attribute(actor, 'intuition');
@@ -169,10 +194,38 @@ describe('addModifier', () => {
 
             addModifier(actor, item, '', `generalSkills.stealth ${placeholder}`);
 
-            const callArgs =modifierManager.add.lastCall.args;
-            expect(callArgs.slice(0,2)).to.have.deep.members(['generalSkills.stealth', {name:'', type: null}]);
-            expect(callArgs.slice(3,5)).to.have.deep.members([item, false]);
+            const callArgs = modifierManager.add.lastCall.args;
+            expect(callArgs.slice(0, 2)).to.have.deep.members(['generalSkills.stealth', {name: '', type: null}]);
+            expect(callArgs.slice(3, 5)).to.have.deep.members([item, false]);
             expect(evaluate(callArgs[2])).to.equal(expected);
         })
+    });
+
+    ([
+        ['K5', new Cost(5, 0, true).asModifier()],
+        ['-8', new Cost(-8, 0, false).asModifier()],
+        ['K2V2', new Cost(0, 2, true).asModifier()],
+        ['-K2V1', new Cost(-1, -1, true).asModifier()],
+        ["4V2", new Cost(2, 2, false).asModifier()]
+    ] as const).forEach(([cost, expected]) => {
+        it(`should pass focus costs of ${cost} to spell manager`, () => {
+            addModifier(actor, item, "", `foreduction.protectionmagic ${cost}`);
+
+            const system = actor.system as CharacterDataModel & PreparedSystem
+            const focusManager = system.spellCostReduction as SinonStubbedInstance<SpellCostReductionManager>;
+            expect(focusManager.addCostModifier.lastCall.args[0]).to.equal("foreduction.protectionmagic");
+            expect(focusManager.addCostModifier.lastCall.args[1]).to.deep.equal(expected);
+            expect(focusManager.addCostModifier.lastCall.args[2]).to.be.undefined;
+        });
+
+        it(`should pass focus costs of ${cost} to spell enhancement manager`, () => {
+            addModifier(actor, item, "", `foenhancedreduction.combatmagic ${cost}`);
+
+            const system = actor.system as CharacterDataModel & PreparedSystem
+            const focusManager = system.spellEnhancedCostReduction as SinonStubbedInstance<SpellCostReductionManager>;
+            expect(focusManager.addCostModifier.lastCall.args[0]).to.equal("foenhancedreduction.combatmagic");
+            expect(focusManager.addCostModifier.lastCall.args[1]).to.deep.equal(expected);
+            expect(focusManager.addCostModifier.lastCall.args[2]).to.be.undefined;
+        });
     });
 });
