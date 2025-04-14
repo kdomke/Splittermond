@@ -97,10 +97,21 @@ describe('addModifier', () => {
         }, of(2), item, false]);
     });
 
-    it('should handle multiplier modifiers', () => {
-        addModifier(actor, item, '', 'Speed.multiplier 2', 'innate', 2);
-        expect(actor.derivedValues.speed.multiplier).to.equal(4); // 2^2
+    it('should ignore 0 as value', () => {
+        addModifier(actor, item, 'Test', 'BonusCap +0');
+        expect(modifierManager.add.notCalled).to.be.true;
     });
+
+    ([
+        ['speed.multiplier 2', 4/*2 from bonus, 2 from multiplier*/],
+        ['gsw.mult 0', 0]
+    ] as const)
+        .forEach(([modifier, expected]) => {
+            it(`should handle multiplier modifier ${modifier}`, () => {
+                addModifier(actor, item, '', modifier, 'innate', 2);
+                expect(actor.derivedValues.speed.multiplier).to.equal(expected);
+            });
+        });
 
     it('should handle regeneration modifiers', () => {
         addModifier(actor, item, '', 'HealthRegeneration.multiplier 2');
