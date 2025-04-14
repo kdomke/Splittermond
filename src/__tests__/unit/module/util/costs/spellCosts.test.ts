@@ -140,6 +140,7 @@ describe('Spell cost calculation reduction selection', () => {
             reductionManager.modifiers.put(new Cost(1, 1, true).asModifier(), "deathmagic", "conjuration");
             reductionManager.modifiers.put(new Cost(2, 2, false).asModifier(), "lightmagic", "corporal");
             reductionManager.modifiers.put(new Cost(3, 3, false).asModifier(), "lightmagic", "conjuration");
+            reductionManager.modifiers.put(new Cost(3, 1, false).asModifier(), "combatmagic", null);
         });
 
     it("cost Reduction should apply the reduction for the skill and type", () => {
@@ -164,5 +165,11 @@ describe('Spell cost calculation reduction selection', () => {
         const reducedCosts = calculateReducedEnhancementCosts(spellData, reductionManagement.spellCostReduction);
         expect(reducedCosts).to.equal("K10");
     });
+
+    it("should apply reductions only once per spell", ()=>{
+        spellData.skill = "combatmagic";
+        const reducedCosts = calculateReducedEnhancementCosts(spellData, reductionManagement.spellCostReduction);
+        expect(reducedCosts).to.equal("K16V4");
+    })
 })
 ;
