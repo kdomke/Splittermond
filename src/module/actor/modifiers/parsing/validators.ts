@@ -35,7 +35,7 @@ export function validateReference(propertyPath: string, source: object): ErrorMe
         const objectName = hasName(source) ? source.name :
             hasId(source) ? source.id :
                 foundryApi.localize("splittermond.modifiers.parseMessages.unknownObject");
-        return [foundryApi.format("splittermond.modifiers.parseMessages.referenceNotPrimitve", {propertyPath, objectName})];
+        return [foundryApi.format("splittermond.modifiers.parseMessages.referenceNotPrimitive", {propertyPath, objectName})];
     }
     return [];
 }
