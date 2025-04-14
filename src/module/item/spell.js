@@ -61,6 +61,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         }
         return super.update(data, context);
     }
+
     updateSource(data, context) {
         if ("availableIn" in data) {
             data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
@@ -70,10 +71,10 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
          * For some reason the damageType is transferred as null if it comes from the form. We're fixing here,
          * because I don't know how to do it in the sheet class.
          */
-        if(data.system?.damageType === "null"){ //also apparently compendium data comes through here with an entirely different structure
+        if (data.system?.damageType === "null") { //also apparently compendium data comes through here with an entirely different structure
             data.system.damageType = null;
         }
-        if(data.system?.costType === "null"){ //see above
+        if (data.system?.costType === "null") { //see above
             data.system.costType = null;
         }
         return super.updateSource(data, context);
@@ -82,6 +83,9 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
 
     get skill() {
+        if (!splittermond.skillGroups.all.includes(this.system.skill)) {
+            console.warn(`Splittermond | Spell ${this.name} on ${this.actor.name} has an invalid skill: `, this.system.skill);
+        }
         return this.actor?.skills[this.system.skill];
     }
 
@@ -168,7 +172,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         };
 
         return this.skill.roll(options)
-            .then(result => !result ? false :SplittermondChatCard.create(this.actor,
+            .then(result => !result ? false : SplittermondChatCard.create(this.actor,
                 SpellRollMessage.initialize(this, result.report), result.rollOptions)
                 .sendToChat()
             ).then((result) => result ?? true);
