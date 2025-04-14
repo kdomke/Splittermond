@@ -20,7 +20,9 @@ import {PrimaryCost} from "../../costs/PrimaryCost";
 import {settings} from "../../../settings";
 
 let hasReducibleEnhancementCosts:()=>boolean = ()=>false;
-settings.registerBoolean("reducibleEnhancementCosts",{position:5,scope:"world",config:true,default:false}).then(value=>hasReducibleEnhancementCosts=value.get);
+settings.registerBoolean("reducibleEnhancementCosts",{position:5,scope:"world",config:true,default:false})
+    .then(value=>hasReducibleEnhancementCosts=value.get)
+    .catch(e => console.error("Splittermond | Failed to register setting for reducible enhancement costs", e));
 
 function FocusCostHandlerSchema() {
     return {

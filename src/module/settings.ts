@@ -1,5 +1,7 @@
 import {foundryApi} from "./api/foundryApi";
 import type {SettingsConfig, SettingTypeMapper, SettingTypes} from "./api/foundryTypes";
+import {splittermond} from "./config";
+
 
 let gameInitialized = false;
 const settingsQueue: { position: number | null, action: Function }[] = [];
@@ -47,24 +49,33 @@ function addToRegisterQueue(action: Function, position: number | null) {
         settingsQueue.push({position, action});
     } else {
         const insertAt = settingsQueue.findIndex(({position: p}) => p === null || p > position);
-        settingsQueue.splice(insertAt <0 ? settingsQueue.length:insertAt, 0, {position, action});
+        settingsQueue.splice(insertAt < 0 ? settingsQueue.length : insertAt, 0, {position, action});
     }
 }
 
 function delayAccessors(action: () => any): Promise<any> {
     return new Promise((resolve, reject) => {
         const checkInitialized = (invocation: number) => {
-            if (invocation > 20) {
-                return reject(`Game not initialized after 2 seconds`);
+            if (invocation > getMaxCount()) {
+                return reject(`Game not initialized after ${getMaxCount() * getDelay() * 0.001} seconds`);
             } else if (gameInitialized) {
                 return resolve(action())
             } else {
-                return setTimeout(() => checkInitialized(++invocation), 100);
+                return setTimeout(() => checkInitialized(++invocation), getDelay());
             }
         }
         checkInitialized(0);
     });
 }
+
+function getDelay() {
+    return splittermond.settings.gameReadyWaitingDelayInMs;
+}
+
+function getMaxCount() {
+    return splittermond.settings.gameReadyWaitingMaxCount;
+}
+
 
 async function registerStringSetting(key: string, setting: PartialSettings<StringConstructor>):
     Promise<SettingAccessor<StringConstructor>> {
@@ -99,7 +110,7 @@ export const registerRequestedSystemSettings = function (): void {
  * This is only for testing purposes, because there is no way of importing this module repeatedly
  */
 export function resetIsInitialized() {
-    if(false){
+    if (false) {
         console.error("");
     }
     gameInitialized = false;

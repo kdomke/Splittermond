@@ -1187,3 +1187,8 @@ splittermond.degreeOfSuccessThresholds = {
     critical : 5
 }
 splittermond.damageTypes = damageTypes;
+
+splittermond.settings = {
+    gameReadyWaitingDelayInMs: 250,
+    gameReadyWaitingMaxCount: 20,
+}

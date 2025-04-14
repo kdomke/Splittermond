@@ -33,7 +33,8 @@ settings.registerBoolean("stableProtectsAllReduction", {
     scope: "world",
     config: true,
     default: true,
-}).then(accessor => getStableProtectsAllReduction = accessor.get);
+}).then(accessor => getStableProtectsAllReduction = accessor.get)
+.catch(e => console.error("Splittermond | Failed to register setting for stable protecting all damage reduction", e));
 
 settings.registerNumber("HGMultiplier", {
     position: 1,
@@ -55,6 +56,7 @@ settings.registerNumber("HGMultiplier", {
         });
     }
 }).then(accessor => getHeroLevelMultiplier = accessor.get)
+    .catch(e => console.error("Splittermond | Failed to register setting for hero level multipliers", e));
 
 export default class SplittermondActor extends Actor {
 
@@ -906,10 +908,10 @@ export default class SplittermondActor extends Actor {
             .map(m => evaluate(m.value))
         const highestValue = Math.max(3, ...bonusFromModifiers);
         //Issue a warning when someone added a modifier that does not actually benefit them
-        if(bonusFromModifiers.length > 0 && highestValue === 3){
-           console.warn("Splittermond | Handed out minimum Splinterpoint bonus despite modifiers present");
+        if (bonusFromModifiers.length > 0 && highestValue === 3) {
+            console.warn("Splittermond | Handed out minimum Splinterpoint bonus despite modifiers present");
         }
-        return  highestValue
+        return highestValue
     }
 
     async useSplinterpointBonus(message) {

@@ -16,5 +16,5 @@ export function initTheme() {
         }
     }).then((accessor) => {
         document.body.setAttribute("data-theme", accessor.get());
-    });
+    }).catch((e)=> console.error("Splittermond | Failed to register theme", e));
 }
