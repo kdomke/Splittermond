@@ -1,11 +1,3 @@
-import SplittermondWeaponItem from "./item/weapon.js";
-import SplittermondItem from "./item/item.js";
-import SplittermondShieldItem from "./item/shield.js";
-import SplittermondSpellItem from "./item/spell.js";
-import SplittermondArmorItem from "./item/armor.js";
-import SplittermondEquipmentItem from "./item/equipment.js";
-import SplittermondNPCAttackItem from "./item/npcattack.js";
-import SplittermondMastery from "./item/mastery.js";
 import {rollType} from "./config/RollType";
 import {splittermondSpellEnhancement} from "./config/SplittermondSpellEnhancements";
 import {modifiers} from "./config/modifiers";
@@ -1187,3 +1179,8 @@ splittermond.degreeOfSuccessThresholds = {
     critical : 5
 }
 splittermond.damageTypes = damageTypes;
+
+splittermond.settings = {
+    gameReadyWaitingDelayInMs: 250,
+    gameReadyWaitingMaxCount: 20,
+};

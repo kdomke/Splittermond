@@ -23,6 +23,7 @@ describe('Modifier Parser', () => {
         ["AUS +1", {path: "AUS", attributes: {value: 1}}],
         ["bonuscap -1", {path: "bonuscap", attributes: {value: -1}}],
         ["speed.multiplier 2", {path: "speed.multiplier", attributes: {value: 2}}],
+        ["gsw.mult 0", {path: "gsw.mult", attributes: {value: 0}}],
         ["generalskills.firemagic/Schaden +2", {
             path: "generalskills.firemagic",
             attributes: {emphasis: "Schaden", value: 2}

@@ -70,7 +70,12 @@ export default class SplittermondActorSheet extends ActorSheet {
 
     _prepareItems(sheetData) {
 
-        sheetData.itemsByType = sheetData.items.reduce((result, item) => {
+        const items = sheetData.items;
+        if(!items) {
+            console.error(`Splittermond | Item property of actor ${this.actor.name} is undefined. Cannot prepare items.`);
+            return;
+        }
+        sheetData.itemsByType = items.reduce((result, item) => {
             if (!(item.type in result)) {
                 result[item.type] = [];
             }
@@ -90,6 +95,12 @@ export default class SplittermondActorSheet extends ActorSheet {
                 result[skill].masteries.push(item);
                 return result;
             }, {});
+        }
+
+        const spells = this.actor.spells;
+        if (!spells) {
+            console.error(`Splittermond | Spell property of actor ${this.actor.name} is undefined. Cannot prepare spells.`);
+            return;
         }
 
         sheetData.spellsBySkill = this.actor.spells.reduce((result, item) => {

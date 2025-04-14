@@ -49,14 +49,18 @@ function parseModifier(modifier: string): SingleParseResult {
     parseResult.attributes = {...parseResult.attributes, ...attributeParseResult};
 
     const value = valueMatch ? parseValue(valueMatch[0]) : null;
-    if (value && attributeParseResult.value) {
+    if (isSet(value) && isSet(attributeParseResult.value)) {
         return foundryApi.format("splittermond.modifiers.parseMessages.duplicateValue",{modifier});
-    } else if (!value && !attributeParseResult.value) {
+    } else if (!isSet(value) && !isSet(attributeParseResult.value)) {
         return foundryApi.format("splittermond.modifiers.parseMessages.noValue",{modifier});
-    } else if (value) {
+    } else if (isSet(value)) {
         parseResult.attributes.value = value;
     }
     return parseResult;
+}
+
+function isSet(value:unknown){
+    return value !== null && value !== undefined;
 }
 
 function findAttributes(modifier: string): string[] {

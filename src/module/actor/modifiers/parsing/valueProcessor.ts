@@ -17,7 +17,7 @@ export function processValues(modifiers: ParsedModifier[], refSource: object) {
     }
     for (const modifier of [...modifiers]) {
         const value = modifier.attributes.value;
-        if (!value) {
+        if (value === null || value === undefined) {
             result.errors.push(foundryApi.format("splittermond.modifiers.parseMessages.noValue", {modifier: modifier.path}));
             continue;
         }

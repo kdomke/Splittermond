@@ -57,10 +57,16 @@ describe('normalizeModifiers', () => {
         }],
         ["+AUS", {propertyPath: "attributes.charisma.value", sign: 1, original: "+AUS"}],
         ["-AUS", {propertyPath: "attributes.charisma.value", sign: -1, original: "-AUS"}],
-        ["Geschichte und Mythen", {propertyPath: "skills.history.value", sign: 1, original:"Geschichte und Mythen"}],
+        ["Geschichte und Mythen", {propertyPath: "skills.history.value", sign: 1, original: "Geschichte und Mythen"}],
     ] as const).forEach(([value, expected]) => {
         it(`should replace value'${value}'`, () => {
             expect(normalizeValue(value)).to.deep.equal(expected);
+        });
+    });
+
+    ["K2V2", "-K4V2", "-12V8", "12V8"].forEach((value) => {
+        it(`should not replace value '${value}'`, () => {
+            expect(normalizeValue(value)).to.deep.equal(value);
         });
     });
 });

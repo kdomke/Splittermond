@@ -158,6 +158,10 @@ export default class SplittermondCombat extends Combat {
         }
     }
 
+    /**
+     * @protected
+     * @deprecated use updateDescendantDocuments instead
+     */
     _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId) {
         this.setupTurns();//otherwise the next player is not marked correctly
         super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId); 

@@ -13,7 +13,7 @@ settings.registerBoolean("showHotbarDuringActionBar", {
         }, 500);
 
     }
-});
+}).catch(e => console.warn("Splittermond | Error registering setting showHotbarDuringActionBar", e));
 
 settings.registerBoolean("showActionBar", {
     position: 3,
@@ -26,7 +26,7 @@ settings.registerBoolean("showActionBar", {
         }, 500);
 
     }
-});
+}).catch(e => console.warn("Splittermond | Error registering setting showActionBar", e));
 
 export default class TokenActionBar extends Application {
 
