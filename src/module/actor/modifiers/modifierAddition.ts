@@ -73,7 +73,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
         } else if (modifierLabel.toLowerCase().startsWith("foenhancedreduction")) {
             data.spellEnhancedCostReduction.addCostModifier(mod.path, evaluateCost(timesCost(of(multiplier), mod.value)), itemSkill);
         } else {
-            allErrors.push("Cannot have a string value in a non-foreduction modifier");
+            console.warn(`Splittermond | Encountered a focus modifier for whose path '${modifierLabel} is unknown.`)
         }
         return;
     })
