@@ -1,3 +1,10 @@
+## 0.12.19
+### Fixed
+ * Modifikatoren mit negativem Fokus als Wert werden jetzt korrekt eingelesen
+ * Der Wert 0 ist nun ein gültiger Modifikatorwert
+ * Jede Fokusreduktion wird jetzt nur einmal auf einen Zauber angewandt
+ * Das Modul "Einstellungen" wartet nun 5 statt 2 Sekunden bis die Spielwelt geladen ist
+ * Die meisten Einstellungen werfen keinen Fehler mehr, wenn sie nicht innerhalb der Frist registriert werden. Stattdessen wird ein Fehler oder eine Warnung in die Konsole geschrieben.
 ## 0.12.18
 ### Fixed 
  * Fokuskostenabrechnung wird jetzt auch angezeigt, wenn Fokuskostenreduktion nicht als Option gewählt ist.
