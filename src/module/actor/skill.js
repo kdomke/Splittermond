@@ -118,10 +118,15 @@ export default class Skill extends Modifiable {
         let rollResult = await Dice.check(this, checkData.difficulty, checkData.rollType, checkData.modifier);
         let skillAttributes = this.attributeValues;
 
+        const mappedModifiers = checkData.modifierElements.map(mod => ({
+            isMalus: mod.value < 0,
+            value: `${Math.abs(mod.value)}`,
+            description: mod.description
+        }));
         if (options.type === "spell") {
             return {
                 rollOptions: ChatMessage.applyRollMode({
-                    rolls:[rollResult.roll],
+                    rolls: [rollResult.roll],
                     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
                 }, checkData.rollMode),
                 /**@type CheckReport*/
@@ -138,7 +143,7 @@ export default class Skill extends Modifiable {
                         dice: rollResult.roll.dice,
                         tooltip: await rollResult.roll.getTooltip(),
                     },
-                    modifierElements: checkData.modifierElements,
+                    modifierElements: [...this.#getStaticModifiersForReport(), ...mappedModifiers],
                     succeeded: rollResult.succeeded,
                     isFumble: rollResult.isFumble,
                     isCrit: rollResult.isCrit,
@@ -158,7 +163,7 @@ export default class Skill extends Modifiable {
             skillAttributes: skillAttributes,
             difficulty: rollResult.difficulty,
             rollType: checkData.rollType,
-            modifierElements: checkData.modifierElements,
+            modifierElements: [...this.#getStaticModifiersForReport(), ...mappedModifiers],
             succeeded: rollResult.succeeded,
             isFumble: rollResult.isFumble,
             isCrit: rollResult.isCrit,
@@ -194,17 +199,17 @@ export default class Skill extends Modifiable {
         selectedModifiers = selectedModifiers.map(s => s.trim().toLowerCase());
         if (selectableModifier) {
             emphasisData = selectableModifier
-                .map(mod => [mod.attributes.name,asString(mod.value)])
+                .map(mod => [mod.attributes.name, asString(mod.value)])
                 .map(([key, value]) => {
                     const operator = /(?<=^\s*)[+-]/.exec(value)?.[0] ?? "+";
                     const cleanedValue = value.replace(/^\s*[+-]/, "").trim();
-                return {
-                    name: key,
-                    label: `${key} ${operator} ${cleanedValue}`,
-                    value: value,
-                    active: selectedModifiers.includes(key.trim().toLowerCase())
-                };
-            });
+                    return {
+                        name: key,
+                        label: `${key} ${operator} ${cleanedValue}`,
+                        value: value,
+                        active: selectedModifiers.includes(key.trim().toLowerCase())
+                    };
+                });
         }
 
         let skillFormula = this.getFormula();
@@ -230,6 +235,15 @@ export default class Skill extends Modifiable {
         const displayTitle = title || game.i18n.localize(this.label);
         const displaySubtitle = subtitle || "";
         return displaySubtitle ? displayTitle : `${displayTitle} - ${displaySubtitle}`;
+    }
+
+    #getStaticModifiersForReport() {
+        return this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
+            .map(mod => ({
+                isMalus: mod.isMalus,
+                value: asString(mod.value),
+                description: mod.attributes.name
+            }));
     }
 
     getFormula() {

@@ -30,8 +30,7 @@ export default class Modifiable {
     }
 
     addModifierTooltipFormulaElements(formula, bonusPrefix = "+", malusPrefix = "-") {
-        this.actor.modifier.static(this._modifierPath).forEach((e) => {
-            e.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix);
-        });
+        this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
+            .forEach(mod => mod.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix));
     }
 }

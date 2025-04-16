@@ -12,6 +12,6 @@ export interface CheckReport extends Omit<GenericRollEvaluation, "roll"> {
         dice: { total: number }[];
         tooltip: string;
     };
-    modifierElements: {value:number, description:string}[];
+    modifierElements: {isMalus:boolean, value:string, description:string}[];
     hideDifficulty: boolean;
 }

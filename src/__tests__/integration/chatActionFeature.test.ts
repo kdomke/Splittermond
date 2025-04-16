@@ -143,7 +143,7 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
                         [spell.skill.attribute2.id]: spell.skill.attribute2.value,
                     },
                 },
-                modifierElements: [{value: 0, description: "4"}],
+                modifierElements: [{isMalus:false, value: "0", description: "4"}],
                 hideDifficulty: false,
                 rollType: "standard",
                 succeeded: true,

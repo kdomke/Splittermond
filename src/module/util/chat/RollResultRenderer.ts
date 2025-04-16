@@ -42,11 +42,10 @@ function renderSkillAndModifiers(checkReport: CheckReport) {
         foundryApi.localize("splittermond.skillPointsAbbrev")
     );
     checkReport.modifierElements.forEach((e) => {
-        const val = Math.abs(e.value);
-        if (e.value > 0) {
-            tooltip.addBonus(val, e.description);
+        if (e.isMalus) {
+            tooltip.addMalus(e.value, e.description);
         } else {
-            tooltip.addMalus(val, e.description);
+            tooltip.addBonus(e.value, e.description);
         }
     });
     return tooltip.getData();
