@@ -1,3 +1,8 @@
+## 0.12.20
+### Fixed
+ * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte
+ * Nicht auswählbare Modifikatoren werden jetzt bei nach dem Wurf angezeigt
+    * Variable Terme zeigen nicht das Ergebnis an, sondern den Term
 ## 0.12.19
 ### Fixed
  * Modifikatoren mit negativem Fokus als Wert werden jetzt korrekt eingelesen

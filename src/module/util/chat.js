@@ -8,6 +8,14 @@ import {foundryApi} from "../api/foundryApi.ts";
 export function canEditMessageOf(userId){
     return userId === foundryApi.currentUser.id || foundryApi.currentUser.isGM;
 }
+
+/**
+ * @param {SplittermondActor} actor
+ * @param {string} rollMode
+ * @param {string} roll
+ * @param {CheckReport} data
+ * @returns {Promise<*>}
+ */
 export async function prepareCheckMessageData(actor, rollMode, roll, data) {
     let templateContext = {
         ...data,
@@ -30,11 +38,10 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
 
     formula.addPart(data.skillPoints, game.i18n.localize(`splittermond.skillPointsAbbrev`));
     data.modifierElements.forEach(e => {
-        let val = Math.abs(e.value);
-        if (e.value > 0) {
-            formula.addBonus("+" + val, e.description);
+        if (e.isMalus) {
+            formula.addMalus(e.value, e.description);
         } else {
-            formula.addMalus("-" + val, e.description);
+            formula.addBonus(e.value, e.description);
         }
     });
 
