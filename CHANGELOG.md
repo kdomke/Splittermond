@@ -1,3 +1,6 @@
+## 0.12.20
+### Fixed
+ * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte
 ## 0.12.19
 ### Fixed
  * Modifikatoren mit negativem Fokus als Wert werden jetzt korrekt eingelesen

@@ -167,6 +167,22 @@ describe('addModifier', () => {
         ]);
     });
 
+    (["fighting", "magic", "general"]as const).forEach((skillGroup) => {
+        it(`should retain emphasis for skill group ${skillGroup}`, () => {
+            addModifier(actor, item, "", `${skillGroup}Skills emphasis="Schwerpunkt" 3`);
+
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                splittermond.skillGroups[skillGroup].slice(-1)[0],
+                {emphasis: 'Schwerpunkt', name: 'Schwerpunkt', type: null},
+                of(3),
+                item,
+                true
+            ]);
+
+        });
+
+    });
+
     it('should handle damage modifiers', () => {
         addModifier(actor, item, 'Damage', 'Damage/fire +5');
         expect(modifierManager.add.lastCall.args).to.have.deep.members([

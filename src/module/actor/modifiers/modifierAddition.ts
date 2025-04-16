@@ -172,13 +172,13 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
             case "magicskills":
                 const magicSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.magic.forEach((skill) => {
-                    addModifierHelper(skill, times(of(multiplier), modifier.value), magicSkillAttributes, "");
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), magicSkillAttributes);
                 });
                 break;
             case "fightingskills":
                 const fightingSkillAttributes = modifier.attributes;
                 splittermond.skillGroups.fighting.forEach((skill) => {
-                    addModifierHelper(skill, times(of(multiplier), modifier.value), fightingSkillAttributes, "");
+                    addModifierHelper(skill, times(of(multiplier), modifier.value), fightingSkillAttributes);
                 });
                 break;
             case "damage":
