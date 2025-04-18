@@ -17,8 +17,8 @@ describe("ModifierManager", () => {
         manager.add("AUS", {name: "Item Bonus", type: "equipment"}, of(1), mockItem);
         manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, true);
 
-        expect(manager.value("AUS")).to.equal(3);
-        expect(manager.value("bonuscap")).to.equal(3);
+        expect(manager.getForId("AUS").getModifiers().value).to.equal(3);
+        expect(manager.getForId("bonuscap").getModifiers().value).to.equal(3);
     });
 
     it("should handle selectable modifiers", () => {
@@ -39,7 +39,7 @@ describe("ModifierManager", () => {
     });
 
     it("should handle empty groups", () => {
-        expect(manager.getForId("nonexistent").value()).to.equal(0);
+        expect(manager.getForId("nonexistent").getModifiers().value).to.equal(0);
         expect(manager.selectable("missing")).to.deep.equal({});
     });
 
@@ -47,7 +47,7 @@ describe("ModifierManager", () => {
         manager.add("melee", {name: "Spell", type: "magic"}, of(1));
         manager.add("melee", {name: "Trait", type: "innate"}, of(2));
 
-        expect(manager.getForId("melee").value()).to.equal(3);
+        expect(manager.getForId("melee").getModifiers().value).to.equal(3);
     });
 
     describe("Selector Build API", () => {
@@ -63,7 +63,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValues("type", "magic", "equipment").value();
+            const result = manager.getForId("damage").withAttributeValues("type", "magic", "equipment").getModifiers().value;
             expect(result).to.equal(5);
         });
 
@@ -71,7 +71,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment", damageType: "physical"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValues("damageType", "physical").value();
+            const result = manager.getForId("damage").withAttributeValues("damageType", "physical").getModifiers().value;
             expect(result).to.equal(3);
         });
 
@@ -79,7 +79,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment", damageType: "physical"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValuesOrAbsent("damageType", "physical").value();
+            const result = manager.getForId("damage").withAttributeValuesOrAbsent("damageType", "physical").getModifiers().value;
             expect(result).to.equal(5);
         });
 
@@ -118,7 +118,7 @@ describe("ModifierManager", () => {
             manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
             manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
 
-            const result = manager.getForIds("AUS", "bonuscap").value();
+            const result = manager.getForIds("AUS", "bonuscap").getModifiers().value;
 
             expect(result).to.deep.equal(5);
         });

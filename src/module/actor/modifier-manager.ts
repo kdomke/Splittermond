@@ -1,4 +1,4 @@
-import Modifier, {IModifier, ModifierAttributes} from "./modifier";
+import Modifier, {IModifier, ModifierAttributes, Modifiers} from "./modifier";
 import SplittermondItem from "../item/item";
 import SplittermondActor from "./actor";
 import {of, plus, evaluate, Expression} from "./modifiers/expressions/scalar";
@@ -140,11 +140,7 @@ class AttributeBuilder {
     }
 
     getModifiers() {
-        return this.manager.getModifiers(this.groupId, this._attributes, this._selectable)
-    }
-
-    value(){
-        return this.manager.value(this.groupId, this._attributes, this._selectable);
+        return Modifiers.from(this.manager.getModifiers(this.groupId, this._attributes, this._selectable))
     }
 }
 
@@ -164,11 +160,6 @@ class MassExtractor {
     }
 
     getModifiers() {
-        return this.groupIds.flatMap(id => this.manager.getModifiers(id, [], this._selectable));
-    }
-
-    value():number{
-        return this.groupIds.flatMap(id => this.manager.value(id, [], this._selectable))
-            .reduce((acc, value) => acc + value, 0);
+        return Modifiers.from(this.groupIds.flatMap(id => this.manager.getModifiers(id, [], this._selectable)));
     }
 }
