@@ -1030,8 +1030,8 @@ export default class SplittermondActor extends Actor {
 
         let defaultTable = "sorcerer";
         eg = Math.abs(eg);
-        let lowerFumbleResult = this.modifier.getForId("lowerfumbleresult/" + skill).getModifiers().value
-        lowerFumbleResult += this.modifier.getForId("lowerfumbleresult/*").getModifiers().value;
+        const lowerFumbleResult = this.modifier.getForId("lowerfumbleresult").notSelectable()
+            .withAttributeValuesOrAbsent("skill",skill).getModifiers().value;
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }
