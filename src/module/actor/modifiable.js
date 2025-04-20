@@ -15,7 +15,7 @@ export default class Modifiable {
     }
 
     get mod() {
-        const grandTotal = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().value();
+        const grandTotal = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers().value;
         const bonusEquipment = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
             .filter(mod => mod.type === "equipment" && mod.isBonus).value
         const bonusMagic = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()

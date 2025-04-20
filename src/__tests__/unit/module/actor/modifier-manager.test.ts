@@ -21,26 +21,18 @@ describe("ModifierManager", () => {
         expect(manager.getForId("bonuscap").getModifiers().value).to.equal(3);
     });
 
-    it("should handle selectable modifiers", () => {
-        manager.add("speed.multiplier", {name: "Boots", type: "equipment"}, of(2), null, true);
-        manager.add("speed.multiplier", {name: "Haste", type: "magic"}, of(1), null, true);
-
-        const result = manager.selectable("speed.multiplier");
-        expect(result).to.deep.equal({"Boots": of(2), "Haste": of(1)});
-    });
-
     it("should merge multiple paths", () => {
         manager.add("damage.physical", {name: "Sword", type: "equipment"}, of(3));
         manager.add("damage.fire", {name: "Enchantment", type: "magic"}, of(2));
 
-        const result = manager.static(["damage.physical", "damage.fire"]);
+        const result = manager.getForIds("damage.physical", "damage.fire").getModifiers();
         expect(result.length).to.equal(2);
         expect(result[0].value).to.deep.equal(of(3));
     });
 
     it("should handle empty groups", () => {
         expect(manager.getForId("nonexistent").getModifiers().value).to.equal(0);
-        expect(manager.selectable("missing")).to.deep.equal({});
+        expect(manager.getForIds("missing").getModifiers()).to.deep.equal([]);
     });
 
     it("should combine modifiers with same groupId", () => {

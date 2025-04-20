@@ -121,8 +121,8 @@ export default class Attack {
 
     get damage() {
         let damage = this._damage;
-        let mod = parseInt(this.actor.modifier.value(`damage.${this.id}`));
-        mod += parseInt(this.actor.modifier.value(`damage.${this.item.name}`));
+        let mod = parseInt(this.actor.modifier.getForId(`damage.${this.id}`).getModifiers().value);
+        mod += parseInt(this.actor.modifier.getForId(`damage.${this.item.name}`).getModifiers().value);
         if (this.actor.items.find(i => i.type == "mastery" && i.system.skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
             mod += 2;
         }
@@ -143,8 +143,8 @@ export default class Attack {
 
     get weaponSpeed() {
         let weaponSpeed = this._weaponSpeed;
-        weaponSpeed -= parseInt(this.actor.modifier.value(`weaponspeed.${this.id}`));
-        weaponSpeed -= parseInt(this.actor.modifier.value(`weaponspeed.${this.item.name}`));
+        weaponSpeed -= parseInt(this.actor.modifier.getForId(`weaponspeed.${this.id}`).getModifiers().value);
+        weaponSpeed -= parseInt(this.actor.modifier.getForId(`weaponspeed.${this.item.name}`).getModifiers().value);
         if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
             weaponSpeed -= 2;
         }

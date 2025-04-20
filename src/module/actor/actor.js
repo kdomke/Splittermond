@@ -201,7 +201,8 @@ export default class SplittermondActor extends Actor {
     }
 
     get bonusCap() {
-        return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
+        return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 +
+            this.modifier.getForId("bonuscap").getModifiers().value;
     }
 
     /**@return {{value:number, max:number}}*/
@@ -237,7 +238,7 @@ export default class SplittermondActor extends Actor {
         this._prepareActiveDefense();
 
         if (this.type === "character") {
-            this.system.splinterpoints.max += this.modifier.value("splinterpoints");
+            this.system.splinterpoints.max += this.modifier.getForId("splinterpoints").getModifiers().value;
         }
 
 
@@ -486,19 +487,19 @@ export default class SplittermondActor extends Actor {
     }
 
     get tickMalus() {
-        return Math.max(this.modifier.value("tickmalus.shield"), 0)
-            + Math.max(this.modifier.value("tickmalus.armor"), 0)
-            + Math.max(this.modifier.value("tickmalus"), 0);
+        return Math.max(this.modifier.getForId("tickmalus.shield").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("tickmalus.armor").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("tickmalus").getModifiers().value, 0);
     }
 
     get handicap() {
-        return Math.max(this.modifier.value("handicap.shield"), 0)
-            + Math.max(this.modifier.value("handicap.armor"), 0)
-            + Math.max(this.modifier.value("handicap"), 0);
+        return Math.max(this.modifier.getForId("handicap.shield").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("handicap.armor").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("handicap").getModifiers().value, 0);
     }
 
     get damageReduction() {
-        return this.modifier.value("damagereduction");
+        return this.modifier.getForId("damagereduction").getModifiers().value;
     }
 
     /**
@@ -1029,8 +1030,8 @@ export default class SplittermondActor extends Actor {
 
         let defaultTable = "sorcerer";
         eg = Math.abs(eg);
-        let lowerFumbleResult = this.modifier.value("lowerfumbleresult/" + skill)
-        lowerFumbleResult += this.modifier.value("lowerfumbleresult/*");
+        let lowerFumbleResult = this.modifier.getForId("lowerfumbleresult/" + skill).getModifiers().value
+        lowerFumbleResult += this.modifier.getForId("lowerfumbleresult/*").getModifiers().value;
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }
