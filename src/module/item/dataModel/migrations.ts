@@ -66,10 +66,10 @@ export function migrateFrom0_12_20(source:unknown){
     if(!!source && typeof source === "object" && ("modifier" in source) && typeof(source.modifier) === "string"){
         const keep = source.modifier.split(",")
             .map(mod => mod.trim())
-            .filter(mod => !mod.startsWith("damage"));
+            .filter(mod => !mod.startsWith("damage") && !mod.startsWith("weaponspeed"));
         const change = source.modifier.split(",")
             .map(mod => mod.trim())
-            .filter(mod => mod.startsWith("damage"))
+            .filter(mod => mod.startsWith("damage")|| mod.startsWith("weaponspeed"))
             .map(mapDamageModifier);
         source.modifier = [...keep, ...change].join(", ");
     }
@@ -78,6 +78,7 @@ export function migrateFrom0_12_20(source:unknown){
 
 function mapDamageModifier(mod: string): string {
     const parsedModifier = parseModifiers(mod).modifiers[0];
+    const path= parsedModifier.path.split(".")[0];
     const nameFromPath= parsedModifier.path.split(".")[1];
     let itemName:string|null = null;
     if(nameFromPath && nameFromPath.length > 0){
@@ -96,8 +97,8 @@ function mapDamageModifier(mod: string): string {
     }
 
     if(itemName){
-        return `damage item="${itemName}" ${valueAsString}`;
+        return `${path} item="${itemName}" ${valueAsString}`;
     }else {
-        return `damage ${valueAsString}`;
+        return `${path} ${valueAsString}`;
     }
 }

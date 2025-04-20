@@ -55,9 +55,9 @@ export default class Attack {
                 of(minAttributeMalus),
                 this
             );
-            this.actor.modifier.add(
-                `weaponspeed.${this.id}`,
+            this.actor.modifier.add("weaponspeed",
                 {
+                    item: this.id,
                     name: foundryApi.localize("splittermond.minAttributes"),
                     type: "innate",
                 },
@@ -143,8 +143,8 @@ export default class Attack {
 
     get weaponSpeed() {
         let weaponSpeed = this._weaponSpeed;
-        weaponSpeed -= parseInt(this.actor.modifier.getForId(`weaponspeed.${this.id}`).getModifiers().value);
-        weaponSpeed -= parseInt(this.actor.modifier.getForId(`weaponspeed.${this.item.name}`).getModifiers().value);
+        weaponSpeed -= this.actor.modifier.getForId("weaponspeed")
+            .withAttributeValuesOrAbsent("item", this.item, this.item.name).getModifiers().value;
         if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
             weaponSpeed -= 2;
         }

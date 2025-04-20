@@ -536,9 +536,10 @@ export function modifierTest(context: QuenchBatchContext) {
                 type: "magic"
             }, of(1), null, false);
             subject.modifier.add("damage", {name: "Mystery", type: "magic"}, of(2), null, false);
-            subject.modifier.add("weaponspeed", {name: "Mystery", type: "magic"}, of(-2), null, false);
+            subject.modifier.add("weaponspeed", {name: "Mystery", type: "magic"}, of(2), null, false);
 
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("3+3");
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.weaponSpeed).to.equal(4);
         });
     });
 }

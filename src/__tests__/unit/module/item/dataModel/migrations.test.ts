@@ -60,36 +60,38 @@ describe("Modifier migration from 0.12.20",()=>{
     });
     afterEach(() => sandbox.restore());
 
-    it("should replace emphasis with item attribute",()=> {
-        const source = {modifier: "damage/Hellebarde 1"}
+    ["damage", "weaponspeed"].forEach(path => {
+        it(`should replace emphasis with item attribute for ${path}`, () => {
+            const source = {modifier: `${path}/Hellebarde 1`}
 
-        const result = migrateFrom0_12_20(source);
+            const result = migrateFrom0_12_20(source);
 
-        expect(result).to.deep.equal({modifier: "damage item=\"Hellebarde\" 1"});
-    });
+            expect(result).to.deep.equal({modifier: `${path} item="Hellebarde" 1`});
+        });
 
-    it("should replace dot descriptor with item attribute",()=> {
-        const source = {modifier: "damage.Hellebarde 1"}
+        it(`should replace dot descriptor with item attribute for ${path}`, () => {
+            const source = {modifier: `${path}.Hellebarde 1`}
 
-        const result = migrateFrom0_12_20(source);
+            const result = migrateFrom0_12_20(source);
 
-        expect(result).to.deep.equal({modifier: "damage item=\"Hellebarde\" 1"});
-    });
+            expect(result).to.deep.equal({modifier: `${path} item="Hellebarde" 1`});
+        });
 
 
-    it("should replace emphasis with spaces emphasis attribute",()=> {
-        const source = {modifier: "damage emphasis='Natürliche Waffe' 1"}
+        it(`should replace emphasis with spaces emphasis attribute for ${path}`, () => {
+            const source = {modifier: `${path} emphasis='Natürliche Waffe' 1`}
 
-        const result = migrateFrom0_12_20(source);
+            const result = migrateFrom0_12_20(source);
 
-        expect(result).to.deep.equal({modifier: "damage item=\"Natürliche Waffe\" 1"});
-    });
+            expect(result).to.deep.equal({modifier: `${path} item="Natürliche Waffe" 1`});
+        });
 
-    it("should keep unaffected modifiers",()=>{
-        const source = {modifier: "FO -1,fightingSkill.melee emphasis=Hellebarde -1  ,   damage emphasis='Natürliche Waffe'  +1,   VTD +2"}
+        it(`should keep unaffected modifiers for ${path}`, () => {
+            const source = {modifier: `FO -1,fightingSkill.melee emphasis=Hellebarde -1  ,   ${path} emphasis='Natürliche Waffe'  +1,   VTD +2`}
 
-        const result = migrateFrom0_12_20(source);
+            const result = migrateFrom0_12_20(source);
 
-        expect(result).to.deep.equal({modifier: "FO -1, fightingSkill.melee emphasis=Hellebarde -1, VTD +2, damage item=\"Natürliche Waffe\" 1"});
+            expect(result).to.deep.equal({modifier: `FO -1, fightingSkill.melee emphasis=Hellebarde -1, VTD +2, ${path} item="Natürliche Waffe" 1`});
+        });
     });
 });
