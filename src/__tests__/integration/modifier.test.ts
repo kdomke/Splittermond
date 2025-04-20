@@ -5,7 +5,7 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "module/actor/actor";
 import {splittermond} from "module/config";
 import {NpcDataModel} from "module/actor/dataModel/NpcDataModel";
-import {evaluate, isGreaterZero, isLessThanZero, roll} from "../../module/actor/modifiers/expressions/scalar";
+import {evaluate, isGreaterZero, isLessThanZero, of, roll} from "../../module/actor/modifiers/expressions/scalar";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -143,11 +143,11 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.attacks.find(a => a.name === "waffenlos")?.weaponSpeed).to.equal(6);
         });
 
-        it ("should account for modifications from npc features", async () => {
+        it("should account for modifications from npc features", async () => {
             const subject = await createNpc("NpcWithFeature");
-            (subject.system as NpcDataModel).attributes.agility.updateSource({value:3});
-            (subject.system as NpcDataModel).attributes.strength.updateSource({value:5});
-            (subject.system as NpcDataModel).updateSource({damageReduction:{value:2}});
+            (subject.system as NpcDataModel).attributes.agility.updateSource({value: 3});
+            (subject.system as NpcDataModel).attributes.strength.updateSource({value: 5});
+            (subject.system as NpcDataModel).updateSource({damageReduction: {value: 2}});
             await subject.createEmbeddedDocuments("Item", [{
                 type: "npcfeature",
                 name: "Elefant Skin",
@@ -164,7 +164,7 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.damageReduction).to.equal(4);
         });
 
-        it ("should cap modifiers for skills", async ()=>{
+        it("should cap modifiers for skills", async () => {
             const subject = await createActor("Overmagiced")
             subject.updateSource({
                 system: {
@@ -191,11 +191,10 @@ export function modifierTest(context: QuenchBatchContext) {
 
             expect(subject.skills.empathy.value).to.equal(8);
         })
-
     });
 
     describe("Modifiable splinterpoint bonus", () => {
-        async function getActorWithMasteryModifying(modifier:string){
+        async function getActorWithMasteryModifying(modifier: string) {
             const subject = await createActor("SplinterpointBonusCharacter");
             (subject.system as CharacterDataModel).attributes.intuition.updateSource({initial: 2, advances: 0});
             (subject.system as CharacterDataModel).attributes.charisma.updateSource({initial: 6, advances: 0});
@@ -218,6 +217,7 @@ export function modifierTest(context: QuenchBatchContext) {
             }]);
             return subject;
         }
+
         it("should process a splinterpoint modifier correctly", async () => {
             const subject = await getActorWithMasteryModifying("splinterpoints.bonus Fertigkeit='Redegewandtheit' +${AUS}");
 
@@ -243,7 +243,7 @@ export function modifierTest(context: QuenchBatchContext) {
         });
 
 
-        it("should only use the highest splinterpoint bonus", async ()=>{
+        it("should only use the highest splinterpoint bonus", async () => {
             const subject = await getActorWithMasteryModifying("splinterpoints.bonus Fertigkeit='Redegewandtheit' ${AUS}");
             await subject.createEmbeddedDocuments("Item", [{
                 type: "mastery",
@@ -485,7 +485,7 @@ export function modifierTest(context: QuenchBatchContext) {
 
     });
 
-    describe("Roll expressions",() => {
+    describe("Roll expressions", () => {
 
         it("should be able to predict parenthetical expressions correctly", async () => {
             expect(isLessThanZero(roll(foundryApi.roll("-2d6")))).to.be.true;
@@ -501,6 +501,44 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         });
     });
+
+    describe("Item modifiers", () => {
+        it("should account for modifications on weapons", async () => {
+            const subject = await createActor("WeaponizedCharacter");
+            (subject.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).updateSource({
+                    skills: {
+                        ...subject.system.skills,
+                        blades: {points: 2, value: 6}
+                    }
+                }
+            );
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "weapon",
+                name: "Lance of Longinus",
+                system: {
+                    skill: "blades",
+                    damage: "3",
+                    equipped: true,
+                    attribute1: "strength",
+                    attribute2: "agility",
+                    weaponSpeed: 6
+                }
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+            subject.modifier.add("damage", {
+                item: "Lance of Longinus",
+                name: "Mastery",
+                type: "magic"
+            }, of(1), null, false);
+            subject.modifier.add("damage", {name: "Mystery", type: "magic"}, of(2), null, false);
+            subject.modifier.add("weaponspeed", {name: "Mystery", type: "magic"}, of(-2), null, false);
+
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("3+3");
+        });
+    });
 }
-
-

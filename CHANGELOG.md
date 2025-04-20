@@ -1,3 +1,6 @@
+## 0.12.21
+### Breaking changes
+ * Der Modifikator "damage.<Waffename>" ist kein gültiger Modifikator mehr
 ## 0.12.20
 ### Fixed
  * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte

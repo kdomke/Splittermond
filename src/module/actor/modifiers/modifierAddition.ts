@@ -186,7 +186,8 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
-                actor.modifier.add(`damage.${modifier.attributes.emphasis}`, {
+                actor.modifier.add("damage", {
+                    ...modifier.attributes,
                     name: emphasisFromName,
                     type
                 }, times(of(multiplier), modifier.value), item, false);
