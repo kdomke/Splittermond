@@ -1,5 +1,5 @@
-import Attack from "../actor/attack.js";
-import { produceAttackableItemTags } from "./tags/attackableItemTags.js";
+import Attack from "../actor/attack";
+import { produceAttackableItemTags } from "./tags/attackableItemTags";
 import SplittermondItem from "./item";
 
 // Helper type to define a constructor

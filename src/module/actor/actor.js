@@ -5,7 +5,7 @@ import Attribute from "./attribute.js";
 import Skill from "./skill.js";
 import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager";
-import Attack from "./attack.js";
+import Attack from "./attack";
 import ActiveDefense from "./active-defense.js";
 import {parseCostString} from "../util/costs/costParser";
 import {initializeSpellCostManagement} from "../util/costs/spellCostManagement";
