@@ -1,6 +1,4 @@
 import Modifier, {IModifier, ModifierAttributes, Modifiers} from "./modifier";
-import SplittermondItem from "../item/item";
-import SplittermondActor from "./actor";
 import {Expression} from "./modifiers/expressions/scalar";
 
 interface AttributeSelector {
@@ -12,7 +10,7 @@ interface AttributeSelector {
 export default class ModifierManager {
     private _modifier: Map<string, IModifier[]> = new Map();
 
-    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: object | null = null, selectable = false) {
         this.addModifier(new Modifier(path, value, attributes, origin, selectable));
     }
 

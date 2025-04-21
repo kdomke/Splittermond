@@ -1,13 +1,13 @@
-import SplittermondActor from "./actor";
-import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
 import {
     abs,
     asString,
-    condense, evaluate,
+    condense,
+    evaluate,
     type Expression,
     isGreaterZero,
-    isLessThanZero, of,
+    isLessThanZero,
+    of,
     plus
 } from "./modifiers/expressions/scalar";
 
@@ -32,7 +32,7 @@ export interface IModifier {
    readonly groupId:string;
    readonly selectable:boolean;
    readonly attributes: ModifierAttributes
-   readonly origin:SplittermondItem|SplittermondActor|null;
+   readonly origin: object|null;
 }
 
 export default class Modifier implements IModifier {
@@ -50,7 +50,7 @@ export default class Modifier implements IModifier {
         public readonly path:string,
         public readonly value:Expression,
         public readonly attributes:ModifierAttributes,
-        public readonly origin:SplittermondItem|SplittermondActor|null = null,
+        public readonly origin:object|null = null,
         public readonly selectable = false) {
         this.selectable = selectable;
         this._isBonus = isGreaterZero(value) ?? true; //Assume a bonus if result is unknown
