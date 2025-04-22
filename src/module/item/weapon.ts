@@ -1,14 +1,22 @@
-import ActiveDefense from "../actor/active-defense.js";
-import AttackableItem from "./attackable-item.ts";
-import SplittermondPhysicalItem from "./physical.js";
+import ActiveDefense from "module/actor/active-defense";
+import AttackableItem from "module/item/attackable-item";
+import SplittermondPhysicalItem from "module/item/physical";
+import {WeaponDataModel} from "module/item/dataModel/WeaponDataModel";
 
 
 export default class SplittermondWeaponItem extends AttackableItem(SplittermondPhysicalItem) {
+
+    //overwrite type
+    declare public system: WeaponDataModel;
+
+    //we cannot define this field; Foundry does weird partial constructing of classes with documents that may delete a field
+    declare private activeDefense: ActiveDefense[];
 
     prepareBaseData() {
         super.prepareBaseData()
         this.activeDefense = [];
     }
+
     prepareActorData() {
         super.prepareActorData();
         if (this.system.equipped && this.system.features.toLowerCase().includes("unhandlich")) {
@@ -18,7 +26,7 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
     }
 
     prepareActiveDefense() {
-        if (!this.system.equipped && this.system.damageLevel <= 1) return;
+        if (!this.system.equipped && (this.system.damageLevel ?? 0) <= 1) return;
 
         this.attacks.forEach(attack => {
             if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skill.id)) {
@@ -28,5 +36,5 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
 
         this.activeDefense.forEach(d => this.actor.activeDefense.defense.push(d));
     }
-    
+
 }
