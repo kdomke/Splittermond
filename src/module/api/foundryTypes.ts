@@ -84,6 +84,7 @@ declare global {
     class Item extends FoundryDocument {
         readonly actor: Actor
         name: string;
+        img: string
         type: string;
         system: Record<string, any>
     }
