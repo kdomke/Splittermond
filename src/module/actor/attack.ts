@@ -6,51 +6,68 @@ import {splittermond} from "../config";
 import {initMapper} from "../util/LanguageMapper";
 import {MasteryDataModel} from "../item/dataModel/MasteryDataModel";
 
+type Options<T extends object> = { [K in keyof T]+?: T[K]| null | undefined };
 interface AttackItem {
     id: string;
     img: string;
     name: string;
     type: string;
-    system: AttackItemData & { secondaryAttack?: AttackItemData };
+    system: Options<AttackItemData> & { secondaryAttack?: Options<AttackItemData> };
 }
 
-//most nulls here are due to secondary attacks
 interface AttackItemData {
-    skill?: string|null;
-    attribute1?: string|null;
-    attribute2?: string|null;
-    skillValue?: number | null;
-    minAttributes?: string|null;
-    skillMod?: number|null;
-    damageLevel?: number|null;
-    range?: number|null;
-    features?: string|null;
-    damage?: string|null;
-    weaponSpeed?: number|null;
-    damageType?: string|null;
-    costType?: string|null;
+    skill: string;
+    attribute1: string;
+    attribute2: string;
+    skillValue: number;
+    minAttributes: string;
+    skillMod: number;
+    damageLevel: number;
+    range: number;
+    features: string;
+    damage: string;
+    weaponSpeed: number;
+    damageType: string;
+    costType: string;
 }
+
+function withDefaults(data: Options<AttackItemData>): AttackItemData {
+    return {
+        //@formatter:off
+        get skill() {return data.skill ?? ""},
+        get attribute1() {return data.attribute1 ?? ""},
+        get attribute2(){ return data.attribute2 ?? ""},
+        get skillValue() { return data.skillValue ?? 0},
+        get minAttributes() {return data.minAttributes ?? ""},
+        get skillMod() {return data.skillMod ?? 0},
+        get damageLevel() {return data.damageLevel ?? 0},
+        get range() {return data.range ?? 0},
+        get features() {return data.features ?? ""},
+        get damage() {return data.damage ?? "1W6+1"},
+        get weaponSpeed() {return data.weaponSpeed ?? 7},
+        get damageType() {return data.damageType ?? "physical"},
+        get costType() {return data.costType ?? "V"},
+        //@formatter:on
+    };
+}
+
 
 const attributeMapper = initMapper(splittermond.attributes)
     .withTranslator(a => `splittermond.attribute.${a}.long`)
     .andOtherMappers(a => `splittermond.attribute.${a}.short`)
     .build();
 
-declare const game: any;
 declare function duplicate<T extends object>(obj: T): T;
 
 export default class Attack {
+    private readonly item: AttackItem;
     private readonly isSecondaryAttack: boolean;
-    private readonly item: AttackItem
+    private readonly attackData: AttackItemData;
 
     private readonly id: string;
     public readonly img: string;
     public readonly name: string;
     public readonly skill: Skill;
-    public readonly range: number;
-    public readonly features: string;
-    private readonly _damage: string;
-    private readonly _weaponSpeed: number;
     private readonly editable: boolean;
     private readonly deletable: boolean;
 
@@ -61,32 +78,34 @@ export default class Attack {
      * @param  secondaryAttack Generate secondary attack of item
      */
     constructor(private readonly actor: SplittermondActor, item: AttackItem, secondaryAttack = false) {
-        this.item = item;
         this.isSecondaryAttack = secondaryAttack;
-        const attackData = secondaryAttack && item.system.secondaryAttack ?
-            item.system.secondaryAttack : item.system;
+        this.attackData = withDefaults(secondaryAttack && item.system.secondaryAttack ?
+            item.system.secondaryAttack : item.system);
+
+        this.editable = ["weapon", "shield", "npcattack"].includes(item.type);
+        this.deletable = ["npcattack"].includes(item.type);
+        this.id = !this.isSecondaryAttack ? item.id : `${item.id}_secondary`;
+        this.img = item.img;
+        this.name = !this.isSecondaryAttack ? item.name : `${item.name} (${foundryApi.localize(`splittermond.skillLabel.${this.attackData.skill}`)})`;
+        this.skill = new Skill(this.actor, (this.attackData.skill || this.name), this.attackData.attribute1, this.attackData.attribute2, this.attackData.skillValue);
+        this.skill.addModifierPath(`skill.${this.id}`);
+        this.item = item
 
 
         let minAttributeMalus = 0;
-        (attackData.minAttributes || "").split(",").forEach(aStr => {
-            let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
-            if (temp) {
-                let attr = attributeMapper().toCode(temp[1]);
+        this.attackData.minAttributes.split(",").forEach(aStr => {
+            const attribute = aStr.match(/^\S+(?=\s)/)?.[0]
+            const minAttributeValue = parseInt(aStr.match(/([0-9]+)$/)?.[0] ?? "0");
+            if (attribute) {
+                let attr = attributeMapper().toCode(attribute);
                 if (attr) {
-                    let diff = parseInt(this.actor.attributes[attr].value) - parseInt(temp[2] || "0");
+                    let diff = parseInt(this.actor.attributes[attr].value) - minAttributeValue;
                     if (diff < 0) {
                         minAttributeMalus += diff;
                     }
                 }
             }
         });
-
-
-        this.id = !this.isSecondaryAttack ? this.item.id : `${this.item.id}_secondary`;
-        this.img = this.item.img;
-        this.name = !this.isSecondaryAttack ? this.item.name : `${this.item.name} (${game.i18n.localize(`splittermond.skillLabel.${attackData.skill}`)})`;
-        this.skill = new Skill(this.actor, (attackData.skill || this.name), (attackData.attribute1 || ""), (attackData.attribute2 || ""), attackData.skillValue ?? null);
-        this.skill.addModifierPath(`skill.${this.id}`);
 
         if (minAttributeMalus) {
             this.actor.modifier.add(
@@ -109,19 +128,20 @@ export default class Attack {
             );
         }
 
-        if (attackData.skillMod) {
+        //add skill modifier if present AND greater than 0!
+        if (this.attackData.skillMod) {
             this.actor.modifier.add(
                 `skill.${this.id}`,
                 {
                     name: foundryApi.localize("splittermond.skillMod"),
                     type: "innate",
                 },
-                of(attackData.skillMod),
+                of(this.attackData.skillMod),
                 this
             );
         }
 
-        if ((this.item?.system?.damageLevel || 0) > 2) {
+        if (this.attackData.damageLevel > 2) {
             this.actor.modifier.add(
                 `skill.${this.id}`,
                 {
@@ -132,13 +152,14 @@ export default class Attack {
                 this
             );
         }
+    }
 
-        this.range = attackData.range || 0;
-        this.features = attackData.features || "";
-        this._damage = attackData.damage || "1W6+1";
-        this._weaponSpeed = attackData.weaponSpeed || 7;
-        this.editable = ["weapon", "shield", "npcattack"].includes(this.item.type);
-        this.deletable = ["npcattack"].includes(this.item.type);
+    get range(){
+        return this.attackData.range;
+    }
+
+    get features(){
+        return this.attackData.features;
     }
 
     toObject() {
@@ -162,7 +183,7 @@ export default class Attack {
 
 
     get damage() {
-        let damage = this._damage;
+        let damage = this.attackData.damage;
         let mod = this.actor.modifier.getForId("damage").notSelectable()
             .withAttributeValuesOrAbsent("item", this.item.name).getModifiers().value;
         if (this.actor.items.find(i => i.type == "mastery" && (i.system as MasteryDataModel).skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
@@ -174,15 +195,15 @@ export default class Attack {
     }
 
     get damageType() {
-        return this.item.system.damageType
+        return this.attackData.damageType
     }
 
     get costType() {
-        return this.item.system.costType;
+        return this.attackData.costType;
     }
 
     get weaponSpeed() {
-        let weaponSpeed = this._weaponSpeed;
+        let weaponSpeed = this.attackData.weaponSpeed;
         weaponSpeed -= this.actor.modifier.getForId("weaponspeed")
             .withAttributeValuesOrAbsent("item", this.item.id, this.item.name).getModifiers().value;
         if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
@@ -207,7 +228,7 @@ export default class Attack {
         const attackRollOptions = {
             ...duplicate(options),
             type: "attack",
-            title:null,
+            title: null,
             subtitle: this.item.name,
             difficulty: "VTD",
             preSelectedModifier: [this.item.name],
