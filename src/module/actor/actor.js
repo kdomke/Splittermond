@@ -395,16 +395,19 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
+                type:"not-an-item",
                 name: game.i18n.localize("splittermond.weaponless"),
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
-                skill: "melee",
-                attribute1: "agility",
-                attribute2: "strength",
-                weaponSpeed: 5,
-                features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
-                damage: "1W6",
-                damageType: "physical",
-                costType: isInjuring ? "V" : "E"
+                system: {
+                    skill: "melee",
+                    attribute1: "agility",
+                    attribute2: "strength",
+                    weaponSpeed: 5,
+                    features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
+                    damage: "1W6",
+                    damageType: "physical",
+                    costType: isInjuring ? "V" : "E"
+                }
             }));
         }
     }
