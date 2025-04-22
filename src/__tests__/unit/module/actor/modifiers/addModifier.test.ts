@@ -186,8 +186,8 @@ describe('addModifier', () => {
     it('should handle damage modifiers', () => {
         addModifier(actor, item, 'Damage', 'Damage/fire +5');
         expect(modifierManager.add.lastCall.args).to.have.deep.members([
-            'damage.fire',
-            {name: 'Damage', type: null},
+            'damage',
+            {name: 'Damage', type: null, emphasis: 'fire'},
             of(5),
             item,
             false

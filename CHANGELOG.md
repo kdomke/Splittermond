@@ -1,3 +1,8 @@
+## 0.12.21
+### Breaking changes
+ * Der Modifikator `damage.<Waffename>` ist kein gültiger Modifikator mehr
+ * Der Modifikator `weaponspeed.<Waffename>` ist kein gültiger Modifikator mehr
+ * Ersatz für beide ist `damage item="Waffename"` bzw. `weaponspeed item="Waffename"`
 ## 0.12.20
 ### Fixed
  * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte

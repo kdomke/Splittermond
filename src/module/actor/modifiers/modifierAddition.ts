@@ -158,8 +158,12 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 data.focusRegeneration.bonus += evaluate(times(of(multiplier), modifier.value));
                 break;
             case "lowerfumbleresult":
-                let skill = "skill" in item.system && item.system.skill ? item.system?.skill : "*";
-                addModifierHelper(modifier.path + "/" + skill, times(of(multiplier), modifier.value), modifier.attributes, "");
+                if (!("skill" in modifier.attributes) && "skill" in item.system && item.system.skill) {
+                    modifier.attributes.skill = item.system.skill;
+                } else if ("skill" in modifier.attributes) {
+                    modifier.attributes.skill = normalizeDescriptor(modifier.attributes.skill).usingMappers("skills").do();
+                }
+                addModifierHelper(modifier.path, times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "generalskills":
                 //Within the foreach function the compiler cannot figure out that the type guard happens first and complains
@@ -182,7 +186,8 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
-                actor.modifier.add(`damage.${modifier.attributes.emphasis}`, {
+                actor.modifier.add("damage", {
+                    ...modifier.attributes,
                     name: emphasisFromName,
                     type
                 }, times(of(multiplier), modifier.value), item, false);

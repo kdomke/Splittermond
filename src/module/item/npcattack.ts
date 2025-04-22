@@ -1,8 +1,15 @@
-import AttackableItem from "./attackable-item.ts";
-import SplittermondItem from "./item.js";
-import ActiveDefense from "../actor/active-defense.js";
+import AttackableItem from "module/item/attackable-item";
+import SplittermondItem from "module/item/item";
+import ActiveDefense from "module/actor/active-defense";
+import {NpcAttackDataModel} from "module/item/dataModel/NpcAttackDataModel";
 
 export default class SplittermondNPCAttackItem extends AttackableItem(SplittermondItem) {
+
+    //overwrite type
+    declare public system: NpcAttackDataModel
+
+    //we cannot define this field; Foundry does weird partial constructing of classes with documents that may delete a field
+    declare private activeDefenses: ActiveDefense[];
 
     prepareBaseData() {
         super.prepareBaseData()

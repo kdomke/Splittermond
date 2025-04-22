@@ -1,7 +1,5 @@
-import Modifier, {IModifier, ModifierAttributes} from "./modifier";
-import SplittermondItem from "../item/item";
-import SplittermondActor from "./actor";
-import {of, plus, evaluate, Expression} from "./modifiers/expressions/scalar";
+import Modifier, {IModifier, ModifierAttributes, Modifiers} from "./modifier";
+import {Expression} from "./modifiers/expressions/scalar";
 
 interface AttributeSelector {
     key: string,
@@ -12,10 +10,7 @@ interface AttributeSelector {
 export default class ModifierManager {
     private _modifier: Map<string, IModifier[]> = new Map();
 
-    constructor() {
-    }
-
-    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: SplittermondItem | SplittermondActor | null = null, selectable = false) {
+    add(path:string, attributes:  ModifierAttributes, value: Expression, origin: object | null = null, selectable = false) {
         this.addModifier(new Modifier(path, value, attributes, origin, selectable));
     }
 
@@ -24,53 +19,6 @@ export default class ModifierManager {
             this._modifier.set(modifier.groupId, []);
         }
         this._modifier.get(modifier.groupId)!.push(modifier)
-    }
-
-
-    /**
-     * @deprecated Do not use with multiple values
-     */
-    public value(groupId:string|string[], attributeSelectors: AttributeSelector[] = [], selectable: boolean | null = null) {
-        if (!Array.isArray(groupId)) {
-            groupId = [groupId];
-        }
-
-        return groupId.map(id => this.singleValue(id, attributeSelectors, selectable))
-            .reduce((acc, value) => acc + value, 0);
-    }
-
-    private singleValue(groupId: string, attributeSelectors: AttributeSelector[] = [],selectable: boolean | null = null) {
-        const sum = this.getModifiers(groupId, attributeSelectors, selectable)
-            .map(mod => mod.value)
-            .reduce((acc, value) => plus(acc, value), of(0))
-        return evaluate(sum)
-    }
-
-
-    selectable(groupId: string | string[], attributeSelectors: AttributeSelector[] = []) {
-        if (!Array.isArray(groupId)) {
-            groupId = [groupId];
-        }
-
-        return groupId.flatMap(id =>this.getModifiers(id, attributeSelectors, true))
-            .reduce((acc, mod) => {
-                acc[mod.attributes.name] = plus((acc[mod.attributes.name] || of(0)), mod.value);
-                return acc;
-            }, {} as Record<string, Expression>);
-    }
-
-    /**
-     * @deprecated use getId or getModifiers
-     */
-    static(id: string | string[]) {
-        if (!Array.isArray(id)) {
-            id = [id];
-        }
-
-        return id.reduce((acc, p) => {
-            acc.push(...(this._modifier.get(p) ?? []).filter(modifier => !modifier.selectable));
-            return acc;
-        }, [] as IModifier[]);
     }
 
     getForIds(...groupIds: string[]) {
@@ -140,11 +88,7 @@ class AttributeBuilder {
     }
 
     getModifiers() {
-        return this.manager.getModifiers(this.groupId, this._attributes, this._selectable)
-    }
-
-    value(){
-        return this.manager.value(this.groupId, this._attributes, this._selectable);
+        return Modifiers.from(this.manager.getModifiers(this.groupId, this._attributes, this._selectable))
     }
 }
 
@@ -164,11 +108,6 @@ class MassExtractor {
     }
 
     getModifiers() {
-        return this.groupIds.flatMap(id => this.manager.getModifiers(id, [], this._selectable));
-    }
-
-    value():number{
-        return this.groupIds.flatMap(id => this.manager.value(id, [], this._selectable))
-            .reduce((acc, value) => acc + value, 0);
+        return Modifiers.from(this.groupIds.flatMap(id => this.manager.getModifiers(id, [], this._selectable)));
     }
 }

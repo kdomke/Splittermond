@@ -126,7 +126,8 @@
         "emphasis": "Schwerpunkt",
         "value": "Wert",
         "damageType": "Schadensart",
-        "skill": "Fertigkeit"
+        "skill": "Fertigkeit",
+        "item": "Objekt"
       },
       "parseMessages": {
         "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",

@@ -5,7 +5,7 @@ import Attribute from "./attribute.js";
 import Skill from "./skill.js";
 import DerivedValue from "./derived-value.js";
 import ModifierManager from "./modifier-manager";
-import Attack from "./attack.js";
+import Attack from "./attack";
 import ActiveDefense from "./active-defense.js";
 import {parseCostString} from "../util/costs/costParser";
 import {initializeSpellCostManagement} from "../util/costs/spellCostManagement";
@@ -201,7 +201,8 @@ export default class SplittermondActor extends Actor {
     }
 
     get bonusCap() {
-        return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 + this.modifier.value("bonuscap");
+        return this.type === "npc" ? 6 : this.system.experience.heroLevel + 2 +
+            this.modifier.getForId("bonuscap").getModifiers().value;
     }
 
     /**@return {{value:number, max:number}}*/
@@ -237,7 +238,7 @@ export default class SplittermondActor extends Actor {
         this._prepareActiveDefense();
 
         if (this.type === "character") {
-            this.system.splinterpoints.max += this.modifier.value("splinterpoints");
+            this.system.splinterpoints.max += this.modifier.getForId("splinterpoints").getModifiers().value;
         }
 
 
@@ -394,16 +395,19 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
+                type:"not-an-item",
                 name: game.i18n.localize("splittermond.weaponless"),
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
-                skill: "melee",
-                attribute1: "agility",
-                attribute2: "strength",
-                weaponSpeed: 5,
-                features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
-                damage: "1W6",
-                damageType: "physical",
-                costType: isInjuring ? "V" : "E"
+                system: {
+                    skill: "melee",
+                    attribute1: "agility",
+                    attribute2: "strength",
+                    weaponSpeed: 5,
+                    features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
+                    damage: "1W6",
+                    damageType: "physical",
+                    costType: isInjuring ? "V" : "E"
+                }
             }));
         }
     }
@@ -486,19 +490,19 @@ export default class SplittermondActor extends Actor {
     }
 
     get tickMalus() {
-        return Math.max(this.modifier.value("tickmalus.shield"), 0)
-            + Math.max(this.modifier.value("tickmalus.armor"), 0)
-            + Math.max(this.modifier.value("tickmalus"), 0);
+        return Math.max(this.modifier.getForId("tickmalus.shield").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("tickmalus.armor").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("tickmalus").getModifiers().value, 0);
     }
 
     get handicap() {
-        return Math.max(this.modifier.value("handicap.shield"), 0)
-            + Math.max(this.modifier.value("handicap.armor"), 0)
-            + Math.max(this.modifier.value("handicap"), 0);
+        return Math.max(this.modifier.getForId("handicap.shield").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("handicap.armor").getModifiers().value, 0)
+            + Math.max(this.modifier.getForId("handicap").getModifiers().value, 0);
     }
 
     get damageReduction() {
-        return this.modifier.value("damagereduction");
+        return this.modifier.getForId("damagereduction").getModifiers().value;
     }
 
     /**
@@ -1029,8 +1033,8 @@ export default class SplittermondActor extends Actor {
 
         let defaultTable = "sorcerer";
         eg = Math.abs(eg);
-        let lowerFumbleResult = this.modifier.value("lowerfumbleresult/" + skill)
-        lowerFumbleResult += this.modifier.value("lowerfumbleresult/*");
+        const lowerFumbleResult = this.modifier.getForId("lowerfumbleresult").notSelectable()
+            .withAttributeValuesOrAbsent("skill",skill).getModifiers().value;
         if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
             defaultTable = "priest";
         }

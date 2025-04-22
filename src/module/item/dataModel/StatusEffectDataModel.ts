@@ -2,7 +2,7 @@ import {DataModelSchemaType, SplittermondDataModel} from "../../data/Splittermon
 import { fields } from "../../data/SplittermondDataModel";
 import {getDescriptorFields} from "./commonFields";
 import SplittermondItem from "../item";
-import {migrateFrom0_12_11, migrateFrom0_12_13} from "./migrations";
+import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
 
 function StatusEffectDataModelSchema() {
     return {
@@ -23,6 +23,7 @@ export class StatusEffectDataModel extends SplittermondDataModel<StatusEffectDat
     static migrateData(source:unknown){
         source = migrateFrom0_12_11(source);
         source = migrateFrom0_12_13(source);
+        source = migrateFrom0_12_20(source);
         return super.migrateData(source);
     }
 }

@@ -1,7 +1,15 @@
-import SplittermondActor from "./actor";
-import SplittermondItem from "../item/item";
 import {TooltipFormula} from "../util/tooltip";
-import {abs, asString, condense, type Expression, isGreaterZero, isLessThanZero} from "./modifiers/expressions/scalar";
+import {
+    abs,
+    asString,
+    condense,
+    evaluate,
+    type Expression,
+    isGreaterZero,
+    isLessThanZero,
+    of,
+    plus
+} from "./modifiers/expressions/scalar";
 
 export interface ModifierAttributes {
     name:string;
@@ -24,7 +32,7 @@ export interface IModifier {
    readonly groupId:string;
    readonly selectable:boolean;
    readonly attributes: ModifierAttributes
-   readonly origin:SplittermondItem|SplittermondActor|null;
+   readonly origin: object|null;
 }
 
 export default class Modifier implements IModifier {
@@ -42,7 +50,7 @@ export default class Modifier implements IModifier {
         public readonly path:string,
         public readonly value:Expression,
         public readonly attributes:ModifierAttributes,
-        public readonly origin:SplittermondItem|SplittermondActor|null = null,
+        public readonly origin:object|null = null,
         public readonly selectable = false) {
         this.selectable = selectable;
         this._isBonus = isGreaterZero(value) ?? true; //Assume a bonus if result is unknown
@@ -90,4 +98,48 @@ export default class Modifier implements IModifier {
         return this.attributes.type;
     }
 
+}
+
+export class Modifiers extends Array<IModifier>{
+    constructor(...args:IModifier[]) {
+        super(...args);
+        Object.setPrototypeOf(this, Modifiers.prototype);
+    }
+
+    static from(modifiers:ArrayLike<IModifier>|Iterable<IModifier>) {
+        return new Modifiers(...Array.from(modifiers));
+    }
+
+    get groupId() {
+        return this.map(mod => mod.groupId).join(",")
+    }
+
+    get selectable() {
+        return this.some(mod => mod.selectable);
+    }
+
+    get nameForDisplay() {
+        return this.map(mod => mod.attributes).join(",")
+    }
+
+    get types():string[] {
+        const types = new Set<string>();
+        this.map(mod => mod.attributes.type)
+            .filter(t => t !== null && t !== undefined)
+            .forEach(t => types.add(t))
+        return Array.from(types);
+    }
+
+    get value(){
+        return evaluate(this.map(mod => mod.value)
+            .reduce((acc, value) => plus(acc,value), of(0)));
+    }
+
+    filter(predicate: (value: IModifier, index: number, array: IModifier[]) => boolean, thisArg?: any): Modifiers {
+        return new Modifiers(...super.filter(predicate, thisArg));
+    }
+
+    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
+        this.forEach(mod => mod.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix));
+    }
 }

@@ -1,6 +1,9 @@
-import Attack from "../actor/attack.js";
-import { produceAttackableItemTags } from "./tags/attackableItemTags.js";
+import Attack from "../actor/attack";
+import { produceAttackableItemTags } from "./tags/attackableItemTags";
 import SplittermondItem from "./item";
+import SplittermondShieldItem from "./shield";
+import SplittermondWeaponItem from "./weapon";
+import SplittermondNPCAttackItem from "./npcattack";
 
 // Helper type to define a constructor
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -23,6 +26,10 @@ function AttackableItem<TBase extends Constructor<SplittermondItem>>(Base: TBase
             const isUnequipped = !("equipped" in this.system  && this.system.equipped);
             if ( isUnequipped && this.type !== "npcattack") {
                 return;
+            }
+            if(!isAttackItem(this)) {
+               console.warn(`Splittermond | Item ${this.name} was declared attackable but is not a valid attack item!`);
+               return;
             }
 
             this.attacks.push(new Attack(this.actor, this));
@@ -47,6 +54,11 @@ function AttackableItem<TBase extends Constructor<SplittermondItem>>(Base: TBase
             );
         }
     };
+}
+
+function isAttackItem(item: SplittermondItem): item is SplittermondNPCAttackItem|SplittermondShieldItem|SplittermondWeaponItem {
+    return ["npcattack", "shield", "weapon"].includes(item.type);
+
 }
 
 export default AttackableItem;

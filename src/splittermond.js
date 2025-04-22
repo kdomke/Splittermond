@@ -1,36 +1,36 @@
-import SplittermondActor  from "./module/actor/actor.js";
-import SplittermondItem from "./module/item/item.js";
-import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet.js";
-import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet.js";
-import SplittermondItemSheet from "./module/item/sheets/item-sheet.js";
-import SplittermondSpellSheet from "./module/item/sheets/spell-sheet.js";
-import SplittermondWeaponSheet from "./module/item/sheets/weapon-sheet.js";
-import SplittermondShieldSheet from "./module/item/sheets/shield-sheet.js";
-import SplittermondArmorSheet from "./module/item/sheets/armor-sheet.js";
-import SplittermondAttackSheet from "./module/item/sheets/attack-sheet.js";
-import {splittermond} from "./module/config.js";
-import * as Dice from "./module/util/dice.js"
-import * as Macros from "./module/util/macros.js"
-import SplittermondCombat from "./module/combat/combat.js";
-import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker.js";
-import ItemImporter from "./module/util/item-importer.js";
-import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
-import {registerRequestedSystemSettings} from "./module/settings.ts";
-import TickBarHud from "./module/apps/tick-bar-hud.js";
+import SplittermondActor  from "./module/actor/actor";
+import SplittermondItem from "./module/item/item";
+import SplittermondCharacterSheet from "./module/actor/sheets/character-sheet";
+import SplittermondNPCSheet from "./module/actor/sheets/npc-sheet";
+import SplittermondItemSheet from "./module/item/sheets/item-sheet";
+import SplittermondSpellSheet from "./module/item/sheets/spell-sheet";
+import SplittermondWeaponSheet from "./module/item/sheets/weapon-sheet";
+import SplittermondShieldSheet from "./module/item/sheets/shield-sheet";
+import SplittermondArmorSheet from "./module/item/sheets/armor-sheet";
+import SplittermondAttackSheet from "./module/item/sheets/attack-sheet";
+import {splittermond} from "./module/config";
+import * as Dice from "./module/util/dice"
+import * as Macros from "./module/util/macros"
+import SplittermondCombat from "./module/combat/combat";
+import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker";
+import ItemImporter from "./module/util/item-importer";
+import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser";
+import {registerRequestedSystemSettings} from "./module/settings";
+import TickBarHud from "./module/apps/tick-bar-hud";
 
-import {init as quenchTestsInit} from "./__tests__/integration/quench.ts";
-import {chatActionFeature} from "./module/util/chat/chatActionFeature.ts";
-import SplittermondWeaponItem from "./module/item/weapon.js";
-import SplittermondShieldItem from "./module/item/shield.js";
-import SplittermondArmorItem from "./module/item/armor.js";
-import SplittermondSpellItem from "./module/item/spell.js";
-import SplittermondEquipmentItem from "./module/item/equipment.js";
-import SplittermondNPCAttackItem from "./module/item/npcattack.js";
-import SplittermondMastery from "./module/item/mastery.js";
-import {referencesUtils} from "./module/data/references/referencesUtils.ts";
+import {init as quenchTestsInit} from "./__tests__/integration/quench";
+import {chatActionFeature} from "./module/util/chat/chatActionFeature";
+import SplittermondWeaponItem from "./module/item/weapon";
+import SplittermondShieldItem from "./module/item/shield";
+import SplittermondArmorItem from "./module/item/armor";
+import SplittermondSpellItem from "./module/item/spell";
+import SplittermondEquipmentItem from "./module/item/equipment";
+import SplittermondNPCAttackItem from "./module/item/npcattack";
+import SplittermondMastery from "./module/item/mastery";
+import {referencesUtils} from "./module/data/references/referencesUtils";
 import {foundryApi} from "./module/api/foundryApi";
-import {canEditMessageOf} from "./module/util/chat.js";
-import "./module/apps/token-action-bar.js";
+import {canEditMessageOf} from "./module/util/chat";
+import "./module/apps/token-action-bar";
 
 import './less/splittermond.less';
 import {initTheme} from "./module/theme";
@@ -38,7 +38,7 @@ import {CharacterDataModel} from "./module/actor/dataModel/CharacterDataModel";
 import {NpcDataModel} from "./module/actor/dataModel/NpcDataModel";
 import {initializeItem} from "./module/item";
 import {DamageInitializer} from "./module/util/chat/damageChatMessage/initDamage";
-import {CostBase} from "./module/util/costs/costTypes.js";
+import {CostBase} from "./module/util/costs/costTypes";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {

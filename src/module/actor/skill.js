@@ -8,6 +8,13 @@ import {asString} from "module/actor/modifiers/expressions/scalar";
 
 
 export default class Skill extends Modifiable {
+    /**
+     * @param {SplittermondActor} actor
+     * @param {SplittermondSkill} skill
+     * @param {SplittermondAttribute|null} attribute1
+     * @param {SplittermondAttribute|null} attribute2
+     * @param {number|null} skillValue
+     */
     constructor(actor, skill, attribute1 = "", attribute2 = "", skillValue = null) {
         super(actor, [skill.toLowerCase().trim(), "woundmalus"]);
         this.id = skill.toLowerCase().trim();

@@ -1,16 +1,23 @@
-import SplittermondPhysicalItem from "./physical.js";
-import AttackableItem from "./attackable-item.ts";
-import ActiveDefense from "../actor/active-defense.js";
-import Skill from "../actor/skill.js";
+import SplittermondPhysicalItem from "./physical";
+import AttackableItem from "./attackable-item";
+import ActiveDefense from "../actor/active-defense";
+import Skill from "../actor/skill";
 import {of} from "../actor/modifiers/expressions/scalar";
+import {ShieldDataModel} from "./dataModel/ShieldDataModel";
+import {splittermond} from "../config";
+import {foundryApi} from "../api/foundryApi";
 
 export default class SplittermondShieldItem extends AttackableItem(SplittermondPhysicalItem) {
+
+    //overwrite type
+    declare public system: ShieldDataModel
+
+    //we cannot define this field; Foundry does weird partial constructing of classes with documents that may delete a field
+    declare private activeDefenses: ActiveDefense[];
 
     prepareBaseData() {
         super.prepareBaseData();
         this.activeDefenses = [];
-        this.system.attribute1 = "agility";
-        this.system.attribute2 = "strength";
     }
 
     prepareActorData() {
@@ -53,7 +60,7 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
 
 
     prepareActiveDefense() {
-        if (!this.system.equipped && this.system.damageLevel <= 1) return;
+        if (!this.system.equipped && (this.system.damageLevel ?? 0) <= 1) return;
 
         let skill = new Skill(this.actor, this.system.skill, "intuition", "strength");
         this.activeDefenses.push(new ActiveDefense(this.id, "defense", this.name, skill, this.system.features, this.img));
@@ -68,11 +75,11 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
         (this.system.minAttributes || "").split(",").forEach(aStr => {
             let temp = aStr.match(/([^ ]+)\s+([0-9]+)/);
             if (temp) {
-                let attr = CONFIG.splittermond.attributes.find(a => {
-                    return temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === game.i18n.localize(`splittermond.attribute.${a}.long`).toLowerCase()
+                let attr = splittermond.attributes.find(a => {
+                    return temp[1].toLowerCase() === foundryApi.localize(`splittermond.attribute.${a}.short`).toLowerCase() || temp[1].toLowerCase() === foundryApi.localize(`splittermond.attribute.${a}.long`).toLowerCase()
                 });
                 if (attr) {
-                    minAttributeMalus += Math.max(parseInt(temp[2] || 0) - parseInt(actor.attributes[attr].value), 0);
+                    minAttributeMalus += Math.max(parseInt(temp[2] || "0") - parseInt(actor.attributes[attr].value), 0);
                 }
             }
         });
@@ -82,11 +89,11 @@ export default class SplittermondShieldItem extends AttackableItem(SplittermondP
 
     get handicap() {
         if (!this.system.equipped) return 0;
-        return parseInt(this.system.handicap) + this.attributeMalus;
+        return this.system.handicap + this.attributeMalus;
     }
 
     get tickMalus() {
         if (!this.system.equipped) return 0;
-        return parseInt(this.system.tickMalus) + this.attributeMalus;
+        return this.system.tickMalus + this.attributeMalus;
     }
 }

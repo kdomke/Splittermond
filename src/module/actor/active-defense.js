@@ -1,5 +1,13 @@
 
 export default class ActiveDefense {
+    /**
+     * @param {string}id
+     * @param {string}type
+     * @param {string}name
+     * @param {Skill}skill
+     * @param {string}features
+     * @param {string|null}img
+     */
     constructor(id, type, name, skill, features = "", img = null) {
         this.id = id;
         this.type = type;

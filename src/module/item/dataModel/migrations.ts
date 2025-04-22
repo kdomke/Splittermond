@@ -1,3 +1,7 @@
+import {parseModifiers} from "../../actor/modifiers/parsing";
+import {validateDescriptors} from "../../actor/modifiers/parsing/validators";
+import {isRoll} from "../../api/Roll";
+
 export function migrateFrom0_12_11(source:unknown){
     if(!!source && typeof source === "object" && ("modifier" in source) && typeof(source.modifier) === "string"){
         const keep = source.modifier.split(",")
@@ -56,4 +60,45 @@ export function migrateFrom0_12_13(source:unknown){
         source.active= !!source.active;
     }
     return source;
+}
+
+export function migrateFrom0_12_20(source:unknown){
+    if(!!source && typeof source === "object" && ("modifier" in source) && typeof(source.modifier) === "string"){
+        const keep = source.modifier.split(",")
+            .map(mod => mod.trim())
+            .filter(mod => !mod.startsWith("damage") && !mod.startsWith("weaponspeed"));
+        const change = source.modifier.split(",")
+            .map(mod => mod.trim())
+            .filter(mod => mod.startsWith("damage")|| mod.startsWith("weaponspeed"))
+            .map(mapDamageModifier);
+        source.modifier = [...keep, ...change].join(", ");
+    }
+    return source;
+}
+
+function mapDamageModifier(mod: string): string {
+    const parsedModifier = parseModifiers(mod).modifiers[0];
+    const path= parsedModifier.path.split(".")[0];
+    const nameFromPath= parsedModifier.path.split(".")[1];
+    let itemName:string|null = null;
+    if(nameFromPath && nameFromPath.length > 0){
+        itemName = nameFromPath.trim();
+    } else if(parsedModifier.attributes.emphasis){
+        const errors = validateDescriptors(parsedModifier.attributes.emphasis);
+        itemName = errors.length > 0 ? null: (parsedModifier.attributes.emphasis as string);
+    }
+    let valueAsString:string;
+    if(isRoll(parsedModifier.attributes.value)){
+        valueAsString = parsedModifier.attributes.value.formula;
+    } else if(typeof parsedModifier.attributes.value === "object"){
+        valueAsString = parsedModifier.attributes.value.original;
+    } else {
+        valueAsString = `${parsedModifier.attributes.value}`;
+    }
+
+    if(itemName){
+        return `${path} item="${itemName}" ${valueAsString}`;
+    }else {
+        return `${path} ${valueAsString}`;
+    }
 }

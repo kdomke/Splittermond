@@ -15,11 +15,11 @@ export default class Modifiable {
     }
 
     get mod() {
-        const grandTotal = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().value();
+        const grandTotal = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers().value;
         const bonusEquipment = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
-            .filter(mod => mod.type === "equipment" && mod.isBonus).reduce((acc, mod) => acc + evaluate(mod.value), 0);
+            .filter(mod => mod.type === "equipment" && mod.isBonus).value
         const bonusMagic = this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
-            .filter(mod => mod.type === "magic" && mod.isBonus).reduce((acc, mod) => acc + evaluate(mod.value), 0);
+            .filter(mod => mod.type === "magic" && mod.isBonus).value
 
         const cappedEquipment = grandTotal - Math.max(0, bonusEquipment - this.actor.bonusCap);
         return cappedEquipment - Math.max(0, bonusMagic - this.actor.bonusCap);
@@ -31,6 +31,6 @@ export default class Modifiable {
 
     addModifierTooltipFormulaElements(formula, bonusPrefix = "+", malusPrefix = "-") {
         this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
-            .forEach(mod => mod.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix));
+            .addTooltipFormulaElements(formula, bonusPrefix, malusPrefix);
     }
 }

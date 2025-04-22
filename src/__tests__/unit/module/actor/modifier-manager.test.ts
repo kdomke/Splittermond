@@ -17,37 +17,29 @@ describe("ModifierManager", () => {
         manager.add("AUS", {name: "Item Bonus", type: "equipment"}, of(1), mockItem);
         manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, true);
 
-        expect(manager.value("AUS")).to.equal(3);
-        expect(manager.value("bonuscap")).to.equal(3);
-    });
-
-    it("should handle selectable modifiers", () => {
-        manager.add("speed.multiplier", {name: "Boots", type: "equipment"}, of(2), null, true);
-        manager.add("speed.multiplier", {name: "Haste", type: "magic"}, of(1), null, true);
-
-        const result = manager.selectable("speed.multiplier");
-        expect(result).to.deep.equal({"Boots": of(2), "Haste": of(1)});
+        expect(manager.getForId("AUS").getModifiers().value).to.equal(3);
+        expect(manager.getForId("bonuscap").getModifiers().value).to.equal(3);
     });
 
     it("should merge multiple paths", () => {
         manager.add("damage.physical", {name: "Sword", type: "equipment"}, of(3));
         manager.add("damage.fire", {name: "Enchantment", type: "magic"}, of(2));
 
-        const result = manager.static(["damage.physical", "damage.fire"]);
+        const result = manager.getForIds("damage.physical", "damage.fire").getModifiers();
         expect(result.length).to.equal(2);
         expect(result[0].value).to.deep.equal(of(3));
     });
 
     it("should handle empty groups", () => {
-        expect(manager.getForId("nonexistent").value()).to.equal(0);
-        expect(manager.selectable("missing")).to.deep.equal({});
+        expect(manager.getForId("nonexistent").getModifiers().value).to.equal(0);
+        expect(manager.getForIds("missing").getModifiers()).to.deep.equal([]);
     });
 
     it("should combine modifiers with same groupId", () => {
         manager.add("melee", {name: "Spell", type: "magic"}, of(1));
         manager.add("melee", {name: "Trait", type: "innate"}, of(2));
 
-        expect(manager.getForId("melee").value()).to.equal(3);
+        expect(manager.getForId("melee").getModifiers().value).to.equal(3);
     });
 
     describe("Selector Build API", () => {
@@ -63,7 +55,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValues("type", "magic", "equipment").value();
+            const result = manager.getForId("damage").withAttributeValues("type", "magic", "equipment").getModifiers().value;
             expect(result).to.equal(5);
         });
 
@@ -71,7 +63,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment", damageType: "physical"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValues("damageType", "physical").value();
+            const result = manager.getForId("damage").withAttributeValues("damageType", "physical").getModifiers().value;
             expect(result).to.equal(3);
         });
 
@@ -79,7 +71,7 @@ describe("ModifierManager", () => {
             manager.add("damage", {name: "Sword", type: "equipment", damageType: "physical"}, of(3));
             manager.add("damage", {name: "Enchantment", type: "magic"}, of(2));
 
-            const result = manager.getForId("damage").withAttributeValuesOrAbsent("damageType", "physical").value();
+            const result = manager.getForId("damage").withAttributeValuesOrAbsent("damageType", "physical").getModifiers().value;
             expect(result).to.equal(5);
         });
 
@@ -118,7 +110,7 @@ describe("ModifierManager", () => {
             manager.add("AUS", {name: "Base", type: "innate"}, of(2), null, false);
             manager.add("bonuscap", {name: "Cap", type: "innate"}, of(3), null, false);
 
-            const result = manager.getForIds("AUS", "bonuscap").value();
+            const result = manager.getForIds("AUS", "bonuscap").getModifiers().value;
 
             expect(result).to.deep.equal(5);
         });
