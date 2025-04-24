@@ -25,7 +25,7 @@ interface AttackItemData {
     skillMod: number;
     damageLevel: number;
     range: number;
-    features: string|ItemFeaturesModel;
+    features: ItemFeaturesModel;
     damage: string;
     weaponSpeed: number;
     damageType: string;
@@ -43,7 +43,7 @@ function withDefaults(data: Options<AttackItemData>): AttackItemData {
         get skillMod() {return data.skillMod ?? 0},
         get damageLevel() {return data.damageLevel ?? 0},
         get range() {return data.range ?? 0},
-        get features() {return data.features ?? ""},
+        get features() {return data.features ?? new ItemFeaturesModel({internalFeatureList:[]})},
         get damage() {return data.damage ?? "1W6+1"},
         get weaponSpeed() {return data.weaponSpeed ?? 7},
         get damageType() {return data.damageType ?? "physical"},
@@ -160,10 +160,7 @@ export default class Attack {
     }
 
     get features(){
-        if(this.attackData.features instanceof ItemFeaturesModel){
-            return this.attackData.features.features
-        }
-        return this.attackData.features;
+        return this.attackData.features.features
     }
 
     toObject() {
@@ -190,7 +187,7 @@ export default class Attack {
         let damage = this.attackData.damage;
         let mod = this.actor.modifier.getForId("damage").notSelectable()
             .withAttributeValuesOrAbsent("item", this.item.name).getModifiers().value;
-        if (this.actor.items.find(i => i.type == "mastery" && (i.system as MasteryDataModel).skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
+        if (this.actor.items.find(i => i.type == "mastery" && (i.system as MasteryDataModel).skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.attackData.features.hasFeature("Improvisiert")) {
             mod += 2;
         }
         if (mod != 0)
@@ -210,7 +207,7 @@ export default class Attack {
         let weaponSpeed = this.attackData.weaponSpeed;
         weaponSpeed -= this.actor.modifier.getForId("weaponspeed")
             .withAttributeValuesOrAbsent("item", this.item.id, this.item.name).getModifiers().value;
-        if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.features.toLowerCase().includes("improvisiert")) {
+        if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.attackData.features.hasFeature("Improvisiert")) {
             weaponSpeed -= 2;
         }
         if (["melee", "slashing", "chains", "blades", "staffs"].includes(this.skill.id))

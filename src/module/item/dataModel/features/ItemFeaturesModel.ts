@@ -19,13 +19,6 @@ export type ItemFeaturesType = DataModelSchemaType<typeof FeaturesSchema>;
 export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, SplittermondItem> {
     static defineSchema = FeaturesSchema;
 
-    /**
-     * Returns a string representation of the features suitable for display.
-     */
-    get features() {
-        return this.featureList.map(feature => `${feature}`).join(", ");
-    }
-
 
     hasFeature(feature: ItemFeature) {
         return this.internalFeatureList.some(f => f.name === feature);
@@ -35,7 +28,15 @@ export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, S
         return this.internalFeatureList
     }
 
-
+    featuresAsStringList(){
+        return this.featureList.map(f => f.toString())
+    }
+    /**
+     * Returns a string representation of the features suitable for display.
+     */
+    get features() {
+        return this.featureList.map(feature => `${feature}`).join(", ");
+    }
 
 }
 
@@ -73,7 +74,8 @@ export function parseFeatures(features: string): DataModelConstructorInput<ItemF
     const featureList = features.split(",").map((f) => f.trim());
     const parsedFeatures: DataModelConstructorInput<ItemFeatureType>[] = [];
     for (const feature of featureList) {
-        const [name, value] = feature.split(" ");
+        const name= /^\S+(?=\s+|$)/.exec(feature)?.[0] ?? feature; //we should never actually hit the right hand side, but TS cannot know that.
+        const value = /(?<=\s+)\d+$/.exec(feature)?.[0];
 
         parsedFeatures.push({
             name: normalizeName(name) as ItemFeature/*we cannot guarantee this, but we have a validation function in the constructor*/,

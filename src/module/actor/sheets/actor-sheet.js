@@ -90,6 +90,18 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
 
             });
         }
+        if (sheetData.itemsByType.shield){
+            sheetData.itemsByType.shield.forEach((item) => {
+                item.system.features = new ItemFeaturesModel(item.system.features).features;
+
+            });
+        }
+        if (sheetData.itemsByType.armor){
+            sheetData.itemsByType.armor.forEach((item) => {
+                item.system.features = new ItemFeaturesModel(item.system.features).features;
+
+            });
+        }
         if (sheetData.itemsByType.mastery) {
             sheetData.masteriesBySkill = sheetData.itemsByType.mastery.reduce((result, item) => {
                 let skill = item.system.skill || "none";

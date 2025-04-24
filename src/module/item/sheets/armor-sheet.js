@@ -1,5 +1,6 @@
 import SplittermondItemSheet from "./item-sheet.js";
 import {foundryApi} from "../../api/foundryApi";
+import {parseFeatures} from "../dataModel/features/ItemFeaturesModel.js";
 
 export default class SplittermondArmorSheet extends SplittermondItemSheet {
     static get defaultOptions() {
@@ -37,5 +38,4 @@ export default class SplittermondArmorSheet extends SplittermondItemSheet {
         ];
             
     }
-
 }

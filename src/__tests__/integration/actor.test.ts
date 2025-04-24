@@ -11,15 +11,15 @@ import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataMode
 declare const Actor: any
 
 export function actorTest(context: QuenchBatchContext) {
-    const {it, expect, afterEach} = context;
+    const {it, expect, afterEach, beforeEach} = context;
 
-    describe("Foundry API compatibility", () => {
-
-    });
     describe("Actor import", () => {
         const sandbox = sinon.createSandbox();
-        afterEach(() => {
+        let actorsToDelete: string[] = [];
+        beforeEach(() => actorsToDelete = []);
+        afterEach(async () => {
             sandbox.restore()
+            await Actor.deleteDocuments(actorsToDelete)
         });
 
 
@@ -30,6 +30,7 @@ export function actorTest(context: QuenchBatchContext) {
             let actor: Actor = sandbox.createStubInstance(SplittermondActor);
             actorSpy.callsFake(async (data) => {
                 actor = await Actor.create(data);
+                actorsToDelete.push(actor.id);
                 return Promise.resolve(actor)
             });
 
@@ -44,12 +45,11 @@ export function actorTest(context: QuenchBatchContext) {
             expect(actor.system.type).to.deep.contain(Baumwandler.expected.system.type);
             expect(actor.system.currency).to.deep.contain(Baumwandler.expected.system.currency);
             expect("img" in actor && actor.img).to.equal("icons/svg/mystery-man.svg")
-
-            await Actor.deleteDocuments([actor.id]);
         });
 
         it("can import an actor via a json import", async () => {
             const actor = await actorCreator.createCharacter({type: "character", name: "Cara Aeternia", system: {}});
+            actorsToDelete.push(actor.id);
 
             await actor.importFromJSON(JSON.stringify(Cara_Aeternia), false);
             const system = actor.system as CharacterDataModel;
@@ -177,7 +177,7 @@ export function actorTest(context: QuenchBatchContext) {
                     weaponSpeed: 5,
                     skill: "blades",
                     skillMod: 0,
-                    features: "Wurffähig",
+                    features: {internalFeatureList: [{name: "Wurffähig", value: 1}]},
                     attribute1: "agility",
                     attribute2: "intuition",
                     prepared: false,
@@ -193,12 +193,15 @@ export function actorTest(context: QuenchBatchContext) {
                         range: 5,
                         weaponSpeed: 4,
                         minAttributes: "",
-                        features: "Improvisiert, Nahkampftauglich"
+                        features: {
+                            internalFeatureList: [{name: "Improvisiert", value: 1}, {
+                                name: "Nahkampftauglich",
+                                value: 1
+                            }]
+                        }
                     },
-                } 
+                }
             )
-            
-            await Actor.deleteDocuments([actor.id]);
         });
 
 

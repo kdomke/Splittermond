@@ -46,8 +46,8 @@ export default class SplittermondWeaponSheet extends SplittermondItemSheet {
 
 
     _updateObject(event, formData) {
-        formData["system.features.internalFeatureList"] = parseFeatures(formData["system.features.features"]);
-        delete formData["system.features.features"];
+        formData["system.secondaryAttack.features.internalFeatureList"] = parseFeatures(formData["system.secondaryAttack.features.features"]);
+        delete formData["system.secondaryAttack.features.features"];
         return super._updateObject(event, formData);
     }
 

@@ -4,6 +4,7 @@ import SplittermondShieldItem from "../shield";
 import {getDefense, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
 import {SplittermondAttribute} from "../../config/attributes";
+import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
 
 function ItemShieldDataModelSchema() {
     return {
@@ -12,7 +13,7 @@ function ItemShieldDataModelSchema() {
         ...getDefense(),
         modifier: new fields.StringField({ required: true, nullable: false }),
         skill: new fields.StringField({ required: true, nullable: false }),
-        features: new fields.StringField({ required: true, nullable: false }),
+        features: new fields.EmbeddedDataField(ItemFeaturesModel,{required: true, nullable: false}),
         minAttributes: new fields.StringField({ required: true, nullable: false }),
         equipped: validatedBoolean()
     };

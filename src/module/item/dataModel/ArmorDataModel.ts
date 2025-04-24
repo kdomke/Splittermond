@@ -3,6 +3,7 @@ import { fields } from "../../data/SplittermondDataModel";
 import SplittermondShieldItem from "../shield";
 import {getDefense, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
+import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
 
 function ItemArmorDataModelSchema() {
     return {
@@ -12,7 +13,7 @@ function ItemArmorDataModelSchema() {
         modifier: new fields.StringField({ required: true, nullable: false }),
         minStr: new fields.NumberField({ required: true, nullable: true}),
         damageReduction: new fields.NumberField({ required: true, nullable: true}),
-        features: new fields.StringField({ required: true, nullable: true}),
+        features: new fields.EmbeddedDataField(ItemFeaturesModel,{required: true, nullable: false}),
         equipped: validatedBoolean()
     };
 }

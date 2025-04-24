@@ -94,4 +94,38 @@ describe("Modifier migration from 0.12.20",()=>{
             expect(result).to.deep.equal({modifier: `FO -1, fightingSkill.melee emphasis=Hellebarde -1, VTD +2, ${path} item="Natürliche Waffe" 1`});
         });
     });
+
+    it ("should map features", () => {
+        const source = {features: "Wurffähig  , Scharf       2,     Wuchtig"};
+
+        const result = migrateFrom0_12_20(source);
+
+        expect(result).to.deep.equal({
+            features: {
+                internalFeatureList: [
+                    {name: "Wurffähig"},
+                    {name: "Scharf", value: 2},
+                    {name: "Wuchtig"}
+                ]
+            }
+        });
+    });
+
+    it ("should map secondary features ", () => {
+        const source = {secondaryAttack:{features: "Wurffähig, Scharf 2, Wuchtig"}};
+
+        const result = migrateFrom0_12_20(source);
+
+        expect(result).to.deep.equal({
+            secondaryAttack: {
+                features: {
+                    internalFeatureList: [
+                        {name: "Wurffähig"},
+                        {name: "Scharf", value: 2},
+                        {name: "Wuchtig"}
+                    ]
+                }
+            }
+        });
+    });
 });
