@@ -2,6 +2,7 @@ import * as Tooltip from "../../util/tooltip.js"
 import {splittermond} from "../../config.js";
 import {foundryApi} from "../../api/foundryApi";
 import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
+import {ItemFeaturesModel} from "../../item/dataModel/features/ItemFeaturesModel.js";
 
 export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {
@@ -83,6 +84,12 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             return result;
         }, {});
 
+        if (sheetData.itemsByType.weapon){
+            sheetData.itemsByType.weapon.forEach((item) => {
+                item.system.features = new ItemFeaturesModel(item.system.features).features;
+
+            });
+        }
         if (sheetData.itemsByType.mastery) {
             sheetData.masteriesBySkill = sheetData.itemsByType.mastery.reduce((result, item) => {
                 let skill = item.system.skill || "none";

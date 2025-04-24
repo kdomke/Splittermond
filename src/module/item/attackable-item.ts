@@ -42,8 +42,16 @@ function AttackableItem<TBase extends Constructor<SplittermondItem>>(Base: TBase
         }
 
         get featuresList() {
-            return "features" in this.system ?
-                produceAttackableItemTags(this.system): [];
+            //TODO:
+            if("features" in this.system && typeof this.system.features === "string") {
+                //@ts-expect-error
+                return produceAttackableItemTags(this.system);
+            } else if ("features" in this.system && typeof this.system === "object" && this.system.features) {
+                //@ts-expect-error
+                return produceAttackableItemTags({features: this.system.features.features});
+            } else {
+                return [];
+            }
         }
 
         get hasSecondaryAttack(): boolean {

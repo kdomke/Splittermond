@@ -4,6 +4,7 @@ import {modifiers} from "./config/modifiers";
 import {skillGroups} from "./config/skillGroups";
 import {damageTypeOptions, damageTypes} from "./config/damageTypes";
 import {attributes, derivedAttributes} from "./config/attributes.js";
+import {itemFeatures} from "./config/itemFeatures.js";
 
 export const splittermond = {};
 
@@ -599,7 +600,7 @@ splittermond.itemSheetProperties.weapon = [
                 help: "splittermond.minAttributesHelpText"
             },
             {
-                field: "system.features",
+                field: "system.features.features",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -1124,56 +1125,9 @@ splittermond.fumbleTable = {
     }
 };
 
-splittermond.weaponFeatures = [ "Ablenkend",
-                                "Auslöser",
-                                "Deckung",
-                                "Defensiv",
-                                "Detonation",
-                                "Doppelwaffe",
-                                "Dornen",
-                                "Durchdringung",
-                                "Entwaffnend",
-                                "Entwaffnungsimmunität",
-                                "Entwaffnungsschutz",
-                                "Exakt",
-                                "Ferndistanz",
-                                "Freihändig",
-                                "Gehärtet",
-                                "Improvisiert",
-                                "Kälteschutz",
-                                "Kletterhilfe",
-                                "Kritisch",
-                                "Lange Waffe",
-                                "Nahkampftauglich",
-                                "Paarwaffe",
-                                "Parierwaffe",
-                                "Primitiv",
-                                "Reiterrüstung",
-                                "Reiterschild",
-                                "Reiterwaffe",
-                                "Rückkehrend",
-                                "Rückstoß",
-                                "Schadensschwund",
-                                "Scharf",
-                                "Schildwall",
-                                "Stabil",
-                                "Behinderung",
-                                "Standfestigkeit",
-                                "Stumpf",
-                                "Teilbar",
-                                "Treffsicher",
-                                "Umklammern",
-                                "Umwerfend",
-                                "Unauffällig",
-                                "Unhandlich",
-                                "Vielseitig",
-                                "Wattiert",
-                                "Wuchtig",
-                                "Wurffähig",
-                                "Wurfkörper",
-                                "Zerbrechlich",
-                                "Zweihändig"
-                            ];
+/** @deprecated use itemFeatures */
+splittermond.weaponFeatures = itemFeatures;
+splittermond.itemFeatures= itemFeatures;
 splittermond.spellEnhancement = splittermondSpellEnhancement;
 splittermond.degreeOfSuccessThresholds = {
     critical : 5

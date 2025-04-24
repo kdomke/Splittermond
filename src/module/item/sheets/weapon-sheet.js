@@ -1,5 +1,6 @@
 import SplittermondItemSheet from "./item-sheet.js";
 import {foundryApi} from "../../api/foundryApi";
+import {parseFeatures} from "../dataModel/features/ItemFeaturesModel.ts";
 
 export default class SplittermondWeaponSheet extends SplittermondItemSheet {
     static get defaultOptions() {
@@ -41,6 +42,13 @@ export default class SplittermondWeaponSheet extends SplittermondItemSheet {
 
         return data;
             
+    }
+
+
+    _updateObject(event, formData) {
+        formData["system.features.internalFeatureList"] = parseFeatures(formData["system.features.features"]);
+        delete formData["system.features.features"];
+        return super._updateObject(event, formData);
     }
 
 }

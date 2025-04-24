@@ -5,6 +5,7 @@ import SplittermondActor from "./actor";
 import {splittermond} from "../config";
 import {initMapper} from "../util/LanguageMapper";
 import {MasteryDataModel} from "../item/dataModel/MasteryDataModel";
+import {ItemFeaturesModel} from "../item/dataModel/features/ItemFeaturesModel";
 
 type Options<T extends object> = { [K in keyof T]+?: T[K]| null | undefined };
 interface AttackItem {
@@ -24,7 +25,7 @@ interface AttackItemData {
     skillMod: number;
     damageLevel: number;
     range: number;
-    features: string;
+    features: string|ItemFeaturesModel;
     damage: string;
     weaponSpeed: number;
     damageType: string;
@@ -159,6 +160,9 @@ export default class Attack {
     }
 
     get features(){
+        if(this.attackData.features instanceof ItemFeaturesModel){
+            return this.attackData.features.features
+        }
         return this.attackData.features;
     }
 
