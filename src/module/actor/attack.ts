@@ -5,7 +5,7 @@ import SplittermondActor from "./actor";
 import {splittermond} from "../config";
 import {initMapper} from "../util/LanguageMapper";
 import {MasteryDataModel} from "../item/dataModel/MasteryDataModel";
-import {ItemFeaturesModel} from "../item/dataModel/features/ItemFeaturesModel";
+import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
 
 type Options<T extends object> = { [K in keyof T]+?: T[K]| null | undefined };
 interface AttackItem {

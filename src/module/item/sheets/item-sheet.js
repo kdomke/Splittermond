@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {parseFeatures} from "../dataModel/features/ItemFeaturesModel.js";
+import {parseFeatures} from "../dataModel/propertyModels/ItemFeaturesModel.js";
 
 export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemSheet {
     static get defaultOptions() {

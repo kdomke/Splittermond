@@ -1,6 +1,6 @@
 import SplittermondItemSheet from "./item-sheet.js";
 import {foundryApi} from "../../api/foundryApi";
-import {parseFeatures} from "../dataModel/features/ItemFeaturesModel.ts";
+import {parseFeatures} from "../dataModel/propertyModels/ItemFeaturesModel.ts";
 
 export default class SplittermondWeaponSheet extends SplittermondItemSheet {
     static get defaultOptions() {

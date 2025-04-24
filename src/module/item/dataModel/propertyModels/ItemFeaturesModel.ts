@@ -71,6 +71,9 @@ export class ItemFeatureDataModel extends SplittermondDataModel<ItemFeatureType,
 }
 
 export function parseFeatures(features: string): DataModelConstructorInput<ItemFeatureType>[] {
+    if(!features) {
+        return [];
+    }
     const featureList = features.split(",").map((f) => f.trim());
     const parsedFeatures: DataModelConstructorInput<ItemFeatureType>[] = [];
     for (const feature of featureList) {

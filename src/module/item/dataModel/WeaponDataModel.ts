@@ -2,7 +2,7 @@ import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/Spl
 import SplittermondWeaponItem from "../weapon";
 import {damage, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
-import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 
 function ItemWeaponDataModelSchema() {
     return {

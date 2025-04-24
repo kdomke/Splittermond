@@ -2,7 +2,7 @@ import {DataModelSchemaType, SplittermondDataModel} from "../../data/Splittermon
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondItem from "../item";
 import {getDescriptorFields, getPhysicalProperties} from "./commonFields";
-import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 import {migrateFrom0_12_20} from "./migrations";
 
 function ItemProjectileDataModelSchema() {

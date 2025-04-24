@@ -2,7 +2,7 @@ import * as Tooltip from "../../util/tooltip.js"
 import {splittermond} from "../../config.js";
 import {foundryApi} from "../../api/foundryApi";
 import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
-import {ItemFeaturesModel} from "../../item/dataModel/features/ItemFeaturesModel.js";
+import {ItemFeaturesModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel.js";
 
 export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {

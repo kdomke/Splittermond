@@ -1,7 +1,7 @@
 import {parseModifiers} from "../../actor/modifiers/parsing";
 import {validateDescriptors} from "../../actor/modifiers/parsing/validators";
 import {isRoll} from "../../api/Roll";
-import {parseFeatures} from "./features/ItemFeaturesModel";
+import {parseFeatures} from "./propertyModels/ItemFeaturesModel";
 
 export function migrateFrom0_12_11(source: unknown) {
     if (!!source && typeof source === "object" && ("modifier" in source) && typeof (source.modifier) === "string") {

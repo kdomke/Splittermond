@@ -2,7 +2,7 @@ import { DataModelSchemaType, SplittermondDataModel } from "../../data/Splitterm
 import { fields } from "../../data/SplittermondDataModel";
 import SplittermondNpcAttackItem from "../npcattack";
 import {damage, getDescriptorFields} from "./commonFields";
-import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 import {migrateFrom0_12_20} from "./migrations";
 
 function ItemNpcAttackDataModelSchema() {

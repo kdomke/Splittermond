@@ -4,7 +4,7 @@ import SplittermondShieldItem from "../shield";
 import {getDefense, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
 import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
 import {SplittermondAttribute} from "../../config/attributes";
-import {ItemFeaturesModel} from "./features/ItemFeaturesModel";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 
 function ItemShieldDataModelSchema() {
     return {
