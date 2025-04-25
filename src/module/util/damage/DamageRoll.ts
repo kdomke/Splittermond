@@ -149,15 +149,6 @@ export class DamageRoll {
         return this.toRecords(this._features.featureList.filter(f => this.activeFeatures.has(f.name)));
     };
 
-    toObject(): DamageRollObjectType {
-        return {
-            nDice: this._nDice,
-            nFaces: this._nFaces,
-            damageModifier: this._damageModifier,
-            features: this.toRecords(this._features.featureList),
-        }
-    }
-
     private toRecords(features: ItemFeatureDataModel[]): Record<string,DamageFeature> {
         const starter = {} as Record<string, DamageFeature>;
         return features.map(f => this.toRecord(f))

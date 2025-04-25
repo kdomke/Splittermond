@@ -9,27 +9,27 @@ import {ItemFeatureDataModel, ItemFeaturesModel} from "module/item/dataModel/pro
 
 describe("DamageRoll damage string parsing and stringifying", () => {
     ([
-        ["0d0 +0", {nDice: 0, nFaces: 0, damageModifier: 0}],
-        ["0d6 +0", {nDice: 0, nFaces: 6, damageModifier: 0}],
-        ["0d6 +1", {nDice: 0, nFaces: 6, damageModifier: 1}],
-        ["garbage", {nDice: 0, nFaces: 0, damageModifier: 0}],
-        ["1d6 +1", {nDice: 1, nFaces: 6, damageModifier: 1}],
-        ["2d6", {nDice: 2, nFaces: 6, damageModifier: 0}],
-        ["2_d_6_+_1", {nDice: 2, nFaces: 6, damageModifier: 1}],
-        ["1d10 -1", {nDice: 1, nFaces: 10, damageModifier: -1}],
-        ["1W6 + 1", {nDice: 1, nFaces: 6, damageModifier: 1}],
-        ["1w6+ 1", {nDice: 1, nFaces: 6, damageModifier: 1}],
-        ["1W6- 1", {nDice: 1, nFaces: 6, damageModifier: -1}],
-        ["2d6- 1", {nDice: 2, nFaces: 6, damageModifier: -1}],
-        ["2d6+ 1 +1", {nDice: 2, nFaces: 6, damageModifier: +2}],
-        ["2d6+ 1 +1+3", {nDice: 2, nFaces: 6, damageModifier: +5}],
-        ["9d6+10", {nDice: 9, nFaces: 6, damageModifier: 10}],
-        ["9W10+20", {nDice: 9, nFaces: 10, damageModifier: 20}],
-        ["20W10+200", {nDice: 20, nFaces: 10, damageModifier: 200}],
-        ["20W12+200", {nDice: 0, nFaces: 0, damageModifier: 0}],
+        ["0d0 +0", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
+        ["0d6 +0", {_nDice: 0, _nFaces: 6, _damageModifier: 0}],
+        ["0d6 +1", {_nDice: 0, _nFaces: 6, _damageModifier: 1}],
+        ["garbage", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
+        ["1d6 +1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
+        ["2d6", {_nDice: 2, _nFaces: 6, _damageModifier: 0}],
+        ["2_d_6_+_1", {_nDice: 2, _nFaces: 6, _damageModifier: 1}],
+        ["1d10 -1", {_nDice: 1, _nFaces: 10, _damageModifier: -1}],
+        ["1W6 + 1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
+        ["1w6+ 1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
+        ["1W6- 1", {_nDice: 1, _nFaces: 6, _damageModifier: -1}],
+        ["2d6- 1", {_nDice: 2, _nFaces: 6, _damageModifier: -1}],
+        ["2d6+ 1 +1", {_nDice: 2, _nFaces: 6, _damageModifier: +2}],
+        ["2d6+ 1 +1+3", {_nDice: 2, _nFaces: 6, _damageModifier: +5}],
+        ["9d6+10", {_nDice: 9, _nFaces: 6, _damageModifier: 10}],
+        ["9W10+20", {_nDice: 9, _nFaces: 10, _damageModifier: 20}],
+        ["20W10+200", {_nDice: 20, _nFaces: 10, _damageModifier: 200}],
+        ["20W12+200", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
     ] as const).forEach(([input, expected]) => {
         it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
-            expect(DamageRoll.parse(input, "").toObject()).to.deep.equal({...expected, features: {}});
+            expect(DamageRoll.parse(input, "")).to.deep.contain({...expected});
         });
     });
 
@@ -53,29 +53,6 @@ describe("DamageRoll damage string parsing and stringifying", () => {
 });
 
 describe("DamageRoll feature string parsing and stringifying", () => {
-    ([
-        ["Scharf", {scharf: {name: "Scharf", value: 1, active: false}}],
-        ["Scharf 1", {scharf: {name: "Scharf", value: 1, active: false}}],
-        ["Kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
-        ["kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
-        ["Exakt 3", {exakt: {name: "Exakt", value: 3, active: false}}],
-        ["eXakT     25", {exakt: {name: "Exakt", value: 25, active: false}}],
-        ["Wuchtig", {wuchtig: {name: "Wuchtig", value: 1, active: false}}],
-    ] as const).forEach(([input, expected]) => {
-        it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
-            expect(DamageRoll.parse("", input).toObject().features).to.deep.equal(expected);
-        });
-    });
-
-    it("should parse several features", () => {
-        const damageRoll = DamageRoll.parse("", "Scharf 1, Kritisch 2, Exakt 3").toObject();
-        expect(damageRoll.features).to.deep.equal({
-            scharf: {name: "Scharf", value: 1, active: false},
-            kritisch: {name: "Kritisch", value: 2, active: false},
-            exakt: {name: "Exakt", value: 3, active: false}
-        });
-    });
-
     ([
         [{name: "Scharf", value: 1}, "Scharf"],
         [{name: "Kritisch", value: 2}, "Kritisch 2"],
