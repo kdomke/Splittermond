@@ -512,7 +512,8 @@ export default class SplittermondActor extends Actor {
      */
     get protectedDamageReduction() {
         const itemsWithProtection = this.items
-            .filter(i => i.system.features?.toLowerCase().includes("stabil"))
+            .filter(i => "feature" in i.system)
+            .filter(i => i.system.features.hasFeature("Stabil"))
             .filter(i => i.system.equipped ?? false)
         if (itemsWithProtection.length === 0) {
             return 0;
