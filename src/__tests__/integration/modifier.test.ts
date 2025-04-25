@@ -527,7 +527,7 @@ export function modifierTest(context: QuenchBatchContext) {
             const rollObject = foundryApi.roll(...rollFormula);
             const evaluated = await rollObject.evaluate();
 
-            expect(rollFormula[0]).to.equal("(((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1))")
+            expect(rollFormula[0]).to.equal("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)")
             expect(evaluated.total, `${asString(expression)} should equal`).to.equal(11);
         });
     });
