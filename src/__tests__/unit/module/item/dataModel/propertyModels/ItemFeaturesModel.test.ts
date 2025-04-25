@@ -7,8 +7,17 @@ import {describe, it, beforeEach, afterEach} from "mocha";
 import {expect} from "chai";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
 import sinon from "sinon";
+import {WeaponDataModel} from "../../../../../../module/item/dataModel/WeaponDataModel";
+import SplittermondWeaponItem from "../../../../../../module/item/weapon";
+import SplittermondActor from "../../../../../../module/actor/actor";
+import ModifierManager from "../../../../../../module/actor/modifier-manager";
+import {of} from "../../../../../../module/actor/modifiers/expressions/scalar";
 
 describe("ItemFeaturesModel", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
+
     it("should provide comma separated values", () => {
         const feature1 = new ItemFeatureDataModel({name: "Scharf", value: 5});
         const feature2 = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
@@ -24,6 +33,54 @@ describe("ItemFeaturesModel", () => {
 
         expect(features.featuresAsStringList()).to.deep.equal(["Scharf 5", "Ablenkend"]);
     });
+
+    it("should account for specific modifiers", () => {
+        const internal = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
+        const parent = setupParent();
+        parent.parent!.actor.modifier.add("item.addfeature", {name:"Test", feature: "Scharf", item: "Test", type:"magic"}, of(5),null, false)
+        const features = new ItemFeaturesModel({internalFeatureList: [internal]},{parent});
+
+        expect(features.featuresAsStringList()).to.deep.equal(["Ablenkend", "Scharf 5"]);
+    });
+    it("should account for global modifiers", () => {
+        const internal = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
+        const parent = setupParent();
+        parent.parent!.actor.modifier.add("item.addfeature", {name:"Test", feature: "Scharf", type:"magic"}, of(5),null, false)
+        const features = new ItemFeaturesModel({internalFeatureList: [internal]},{parent});
+
+        expect(features.featuresAsStringList()).to.deep.equal(["Ablenkend", "Scharf 5"]);
+
+    });
+
+    it("should deduplicate modifiers", () => {
+        const internal1 = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
+        const internal2 = new ItemFeatureDataModel({name: "Scharf", value: 2});
+        const parent = setupParent();
+        parent.parent!.actor.modifier.add("item.addfeature", {name:"Test", feature: "Scharf", item: "Test", type:"magic"}, of(5),null, false)
+        const features = new ItemFeaturesModel({internalFeatureList: [internal1,internal2]},{parent});
+
+        expect(features.featuresAsStringList()).to.deep.equal(["Ablenkend", "Scharf 5"]);
+    })
+
+    it("should filter by item name", () => {
+        const internal1 = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
+        const internal2 = new ItemFeatureDataModel({name: "Scharf", value: 2});
+        const parent = setupParent();
+        parent.parent!.actor.modifier.add("item.addfeature", {name:"Test", feature: "Scharf", item: "Test2", type:"magic"}, of(5),null, false)
+        const features = new ItemFeaturesModel({internalFeatureList: [internal1,internal2]},{parent});
+
+        expect(features.featuresAsStringList()).to.deep.equal(["Ablenkend", "Scharf 2"]);
+    });
+
+    function setupParent(){
+        const parent = sandbox.createStubInstance(WeaponDataModel);
+        const actor = sandbox.createStubInstance(SplittermondActor);
+        Object.defineProperty(actor,"modifier", {value: new ModifierManager(), enumerable: true, writable: false});
+        parent.parent = sandbox.createStubInstance(SplittermondWeaponItem)
+        parent.parent.name = "Test";
+        Object.defineProperty(parent.parent,"actor", {value: actor, enumerable: true, writable: false});
+        return parent;
+    }
 });
 
 describe("ItemFeatureDataModel", () => {
@@ -32,7 +89,7 @@ describe("ItemFeatureDataModel", () => {
         expect(feature.toString()).to.equal("Scharf 5");
     });
 
-    it("should omit values if none present", () => {
+    it("should omit values if equal to 1", () => {
         const feature = new ItemFeatureDataModel({name: "Ablenkend", value: 1});
         expect(feature.toString()).to.equal("Ablenkend");
     });
@@ -101,5 +158,12 @@ describe("feature parser", () => {
         expect(result[1].name).to.equal("Improvisiert");
     });
 
+    it("should deduplicate features", () => {
+        const featureString = "Scharf 3, Improvisiert, Scharf 5";
+        const result = parseFeatures(featureString);
 
+        expect(result).to.have.lengthOf(2);
+        expect(result[0]).to.deep.equal({name: "Scharf", value: 5});
+        expect(result[1].name).to.equal("Improvisiert");
+    });
 });

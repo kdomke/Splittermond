@@ -4,6 +4,9 @@ import {ItemFeature, itemFeatures} from "../../../config/itemFeatures";
 import {splittermond} from "../../../config";
 import {DataModelConstructorInput} from "../../../api/DataModel";
 import {foundryApi} from "../../../api/foundryApi";
+import {SplittermondItemDataModel} from "../../index";
+import ModifierManager from "../../../actor/modifier-manager";
+import {evaluate} from "../../../actor/modifiers/expressions/scalar";
 
 
 function FeaturesSchema() {
@@ -17,7 +20,7 @@ function FeaturesSchema() {
 
 export type ItemFeaturesType = DataModelSchemaType<typeof FeaturesSchema>;
 
-export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, SplittermondItem> {
+export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, SplittermondItemDataModel> {
     static defineSchema = FeaturesSchema;
 
 
@@ -26,10 +29,16 @@ export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, S
     }
 
     get featureList() {
-        return this.internalFeatureList
+        const featuresFromModifier = this.getModifierManager()
+            .getForId("item.addfeature").withAttributeValuesOrAbsent("item", this.getName() ?? "").getModifiers()
+            .flatMap(m => {
+                const value = `${evaluate(m.value)}` || "";
+                return parseFeatures(`${m.attributes.feature} ${value}`)
+            }).map(f => new ItemFeatureDataModel(f));
+        return mergeDataModels(this.internalFeatureList, featuresFromModifier);
     }
 
-    featuresAsStringList() {
+    featuresAsStringList(){
         return this.featureList.map(f => f.toString())
     }
 
@@ -37,7 +46,16 @@ export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, S
      * Returns a string representation of the features suitable for display.
      */
     get features() {
-        return this.featureList.map(feature => `${feature}`).join(", ");
+        return this.featureList.map(f=> f.toString()).join(", ");
+    }
+
+    private getModifierManager(): ModifierManager {
+        const modifierManager = this.parent?.parent?.actor?.modifier;
+        return modifierManager ?? new ModifierManager();
+    }
+
+    private getName(): string | null {
+        return this.parent?.parent?.name ?? null;
     }
 
 }
@@ -86,7 +104,7 @@ export function parseFeatures(features: string): DataModelConstructorInput<ItemF
         }
         parsedFeatures.push({name, value});
     }
-    return parsedFeatures;
+    return mergeConstructorData(parsedFeatures, parsedFeatures); //remove duplicates
 }
 
 function parseName(feature: string) {
@@ -112,4 +130,25 @@ function parseValue(feature: string) {
 
 function normalizeName(name: string) {
     return splittermond.itemFeatures.find(f => f.toLowerCase() == name.trim().toLowerCase()) ?? name;
+}
+
+function mergeDataModels(one: ItemFeatureDataModel[], other: ItemFeatureDataModel[]) {
+    return merge(one, other, (x) => new ItemFeatureDataModel(x as DataModelConstructorInput<ItemFeatureType>));
+}
+function mergeConstructorData(one: DataModelConstructorInput<ItemFeatureType>[], other: DataModelConstructorInput<ItemFeatureType>[]) {
+    return merge(one, other,(x)=> x as DataModelConstructorInput<ItemFeatureType>)
+}
+
+type Mergeable = {name:string,value:number};
+function merge<T extends Mergeable>(one: T[], other: T[], constructor: (x:Mergeable)=>T) {
+    const merged = new Map<string, T>();
+    [...one, ...other].forEach(feature => {
+        if(merged.has(feature.name)){
+            const old = merged.get(feature.name)!/*we just tested for presence*/;
+            merged.set(feature.name, constructor({name:feature.name, value: Math.max(old.value , feature.value)}))
+        }else {
+            merged.set(feature.name, feature);
+        }
+    });
+    return Array.from(merged.values());
 }

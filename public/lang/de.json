@@ -127,7 +127,8 @@
         "value": "Wert",
         "damageType": "Schadensart",
         "skill": "Fertigkeit",
-        "item": "Objekt"
+        "item": "Objekt",
+        "feature": "Merkmal"
       },
       "parseMessages": {
         "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",

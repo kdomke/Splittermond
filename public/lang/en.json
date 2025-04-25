@@ -49,7 +49,8 @@
           "emphasis": "emphasis",
           "damageType": "damageType",
           "skill": "skill",
-          "item": "item"
+          "item": "item",
+          "feature": "feature"
         },
         "parseMessages": {
           "notAModifier": "Modifier '{modifier}' is not of a modifier format.",

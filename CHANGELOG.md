@@ -3,6 +3,13 @@
  * Der Modifikator `damage.<Waffename>` ist kein gültiger Modifikator mehr
  * Der Modifikator `weaponspeed.<Waffename>` ist kein gültiger Modifikator mehr
  * Ersatz für beide ist `damage item="Waffename"` bzw. `weaponspeed item="Waffename"`
+### New Features
+ * Merkmale von Waffen, Schilden, NPC Angriffen und Rüstungen erkennen jetzt Modifikatoren
+    * Modifikatoren gelten immer für primäre und sekundäre Waffenmerkmale 
+    * Modifikatoren können mit `item.addfeature` hinzugefügt werden
+    * Sie können global gelten oder mittels attribute `item="<name>" beschränkt werden`
+    * Merkmale die für gewönlich keinen Wert haben (z.B. "Ablenkend") müssen mit Wert 1 hinzugefügt werden
+    * Beispiel: `item.addfeature feature="Ablenkend" item=Schwert" 1`
 ## 0.12.20
 ### Fixed
  * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte
