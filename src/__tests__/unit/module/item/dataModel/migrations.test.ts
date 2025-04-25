@@ -103,9 +103,9 @@ describe("Modifier migration from 0.12.20",()=>{
         expect(result).to.deep.equal({
             features: {
                 internalFeatureList: [
-                    {name: "Wurffähig"},
+                    {name: "Wurffähig", value: 1},
                     {name: "Scharf", value: 2},
-                    {name: "Wuchtig"}
+                    {name: "Wuchtig", value: 1}
                 ]
             }
         });
@@ -120,9 +120,9 @@ describe("Modifier migration from 0.12.20",()=>{
             secondaryAttack: {
                 features: {
                     internalFeatureList: [
-                        {name: "Wurffähig"},
+                        {name: "Wurffähig", value: 1},
                         {name: "Scharf", value: 2},
-                        {name: "Wuchtig"}
+                        {name: "Wuchtig", value: 1}
                     ]
                 }
             }
