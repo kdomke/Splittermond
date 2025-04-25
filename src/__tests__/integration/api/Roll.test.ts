@@ -1,9 +1,13 @@
 import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 import {foundryApi} from "module/api/foundryApi";
-import {addRolls, sumRolls} from "module/api/Roll";
+import {addRolls, sumRolls, type Die as DieType} from "module/api/Roll";
 
-declare class Die {
-    results: any;
+declare class Die implements DieType{
+    results: { active: boolean; result: number; discarded?:boolean}[];
+    _evaluated: boolean;
+    faces: number;
+    modifiers: string[];
+    number: number;
 }
 
 declare class OperatorTerm {
@@ -60,7 +64,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(rollResult.total).to.equal(0);
         });
 
-        it("should have a result if not evalutated", () => {
+        it("should have a result if not evaluated", () => {
             expect(foundryApi.roll("1d6+3").result).to.contain("+ 3");
         })
 
@@ -72,7 +76,21 @@ export function foundryRollTest(context: QuenchBatchContext) {
             const rollResult = await foundryApi.roll("1d6").evaluate().then((roll) => roll.total);
             expect(rollResult).to.be.above(0);
             expect(rollResult).to.be.below(7);
-        })
+        });
+
+        it("should allow manipulation of roll terms", async () => {
+            const roll =     foundryApi.roll("998d6");
+            (roll.terms[0] as Die).number+= 1;
+            (roll.terms[0] as Die).modifiers.push("kh1");
+
+            const rollResult = await roll.evaluate();
+
+            expect((rollResult.terms[0] as Die).results.length).to.equal(999);
+            expect(rollResult.total).to.be.below(7);
+
+        });
+
+
 
         it("should produce a tooltip", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
