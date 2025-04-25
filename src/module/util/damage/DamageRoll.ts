@@ -8,13 +8,12 @@ import {
 } from "../../item/dataModel/propertyModels/ItemFeaturesModel";
 import {ItemFeature} from "../../config/itemFeatures";
 
-interface DamageRollObjectType {
+interface DamageRollConstructorInput {
     nDice: number;
     nFaces: number;
     damageModifier: number;
-    features: Record<string, DamageFeature>;
+    features: ItemFeaturesModel
 }
-type DamageRollConstructorInput = Omit<DamageRollObjectType, "features"> & {features: ItemFeaturesModel};
 
 export class DamageRoll {
 
