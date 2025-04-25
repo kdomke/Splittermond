@@ -1,0 +1,58 @@
+// noinspection SuspiciousTypeOfGuard
+
+import {
+    AbsExpression,
+    AddExpression,
+    AmountExpression, DivideExpression,
+    Expression, MultiplyExpression,
+    ReferenceExpression,
+    RollExpression,
+    SubtractExpression
+} from "./definitions";
+import {exhaustiveMatchGuard, PropertyResolver} from "../util";
+
+
+export function toRollFormula(expression: Expression): [string, Record<string, string>] {
+    if (expression instanceof AmountExpression) {
+        return [`${expression.amount}`, {}];
+    } else if (expression instanceof RollExpression) {
+        return [`${expression.value.formula}`, {}];
+    } else if (expression instanceof ReferenceExpression) {
+        return handleReferences(expression);
+    } else if (expression instanceof AbsExpression) {
+        const innerRoll = toRollFormula(expression.arg);
+        return [`abs(${innerRoll[0]})`, innerRoll[1]];
+    } else if (expression instanceof AddExpression) {
+        return handleSummation(expression, "+");
+    } else if (expression instanceof SubtractExpression) {
+        return handleSummation(expression, "-");
+    } else if (expression instanceof MultiplyExpression) {
+        return handleFactorExpressions(expression, "*");
+    } else if (expression instanceof DivideExpression) {
+        return handleFactorExpressions(expression, "/");
+    }
+    exhaustiveMatchGuard(expression)
+}
+
+const nextNumber = function* (): Generator<number> {
+    let current = 0;
+    while (true) {
+        yield current++;
+    }
+}()
+function handleReferences(expression: ReferenceExpression):[string, Record<string, string>]{
+    const uniqueId = `${expression.stringRep}${nextNumber.next().value}`;
+    return [`@${uniqueId}`, {[uniqueId]: `${new PropertyResolver().numberOrNull(expression.propertyPath, expression.source) ?? 0}`}];
+}
+
+function handleSummation(expression:{left:Expression, right:Expression}, operator:'+'|'-'):[string, Record<string, string>]{
+    const left = toRollFormula(expression.left);
+    const right = toRollFormula(expression.right);
+    return [`(${left[0]} ${operator} ${right[0]})`, {...left[1], ...right[1]}];
+}
+
+function handleFactorExpressions(expression:{left:Expression, right:Expression}, operator:'*'|'/'):[string, Record<string, string>]{
+    const left = toRollFormula(expression.left);
+    const right = toRollFormula(expression.right);
+    return [`(${left[0]} ${operator} ${right[0]})`, {...left[1], ...right[1]}];
+}

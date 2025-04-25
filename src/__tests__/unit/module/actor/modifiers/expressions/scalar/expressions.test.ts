@@ -11,7 +11,7 @@ import {
     plus,
     roll,
     ref,
-    times
+    times, toRollFormula
 } from "module/actor/modifiers/expressions/scalar";
 import {expect} from "chai";
 import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
@@ -23,14 +23,14 @@ import {AddExpression} from "module/actor/modifiers/expressions/scalar/definitio
 
 describe("Expressions", () => {
     ([
-        [abs(of(-3)), 3, of(3), "3"],
-        [of(3), 3, of(3), "3"],
-        [of(-3), -3, of(-3), "-3"],
-        [plus(of(3), of(3)), 6, of(6), "3 + 3"],
-        [minus(of(3), of(3)), 0, of(0), "3 - 3"],
-        [times(of(3), of(3)), 9, of(9), "3 \u00D7 3"],
-        [dividedBy(of(3), of(3)), 1, of(1), "3 / 3"],
-    ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
+        [abs(of(-3)), 3, of(3), "3", "abs(-3)"],
+        [of(3), 3, of(3), "3", "3"],
+        [of(-3), -3, of(-3), "-3", "-3"],
+        [plus(of(3), of(3)), 6, of(6), "3 + 3", "(3 + 3)"],
+        [minus(of(3), of(3)), 0, of(0), "3 - 3", "(3 - 3)"],
+        [times(of(3), of(3)), 9, of(9), "3 \u00D7 3", "(3 * 3)"],
+        [dividedBy(of(3), of(3)), 1, of(1), "3 / 3", "(3 / 3)"],
+    ] as const).forEach(([input, evaluated, condensed, stringRepresentation, rollRepresentation]) => {
 
         it(`simple expression ${stringRepresentation} should evaluate to ${evaluated}`, () => {
             expect(evaluate(input)).to.equal(evaluated);
@@ -44,6 +44,10 @@ describe("Expressions", () => {
             expect(asString(input)).to.equal(stringRepresentation);
         });
 
+        it(`should convert simple expression ${stringRepresentation} to roll representation`, () => {
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation,{}]);
+        })
+
         it(`should correctly estimate ${stringRepresentation} greater than zero`, () => {
             expect(isGreaterZero(input)).to.equal(evaluated > 0);
         });
@@ -54,13 +58,13 @@ describe("Expressions", () => {
     });
 
     ([
-        [times(plus(of(1), of(0)), of(1)), 1, of(1), "1"],
-        [times(minus(of(1), of(0)), of(1)), 1, of(1), "1"],
-        [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1"],
-        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) \u00D7 3"],
-        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) \u00D7 3"],
-        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) \u00D7 3"],
-        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| \u00D7 3"],
+        [times(plus(of(1), of(0)), of(1)), 1, of(1), "1", "1"],
+        [times(minus(of(1), of(0)), of(1)), 1, of(1), "1", "1"],
+        [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1", "-1"],
+        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) \u00D7 3", "((3 + 3) * 3)"],
+        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) \u00D7 3", "((4 - 3) * 3)"],
+        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) \u00D7 3", "((3 - 4) * 3)"],
+        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| \u00D7 3", "(abs((3 - 4)) * 3)"],
         [dividedBy(
             times(
                 of(2),
@@ -70,13 +74,17 @@ describe("Expressions", () => {
                 of(3),
                 minus(of(4), of(3))
             )
-        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))"],
+        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))",   "((2 * (1 + 2)) / (3 * (4 - 3)))"],
 
-    ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
+    ] as const).forEach(([input, evaluated, condensed, stringRepresentation, rollRepresentation]) => {
 
         it(`braced expression ${stringRepresentation} should evaluate to ${evaluated}`, () => {
             expect(evaluate(input)).to.equal(evaluated);
         });
+
+        it(`braced expression ${stringRepresentation} should convert to roll representation`, () => {
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation,{}]);
+        })
 
         it(`braced expression ${stringRepresentation} should condense to ${stringRepresentation}`, () => {
             expect(condense(input)).to.deep.equal(condensed);
@@ -181,6 +189,16 @@ describe("Expressions", () => {
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(asString(expression)).to.equal("(3 + ${value}) \u00D7 (4 - 3)");
         });
+
+        it("should produce a unique identifier for each reference", () => {
+            const property1 = ref("value", {value: 3}, "value");
+            const property2 = ref("value", {value: 4}, "value");
+            const expression = plus(property1, property2);
+            expect(toRollFormula(expression)).to.deep.equal(["(@value0 + @value1)", {value0: "3", value1: "4"}]);
+
+
+        });
+
     });
 });
 

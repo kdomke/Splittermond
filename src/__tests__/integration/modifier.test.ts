@@ -5,7 +5,16 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "module/actor/actor";
 import {splittermond} from "module/config";
 import {NpcDataModel} from "module/actor/dataModel/NpcDataModel";
-import {evaluate, isGreaterZero, isLessThanZero, of, roll} from "../../module/actor/modifiers/expressions/scalar";
+import {
+    abs, asString,
+    dividedBy,
+    evaluate,
+    isGreaterZero,
+    isLessThanZero, minus,
+    of, plus, ref,
+    roll,
+    times, toRollFormula
+} from "module/actor/modifiers/expressions/scalar";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -500,6 +509,27 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(isLessThanZero(roll(foundryApi.roll("2 + -1 * 3d6")))).to.be.true;
             expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         });
+
+        it("should be able to produce valid a valid roll expression", async () => {
+            //is (1*14 + |-4|/1) - (2*3 + 1)
+            const expression = minus(
+                plus(
+                    times(roll(foundryApi.roll("1d1")), of(14)),
+                    dividedBy(abs(of(-4)), roll(foundryApi.roll("1d1")))
+                ),
+                plus(
+                    times(of(2), ref("value", {value:3}, "value")),
+                    ref("value", {value: 1}, "value")
+                )
+            );
+
+            const rollFormula = toRollFormula(expression)
+            const rollObject = foundryApi.roll(...rollFormula);
+            const evaluated = await rollObject.evaluate();
+
+            expect(rollFormula[0]).to.equal("(((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1))")
+            expect(evaluated.total, `${asString(expression)} should equal`).to.equal(11);
+        });
     });
 
     describe("Item modifiers", () => {
@@ -575,7 +605,12 @@ export function modifierTest(context: QuenchBatchContext) {
                 name: "Mastery",
                 type: "magic"
             }, of(1), null, false);
-            subject.modifier.add("item.addfeature", {name: "Mystery", feature:"Scharf", item:"Lance of Longinus", type: "magic"}, of(2), null, false);
+            subject.modifier.add("item.addfeature", {
+                name: "Mystery",
+                feature: "Scharf",
+                item: "Lance of Longinus",
+                type: "magic"
+            }, of(2), null, false);
 
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.features).to.equal("Scharf 2");
         });
