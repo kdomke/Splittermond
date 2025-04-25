@@ -34,7 +34,9 @@ export const expected  = {
         effectDuration: null,
         enhancementCosts: "1 EG/+1V1",
         enhancementDescription: "Lorem ipsum dolor sit 30 Ticks mundo Zustand Benommen 1.",
-        features: null,
+        features: {
+            internalFeatureList: [],
+        },
         skill: null,
         skillLevel: null,
         source: null,

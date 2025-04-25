@@ -4,6 +4,7 @@ import {foundryApi} from "../../api/foundryApi";
 import {itemCreator} from "../../data/EntityCreator";
 import {getSpellAvailabilityParser} from "../../item/availabilityParser";
 import {SpellDataModelType} from "../../item";
+import {ItemFeatureDataModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel";
 
 export async function importSpell(spellName: string, rawData: string, folder: string): Promise<SplittermondSpellItem> {
     let spellData = {
@@ -14,7 +15,9 @@ export async function importSpell(spellName: string, rawData: string, folder: st
         system: {
             damage: null,
             damageType:null,
-            features: null,
+            features: {
+                internalFeatureList: [] as ItemFeatureDataModel[],
+            },
             skill: null,
             skillLevel: null,
             source: null,

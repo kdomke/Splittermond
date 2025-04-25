@@ -83,7 +83,9 @@ export function itemTest(this:any, context: QuenchBatchContext) {
                     difficulty:"",
                     effectDuration: "",
                     spellType:"",
-                    features: "",
+                    features:{
+                        internalFeatureList:[],
+                    },
                     range: "",
                     source: ""
                 }

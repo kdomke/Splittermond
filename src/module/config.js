@@ -844,7 +844,7 @@ splittermond.itemSheetProperties.spell = [
                 template: "input"
             },
             {
-                field: "system.features",
+                field: "system.features.features",
                 label: "splittermond.features",
                 template: "input"
             }

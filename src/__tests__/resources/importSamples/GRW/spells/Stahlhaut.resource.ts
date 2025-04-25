@@ -32,7 +32,9 @@ export const expected = {
         damageType:null,
         costType:null,
         effectArea: null,
-        features:  null,
+        features:  {
+            internalFeatureList: [],
+        },
         skill:null,
         skillLevel:null,
         source:null,

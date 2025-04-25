@@ -106,7 +106,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
                     return DamageInitializer.rollDamage(
                         [{
                             damageFormula,
-                            featureString: spell.system.features ?? "",
+                            featureString: spell.system.features.features ?? "",
                             damageSource: spell.name,
                             damageType: spell.system.damageType,
                         }],
