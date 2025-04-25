@@ -134,6 +134,13 @@ describe("feature parser", () => {
         expect(warnStub.calledOnce).to.equal(true);
     });
 
+    it("should handle Lange Waffe", () => {
+        const featureString = "Lange Waffe";
+        const result = parseFeatures(featureString);
+
+        expect(result[0]).to.deep.equal({name: "Lange Waffe", value: 1});
+    })
+
     it("should ignore nonfeature names", () => {
         const featureString = "testFeature";
         const result = parseFeatures(featureString);

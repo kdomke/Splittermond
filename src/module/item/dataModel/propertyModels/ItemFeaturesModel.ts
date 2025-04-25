@@ -22,12 +22,24 @@ export type ItemFeaturesType = DataModelSchemaType<typeof FeaturesSchema>;
 
 export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, SplittermondItemDataModel> {
 
-    static emptyFeatures(){
+    static emptyFeatures() {
         return new ItemFeaturesModel({internalFeatureList: []});
     }
 
-    static from(features: ItemFeatureDataModel[]){
+    static from(features: string | ItemFeatureDataModel[]) {
+        return typeof features === "string" ?
+            ItemFeaturesModel.fromString(features) :
+            ItemFeaturesModel.fromFeatures(features);
+    }
+
+    private static fromFeatures(features: ItemFeatureDataModel[]) {
         return new ItemFeaturesModel({internalFeatureList: features});
+    }
+
+    private static fromString(features: string) {
+        const parsed = parseFeatures(features);
+        const itemFeatures = parsed.map(f => new ItemFeatureDataModel(f))
+        return new ItemFeaturesModel({internalFeatureList: itemFeatures});
     }
 
     static defineSchema = FeaturesSchema;
@@ -132,23 +144,18 @@ export function parseFeatures(features: string): DataModelConstructorInput<ItemF
 }
 
 function parseName(feature: string) {
-    const name = /^\S+(?=\s+|$)/.exec(feature)?.[0] ?? feature; //we should never actually hit the right hand side, but TS cannot know that.
+    const name = /^.+?(?=\s+\d+|$)/.exec(feature)?.[0] ?? feature; //we should never actually hit the right hand side, but TS cannot know that.
     const matched = normalizeName(name);
     if (!splittermond.itemFeatures.includes(matched as ItemFeature)) {
-        foundryApi.warnUser("splittermond.message.featureParsingFailure",{feature})
+        foundryApi.warnUser("splittermond.message.featureParsingFailure", {feature})
         return null;
     }
     return matched as ItemFeature;
 }
 
 function parseValue(feature: string) {
-    const valueString = /(?<=\s+)\S+$/.exec(feature)?.[0] ?? "1"; //A feature that does not need a scale gets a scale of one.
-    const value = parseInt(valueString);
-    if (isNaN(value)) {
-        foundryApi.warnUser("splittermond.message.featureParsingFailure", {feature})
-        return null
-    }
-    return value;
+    const valueString = /(?<=\s+)\d+$/.exec(feature)?.[0] ?? "1"; //A feature that does not need a scale gets a scale of one.
+    return parseInt(valueString);
 }
 
 
