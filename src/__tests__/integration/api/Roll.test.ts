@@ -72,6 +72,11 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(foundryApi.roll("1d6+3").total).to.equal(0);
         });
 
+        it("has an absolute function", () => {
+            expect(foundryApi.roll("abs(-3)").evaluateSync().total).to.equal(3);
+
+        });
+
         it("should have a result if evaluated", async () => {
             const rollResult = await foundryApi.roll("1d6").evaluate().then((roll) => roll.total);
             expect(rollResult).to.be.above(0);
