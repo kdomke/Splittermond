@@ -178,7 +178,7 @@ export default class Attack {
             editable: this.editable,
             deletable: this.deletable,
             isPrepared: this.isPrepared,
-            featureList: this.featureList
+            featureList: this.attackData.features.featuresAsStringList(),
         }
     }
 
@@ -219,9 +219,7 @@ export default class Attack {
         return ["longrange", "throwing"].includes(this.skill.id) ? this.actor.getFlag("splittermond", "preparedAttack") == this.id : true;
     }
 
-    get featureList() {
-        return this.features?.split(",")?.map(str => str.trim());
-    }
+
 
     async roll(options: Record<string, any> = {}) {
         if (!this.actor) return false;
