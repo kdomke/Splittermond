@@ -1,3 +1,5 @@
+import {foundryApi} from "./foundryApi";
+
 export type RollTerm = Die | OperatorTerm | NumericTerm | ParentheticTerm
 export interface Die {
     number: number;
@@ -45,6 +47,7 @@ export declare class Roll {
     terms: (Die | OperatorTerm | NumericTerm|ParentheticTerm)[]
 
     getTooltip(): Promise<string>;
+    resetFormula():void;
 
     static fromTerms(terms: RollTerm[]): Roll;
 
@@ -116,7 +119,7 @@ namespace Terms {
 
     export function getEvaluatedAddTerm(): OperatorTerm {
         if (evaluatedAddTerm === null) {
-            evaluatedAddTerm = new Roll("0d0+0").terms[1] as OperatorTerm
+            evaluatedAddTerm = foundryApi.rollInfra.plusTerm()
             evaluatedAddTerm._evaluated = true;
         }
         return evaluatedAddTerm
@@ -124,7 +127,7 @@ namespace Terms {
 
     export function getUnevaluatedAddTerm(): OperatorTerm {
         if (unEvaluatedAddTerm === null) {
-            unEvaluatedAddTerm = new Roll("0d0+0").terms[1] as OperatorTerm
+            unEvaluatedAddTerm = foundryApi.rollInfra.plusTerm()
         }
         return unEvaluatedAddTerm
     }

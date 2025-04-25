@@ -55,7 +55,6 @@ export function foundryRollTest(context: QuenchBatchContext) {
 
             expect(rollResult.terms[2]).to.be.instanceOf(NumericTerm);
             expect((rollResult.terms[2] as NumericTerm).number).to.equal(1);
-
         });
 
         it("should not fail for a zero dice formula", async () => {
@@ -92,10 +91,20 @@ export function foundryRollTest(context: QuenchBatchContext) {
 
             expect((rollResult.terms[0] as Die).results.length).to.equal(999);
             expect(rollResult.total).to.be.below(7);
-
         });
 
+        it("should allow adding of roll terms", async () => {
+            const roll =  foundryApi.roll("1d6");
 
+            roll.terms.push(foundryApi.rollInfra.plusTerm())
+            roll.terms.push(foundryApi.rollInfra.numericTerm(3))
+            roll.terms.push(foundryApi.rollInfra.minusTerm())
+            roll.terms.push(foundryApi.rollInfra.numericTerm(3))
+            roll.resetFormula();
+
+            expect(roll.terms.length).to.equal(5);
+            expect(roll.formula).to.equal("1d6 + 3 - 3");
+        });
 
         it("should produce a tooltip", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
