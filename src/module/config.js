@@ -600,7 +600,7 @@ splittermond.itemSheetProperties.weapon = [
                 help: "splittermond.minAttributesHelpText"
             },
             {
-                field: "system.features.features",
+                field: "system.features.innateFeatures",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -665,7 +665,7 @@ splittermond.itemSheetProperties.weapon = [
                 template: "input"
             },
             {
-                field: "system.secondaryAttack.features.features",
+                field: "system.secondaryAttack.features.innateFeatures",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -707,7 +707,7 @@ splittermond.itemSheetProperties.armor = [
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "system.features.features",
+                field: "system.features.innateFeatures",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -751,7 +751,7 @@ splittermond.itemSheetProperties.shield = [
                 help: "splittermond.minAttributesHelpText"
             },
             {
-                field: "system.features.features",
+                field: "system.features.innateFeatures",
                 label: "splittermond.features",
                 template: "input"
             }
@@ -966,7 +966,7 @@ splittermond.itemSheetProperties.npcattack = [
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "system.features.features",
+                field: "system.features.innateFeatures",
                 label: "splittermond.features",
                 template: "input"
             }

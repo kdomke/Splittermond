@@ -38,15 +38,22 @@ export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, S
         return mergeDataModels(this.internalFeatureList, featuresFromModifier);
     }
 
-    featuresAsStringList(){
+    featuresAsStringList() {
         return this.featureList.map(f => f.toString())
+    }
+
+    /**
+     * Returns a string representation for the item sheet so that the user can edit the contents
+     */
+    get innateFeatures() {
+        return this.internalFeatureList.map(f => f.toString()).join(", ");
     }
 
     /**
      * Returns a string representation of the features suitable for display.
      */
     get features() {
-        return this.featureList.map(f=> f.toString()).join(", ");
+        return this.featureList.map(f => f.toString()).join(", ");
     }
 
     private getModifierManager(): ModifierManager {
@@ -99,7 +106,7 @@ export function parseFeatures(features: string): DataModelConstructorInput<ItemF
     for (const feature of featureList) {
         const name = parseName(feature);
         const value = parseValue(feature);
-        if(!name || !value){
+        if (!name || !value) {
             continue;
         }
         parsedFeatures.push({name, value});
@@ -135,18 +142,20 @@ function normalizeName(name: string) {
 function mergeDataModels(one: ItemFeatureDataModel[], other: ItemFeatureDataModel[]) {
     return merge(one, other, (x) => new ItemFeatureDataModel(x as DataModelConstructorInput<ItemFeatureType>));
 }
+
 function mergeConstructorData(one: DataModelConstructorInput<ItemFeatureType>[], other: DataModelConstructorInput<ItemFeatureType>[]) {
-    return merge(one, other,(x)=> x as DataModelConstructorInput<ItemFeatureType>)
+    return merge(one, other, (x) => x as DataModelConstructorInput<ItemFeatureType>)
 }
 
-type Mergeable = {name:string,value:number};
-function merge<T extends Mergeable>(one: T[], other: T[], constructor: (x:Mergeable)=>T) {
+type Mergeable = { name: string, value: number };
+
+function merge<T extends Mergeable>(one: T[], other: T[], constructor: (x: Mergeable) => T) {
     const merged = new Map<string, T>();
     [...one, ...other].forEach(feature => {
-        if(merged.has(feature.name)){
+        if (merged.has(feature.name)) {
             const old = merged.get(feature.name)!/*we just tested for presence*/;
-            merged.set(feature.name, constructor({name:feature.name, value: Math.max(old.value , feature.value)}))
-        }else {
+            merged.set(feature.name, constructor({name: feature.name, value: Math.max(old.value, feature.value)}))
+        } else {
             merged.set(feature.name, feature);
         }
     });

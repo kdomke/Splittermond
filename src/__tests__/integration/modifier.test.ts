@@ -541,5 +541,43 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("3+3");
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.weaponSpeed).to.equal(4);
         });
+
+        it("should account for modifications on shields", async () => {
+            const subject = await createActor("WeaponizedCharacter");
+            (subject.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).updateSource({
+                    skills: {
+                        ...subject.system.skills,
+                        blades: {points: 2, value: 6}
+                    }
+                }
+            );
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "weapon",
+                name: "Lance of Longinus",
+                system: {
+                    skill: "blades",
+                    damage: "3",
+                    equipped: true,
+                    attribute1: "strength",
+                    attribute2: "agility",
+                    features: "Scharf 1",
+                    weaponSpeed: 6
+                }
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+            subject.modifier.add("damage", {
+                item: "Lance of Longinus",
+                name: "Mastery",
+                type: "magic"
+            }, of(1), null, false);
+            subject.modifier.add("item.addfeature", {name: "Mystery", feature:"Scharf", item:"Lance of Longinus", type: "magic"}, of(2), null, false);
+
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.features).to.equal("Scharf 2");
+        });
     });
 }
