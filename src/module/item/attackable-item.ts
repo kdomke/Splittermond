@@ -1,5 +1,4 @@
 import Attack from "../actor/attack";
-import { produceAttackableItemTags } from "./tags/attackableItemTags";
 import SplittermondItem from "./item";
 import SplittermondShieldItem from "./shield";
 import SplittermondWeaponItem from "./weapon";
@@ -42,13 +41,8 @@ function AttackableItem<TBase extends Constructor<SplittermondItem>>(Base: TBase
         }
 
         get featuresList() {
-            //TODO:
-            if("features" in this.system && typeof this.system.features === "string") {
-                //@ts-expect-error
-                return produceAttackableItemTags(this.system);
-            } else if ("features" in this.system && typeof this.system === "object" && this.system.features) {
-                //@ts-expect-error
-                return produceAttackableItemTags({features: this.system.features.features});
+            if("features" in this.system && this.system.features) {
+                return this.system.features.featuresAsStringList();
             } else {
                 return [];
             }

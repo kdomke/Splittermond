@@ -15,6 +15,7 @@ import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
 import {of, evaluate} from "./modifiers/expressions/scalar";
+import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -415,9 +416,9 @@ export default class SplittermondActor extends Actor {
     _prepareActiveDefense() {
         const data = this.system;
 
-        this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", game.i18n.localize(this.skills["acrobatics"].label), this.skills["acrobatics"]));
-        this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", game.i18n.localize(this.skills["determination"].label), this.skills["determination"]));
-        this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", game.i18n.localize(this.skills["endurance"].label), this.skills["endurance"]));
+        this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", foundryApi.localize(this.skills["acrobatics"].label), this.skills["acrobatics"], ItemFeaturesModel.emptyFeatures()));
+        this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", foundryApi.localize(this.skills["determination"].label), this.skills["determination"], ItemFeaturesModel.emptyFeatures()));
+        this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", foundryApi.localize(this.skills["endurance"].label), this.skills["endurance"], ItemFeaturesModel.emptyFeatures()));
     }
 
     //this function is used in item.js to add modifiers to the actor
@@ -1035,7 +1036,7 @@ export default class SplittermondActor extends Actor {
         eg = Math.abs(eg);
         const lowerFumbleResult = this.modifier.getForId("lowerfumbleresult").notSelectable()
             .withAttributeValuesOrAbsent("skill",skill).getModifiers().value;
-        if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
+        if (this.items.find(i => i.type === "strength" && i.name.toLowerCase() === "priester")) {
             defaultTable = "priest";
         }
 

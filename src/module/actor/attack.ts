@@ -159,8 +159,15 @@ export default class Attack {
         return this.attackData.range;
     }
 
+    /**
+     * Returns the features of the attack as a string, suitable for display.
+     */
     get features(){
         return this.attackData.features.features
+    }
+
+    get featuresAsObject(){
+        return this.attackData.features.featureList;
     }
 
     toObject() {

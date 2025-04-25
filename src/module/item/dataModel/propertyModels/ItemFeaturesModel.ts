@@ -21,11 +21,28 @@ function FeaturesSchema() {
 export type ItemFeaturesType = DataModelSchemaType<typeof FeaturesSchema>;
 
 export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, SplittermondItemDataModel> {
+
+    static emptyFeatures(){
+        return new ItemFeaturesModel({internalFeatureList: []});
+    }
+
+    static from(features: ItemFeatureDataModel[]){
+        return new ItemFeaturesModel({internalFeatureList: features});
+    }
+
     static defineSchema = FeaturesSchema;
 
 
     hasFeature(feature: ItemFeature) {
-        return this.featureList.some(f => f.name === feature && f.value > 0);
+        return this.featureList.some(f => f.name === feature);
+    }
+
+    valueOf(feature: ItemFeature) {
+        return this.findFeature(feature)?.value ?? 0;
+    }
+
+    private findFeature(feature: ItemFeature) {
+        return this.featureList.find(f => f.name === feature);
     }
 
     get featureList() {

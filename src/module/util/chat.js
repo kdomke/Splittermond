@@ -141,20 +141,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             let tickCost = 3;
             let defenseValue = data.baseDefense;
             if (data.succeeded) {
-                defenseValue = defenseValue + 1 + data.degreeOfSuccess;
-
-                let feature = {};
-                data.itemData.features?.toLowerCase().split(',').forEach(feat => {
-                    let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
-                    if (temp[1]) {
-                        feature[temp[1]] = parseInt(temp[2] || 1);
-                    }
-                });
-
-                if (feature["defensiv"]) {
-                    defenseValue += feature["defensiv"];
-                }
-
+                defenseValue = defenseValue + 1 + data.degreeOfSuccess + data.itemData.itemFeatures.valueOf("Defensiv");
                 templateContext.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
 
 
