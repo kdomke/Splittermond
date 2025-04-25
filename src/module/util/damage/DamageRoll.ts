@@ -60,18 +60,18 @@ export class DamageRoll {
 
     async evaluate(): Promise<FoundryRoll> {
         const rollFormula = `${this._nDice}d${this._nFaces}`;
-        const rollFormulaWithPrecision = this.#modifyFormulaForExactFeature(rollFormula);
-        const modifierTerm = this._damageModifier ? `${this.#getSign()}${Math.abs(this._damageModifier)}` : "";
+        const rollFormulaWithPrecision = this.modifyFormulaForExactFeature(rollFormula);
+        const modifierTerm = this._damageModifier ? `${this.getSign()}${Math.abs(this._damageModifier)}` : "";
         const damageFormula = `${rollFormulaWithPrecision}${modifierTerm}`;
 
         let rollResult = await foundryApi.roll(damageFormula, {}).evaluate();
 
-        rollResult = this.#modifyResultForScharfFeature(rollResult);
-        rollResult = this.#modifyResultForKritischFeature(rollResult);
+        rollResult = this.modifyResultForScharfFeature(rollResult);
+        rollResult = this.modifyResultForKritischFeature(rollResult);
         return rollResult;
     }
 
-    #modifyFormulaForExactFeature(rollFormula: string) {
+    private modifyFormulaForExactFeature(rollFormula: string) {
         const exactValue = this._features.valueOf("Exakt");
         if (exactValue) {
             this.activeFeatures.add("Exakt");
@@ -81,7 +81,7 @@ export class DamageRoll {
         return rollFormula;
     }
 
-    #modifyResultForScharfFeature(roll: FoundryRoll): FoundryRoll {
+    private modifyResultForScharfFeature(roll: FoundryRoll): FoundryRoll {
         const scharfValue = this._features.valueOf("Scharf");
         if (scharfValue) {
             let scharfBonus = 0;
@@ -98,7 +98,7 @@ export class DamageRoll {
         return roll;
     }
 
-    #modifyResultForKritischFeature(roll: FoundryRoll): FoundryRoll {
+    private modifyResultForKritischFeature(roll: FoundryRoll): FoundryRoll {
         const kritischValue = this._features.valueOf("Kritisch");
         if (kritischValue) {
             let kritischBonus = 0;
@@ -127,14 +127,14 @@ export class DamageRoll {
 
     getDamageFormula() {
         let damageFormula = `${this._nDice}W${this._nFaces}`;
-        const sign = this.#getSign();
+        const sign = this.getSign();
         if (this._damageModifier) {
             damageFormula += `${sign}${Math.abs(this._damageModifier)}`
         }
         return damageFormula;
     }
 
-    #getSign(): string {
+    private getSign(): string {
         return this._damageModifier >= 0 ? "+" : "-";
     }
 
