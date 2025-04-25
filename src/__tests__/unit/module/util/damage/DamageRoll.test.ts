@@ -4,6 +4,7 @@ import sinon from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
 import {Die, FoundryRoll} from "module/api/Roll";
 import {createTestRoll, stubFoundryRoll} from "../../../RollMock";
+import {ItemFeatureDataModel, ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 
 
 describe("DamageRoll damage string parsing and stringifying", () => {
@@ -43,7 +44,10 @@ describe("DamageRoll damage string parsing and stringifying", () => {
         [{nDice: 20, nFaces: 10, damageModifier: 200}, "20W10+200"],
     ] as const).forEach(([input, expected]) => {
         it(`should stringify ${JSON.stringify(expected)} to ${input}`, () => {
-            expect(new DamageRoll({...input, features: {}}).getDamageFormula()).to.equal(expected);
+            expect(new DamageRoll({
+                ...input,
+                features: ItemFeaturesModel.emptyFeatures()
+            }).getDamageFormula()).to.equal(expected);
         });
     });
 });
@@ -51,11 +55,11 @@ describe("DamageRoll damage string parsing and stringifying", () => {
 describe("DamageRoll feature string parsing and stringifying", () => {
     ([
         ["Scharf", {scharf: {name: "Scharf", value: 1, active: false}}],
-        ["Scharf1", {scharf: {name: "Scharf", value: 1, active: false}}],
+        ["Scharf 1", {scharf: {name: "Scharf", value: 1, active: false}}],
         ["Kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
-        ["kritisch2", {kritisch: {name: "kritisch", value: 2, active: false}}],
+        ["kritisch 2", {kritisch: {name: "Kritisch", value: 2, active: false}}],
         ["Exakt 3", {exakt: {name: "Exakt", value: 3, active: false}}],
-        ["eXakT     25", {exakt: {name: "eXakT", value: 25, active: false}}],
+        ["eXakT     25", {exakt: {name: "Exakt", value: 25, active: false}}],
         ["Wuchtig", {wuchtig: {name: "Wuchtig", value: 1, active: false}}],
     ] as const).forEach(([input, expected]) => {
         it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
@@ -73,48 +77,49 @@ describe("DamageRoll feature string parsing and stringifying", () => {
     });
 
     ([
-        [{scharf: {name: "Scharf", value: 1, active: false}}, "Scharf 1"],
-        [{kritisch: {name: "Kritisch", value: 2, active: false}}, "Kritisch 2"],
-        [{exakt: {name: "Exakt", value: 3, active: false}}, "Exakt 3"],
+        [{name: "Scharf", value: 1}, "Scharf"],
+        [{name: "Kritisch", value: 2}, "Kritisch 2"],
+        [{name: "Exakt", value: 3}, "Exakt 3"],
     ] as const).forEach(([input, expected]) => {
         it(`should stringify ${JSON.stringify(input)} to ${expected}`, () => {
-            expect(new DamageRoll({nDice: 0, nFaces: 0, damageModifier: 0, features: input})
+            const features = ItemFeaturesModel.from([new ItemFeatureDataModel(input)]);
+            expect(new DamageRoll({nDice: 0, nFaces: 0, damageModifier: 0, features})
                 .getFeatureString()).to.equal(expected);
         });
     });
 
     it("should stringify all features", () => {
+        const features = ([
+            {name: "Scharf", value: 1}, {name: "Kritisch", value: 2}, {name: "Exakt", value: 3}
+        ] as const).map(f => new ItemFeatureDataModel(f));
         const damageRoll = new DamageRoll({
-            nDice: 0, nFaces: 0, damageModifier: 0, features: {
-                scharf: {name: "Scharf", value: 1, active: false},
-                kritisch: {name: "Kritisch", value: 2, active: false},
-                exakt: {name: "Exakt", value: 3, active: false}
-            }
+            nDice: 0, nFaces: 0, damageModifier: 0, features: ItemFeaturesModel.from(features)
         });
-        expect(damageRoll.getFeatureString()).to.equal("Scharf 1, Kritisch 2, Exakt 3");
+        expect(damageRoll.getFeatureString()).to.equal("Scharf, Kritisch 2, Exakt 3");
     });
 });
 
 describe("Addition to Damage Roll", () => {
     it("should increase damage modifier by amount", () => {
-        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 1, features: {}});
+        const features = ItemFeaturesModel.emptyFeatures()
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 1, features});
         damageRoll.increaseDamage(5);
 
         expect(damageRoll.getDamageFormula()).to.equal("1W6+6");
     });
 
     it("should decrease damage modifier by amount", () => {
-        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features: {}});
+        const features = ItemFeaturesModel.emptyFeatures()
+        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features});
         damageRoll.decreaseDamage(5);
 
         expect(damageRoll.getDamageFormula()).to.equal("1W6+2");
     });
 
     it("should double damage modifier on addition if 'Wuchtig' feature exists", () => {
+        const features = ItemFeaturesModel.from("Wuchtig");
         const damageRoll = new DamageRoll({
-            nDice: 1, nFaces: 6, damageModifier: 7, features: {
-                wuchtig: {name: "Wuchtig", value: 1, active: false}
-            }
+            nDice: 1, nFaces: 6, damageModifier: 7, features
         });
         damageRoll.increaseDamage(5);
 
@@ -122,10 +127,9 @@ describe("Addition to Damage Roll", () => {
     });
 
     it("should double damage modifier on subtraction if 'Wuchtig' feature exists", () => {
+        const features = ItemFeaturesModel.from("Wuchtig");
         const damageRoll = new DamageRoll({
-            nDice: 1, nFaces: 6, damageModifier: 7, features: {
-                wuchtig: {name: "Wuchtig", value: 1, active: false}
-            }
+            nDice: 1, nFaces: 6, damageModifier: 7, features
         });
         damageRoll.decreaseDamage(5);
 
