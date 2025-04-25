@@ -5,7 +5,7 @@ export interface Die {
     /**
      * Contains dice postprocessing, like keep lowest or similar
      */
-    modifier:string[]
+    modifiers:string[]
     /**@internal*/_evaluated: boolean;
     results: { active: boolean, result: number }[]
 }
