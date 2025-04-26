@@ -10,7 +10,7 @@ import {
     dividedBy,
     evaluate,
     isGreaterZero,
-    isLessThanZero, minus,
+    isLessThanZero, mapRoll, minus,
     of, plus, ref,
     roll,
     times, toRollFormula
@@ -510,7 +510,7 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         });
 
-        it("should be able to produce valid a valid roll expression", async () => {
+        it("should be able to produce a valid roll expression", async () => {
             //is (1*14 + |-4|/1) - (2*3 + 1)
             const expression = minus(
                 plus(
@@ -527,8 +527,17 @@ export function modifierTest(context: QuenchBatchContext) {
             const rollObject = foundryApi.roll(...rollFormula);
             const evaluated = await rollObject.evaluate();
 
-            expect(rollFormula[0]).to.equal("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)")
+        expect(rollFormula[0]).to.equal("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)")
             expect(evaluated.total, `${asString(expression)} should equal`).to.equal(11);
+        });
+
+        it("should be able to parse a valid roll expression", async () => {
+            const roll = foundryApi.roll("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)", {value0: "3", value1: "1"});
+
+            const mapped = mapRoll(roll);
+            const evaluated = evaluate(mapped);
+
+            expect(evaluated).to.equal(11);
         });
     });
 

@@ -11,6 +11,10 @@ class MockDie implements Die {
         public results: Array<{ active: boolean; result: number }>,
         public _evaluated = false
     ) {}
+
+    get formula(){
+        return `${this.number}d${this.faces}`;
+    }
 }
 
 class MockOperatorTerm implements OperatorTerm {
@@ -18,6 +22,9 @@ class MockOperatorTerm implements OperatorTerm {
         public operator: string,
         public _evaluated = false
     ) {}
+    get formula(){
+        return this.operator;
+    }
 }
 
 class MockNumericTerm implements NumericTerm {
@@ -32,6 +39,10 @@ class MockNumericTerm implements NumericTerm {
 
     get expression(){
         return `${this.number}`
+    }
+
+    get formula(){
+        return this.expression;
     }
 }
 
@@ -73,6 +84,10 @@ export class MockRoll implements FoundryRoll{
                 );
             }
         }
+    }
+
+    resetFormula(){
+       // This is a mock, so we don't need to reset the formula
     }
 
     get result(): string {

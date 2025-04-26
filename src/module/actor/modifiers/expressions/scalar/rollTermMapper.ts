@@ -1,14 +1,5 @@
 import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "module/api/Roll";
-import {
-    AmountExpression,
-    dividedBy,
-    Expression,
-    minus,
-    plus,
-    RollExpression,
-    times
-} from "./definitions";
-import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
+import {AmountExpression, dividedBy, Expression, minus, plus, RollExpression, times} from "./definitions";
 import {foundryApi} from "module/api/foundryApi";
 
 type NoOperatorTerm = Exclude<RollTerm, OperatorTerm>;
@@ -105,6 +96,8 @@ function termToExpression(term:NoOperatorTerm):Expression {
             throw new Error("Found a term with a roll expression that was not a parenthetic expression")
         }
         return mapRoll(term.roll);
+    } else {
+        console.debug(`Splittermond | Found an unknown term ${term.formula} while mapping to expression.`)
+        return new RollExpression(foundryApi.rollInfra.rollFromTerms([term]));
     }
-    exhaustiveMatchGuard(term);
 }

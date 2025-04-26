@@ -21,7 +21,7 @@ export class RollExpression {
 
     evaluate(): number {
         if (this.result === null) {
-            console.debug("Splittermond | Roll evaluation did not yet return. Using a cheap evaluation method.")
+            console.debug(`Splittermond | Evaluation of roll ${this.value.formula} did not yet return. Using a cheap evaluation method.`)
             return this.cheapPreliminaryValue();
         }
         const lastResult = this.result;

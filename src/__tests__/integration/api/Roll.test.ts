@@ -3,6 +3,7 @@ import {foundryApi} from "module/api/foundryApi";
 import {addRolls, sumRolls, type Die as DieType} from "module/api/Roll";
 
 declare class Die implements DieType{
+    formula:string;
     results: { active: boolean; result: number; discarded?:boolean}[];
     _evaluated: boolean;
     faces: number;
