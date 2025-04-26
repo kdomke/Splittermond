@@ -1,10 +1,16 @@
 import {describe} from "mocha";
 import sinon from "sinon";
-import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
+import {createTestRoll, MockRoll, stubRollApi} from "__tests__/unit/RollMock";
 import {DamageInitializer} from "module/util/chat/damageChatMessage/initDamage";
 import {expect} from "chai";
 import {DamageMessage} from "module/util/chat/damageChatMessage/DamageMessage";
 import {foundryApi} from "module/api/foundryApi";
+import {DamageRoll} from "../../../../../module/util/damage/DamageRoll";
+import {
+    ItemFeatureDataModel,
+    ItemFeaturesModel,
+    parseFeatures
+} from "../../../../../module/item/dataModel/propertyModels/ItemFeaturesModel";
 
 describe("Damage Event initialization", ()=>{
 
@@ -13,6 +19,7 @@ describe("Damage Event initialization", ()=>{
         sandbox = sinon.createSandbox()
         sandbox.stub(foundryApi, 'chatMessageTypes').value({OTHER: 0});
         sandbox.stub(foundryApi, 'getSpeaker').returns({actor:null, scene:'askf4903', token:null, alias:'Gamemaster'});
+        stubRollApi(sandbox);
         //@ts-expect-error we haven't defined the global namespace
         global.Roll = MockRoll;
     });
@@ -40,9 +47,12 @@ describe("Damage Event initialization", ()=>{
         damageType: "physical" as const
     }
     it("should output the sum of two rolls", async () => {
-        sandbox.stub(foundryApi, 'roll')
-            .onFirstCall().returns(createTestRoll("1d6", [5], 0))
-            .onSecondCall().returns(createTestRoll("1d10", [3], 0));
+        sandbox.stub(DamageRoll, "parse").callsFake((str, features) => {
+           return new DamageRoll(
+               str === firstImplement.damageFormula ? createTestRoll("1d6", [5], 0): createTestRoll("1d10", [3], 0),
+               ItemFeaturesModel.from(parseFeatures(features??"").map(f => new ItemFeatureDataModel(f)))
+           );
+        })
         const damageMessage= await DamageInitializer.rollDamage([firstImplement, secondImplement], "V", null)
             .then((chatMessage) => chatMessage.system)
             .then((message) => message as DamageMessage);
@@ -52,9 +62,12 @@ describe("Damage Event initialization", ()=>{
     });
 
     it("should record damage reduction override", async () => {
-        sandbox.stub(foundryApi, 'roll')
-            .onFirstCall().returns(createTestRoll("2d10", [10,1], 0))
-
+        sandbox.stub(DamageRoll, "parse").returns(
+            new DamageRoll(
+                createTestRoll("2d10", [10,1], 0),
+                ItemFeaturesModel.from(parseFeatures(thirdImplement.featureString).map(f => new ItemFeatureDataModel(f)))
+            )
+        );
         const damageMessage= await DamageInitializer.rollDamage([thirdImplement], "V", null)
             .then((chatMessage) => chatMessage.system)
             .then((message) => message as DamageMessage);

@@ -1,58 +1,53 @@
 import {describe, it} from "mocha";
 import {expect} from "chai";
-import sinon from "sinon";
+import sinon, {SinonStub} from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
 import {Die, FoundryRoll} from "module/api/Roll";
-import {createTestRoll, stubFoundryRoll} from "../../../RollMock";
+import {createTestRoll, stubFoundryRoll, stubRollApi} from "../../../RollMock";
 import {ItemFeatureDataModel, ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
+import {foundryApi} from "../../../../../module/api/foundryApi";
 
 
-describe("DamageRoll damage string parsing and stringifying", () => {
-    ([
-        ["0d0 +0", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
-        ["0d6 +0", {_nDice: 0, _nFaces: 6, _damageModifier: 0}],
-        ["0d6 +1", {_nDice: 0, _nFaces: 6, _damageModifier: 1}],
-        ["garbage", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
-        ["1d6 +1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
-        ["2d6", {_nDice: 2, _nFaces: 6, _damageModifier: 0}],
-        ["2_d_6_+_1", {_nDice: 2, _nFaces: 6, _damageModifier: 1}],
-        ["1d10 -1", {_nDice: 1, _nFaces: 10, _damageModifier: -1}],
-        ["1W6 + 1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
-        ["1w6+ 1", {_nDice: 1, _nFaces: 6, _damageModifier: 1}],
-        ["1W6- 1", {_nDice: 1, _nFaces: 6, _damageModifier: -1}],
-        ["2d6- 1", {_nDice: 2, _nFaces: 6, _damageModifier: -1}],
-        ["2d6+ 1 +1", {_nDice: 2, _nFaces: 6, _damageModifier: +2}],
-        ["2d6+ 1 +1+3", {_nDice: 2, _nFaces: 6, _damageModifier: +5}],
-        ["9d6+10", {_nDice: 9, _nFaces: 6, _damageModifier: 10}],
-        ["9W10+20", {_nDice: 9, _nFaces: 10, _damageModifier: 20}],
-        ["20W10+200", {_nDice: 20, _nFaces: 10, _damageModifier: 200}],
-        ["20W12+200", {_nDice: 0, _nFaces: 0, _damageModifier: 0}],
-    ] as const).forEach(([input, expected]) => {
-        it(`should parse ${input} to ${JSON.stringify(expected)}`, () => {
-            expect(DamageRoll.parse(input, "")).to.deep.contain({...expected});
-        });
+describe("DamageRoll input optimization", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(() => sandbox.restore());
+
+    it("should parse damage string with 'W' to 'd'", () => {
+        const damageRoll = DamageRoll.parse("1W6+2", "Scharf 1");
+
+        expect(damageRoll.getDamageFormula()).to.equal("1W6 + 2");
     });
 
-    ([
-        [{nDice: 0, nFaces: 6, damageModifier: 1}, "0W6+1"],
-        [{nDice: 1, nFaces: 6, damageModifier: 1}, "1W6+1"],
-        [{nDice: 2, nFaces: 6, damageModifier: 0}, "2W6"],
-        [{nDice: 1, nFaces: 10, damageModifier: -1}, "1W10-1"],
-        [{nDice: 1, nFaces: 6, damageModifier: 1}, "1W6+1"],
-        [{nDice: 1, nFaces: 6, damageModifier: -1}, "1W6-1"],
-        [{nDice: 9, nFaces: 6, damageModifier: 10}, "9W6+10"],
-        [{nDice: 20, nFaces: 10, damageModifier: 200}, "20W10+200"],
-    ] as const).forEach(([input, expected]) => {
-        it(`should stringify ${JSON.stringify(expected)} to ${input}`, () => {
-            expect(new DamageRoll({
-                ...input,
-                features: ItemFeaturesModel.emptyFeatures()
-            }).getDamageFormula()).to.equal(expected);
-        });
+    it("should condense numeric terms", () => {
+        const mockRoll = createTestRoll("1d6+2", [1], 0);
+        mockRoll.terms.push(
+            foundryApi.rollInfra.plusTerm(),
+            foundryApi.rollInfra.numericTerm(2),
+            foundryApi.rollInfra.plusTerm(),
+            foundryApi.rollInfra.numericTerm(4),
+            foundryApi.rollInfra.minusTerm(),
+            foundryApi.rollInfra.numericTerm(5),
+        );
+        stubFoundryRoll(mockRoll, sandbox);
+
+        DamageRoll.parse("1d6+2+4-5", "");
+
+        expect((foundryApi.roll as SinonStub).lastCall.args).to.have.members(["1d6 + 1"]);
+
     });
 });
 
 describe("DamageRoll feature string parsing and stringifying", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(() => sandbox.restore());
     ([
         [{name: "Scharf", value: 1}, "Scharf"],
         [{name: "Kritisch", value: 2}, "Kritisch 2"],
@@ -60,8 +55,7 @@ describe("DamageRoll feature string parsing and stringifying", () => {
     ] as const).forEach(([input, expected]) => {
         it(`should stringify ${JSON.stringify(input)} to ${expected}`, () => {
             const features = ItemFeaturesModel.from([new ItemFeatureDataModel(input)]);
-            expect(new DamageRoll({nDice: 0, nFaces: 0, damageModifier: 0, features})
-                .getFeatureString()).to.equal(expected);
+            expect(DamageRoll.from("0d0+0", features).getFeatureString()).to.equal(expected);
         });
     });
 
@@ -69,65 +63,68 @@ describe("DamageRoll feature string parsing and stringifying", () => {
         const features = ([
             {name: "Scharf", value: 1}, {name: "Kritisch", value: 2}, {name: "Exakt", value: 3}
         ] as const).map(f => new ItemFeatureDataModel(f));
-        const damageRoll = new DamageRoll({
-            nDice: 0, nFaces: 0, damageModifier: 0, features: ItemFeaturesModel.from(features)
-        });
+        const damageRoll = DamageRoll.from("0d0+0", ItemFeaturesModel.from(features))
+
         expect(damageRoll.getFeatureString()).to.equal("Scharf, Kritisch 2, Exakt 3");
     });
 });
 
 describe("Addition to Damage Roll", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(() => sandbox.restore());
     it("should increase damage modifier by amount", () => {
-        const features = ItemFeaturesModel.emptyFeatures()
-        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 1, features});
+        const damageRoll = DamageRoll.parse("1W6 + 1", "")
+
         damageRoll.increaseDamage(5);
 
-        expect(damageRoll.getDamageFormula()).to.equal("1W6+6");
+        expect(damageRoll.getDamageFormula()).to.equal("1W6 + 6");
     });
 
     it("should decrease damage modifier by amount", () => {
-        const features = ItemFeaturesModel.emptyFeatures()
-        const damageRoll = new DamageRoll({nDice: 1, nFaces: 6, damageModifier: 7, features});
+        const damageRoll = DamageRoll.parse("1W6 + 7", "")
+
         damageRoll.decreaseDamage(5);
 
-        expect(damageRoll.getDamageFormula()).to.equal("1W6+2");
+        expect(damageRoll.getDamageFormula()).to.equal("1W6 + 2");
     });
 
     it("should double damage modifier on addition if 'Wuchtig' feature exists", () => {
-        const features = ItemFeaturesModel.from("Wuchtig");
-        const damageRoll = new DamageRoll({
-            nDice: 1, nFaces: 6, damageModifier: 7, features
-        });
+        const damageRoll = DamageRoll.parse("1W6+7", "Wuchtig")
+
         damageRoll.increaseDamage(5);
 
-        expect(damageRoll.getDamageFormula()).to.equal("1W6+17");
+        expect(damageRoll.getDamageFormula()).to.equal("1W6 + 17");
     });
 
     it("should double damage modifier on subtraction if 'Wuchtig' feature exists", () => {
-        const features = ItemFeaturesModel.from("Wuchtig");
-        const damageRoll = new DamageRoll({
-            nDice: 1, nFaces: 6, damageModifier: 7, features
-        });
+        const damageRoll = DamageRoll.parse("1W6+7", "Wuchtig")
+
         damageRoll.decreaseDamage(5);
 
-        expect(damageRoll.getDamageFormula()).to.equal("1W6-3");
+        expect(damageRoll.getDamageFormula()).to.equal("1W6 - 3");
     });
 
 })
 
 describe("DamageRoll evaluation", () => {
     let sandbox: sinon.SinonSandbox;
-    beforeEach(() => sandbox = sinon.createSandbox());
-    afterEach(() => sandbox.restore());
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(()=>sandbox.restore())
 
     it("Should add an optional die for exact feature", async () => {
         const damageString = "1d6"
-        const rollMock: FoundryRoll = createTestRoll("1d6", [1], 0);
-        const mock = stubFoundryRoll(rollMock, sandbox);
-        await DamageRoll.parse(damageString, "Exakt 1").evaluate();
 
-        expect(mock.callCount).to.equal(1);
-        expect(mock.firstCall.args[0]).to.equal("2d6kh1");
+        const damageRoll = DamageRoll.parse(damageString, "Exakt 1");
+        const evaluatedRoll = await damageRoll.evaluate();
+
+        expect(evaluatedRoll.formula).to.equal("2d6kh1");
     });
 
     it("Should not increase the lowest dice for scharf feature", async () => {
@@ -135,7 +132,8 @@ describe("DamageRoll evaluation", () => {
         const rollMock: FoundryRoll = createTestRoll("2d6", [1, 1], 0);
         stubFoundryRoll(rollMock, sandbox);
 
-        const roll = await DamageRoll.parse(damageString, "Scharf 2").evaluate();
+        const damageRoll = DamageRoll.parse(damageString, "Scharf 2");
+        const roll = await damageRoll.evaluate();
 
         expect(roll._total).to.equal(4);
         expect(getFirstDie(roll).results[0].result).to.equal(1);
@@ -157,8 +155,11 @@ describe("DamageRoll evaluation", () => {
 
 describe("Feature activation", () => {
     let sandbox: sinon.SinonSandbox;
-    beforeEach(() => sandbox = sinon.createSandbox());
-    afterEach(() => sandbox.restore());
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(()=>sandbox.restore());
 
     it("should activate the exakt feature", async () => {
         const damageString = "1d6"

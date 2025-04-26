@@ -1,4 +1,4 @@
-import {Die, FoundryRoll, NumericTerm, OperatorTerm} from "module/api/Roll";
+import {Die, FoundryRoll, NumericTerm, OperatorTerm, ParentheticTerm, RollTerm} from "module/api/Roll";
 import {foundryApi} from "../../module/api/foundryApi";
 import sinon, {SinonSandbox} from "sinon";
 
@@ -13,7 +13,7 @@ class MockDie implements Die {
     ) {}
 
     get formula(){
-        return `${this.number}d${this.faces}`;
+        return `${this.number}d${this.faces}${this.modifiers.join("")}`;
     }
 }
 
@@ -87,7 +87,7 @@ export class MockRoll implements FoundryRoll{
     }
 
     resetFormula(){
-       // This is a mock, so we don't need to reset the formula
+        this.formula = this.terms.map(t => t.formula).join(" ");
     }
 
     get result(): string {
@@ -191,5 +191,29 @@ export function createTestRoll(
 
 // Sinon stub setup helper
 export function stubFoundryRoll(rollInstance: FoundryRoll, sandbox:SinonSandbox=sinon) {
+    //handle case where roll is already stubbed (e.g. by stubRollApi)
+    if("restore" in foundryApi.roll && typeof (foundryApi.roll as any).restore === "function") {
+        (foundryApi.roll as any).restore();
+    }
     return sandbox.stub(foundryApi, 'roll').returns(rollInstance);
+}
+
+export function stubRollApi(sandbox:SinonSandbox=sinon) {
+    sandbox.stub(foundryApi, 'roll').callsFake(str => new MockRoll(str));
+    sandbox.stub(foundryApi, 'rollInfra').get(()=> {
+        return {
+            rollFromTerms(terms: Exclude<RollTerm, ParentheticTerm>[]): FoundryRoll {
+                return MockRoll.fromTerms(terms);
+            },
+            plusTerm(): OperatorTerm {
+                return new MockOperatorTerm("+");
+            },
+            minusTerm(): OperatorTerm {
+                return new MockOperatorTerm("-");
+            },
+            numericTerm(number: number): NumericTerm {
+                return new MockNumericTerm(number);
+            }
+        }
+    })
 }

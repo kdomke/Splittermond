@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {Die, FoundryRoll} from "../../api/Roll";
+import {Die, FoundryRoll, isNumericTerm, isOperatorTerm, NumericTerm} from "../../api/Roll";
 import {DamageFeature} from "./DamageFeature";
 import {
     ItemFeatureDataModel,
@@ -7,13 +7,7 @@ import {
     parseFeatures
 } from "../../item/dataModel/propertyModels/ItemFeaturesModel";
 import {ItemFeature} from "../../config/itemFeatures";
-
-interface DamageRollConstructorInput {
-    nDice: number;
-    nFaces: number;
-    damageModifier: number;
-    features: ItemFeaturesModel
-}
+import {condense, mapRoll, toRollFormula} from "../../actor/modifiers/expressions/scalar";
 
 export class DamageRoll {
 
@@ -27,22 +21,55 @@ export class DamageRoll {
     }
 
     static from(damageString: string, itemFeatures: ItemFeaturesModel) {
-        const damage = parseDamageString(damageString);
-        return new DamageRoll({...damage, features: itemFeatures})
+        const damage = concatSimpleRoll(foundryApi.roll(damageString.replace(/(?<=\d+)[wW](?=\d+)/g, "d")));
+        return new DamageRoll(damage, itemFeatures)
     }
 
-    private _nDice: number;
-    private _nFaces: number;
+    private backingRoll: FoundryRoll;
+    private baseModifier: number;
+    private hasFinalNumericTerm: boolean;
     private _damageModifier: number;
     private _features: ItemFeaturesModel;
     private activeFeatures: Set<ItemFeature>
 
-    constructor({nDice, nFaces, damageModifier, features}:DamageRollConstructorInput) {
-        this._nDice = nDice;
-        this._nFaces = nFaces;
-        this._damageModifier = damageModifier;
+    constructor(roll: FoundryRoll, features: ItemFeaturesModel) {
+        this.backingRoll = roll;
+        this._damageModifier = 0;
+        this.hasFinalNumericTerm = isNumericTerm(this.getLastTerm(roll));
+        this.baseModifier = this.hasFinalNumericTerm ? (this.getLastTerm(roll) as NumericTerm).number : 0;
         this._features = features
         this.activeFeatures = new Set();
+    }
+
+    private getLastTerm(roll: FoundryRoll) {
+        return roll.terms.slice(-1)[0];
+    }
+
+    private modifyRollFormula(roll: FoundryRoll) {
+        const finalModificationValue = this.baseModifier + this._damageModifier;
+        if (this.hasFinalNumericTerm) {
+            const lastOperand = roll.terms.slice(-2);
+            const lastOperator = lastOperand[0];
+            const lastNumericTerm= lastOperand[1];
+            if(isOperatorTerm(lastOperator) && isNumericTerm(lastNumericTerm)) {
+                lastOperator.operator = finalModificationValue > 0 ? "+" : "-";
+                lastNumericTerm.number = Math.abs(finalModificationValue);
+                roll.resetFormula();
+                return roll;
+            }
+        }
+        return this.appendModifier(roll, finalModificationValue);
+    }
+
+    private appendModifier(roll: FoundryRoll, damageModifier:number) {
+        if(damageModifier === 0){
+            return roll;
+        }
+        const operator = damageModifier< 0 ? foundryApi.rollInfra.minusTerm() : foundryApi.rollInfra.plusTerm();
+        const number = foundryApi.rollInfra.numericTerm(damageModifier);
+        roll.terms.push(operator,number);
+        roll.resetFormula();
+        return roll;
     }
 
     increaseDamage(amount: number) {
@@ -58,26 +85,25 @@ export class DamageRoll {
     }
 
     async evaluate(): Promise<FoundryRoll> {
-        const rollFormula = `${this._nDice}d${this._nFaces}`;
-        const rollFormulaWithPrecision = this.modifyFormulaForExactFeature(rollFormula);
-        const modifierTerm = this._damageModifier ? `${this.getSign()}${Math.abs(this._damageModifier)}` : "";
-        const damageFormula = `${rollFormulaWithPrecision}${modifierTerm}`;
-
-        let rollResult = await foundryApi.roll(damageFormula, {}).evaluate();
+        const roll = this.modifyRollFormula(this.backingRoll.clone());
+        const withPrecision = this.modifyFormulaForExactFeature(roll);
+        let rollResult = await withPrecision.evaluate();
 
         rollResult = this.modifyResultForScharfFeature(rollResult);
         rollResult = this.modifyResultForKritischFeature(rollResult);
         return rollResult;
     }
 
-    private modifyFormulaForExactFeature(rollFormula: string) {
+    private modifyFormulaForExactFeature(roll: FoundryRoll) {
         const exactValue = this._features.valueOf("Exakt");
         if (exactValue) {
             this.activeFeatures.add("Exakt");
-            let temp = this._nDice + exactValue
-            return `${temp}d${this._nFaces}kh${this._nDice}`;
+            const dieTerm  =this.getFirstDieTerm(roll);
+            dieTerm.number += exactValue;
+            dieTerm.modifiers.push(`kh${exactValue}`)
+            roll.resetFormula();
         }
-        return rollFormula;
+        return roll;
     }
 
     private modifyResultForScharfFeature(roll: FoundryRoll): FoundryRoll {
@@ -125,16 +151,8 @@ export class DamageRoll {
     }
 
     getDamageFormula() {
-        let damageFormula = `${this._nDice}W${this._nFaces}`;
-        const sign = this.getSign();
-        if (this._damageModifier) {
-            damageFormula += `${sign}${Math.abs(this._damageModifier)}`
-        }
-        return damageFormula;
-    }
-
-    private getSign(): string {
-        return this._damageModifier >= 0 ? "+" : "-";
+        const rollCopy = this.modifyRollFormula(this.backingRoll.clone());
+        return rollCopy.formula.replace(/(?<=\d+)[d](?=\d+)/g, "W");
     }
 
     getFeatureString(): string {
@@ -148,11 +166,15 @@ export class DamageRoll {
         return this.toRecords(this._features.featureList.filter(f => this.activeFeatures.has(f.name)));
     };
 
-    private toRecords(features: ItemFeatureDataModel[]): Record<string,DamageFeature> {
+    private toRecords(features: ItemFeatureDataModel[]): Record<string, DamageFeature> {
         const starter = {} as Record<string, DamageFeature>;
         return features.map(f => this.toRecord(f))
-            .reduce((acc, f) => {acc[f.name.toLowerCase()] = f; return acc}, starter);
+            .reduce((acc, f) => {
+                acc[f.name.toLowerCase()] = f;
+                return acc
+            }, starter);
     }
+
     private toRecord(feature: ItemFeatureDataModel): DamageFeature {
         return {
             name: feature.name,
@@ -162,69 +184,7 @@ export class DamageRoll {
     }
 }
 
-function parseDamageString(damageString: string): { nDice: number, nFaces: number, damageModifier: number } {
-    const sanitizedFormula = sanitizeDamageString(damageString)
-    const terms = getStringSegments(sanitizedFormula);
-    const firstDieTerm = parseDie(terms.firstDie);
-    //dice other than 6 or 10 faced do not occur in damage calculation
-    if (![0, 6, 10].includes(firstDieTerm.nFaces)) {
-        console.warn(`Discarded damage string ${damageString}, because it uses dice with an invalid number of faces.`)
-        return {nDice: 0, nFaces: 0, damageModifier: 0}
-    }
-    return {...firstDieTerm, damageModifier: parseModifiers(terms.modifiers)}
-}
-
-function sanitizeDamageString(damageString: string): string {
-    return damageString.toLowerCase()
-        .replace(/\s/g, "")
-        .replace(/w/g, "d")
-        .replace(/_/g, "");
-}
-
-function getStringSegments(damageString: string) {
-    const pattern = /([+-]?\d*d\d+|[+-]\d+)/g;
-    const terms = damageString.match(pattern);
-    const segmentedTerms = {firstDie: "0d0", otherDice: [] as string[], modifiers: [] as string[]}
-    if (!Array.isArray(terms)) {
-        return segmentedTerms
-    }
-    let firstDieFound = false;
-    for (const term of terms) {
-        if (term.includes("d") && !firstDieFound) {
-            firstDieFound = true;
-            segmentedTerms.firstDie = term;
-        } else if (terms.includes("d")) {
-            segmentedTerms.otherDice.push(term)
-        } else {
-            segmentedTerms.modifiers.push(term)
-        }
-    }
-    return segmentedTerms;
-}
-
-function parseDie(dieTerm: string) {
-    //throwing more than 999 dice is not supported by Foundry V12.
-    const diceTermPattern = /(?<ndice>\d{0,999})d(?<nfaces>\d+)/
-    const parsedTerm = diceTermPattern.exec(dieTerm);
-    return {
-        nDice: parseInt(parsedTerm?.groups?.ndice ?? '0'),
-        nFaces: parseInt(parsedTerm?.groups?.nfaces ?? '0')
-    }
-}
-
-
-function parseModifiers(modifierTerms: string[]): number {
-    function isANumber(modifier: number, index: number) {
-        if (isNaN(modifier)) {
-            console.warn(`Discarded flat damage term ${modifierTerms[index]}, because it could not be parsed`)
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    return modifierTerms
-        .map(term => parseInt(term))
-        .filter(isANumber)
-        .reduce((a, b) => a + b, 0);
+function concatSimpleRoll(roll:FoundryRoll){
+    const condensedFormula = toRollFormula(condense(mapRoll(roll)));
+    return foundryApi.roll(condensedFormula[0]);
 }

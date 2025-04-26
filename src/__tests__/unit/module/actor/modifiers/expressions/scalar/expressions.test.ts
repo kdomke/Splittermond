@@ -9,9 +9,10 @@ import {
     minus,
     of,
     plus,
-    roll,
     ref,
-    times, toRollFormula
+    roll,
+    times,
+    toRollFormula
 } from "module/actor/modifiers/expressions/scalar";
 import {expect} from "chai";
 import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
@@ -45,7 +46,7 @@ describe("Expressions", () => {
         });
 
         it(`should convert simple expression ${stringRepresentation} to roll representation`, () => {
-            expect(toRollFormula(input)).to.deep.equal([rollRepresentation,{}]);
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation, {}]);
         })
 
         it(`should correctly estimate ${stringRepresentation} greater than zero`, () => {
@@ -74,7 +75,7 @@ describe("Expressions", () => {
                 of(3),
                 minus(of(4), of(3))
             )
-        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))",   "(2 * (1 + 2)) / (3 * (4 - 3))"],
+        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))", "(2 * (1 + 2)) / (3 * (4 - 3))"],
 
     ] as const).forEach(([input, evaluated, condensed, stringRepresentation, rollRepresentation]) => {
 
@@ -83,7 +84,7 @@ describe("Expressions", () => {
         });
 
         it(`braced expression ${stringRepresentation} should convert to roll representation`, () => {
-            expect(toRollFormula(input)).to.deep.equal([rollRepresentation,{}]);
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation, {}]);
         })
 
         it(`braced expression ${stringRepresentation} should condense to ${stringRepresentation}`, () => {
@@ -108,7 +109,7 @@ describe("Expressions", () => {
                             total: value,
                         }
                     },
-                    rollFromTerms(terms: (OperatorTerm|NumericTerm)[]) {
+                    rollFromTerms(terms: (OperatorTerm | NumericTerm)[]) {
                         return MockRoll.fromTerms(terms);
                     }
 

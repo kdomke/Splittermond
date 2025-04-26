@@ -27,6 +27,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
             foundryApi.roll("1000d6").evaluate()
                 .then(() => expect.fail("Expected test to throw an error"));
         });
+
         it("should return a roll object", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
 
@@ -105,6 +106,14 @@ export function foundryRollTest(context: QuenchBatchContext) {
 
             expect(roll.terms.length).to.equal(5);
             expect(roll.formula).to.equal("1d6 + 3 - 3");
+        });
+
+        it("should reset formula", async () => {
+            const roll = foundryApi.roll("1d6+3");
+            roll.terms.push(foundryApi.rollInfra.plusTerm(), foundryApi.rollInfra.numericTerm(3));
+            roll.resetFormula();
+
+            expect(roll.formula).to.equal("1d6 + 3 + 3");
         });
 
         it("should produce a tooltip", async () => {
