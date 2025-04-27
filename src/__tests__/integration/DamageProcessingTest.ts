@@ -21,7 +21,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
 
     describe("Damage Roll evaluation", () => {
         it("Exact should modify roll in a way that the highest dice is kept", async () => {
-            const roll = await DamageRoll.parse("2d6", "Exakt 1").evaluate();
+            const roll = (await DamageRoll.parse("2d6", "Exakt 1").evaluate()).roll;
 
             expect(roll.terms[0]).to.be.instanceOf(Die);
             expect((roll.terms[0] as Die).results).to.have.length(3);
@@ -33,7 +33,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
         });
 
         it("Scharf should modify roll in a way that the lowest dice are increased", async () => {
-            const roll = await DamageRoll.parse("1d6", "Scharf 6").evaluate();
+            const roll = (await DamageRoll.parse("1d6", "Scharf 6").evaluate()).roll;
 
             expect(roll.total).to.equal(6);
             expect(roll.terms[0]).to.be.instanceOf(Die);
@@ -42,7 +42,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
         });
 
         it("Kritisch should modify roll in a way that the highest dice are increased", async () => {
-            const roll = await DamageRoll.parse("999d6", "Kritisch 1").evaluate();
+            const roll = (await DamageRoll.parse("999d6", "Kritisch 1").evaluate()).roll;
 
             expect(roll.terms[0]).to.be.instanceOf(Die);
             expect(roll.total).not.to.equal(

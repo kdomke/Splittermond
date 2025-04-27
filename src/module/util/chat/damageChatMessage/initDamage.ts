@@ -51,13 +51,13 @@ async function rollDamages(damages: ProtoDamageImplement[]) {
     const damageImplements = await Promise.all(damages.map(async damage => {
         const damageRoll = DamageRoll.parse(damage.damageFormula, damage.featureString);
         const rollResult = await damageRoll.evaluate();
-        allFeature.push(...Object.values(damageRoll.getActiveFeatures()));
-        allRolls.push(rollResult);
+        allFeature.push(...Object.values(rollResult.getActiveFeatures()));
+        allRolls.push(rollResult.roll);
         return new DamageImplement({
-            damage: rollResult.total,
+            damage: rollResult.roll.total,
             formula: damage.damageFormula,
             implementName: damage.damageSource,
-            damageExplanation: await rollResult.getTooltip(),
+            damageExplanation: await rollResult.roll.getTooltip(),
             _baseReductionOverride: parseFeatureString(damage.featureString)["durchdringung"]?.value ?? 0,
             damageType: damage.damageType ?? "physical"
         });
