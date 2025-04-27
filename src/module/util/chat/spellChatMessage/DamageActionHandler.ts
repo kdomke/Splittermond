@@ -11,12 +11,12 @@ import {AgentReference} from "../../../data/references/AgentReference";
 import {splittermond} from "../../../config";
 import {ItemReference} from "../../../data/references/ItemReference";
 import SplittermondSpellItem from "../../../item/spell";
-import {DamageRoll} from "../../damage/DamageRoll";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {CheckReport} from "../../../actor/CheckReport";
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 import {DamageInitializer} from "../damageChatMessage/initDamage";
+import {CostBase} from "../../costs/costTypes";
 
 function DamageActionHandlerSchema() {
     return {
@@ -102,15 +102,10 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
             .whenAllChecksPassed(() => {
                     this.updateSource({used: true});
                     const spell = this.spellReference.getItem();
-                    const damageFormula  =this.totalDamage.getDamageFormula();
-                    return DamageInitializer.rollDamage(
-                        [{
-                            damageFormula,
-                            featureString: spell.system.features.features ?? "",
-                            damageSource: spell.name,
-                            damageType: spell.system.damageType,
-                        }],
-                        spell.system.costType ?? "V",
+                    const damages = this.spellReference.getItem().getForDamageRoll();
+                    return DamageInitializer.rollFromDamageRoll(
+                        [damages.principalComponent, ...damages.otherComponents],
+                        CostBase.create(spell.system.costType ?? "V"),
                         this.actorReference.getAgent()
                     ).then((chatCard) => chatCard.sendToChat());
                 }
@@ -124,7 +119,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
         return [
             {
                 type: "applyDamage",
-                value: `${this.totalDamage.getDamageFormula()}`,
+                value: `${this.totalDamage.principalComponent.getDamageFormula()}`,
                 disabled: this.used,
                 isLocal: false
             }
@@ -140,8 +135,8 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
 
     get totalDamage() {
-        const damage = DamageRoll.parse(this.spellReference.getItem().damage, "");
-        damage.increaseDamage(this.damageAddition);
+        const damage = this.spellReference.getItem().getForDamageRoll();
+        damage.principalComponent.increaseDamage(this.damageAddition);
         return damage;
     }
 }

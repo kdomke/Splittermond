@@ -29,6 +29,7 @@ declare class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
 
    roll(options: any): Promise<boolean>;
    getCostsForFinishedRoll(degreeOfSuccess: number, successful: boolean): PrimaryCost;
+   getForDamageRoll():{principalComponent: ProtoDamageImplement, otherComponents: ProtoDamageImplement[]}
 }
 
 export default SplittermondSpellItem;

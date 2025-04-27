@@ -20,6 +20,10 @@ const skillMapper = initMapper(splittermond.skillGroups.all)
     .withTranslator((t) => `splittermond.skillLabel.${t}`)
     .andOtherMappers((t) => `splittermond.skillAbbreviation.${t}`)
     .build();
+const damageTypeMapper = initMapper(splittermond.damageTypes)
+    .withTranslator((t) => `splittermond.damageTypes.long.${t}`)
+    .andOtherMappers((t) => `splittermond.damageTypes.short.${t}`)
+    .build();
 
 /**
  * Only use for testing
@@ -117,6 +121,7 @@ class NoValueAdornmentNormalizer {
         derivedAttributes:{collection: splittermond.attributes, mapper:derivedAttributeMapper},
         skills: {collection: splittermond.skillGroups.all, mapper:skillMapper},
         modifiers: {collection: modifierKeys, mapper: modifierKeyMapper},
+        damageTypes: {collection: splittermond.damageTypes, mapper: damageTypeMapper},
     } as const;
     constructor(private readonly descriptor: string) {
     }

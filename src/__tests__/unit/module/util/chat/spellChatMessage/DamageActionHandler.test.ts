@@ -13,10 +13,12 @@ import {expect} from "chai";
 import {splittermond} from "module/config";
 import SplittermondSpellItem from "module/item/spell";
 import {foundryApi} from "module/api/foundryApi";
-import {DamageActionHandler} from "../../../../../../module/util/chat/spellChatMessage/DamageActionHandler";
-import {DamageInitializer} from "../../../../../../module/util/chat/damageChatMessage/initDamage";
-import {SplittermondChatCard} from "../../../../../../module/util/chat/SplittermondChatCard";
-import {stubRollApi} from "../../../../RollMock";
+import {DamageActionHandler} from "module/util/chat/spellChatMessage/DamageActionHandler";
+import {DamageInitializer} from "module/util/chat/damageChatMessage/initDamage";
+import {SplittermondChatCard} from "module/util/chat/SplittermondChatCard";
+import {MockRoll, stubRollApi} from "__tests__/unit/RollMock";
+import {DamageRoll} from "module/util/damage/DamageRoll";
+import {ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 
 describe("DamageActionHandler", () => {
     let sandbox: sinon.SinonSandbox;
@@ -138,7 +140,7 @@ describe("DamageActionHandler", () => {
         it("should invoke Dice module on damage application", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
                 .returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
@@ -151,23 +153,31 @@ describe("DamageActionHandler", () => {
         it("should respect damage increases", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
                 .returns(Promise.resolve(chatCardMock));
-            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
+            underTest.spellReference.getItem().getForDamageRoll.returns({
+                principalComponent: {
+                    damageRoll: new DamageRoll(new MockRoll("0d0 + 1"), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "bleeding",
+                    source: underTest.spellReference.getItem().name
+                },
+                otherComponents: []
+            })
             underTest.checkReportReference.get().succeeded = true;
-            underTest.spellReference.getItem().system.damageType = "bleeding";
 
             underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity: "2"}).action();
             underTest.useAction({action: "applyDamage"});
 
-            expect(diceModuleStub.lastCall.firstArg).to.deep.equal([{damageFormula: "0W0 + 3", featureString:"", damageSource: "name", damageType:"bleeding"}]);
+            expect(diceModuleStub.lastCall.firstArg).to.deep.equal(
+                [underTest.spellReference.getItem().getForDamageRoll().principalComponent]
+            );
             expect(diceModuleStub.lastCall.lastArg).to.equal(underTest.actorReference.getAgent());
         });
 
         it("should not allow using actions multiple times", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage").returns(Promise.resolve(chatCardMock));
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll").returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
             sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
 
@@ -198,5 +208,13 @@ function setUpDamageActionHandler(sandbox: SinonSandbox): WithMockedRefs<DamageA
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
     sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => ({damage: true,} as Record<keyof typeof splittermond.spellEnhancement, boolean>));
     sandbox.stub(spellMock, "damage").get(() => "1W6");
+    spellMock.getForDamageRoll.returns({
+        principalComponent: {
+            damageRoll: new DamageRoll(new MockRoll("1d6"), ItemFeaturesModel.emptyFeatures()),
+            damageType: "physical",
+            source: spellMock.name
+        },
+        otherComponents: []
+    })
     spellMock.name = "name";
 }

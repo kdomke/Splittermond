@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {Die, FoundryRoll, isNumericTerm, isOperatorTerm, NumericTerm} from "../../api/Roll";
+import {Die, FoundryRoll, isNumericTerm, isOperatorTerm, isRoll, NumericTerm} from "../../api/Roll";
 import {DamageFeature} from "./DamageFeature";
 import {
     ItemFeatureDataModel,
@@ -7,7 +7,7 @@ import {
     parseFeatures
 } from "../../item/dataModel/propertyModels/ItemFeaturesModel";
 import {ItemFeature} from "../../config/itemFeatures";
-import {condense, mapRoll, toRollFormula} from "../../actor/modifiers/expressions/scalar";
+import {condense, Expression, mapRoll, toRollFormula} from "../../actor/modifiers/expressions/scalar";
 
 export class DamageRoll {
 
@@ -23,6 +23,11 @@ export class DamageRoll {
     static from(damageString: string, itemFeatures: ItemFeaturesModel) {
         const damage = concatSimpleRoll(foundryApi.roll(damageString.replace(/(?<=\d+)[wW](?=\d+)/g, "d")));
         return new DamageRoll(damage, itemFeatures)
+    }
+
+    static fromExpression(rollExpression: Expression): DamageRoll {
+        const roll = concatSimpleRoll(rollExpression);
+        return new DamageRoll(roll, ItemFeaturesModel.emptyFeatures());
     }
 
     private backingRoll: FoundryRoll;
@@ -102,6 +107,7 @@ export class DamageRoll {
 
 }
 
+export type {EvaluatedDamageRoll};
 class EvaluatedDamageRoll {
 
     constructor(
@@ -180,9 +186,13 @@ async function evaluateDamageRoll(roll: FoundryRoll, features: ItemFeaturesModel
     }
 }
 
-
-function concatSimpleRoll(roll: FoundryRoll) {
-    const condensedFormula = toRollFormula(condense(mapRoll(roll)));
+/**
+ * Uses a quirk of the {@link mapRoll} function that allows us to concatenate the rather simple common
+ * roll formula 1d6 +2 +2 to 1d6 + 4.
+ */
+function concatSimpleRoll(roll: FoundryRoll|Expression) {
+    const expression = isRoll(roll) ? mapRoll(roll) : roll;
+    const condensedFormula = toRollFormula(condense(expression));
     return foundryApi.roll(condensedFormula[0]);
 }
 

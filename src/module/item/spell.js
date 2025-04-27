@@ -10,6 +10,8 @@ import {splittermond} from "../config.js";
 import {PrimaryCost} from "../util/costs/PrimaryCost.ts";
 import {Cost} from "../util/costs/Cost.ts";
 import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage.ts";
+import {ItemFeaturesModel} from "./dataModel/propertyModels/ItemFeaturesModel.js";
+import {DamageRoll} from "../util/damage/DamageRoll.js";
 
 
 /**
@@ -141,6 +143,33 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
 
     get availableInList() {
         return produceSpellAvailabilityTags(this.system, this.availabilityParser);
+    }
+
+
+    /**
+     * @return {principalComponent: ProtoDamageImplement, otherComponents: ProtoDamageImplement[]}
+     */
+    getForDamageRoll() {
+        const fromModifiers = this.actor.modifier.getForId("damage")
+            .withAttributeValuesOrAbsent("item", this.name)
+            .getModifiers().map(m => {
+            const features = mergeFeatures(
+                ItemFeaturesModel.from(m.attributes.features ?? ""),
+                this.system.features);
+            return {
+                damageRoll: DamageRoll.fromExpression(m.value, features),
+                damageType: m.attributes.damageType ?? this.system.damageType,
+                damageSource: m.attributes.name ?? null
+            }
+        })
+        return {
+            principalComponent: {
+                damageRoll: DamageRoll.from(this.system.damage, this.system.features),
+                damageType: this.system.damageType,
+                damageSource: this.name
+            },
+            otherComponents: fromModifiers
+        }
     }
 
     async roll(options) {

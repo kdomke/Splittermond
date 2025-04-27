@@ -186,6 +186,9 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
+                if("damageType" in modifier.attributes) {
+                    modifier.attributes.damageType = normalizeDescriptor(modifier.attributes.damageType).usingMappers("damageTypes").do();
+                }
                 actor.modifier.add("damage", {
                     ...modifier.attributes,
                     name: emphasisFromName,
