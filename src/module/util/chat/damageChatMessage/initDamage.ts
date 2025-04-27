@@ -10,7 +10,7 @@ import SplittermondActor from "../../../actor/actor";
 import {CostBase, CostType} from "../../costs/costTypes";
 import {SplittermondChatCard} from "../SplittermondChatCard";
 
-interface ProtoDamageImplement {
+interface ProtoDamageImplement0 {
     damageFormula: string;
     featureString: string;
     damageSource: string;
@@ -20,7 +20,7 @@ export const DamageInitializer ={
     rollDamage,
 }
 
-async function rollDamage(damages: ProtoDamageImplement[], costType: CostType|CostBase, speaker: SplittermondActor| null) {
+async function rollDamage(damages: ProtoDamageImplement0[], costType: CostType|CostBase, speaker: SplittermondActor| null) {
 
     const damageResults = await rollDamages(damages);
     const actorReference = speaker ? AgentReference.initialize(speaker) : null;
@@ -45,7 +45,7 @@ async function rollDamage(damages: ProtoDamageImplement[], costType: CostType|Co
     );
 }
 
-async function rollDamages(damages: ProtoDamageImplement[]) {
+async function rollDamages(damages: ProtoDamageImplement0[]) {
     const allRolls: Roll[] = [];
     const allFeature:DamageFeature[] = [];
     const damageImplements = await Promise.all(damages.map(async damage => {
