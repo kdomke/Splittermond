@@ -168,7 +168,7 @@ describe("Feature activation", () => {
         const damageRoll = DamageRoll.parse(damageString, "Exakt 1");
         const evaluatedRoll = await damageRoll.evaluate();
 
-        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal({exakt: {name: "Exakt", value: 1, active: true}});
+        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal([{name: "Exakt", value: 1, active: true}]);
     });
 
     it("should activate the scharf feature", async () => {
@@ -178,7 +178,7 @@ describe("Feature activation", () => {
         const damageRoll = DamageRoll.parse(damageString, "Scharf 2");
         const evaluatedRoll = await damageRoll.evaluate();
 
-        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal({scharf: {name: "Scharf", value: 2, active: true}});
+        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal([{name: "Scharf", value: 2, active: true}]);
     });
 
     it("should activate the kritisch feature", async () => {
@@ -188,7 +188,7 @@ describe("Feature activation", () => {
         const damageRoll = DamageRoll.parse(damageString, "Kritisch 1");
         const evaluatedRoll = await damageRoll.evaluate();
 
-        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal({kritisch: {name: "Kritisch", value: 1, active: true}});
+        expect(evaluatedRoll.getActiveFeatures()).to.deep.equal([{name: "Kritisch", value: 1, active: true}]);
     });
 });
 

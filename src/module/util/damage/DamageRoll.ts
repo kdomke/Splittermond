@@ -111,18 +111,10 @@ class EvaluatedDamageRoll {
     ) {
     }
 
-    getActiveFeatures(): Record<string, DamageFeature> {
-        return this.toRecords(this.features.featureList.filter(f => this.activeFeatures.has(f.name)));
+    getActiveFeatures(): DamageFeature[] {
+        return this.features.featureList.filter(f => this.activeFeatures.has(f.name))
+            .map(f => this.toRecord(f))
     };
-
-    private toRecords(features: ItemFeatureDataModel[]): Record<string, DamageFeature> {
-        const starter = {} as Record<string, DamageFeature>;
-        return features.map(f => this.toRecord(f))
-            .reduce((acc, f) => {
-                acc[f.name.toLowerCase()] = f;
-                return acc
-            }, starter);
-    }
 
     private toRecord(feature: ItemFeatureDataModel): DamageFeature {
         return {
