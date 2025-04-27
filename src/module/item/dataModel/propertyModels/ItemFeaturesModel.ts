@@ -96,6 +96,10 @@ export class ItemFeaturesModel extends SplittermondDataModel<ItemFeaturesType, S
 
 }
 
+export function mergeFeatures(one: ItemFeaturesModel, other: ItemFeaturesModel) {
+    return ItemFeaturesModel.from(mergeDataModels(one.featureList, other.featureList));
+}
+
 
 function FeatureSchema() {
     return {

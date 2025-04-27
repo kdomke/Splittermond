@@ -1,6 +1,6 @@
 import {
     ItemFeatureDataModel,
-    ItemFeaturesModel,
+    ItemFeaturesModel, mergeFeatures,
     parseFeatures
 } from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 import {describe, it, beforeEach, afterEach} from "mocha";
@@ -71,6 +71,16 @@ describe("ItemFeaturesModel", () => {
 
         expect(features.featuresAsStringList()).to.deep.equal(["Ablenkend", "Scharf 2"]);
     });
+
+    it("should merge features", () => {
+       const one = ItemFeaturesModel.from("Ablenkend 1, Scharf 2, Durchdringung 3");
+        const other= ItemFeaturesModel.from("Wuchtig, Scharf 5, Durchdringung 1");
+        const merged = mergeFeatures(one, other);
+
+        expect(merged.featuresAsStringList()).to.have.members(["Ablenkend", "Scharf 5", "Durchdringung 3", "Wuchtig"]);
+
+    });
+
 
     function setupParent(){
         const parent = sandbox.createStubInstance(WeaponDataModel);
