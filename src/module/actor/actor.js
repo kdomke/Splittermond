@@ -35,7 +35,7 @@ settings.registerBoolean("stableProtectsAllReduction", {
     config: true,
     default: true,
 }).then(accessor => getStableProtectsAllReduction = accessor.get)
-.catch(e => console.error("Splittermond | Failed to register setting for stable protecting all damage reduction", e));
+    .catch(e => console.error("Splittermond | Failed to register setting for stable protecting all damage reduction", e));
 
 settings.registerNumber("HGMultiplier", {
     position: 1,
@@ -396,7 +396,7 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
-                type:"not-an-item",
+                type: "not-an-item",
                 name: game.i18n.localize("splittermond.weaponless"),
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
                 system: {
@@ -1036,7 +1036,7 @@ export default class SplittermondActor extends Actor {
         let defaultTable = "sorcerer";
         eg = Math.abs(eg);
         const lowerFumbleResult = this.modifier.getForId("lowerfumbleresult").notSelectable()
-            .withAttributeValuesOrAbsent("skill",skill).getModifiers().value;
+            .withAttributeValuesOrAbsent("skill", skill).getModifiers().value;
         if (this.items.find(i => i.type === "strength" && i.name.toLowerCase() === "priester")) {
             defaultTable = "priest";
         }
@@ -1393,6 +1393,37 @@ export default class SplittermondActor extends Actor {
     toCompendium(pack) {
         this.setFlag('splittermond', 'originId', this._id);
         return super.toCompendium(pack);
+    }
+
+    findItem() {
+        let targetType = null;
+        let targetName = null;
+        const actor = this;
+
+        /**
+         * @param {string} type
+         * @returns {SplittermondItem}
+         */
+        function withType(type) {
+            targetType = type.toLowerCase();
+            return {withName: withName};
+        }
+
+        /**
+         * @param {string} name
+         * @returns {SplittermondItem}
+         */
+        function withName(name) {
+            targetName = name.toLowerCase();
+            return execute();
+        }
+
+        function execute() {
+            return actor.items.filter(i => i.type === null || i.type.toLowerCase() === targetType)
+                .find(i => i.name.toLowerCase() === targetName);
+        }
+
+        return {withType, withName}
     }
 }
 

@@ -40,6 +40,8 @@ declare class SplittermondActor extends Actor {
 
     importFromJSON(json: string, overwriteData?): Promise<unknown>;
 
+    findItem();
+
     attacks: Attack[];
     type: "character" | "npc";
 }
