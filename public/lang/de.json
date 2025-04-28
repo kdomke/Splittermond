@@ -146,7 +146,8 @@
         "unknownObject": "unbekannt",
         "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!",
         "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln.",
-        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln."
+        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln.",
+        "unknownDescriptor": "Der Wert {value} für das Attribut '{descriptor}' für einen Modifikator auf '{itemName}' ist ungültig."
       }
     },
     "modifier": "Modifikator",

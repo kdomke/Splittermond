@@ -183,15 +183,39 @@ describe('addModifier', () => {
 
     });
 
-    it('should handle damage modifiers', () => {
-        addModifier(actor, item, 'Damage', 'Damage/fire +5');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members([
-            'damage',
-            {name: 'Damage', type: null, emphasis: 'fire'},
-            of(5),
-            item,
-            false
-        ]);
+    describe("damage modifiers", () => {
+        it('should handle damage modifiers', () => {
+            addModifier(actor, item, 'Damage', 'Damage/fire +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: 'Damage', type: null, emphasis: 'fire'},
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it("should pass valid damage types on modifiers", () => {
+            addModifier(actor, item,"", 'damage damageType="fire" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: '', type: null, damageType: 'fire'},
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it("should omit invalid damage types on modifiers", () => {
+            addModifier(actor, item,"", 'damage damageType="frie" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: '', type: null},
+                of(5),
+                item,
+                false
+            ]);
+        });
     });
 
     ["Initiative", "INI"].forEach(iniRepresentation => {
