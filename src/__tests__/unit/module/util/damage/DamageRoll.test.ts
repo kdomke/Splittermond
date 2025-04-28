@@ -3,7 +3,7 @@ import {expect} from "chai";
 import sinon, {SinonStub} from "sinon";
 import {DamageRoll} from "module/util/damage/DamageRoll.js";
 import {Die, FoundryRoll} from "module/api/Roll";
-import {createTestRoll, stubFoundryRoll, stubRollApi} from "../../../RollMock";
+import {createTestRoll, MockRoll, stubFoundryRoll, stubRollApi} from "../../../RollMock";
 import {ItemFeatureDataModel, ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 import {foundryApi} from "../../../../../module/api/foundryApi";
 
@@ -23,7 +23,7 @@ describe("DamageRoll input optimization", () => {
     });
 
     it("should condense numeric terms", () => {
-        const mockRoll = createTestRoll("1d6+2", [1], 0);
+        const mockRoll = createTestRoll("1d6", [1]);
         mockRoll.terms.push(
             foundryApi.rollInfra.plusTerm(),
             foundryApi.rollInfra.numericTerm(2),
@@ -66,6 +66,50 @@ describe("DamageRoll feature string parsing and stringifying", () => {
         const damageRoll = DamageRoll.from("0d0+0", ItemFeaturesModel.from(features))
 
         expect(damageRoll.getFeatureString()).to.equal("Scharf, Kritisch 2, Exakt 3");
+    });
+
+    it("should produce the correct formula for a damage roll", () => {
+        const roll = new DamageRoll(createTestRoll("1d6", [1], 2), ItemFeaturesModel.emptyFeatures());
+        expect(roll.getDamageFormula()).to.equal("1W6 + 2");
+    });
+
+    it("should add a numeric term is none present",() =>{
+        const roll = new DamageRoll(createTestRoll("1d6", [1], 0), ItemFeaturesModel.emptyFeatures());
+        roll.increaseDamage(2);
+        expect(roll.getDamageFormula()).to.equal("1W6 + 2");
+    });
+
+    it("should not add a numeric term if no modification happened",() =>{
+        const roll = new DamageRoll(createTestRoll("1d6", [1], 0), ItemFeaturesModel.emptyFeatures());
+        expect(roll.getDamageFormula()).to.equal("1W6");
+    });
+
+    it("should reuse the last numeric term",() =>{
+        const roll = new DamageRoll(createTestRoll("1d6", [1], 2), ItemFeaturesModel.emptyFeatures());
+        roll.increaseDamage(2);
+        expect(roll.getDamageFormula()).to.equal("1W6 + 4");
+    });
+
+    it("should switch operators if damage switches",() =>{
+        const roll = new DamageRoll(createTestRoll("1d6", [1], 2), ItemFeaturesModel.emptyFeatures());
+        roll.decreaseDamage(4);
+        expect(roll.getDamageFormula()).to.equal("1W6 - 2");
+    });
+
+    it("should reuse the only numeric term",() =>{
+        const roll = new DamageRoll(createTestRoll("", [], 2), ItemFeaturesModel.emptyFeatures());
+        expect(roll.getDamageFormula()).to.equal("2");
+    });
+
+    it("should handle multiple dice",() =>{
+        const mock = createTestRoll("1d6", [6], 2)
+        mock.terms.push(
+            foundryApi.rollInfra.plusTerm(),
+            new MockRoll("1d10").terms[0]
+        )
+        mock.resetFormula();
+        const roll = new DamageRoll(mock, ItemFeaturesModel.emptyFeatures());
+        expect(roll.getDamageFormula()).to.equal("1W6 + 2 + 1W10");
     });
 });
 

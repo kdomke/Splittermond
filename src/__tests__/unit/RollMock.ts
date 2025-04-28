@@ -155,14 +155,16 @@ export class MockRoll implements FoundryRoll{
 
 // Test utility functions
 export function createTestRoll(
-    formula: `${number}d${number}`|`${number}d${number}+${number}`,
+    formula: `${number}d${number}`| "" ,
     results: number[],
     modifier = 0
 ): FoundryRoll{
     const terms: Array<Die | OperatorTerm | NumericTerm> = [];
     const dice: Die[] = [];
+    let pushedDie = false;
 
     if (results.length > 0) {
+        pushedDie=true;
         const die = new MockDie(
             results.length,
             parseInt(/(?<=d)\d/.exec(formula)![0]),
@@ -174,10 +176,10 @@ export function createTestRoll(
     }
 
     if (modifier !== 0) {
-        terms.push(
-            new MockOperatorTerm(modifier > 0 ? '+' : '-'),
-            new MockNumericTerm(Math.abs(modifier))
-        );
+        if(pushedDie) {
+            terms.push(new MockOperatorTerm(modifier > 0 ? '+' : '-'));
+        }
+        terms.push(new MockNumericTerm(Math.abs(modifier)));
     }
 
     const roll = new MockRoll(formula);

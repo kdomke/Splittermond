@@ -25,9 +25,9 @@ export class DamageRoll {
         return new DamageRoll(damage, itemFeatures)
     }
 
-    static fromExpression(rollExpression: Expression): DamageRoll {
+    static fromExpression(rollExpression: Expression, itemFeatures:ItemFeaturesModel): DamageRoll {
         const roll = concatSimpleRoll(rollExpression);
-        return new DamageRoll(roll, ItemFeaturesModel.emptyFeatures());
+        return new DamageRoll(roll, itemFeatures);
     }
 
     private backingRoll: FoundryRoll;
@@ -58,7 +58,7 @@ export class DamageRoll {
 
     private modifyRollFormula(roll: FoundryRoll) {
         const finalModificationValue = this.baseModifier + this._damageModifier;
-        if (this.hasFinalNumericTerm) {
+        if (this.hasFinalNumericTerm && roll.terms.length >= 3) {
             const lastOperand = roll.terms.slice(-2);
             const lastOperator = lastOperand[0];
             const lastNumericTerm = lastOperand[1];
@@ -68,6 +68,10 @@ export class DamageRoll {
                 roll.resetFormula();
                 return roll;
             }
+        } else if (this.hasFinalNumericTerm && roll.terms.length == 1) {
+            (this.getLastTerm(roll) as NumericTerm/*follows from condition*/).number = finalModificationValue;
+            roll.resetFormula();
+            return roll;
         }
         return this.appendModifier(roll, finalModificationValue);
     }
