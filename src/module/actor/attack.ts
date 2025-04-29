@@ -1,13 +1,23 @@
 import Skill from "./skill.js";
-import {of} from "./modifiers/expressions/scalar";
+import {
+    asString,
+    condense,
+    condenseCombineDamageWithModifiers,
+    evaluate,
+    mapRoll,
+    of,
+    plus
+} from "./modifiers/expressions/scalar";
 import {foundryApi} from "../api/foundryApi.js";
 import SplittermondActor from "./actor";
 import {splittermond} from "../config";
 import {initMapper} from "../util/LanguageMapper";
-import {MasteryDataModel} from "../item/dataModel/MasteryDataModel";
-import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
+import {ItemFeaturesModel, mergeFeatures} from "../item/dataModel/propertyModels/ItemFeaturesModel";
+import {DamageRoll} from "../util/damage/DamageRoll";
+import {toDisplayFormula, toRollFormula} from "../util/damage/util";
 
-type Options<T extends object> = { [K in keyof T]+?: T[K]| null | undefined };
+type Options<T extends object> = { [K in keyof T]+?: T[K] | null | undefined };
+
 interface AttackItem {
     id: string;
     img: string;
@@ -44,7 +54,7 @@ function withDefaults(data: Options<AttackItemData>): AttackItemData {
         get damageLevel() {return data.damageLevel ?? 0},
         get range() {return data.range ?? 0},
         get features() {return data.features ?? new ItemFeaturesModel({internalFeatureList:[]})},
-        get damage() {return data.damage ?? "1W6+1"},
+        get damage() {return toRollFormula(data.damage ?? "1W6+1")},
         get weaponSpeed() {return data.weaponSpeed ?? 7},
         get damageType() {return data.damageType ?? "physical"},
         get costType() {return data.costType ?? "V"},
@@ -155,18 +165,18 @@ export default class Attack {
         }
     }
 
-    get range(){
+    get range() {
         return this.attackData.range;
     }
 
     /**
      * Returns the features of the attack as a string, suitable for display.
      */
-    get features(){
+    get features() {
         return this.attackData.features.features
     }
 
-    get featuresAsObject(){
+    get featuresAsObject() {
         return this.attackData.features.featureList;
     }
 
@@ -189,18 +199,66 @@ export default class Attack {
         }
     }
 
+    /**
+     * @return {principalComponent: ProtoDamageImplement, otherComponents: ProtoDamageImplement[]}
+     */
+    getForDamageRoll() {
+        const fromModifiers =
+            this.collectModifiers().map(m => {
+                return {
+                    damageRoll: DamageRoll.fromExpression(m.damageExpression, m.features),
+                    damageType: m.damageType,
+                    damageSource: m.damageSource
+                }
+            });
+        return {
+            principalComponent: {
+                damageRoll: DamageRoll.from(this.attackData.damage, this.attackData.features),
+                damageType: this.attackData.damageType,
+                damageSource: this.name
+            },
+            otherComponents: fromModifiers
+        }
+    }
+
 
     get damage() {
-        let damage = this.attackData.damage;
-        let mod = this.actor.modifier.getForId("damage").notSelectable()
-            .withAttributeValuesOrAbsent("item", this.item.name).getModifiers().value;
-        if (this.actor.items.find(i => i.type == "mastery" && (i.system as MasteryDataModel).skill == this.skill.id && i.name.toLowerCase() == "improvisation") && this.attackData.features.hasFeature("Improvisiert")) {
-            mod += 2;
-        }
-        if (mod != 0)
-            damage += (mod < 0 ? "" : "+") + mod;
-        return damage;
+        const modifiers = this.collectModifiers().map(m => m.damageExpression)
+            .reduce((a, b) => plus(a,b), of(0));
+        const mainComponent = condense(mapRoll(foundryApi.roll(this.attackData.damage)))
+        return toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, modifiers)));
     }
+
+    private collectModifiers() {
+        const modifiers = this.actor.modifier.getForId("damage")
+            .notSelectable()
+            .withAttributeValuesOrAbsent("item", this.name)
+            .getModifiers().map(m => {
+                const features = mergeFeatures(ItemFeaturesModel.from(m.attributes.features ?? ""), this.attackData.features);
+                return {
+                    damageExpression: m.value,
+                    features: features,
+                    damageType: m.attributes.damageType ?? this.attackData.damageType,
+                    damageSource: m.attributes.name ?? null
+                }
+            });
+        modifiers.push(...this.getImproviationBonus());
+        return modifiers;
+    }
+
+    private getImproviationBonus() {
+        const improviationBonus = !!this.actor.findItem().withType("mastery").withName("improvisation") &&
+            this.attackData.features.hasFeature("Improvisiert");
+        const modifier = {
+            damageExpression: of(2),
+            features: this.attackData.features,
+            damageType: this.attackData.damageType,
+            damageSource: "Improvisation"
+        };
+        return improviationBonus ? [modifier] : [];
+    }
+
+
 
     get damageType() {
         return this.attackData.damageType
@@ -214,9 +272,7 @@ export default class Attack {
         let weaponSpeed = this.attackData.weaponSpeed;
         weaponSpeed -= this.actor.modifier.getForId("weaponspeed")
             .withAttributeValuesOrAbsent("item", this.item.id, this.item.name).getModifiers().value;
-        if (this.actor.items.find(i => i.type == "mastery" && i.name.toLowerCase() == "improvisation") && this.attackData.features.hasFeature("Improvisiert")) {
-            weaponSpeed -= 2;
-        }
+        this.getImproviationBonus().forEach(bonus => weaponSpeed -= evaluate(bonus.damageExpression))
         if (["melee", "slashing", "chains", "blades", "staffs"].includes(this.skill.id))
             weaponSpeed += parseInt(this.actor.tickMalus);
         return weaponSpeed;
@@ -225,7 +281,6 @@ export default class Attack {
     get isPrepared() {
         return ["longrange", "throwing"].includes(this.skill.id) ? this.actor.getFlag("splittermond", "preparedAttack") == this.id : true;
     }
-
 
 
     async roll(options: Record<string, any> = {}) {

@@ -8,6 +8,7 @@ import {
 } from "../../item/dataModel/propertyModels/ItemFeaturesModel";
 import {ItemFeature} from "../../config/itemFeatures";
 import {condense, Expression, mapRoll, toRollFormula} from "../../actor/modifiers/expressions/scalar";
+import {toDisplayFormula, toRollFormula as rollFormulaReplacer} from "./util";
 
 export class DamageRoll {
 
@@ -21,7 +22,7 @@ export class DamageRoll {
     }
 
     static from(damageString: string, itemFeatures: ItemFeaturesModel) {
-        const damage = concatSimpleRoll(foundryApi.roll(damageString.replace(/(?<=\d+)[wW](?=\d+)/g, "d")));
+        const damage = concatSimpleRoll(foundryApi.roll(rollFormulaReplacer(damageString)));
         return new DamageRoll(damage, itemFeatures)
     }
 
@@ -102,7 +103,7 @@ export class DamageRoll {
 
     getDamageFormula() {
         const rollCopy = this.modifyRollFormula(this.backingRoll.clone());
-        return rollCopy.formula.replace(/(?<=\d+)[d](?=\d+)/g, "W");
+        return toDisplayFormula(rollCopy.formula);
     }
 
     getFeatureString(): string {

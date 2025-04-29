@@ -4,8 +4,15 @@ import {getSpellAvailabilityParser} from "module/item/availabilityParser";
 import {describe} from "mocha";
 import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement";
 import {Cost} from "module/util/costs/Cost";
-import sinon from "sinon";
+import sinon, {SinonSandbox} from "sinon";
 import {SpellDataModel} from "../../../../module/item/dataModel/SpellDataModel";
+import SplittermondActor from "../../../../module/actor/actor";
+import ModifierManager from "../../../../module/actor/modifier-manager";
+import {createTestRoll, stubRollApi} from "../../RollMock";
+import {evaluate, of} from "../../../../module/actor/modifiers/expressions/scalar";
+import {ItemFeaturesModel} from "../../../../module/item/dataModel/propertyModels/ItemFeaturesModel";
+import {DamageRoll} from "../../../../module/util/damage/DamageRoll";
+import {foundryApi} from "../../../../module/api/foundryApi";
 
 describe("Spell item availability display", () => {
     const sampleSpell = new SplittermondSpellItem({}, { splittermond: { ready: true } }, getSpellAvailabilityParser({ localize: (str) => (str).split(".").pop() ?? str }, ["illusionmagic", "deathmagic"]));
@@ -126,4 +133,155 @@ describe("Spell item roll costs", () => {
         const actual = stub.getCostsForFinishedRoll(-2, false);
         expect(actual).to.deep.equal(new Cost(2, 0, false).asPrimaryCost());
     });
+});
+
+describe("Spell item damage report", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox()
+        stubRollApi(sandbox);
+        sandbox.stub(DamageRoll, "fromExpression").callsFake((exp, features) => {
+            const parsed = evaluate(exp);
+            return new DamageRoll(createTestRoll("", [], parsed), features);
+        });
+    });
+    afterEach(() => sandbox.restore());
+
+    it("should return the damage report", () => {
+        const underTest = setUpSpell(sandbox);
+        defineValue(underTest.system, "damage", "2W6");
+        defineValue(underTest.system, "damageType", "light");
+        defineValue(underTest.system, "costType", "V");
+        defineValue(underTest.system, "features", ItemFeaturesModel.emptyFeatures());
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.principalComponent.damageType).to.equal("light");
+        expect(damages.principalComponent.damageRoll.getDamageFormula()).to.equal("2W6");
+    });
+
+    it("should fill in properties from the item", () => {
+        const underTest = setUpSpell(sandbox);
+        defineValue(underTest.system, "damage", "2W6");
+        defineValue(underTest.system, "damageType", "physical");
+        defineValue(underTest.system, "costType", "V");
+        defineValue(underTest.system, "features", ItemFeaturesModel.from("Wuchtig"));
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+            features:"Scharf 2",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(1), null, false);
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.otherComponents).to.have.lengthOf(1);
+        expect(damages.otherComponents[0].damageRoll.getDamageFormula()).to.equal("1");
+        expect(damages.otherComponents[0].damageType).to.equal("physical");
+        expect(damages.otherComponents[0].damageRoll.getFeatureString()).to.equal("Scharf 2, Wuchtig");
+    });
+
+    it("should account for modifiers on actor", ()=> {
+        const underTest = setUpSpell(sandbox);
+        defineValue(underTest, "name", "Kettenblitz");
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+            damageType: "light",
+            features:"Scharf 2",
+            item: "Kettenblitz",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(3), null, false);
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.otherComponents).to.have.lengthOf(1);
+        expect(damages.otherComponents[0].damageRoll.getDamageFormula()).to.equal("3");
+        expect(damages.otherComponents[0].damageType).to.equal("light");
+        expect(damages.otherComponents[0].damageRoll.getFeatureString()).to.equal("Scharf 2");
+    });
+
+    it("should account for global modifiers", ()=> {
+        const underTest = setUpSpell(sandbox);
+        defineValue(underTest, "name", "Kettenblitz");
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(3), null, false);
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.otherComponents).to.have.lengthOf(1);
+    });
+
+    it("should ignore selectable modifiers", ()=> {
+        const underTest = setUpSpell(sandbox);
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(3), null, true);
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.otherComponents).to.have.lengthOf(0);
+    });
+
+    it("should ignore modifiers for other items", () => {
+        const underTest = setUpSpell(sandbox);
+        defineValue(underTest, "name", "Kettenblitz");
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+            item: "Regentanz",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(3), null, false);
+
+        const damages = underTest.getForDamageRoll();
+
+        expect(damages.otherComponents).to.have.lengthOf(0);
+    });
+
+    it("should produce a printable damage report via a getter", () =>{
+        sandbox.stub(foundryApi, "mergeObject").returns({});
+        const parser =getSpellAvailabilityParser({ localize: (str) => str.split(".").pop() ?? str },[]);
+        const underTest = new SplittermondSpellItem({},{ splittermond: { ready: true } }, parser);
+        defineValue(underTest, "actor", setUpActor(sandbox));
+        defineValue(underTest, "system", sandbox.createStubInstance(SpellDataModel));
+        defineValue(underTest.system, "damage", "1W6 +2");
+        const modifierProperties = {
+            type: "magic" as const,
+            name:"Klinge aus Licht",
+        }
+        underTest.actor.modifier.add("damage",modifierProperties, of(3), null, false);
+
+        const damageString = underTest.damage;
+
+        expect(damageString).to.equal("1W6 + 5");
+    });
+
+    function defineValue(object:object, property: string, value:unknown){
+        Object.defineProperty(object, property, {value, enumerable: true, writable: true});
+    }
+
+    function setUpSpell(sandbox:SinonSandbox) {
+        const stub = sinon.createStubInstance(SplittermondSpellItem);
+        const system = sandbox.createStubInstance(SpellDataModel);
+        Object.defineProperty(stub, "system", {value: system, enumerable: true, writable: false});
+        Object.defineProperty(stub, "actor", {value: setUpActor(sandbox), enumerable: true, writable: false});
+        stub.getForDamageRoll.callThrough();
+        defineValue(system, "damage", "2W6");
+        defineValue(system, "damageType", "physical");
+        defineValue(system, "costType", "V");
+        defineValue(system, "features", ItemFeaturesModel.emptyFeatures());
+        return stub;
+    }
+
+    function setUpActor(sandbox: SinonSandbox) {
+        const actor = sandbox.createStubInstance(SplittermondActor);
+        Object.defineProperty(actor, "getFlag", {value: sandbox.stub(), enumerable: true, writable: false});
+        Object.defineProperty(actor, "modifier", {value: new ModifierManager(), enumerable: true, writable: false});
+        return actor;
+    }
 });
