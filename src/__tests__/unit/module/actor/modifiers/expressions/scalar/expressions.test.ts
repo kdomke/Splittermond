@@ -1,11 +1,11 @@
 import {
     abs,
     asString,
-    condense,
+    condense, condenseCombineDamageWithModifiers,
     dividedBy,
     evaluate,
     isGreaterZero,
-    isLessThanZero,
+    isLessThanZero, mapRoll,
     minus,
     of,
     plus,
@@ -15,8 +15,8 @@ import {
     toRollFormula
 } from "module/actor/modifiers/expressions/scalar";
 import {expect} from "chai";
-import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
-import sinon from "sinon";
+import {createTestRoll, MockRoll, stubRollApi} from "__tests__/unit/RollMock";
+import sinon, {SinonSandbox} from "sinon";
 import {foundryApi} from "module/api/foundryApi";
 import {NumericTerm, OperatorTerm} from "module/api/Roll";
 import {AddExpression} from "module/actor/modifiers/expressions/scalar/definitions";
@@ -247,5 +247,69 @@ describe("Smart constructors", () => {
     it("should throw for division by zero", () => {
         expect(() => dividedBy(of(3), of(0))).to.throw();
     })
+});
+
+describe("Roll condensation", () => {
+    let sandbox: SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(() => sandbox.restore());
+
+    it("should condense a roll with a single numeric term", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],3));
+        const modifiers = of(0);
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 + 3");
+    });
+
+    it("should condense a roll with a single numeric term and a modifier", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],3));
+        const modifiers = plus(of(3), of(-2));
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 + 4");
+    });
+
+    it("should condense a roll with a single negative numeric term ", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],-3));
+        const modifiers = of(0);
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 - 3");
+    });
+
+    ([
+        [3, of(-3), ""],
+        [-3, of(3), ""],
+        [-3, of(4), "+ 1"],
+        [6, of(-8), "- 2"],
+        [2, plus(minus(of(3),of(8)),of(2)), "- 1"],
+    ] as const).forEach(([principalModifier, modifiers, expected]) => {
+        it(`should condense a roll with inputs ${principalModifier}, ${asString(modifiers)}`, () => {
+            const rollTerm = mapRoll(createTestRoll("1d6",[6],principalModifier));
+            const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+            expect(asString(result)).to.equal(`1d6 ${expected}`.trim());
+        });
+    });
+
+    it(`should pass through a roll with two roll terms`, () => {
+        const firstRoll= mapRoll(createTestRoll("1d6",[6],0));
+        const secondRoll= mapRoll(createTestRoll("1d10",[10],0));
+        const roll = plus(firstRoll, secondRoll);
+
+        expect(asString(condenseCombineDamageWithModifiers(roll, of(0)))).to.equal(asString(roll));
+    });
+
+    it(`should pass through a roll in the modifier term`, () => {
+        const firstRoll= mapRoll(createTestRoll("1d6",[6],3));
+        const secondRoll= mapRoll(createTestRoll("1d9",[9],0));
+
+        expect(asString(condenseCombineDamageWithModifiers(firstRoll, secondRoll)))
+            .to.equal(asString(plus(firstRoll, secondRoll)));
+    });
 });
 
