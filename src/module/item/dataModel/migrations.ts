@@ -97,6 +97,9 @@ function migrateFeatures(source: unknown) {
 }
 
 function mapDamageModifier(mod: string): string {
+    if(!mod.includes("/") && !/^\s*\S+[.]\S+/.test(mod) && !/emphasis=\S+/.test(mod)) {
+       return mod;
+    }
     const parsedModifier = parseModifiers(mod).modifiers[0];
     const path = parsedModifier.path.split(".")[0];
     const nameFromPath = parsedModifier.path.split(".")[1];

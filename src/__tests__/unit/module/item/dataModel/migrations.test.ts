@@ -93,6 +93,14 @@ describe("Modifier migration from 0.12.20",()=>{
 
             expect(result).to.deep.equal({modifier: `FO -1, fightingSkill.melee emphasis=Hellebarde -1, VTD +2, ${path} item="Natürliche Waffe" 1`});
         });
+
+        it(`should not engage new style modifiers`, ()=>{
+            const source = {modifier: `${path} item="Hellebarde" damageType="Wasser" 1`}
+
+            const result = migrateFrom0_12_20(source);
+
+            expect(result).to.deep.equal({modifier: `${path} item="Hellebarde" damageType="Wasser" 1`});
+        })
     });
 
     it ("should map features", () => {
