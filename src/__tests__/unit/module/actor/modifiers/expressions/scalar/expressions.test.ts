@@ -297,8 +297,8 @@ describe("Roll condensation", () => {
     });
 
     it(`should pass through a roll with two roll terms`, () => {
-        const firstRoll= mapRoll(createTestRoll("1d6",[6],0));
-        const secondRoll= mapRoll(createTestRoll("1d10",[10],0));
+        const firstRoll= mapRoll(createTestRoll("1d6",[6]));
+        const secondRoll= mapRoll(createTestRoll("1d10",[10]));
         const roll = plus(firstRoll, secondRoll);
 
         expect(asString(condenseCombineDamageWithModifiers(roll, of(0)))).to.equal(asString(roll));
@@ -306,7 +306,7 @@ describe("Roll condensation", () => {
 
     it(`should pass through a roll in the modifier term`, () => {
         const firstRoll= mapRoll(createTestRoll("1d6",[6],3));
-        const secondRoll= mapRoll(createTestRoll("1d9",[9],0));
+        const secondRoll= mapRoll(createTestRoll("1d9",[9]));
 
         expect(asString(condenseCombineDamageWithModifiers(firstRoll, secondRoll)))
             .to.equal(asString(plus(firstRoll, secondRoll)));

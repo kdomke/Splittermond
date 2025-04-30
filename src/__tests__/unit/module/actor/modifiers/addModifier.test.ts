@@ -13,6 +13,7 @@ import {CharacterAttribute} from "module/actor/dataModel/CharacterAttribute";
 import Attribute from "module/actor/attribute";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 import {evaluate, of} from "module/actor/modifiers/expressions/scalar";
+import {stubRollApi} from "../../../RollMock";
 
 //Duplicated, because I don't want to export the original type definition
 interface PreparedSystem {
@@ -32,6 +33,7 @@ describe('addModifier', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        stubRollApi(sandbox);
         systemData = {
             healthRegeneration: {multiplier: 1, bonus: 0},
             focusRegeneration: {multiplier: 1, bonus: 0},

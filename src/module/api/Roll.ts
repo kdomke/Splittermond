@@ -63,6 +63,8 @@ export declare class Roll {
 
     resetFormula(): void;
 
+    static validate(formula:string):boolean
+
     static fromTerms(terms: RollTerm[]): Roll;
 
     /**

@@ -145,6 +145,10 @@ export const foundryApi = new class FoundryApi {
 
     get rollInfra() {
         return {
+            validate(formula: string): boolean {
+                //@ts-ignore
+                return Roll.validate(formula);
+            },
             rollFromTerms(terms: FoundryRoll["terms"]): FoundryRoll {
                 //@ts-ignore
                 return Roll.fromTerms(terms);

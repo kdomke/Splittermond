@@ -144,12 +144,7 @@ function parseValue(value: string) {
 }
 
 function isRoll(value: string): boolean {
-    try{
-        foundryApi.roll(value).evaluateSync({strict:false});
-        return true;
-    } catch(e){
-        return false;
-    }
+        return foundryApi.rollInfra.validate(value)
 }
 
 
