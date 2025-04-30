@@ -42,6 +42,13 @@ interface AttackItemData {
     costType: string;
 }
 
+function validate(data: Options<AttackItemData>): Options<AttackItemData> {
+    if(data.damage !== null && data.damage !== undefined && !foundryApi.rollInfra.validate(toRollFormula(data.damage))){
+        data.damage = null;
+    }
+    return data;
+}
+
 function withDefaults(data: Options<AttackItemData>): AttackItemData {
     return {
         //@formatter:off
@@ -54,7 +61,7 @@ function withDefaults(data: Options<AttackItemData>): AttackItemData {
         get damageLevel() {return data.damageLevel ?? 0},
         get range() {return data.range ?? 0},
         get features() {return data.features ?? new ItemFeaturesModel({internalFeatureList:[]})},
-        get damage() {return toRollFormula(data.damage ?? "1W6+1")},
+        get damage() {return toRollFormula(data.damage ?? "0")},
         get weaponSpeed() {return data.weaponSpeed ?? 7},
         get damageType() {return data.damageType ?? "physical"},
         get costType() {return data.costType ?? "V"},
@@ -79,8 +86,8 @@ export default class Attack {
     public readonly img: string;
     public readonly name: string;
     public readonly skill: Skill;
-    private readonly editable: boolean;
-    private readonly deletable: boolean;
+    public readonly editable: boolean;
+    public readonly deletable: boolean;
 
     /**
      *
@@ -90,8 +97,8 @@ export default class Attack {
      */
     constructor(private readonly actor: SplittermondActor, item: AttackItem, secondaryAttack = false) {
         this.isSecondaryAttack = secondaryAttack;
-        this.attackData = withDefaults(secondaryAttack && item.system.secondaryAttack ?
-            item.system.secondaryAttack : item.system);
+        this.attackData = withDefaults(validate(secondaryAttack && item.system.secondaryAttack ?
+            item.system.secondaryAttack : item.system));
 
         this.editable = ["weapon", "shield", "npcattack"].includes(item.type);
         this.deletable = ["npcattack"].includes(item.type);
@@ -178,25 +185,6 @@ export default class Attack {
 
     get featuresAsObject() {
         return this.attackData.features.featureList;
-    }
-
-    toObject() {
-        return {
-            id: this.id,
-            img: this.img,
-            name: this.name,
-            skill: this.skill.toObject(),
-            range: this.range,
-            features: this.features,
-            damage: this.damage,
-            damageType: this.damageType,
-            costType: this.costType,
-            weaponSpeed: this.weaponSpeed,
-            editable: this.editable,
-            deletable: this.deletable,
-            isPrepared: this.isPrepared,
-            featureList: this.attackData.features.featuresAsStringList(),
-        }
     }
 
     /**
@@ -295,7 +283,8 @@ export default class Attack {
             preSelectedModifier: [this.item.name],
             modifier: 0,
             checkMessageData: {
-                weapon: this.toObject()
+                costType: this.attackData.costType,
+                damageImplements: this.getForDamageRoll(),
             }
         };
         return this.skill.roll(attackRollOptions);

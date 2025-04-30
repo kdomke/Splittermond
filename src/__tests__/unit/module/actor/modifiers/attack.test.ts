@@ -16,7 +16,7 @@ describe("Attack", () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         sandbox.stub(foundryApi, "localize").callsFake((key: string) => key);
-        stubRollApi(sandbox)
+        stubRollApi(sandbox).rollStub
     });
 
     afterEach(() => sandbox.restore());
@@ -27,6 +27,39 @@ describe("Attack", () => {
                 const parsed = evaluate(exp);
                 return new DamageRoll(createTestRoll("", [], parsed), features);
             });
+        });
+        ["", "aW6 +b", null, undefined, "aW6 +"].forEach((input) => {
+            it (`should handle garbage input ${input} for display`, () => {
+                const actor = setUpActor(sandbox);
+                const attackItem = setUpAttackItem({damage: input});
+                attackItem.name = "Langschwert";
+                const modifierAttributes = {
+                    type: "magic" as const,
+                    name: "Klinge des Lichts",
+                }
+                actor.modifier.add("damage", modifierAttributes, of(3), null, false)
+                const underTest = new Attack(actor, attackItem);
+
+                expect(underTest.damage).to.equal("3");
+            });
+
+            it("should handle garbage input for calculation", () => {
+                const actor = setUpActor(sandbox);
+                const attackItem = setUpAttackItem({damage: input});
+                attackItem.name = "Langschwert";
+                const modifierAttributes = {
+                    type: "magic" as const,
+                    name: "Klinge des Lichts",
+                }
+                actor.modifier.add("damage", modifierAttributes, of(3), null, false)
+                const underTest = new Attack(actor, attackItem);
+
+                const result = underTest.getForDamageRoll()
+
+                expect(result.principalComponent.damageRoll.getDamageFormula()).to.equal("0");
+                expect(result.otherComponents[0]?.damageRoll.getDamageFormula()).to.equal("3");
+            });
+
         });
         it("should produce a damage roll", () => {
             const actor = setUpActor(sandbox);

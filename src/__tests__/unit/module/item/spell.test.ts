@@ -147,6 +147,26 @@ describe("Spell item damage report", () => {
     });
     afterEach(() => sandbox.restore());
 
+
+    ["", "aW6 +b", null, undefined, "aW6 +"].forEach((input) => {
+        it("should handle garbage input for calculation", () => {
+            const underTest = setUpSpell(sandbox);
+            underTest.system.damage = input as any
+            underTest.name = "Langschwert";
+            const modifierAttributes = {
+                type: "magic" as const,
+                name: "Klinge des Lichts",
+            }
+            underTest.actor.modifier.add("damage", modifierAttributes, of(3), null, false)
+
+            const result = underTest.getForDamageRoll()
+
+            expect(result.principalComponent.damageRoll.getDamageFormula()).to.equal("0");
+            expect(result.otherComponents[0]?.damageRoll.getDamageFormula()).to.equal("3");
+        });
+
+    });
+
     it("should return the damage report", () => {
         const underTest = setUpSpell(sandbox);
         defineValue(underTest.system, "damage", "2W6");
@@ -243,6 +263,25 @@ describe("Spell item damage report", () => {
         expect(damages.otherComponents).to.have.lengthOf(0);
     });
 
+    ["", "aW6 +b", null, undefined, "aW6 +"].forEach((input) => {
+        it(`should handle garbage input ${input} for display`, () => {
+            sandbox.stub(foundryApi, "mergeObject").returns({});
+            const parser =getSpellAvailabilityParser({ localize: (str) => str.split(".").pop() ?? str },[]);
+            const underTest = new SplittermondSpellItem({},{ splittermond: { ready: true } }, parser);
+            defineValue(underTest, "actor", setUpActor(sandbox));
+            defineValue(underTest, "system", sandbox.createStubInstance(SpellDataModel));
+            defineValue(underTest.system, "damage", input);
+            underTest.name = "Langschwert";
+            const modifierAttributes = {
+                type: "magic" as const,
+                name: "Klinge des Lichts",
+            }
+            underTest.actor.modifier.add("damage", modifierAttributes, of(3), null, false)
+
+            expect(underTest.damage).to.equal("3");
+        });
+    });
+
     it("should produce a printable damage report via a getter", () =>{
         sandbox.stub(foundryApi, "mergeObject").returns({});
         const parser =getSpellAvailabilityParser({ localize: (str) => str.split(".").pop() ?? str },[]);
@@ -271,6 +310,7 @@ describe("Spell item damage report", () => {
         Object.defineProperty(stub, "system", {value: system, enumerable: true, writable: false});
         Object.defineProperty(stub, "actor", {value: setUpActor(sandbox), enumerable: true, writable: false});
         stub.getForDamageRoll.callThrough();
+        stub.getSystemDamage.callThrough();
         defineValue(system, "damage", "2W6");
         defineValue(system, "damageType", "physical");
         defineValue(system, "costType", "V");

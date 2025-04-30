@@ -147,20 +147,20 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.spellType?.split(",").map(str => str.trim());
     }
 
+    get availableInList() {
+        return produceSpellAvailabilityTags(this.system, this.availabilityParser);
+    }
+
+
     get damage() {
         const fromModifiers = this.actor.modifier.getForId("damage")
             .notSelectable()
             .withAttributeValuesOrAbsent("item", this.name)
             .getModifiers().map(m => m.value)
             .reduce((a,b) => plus(a,b), of(0));
-        const mainComponent = condense(mapRoll(foundryApi.roll(toRollFormula(this.system.damage))))
+        const mainComponent = condense(mapRoll(foundryApi.roll(this.getSystemDamage())))
         return toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, fromModifiers)));
     }
-
-    get availableInList() {
-        return produceSpellAvailabilityTags(this.system, this.availabilityParser);
-    }
-
 
     /**
      * @return {principalComponent: ProtoDamageImplement, otherComponents: ProtoDamageImplement[]}
@@ -181,12 +181,21 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         });
         return {
             principalComponent: {
-                damageRoll: DamageRoll.from(this.system.damage, this.system.features),
+                damageRoll: DamageRoll.from(this.getSystemDamage(), this.system.features),
                 damageType: this.system.damageType,
                 damageSource: this.name
             },
             otherComponents: fromModifiers
         }
+    }
+
+    /**
+     * @private
+     * @returns {string}
+     */
+    getSystemDamage(){
+        const damage = toRollFormula(this.system.damage ?? "0");
+        return foundryApi.rollInfra.validate(damage) ? damage : "0";
     }
 
     async roll(options) {
