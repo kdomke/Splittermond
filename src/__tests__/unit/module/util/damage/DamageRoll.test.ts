@@ -37,9 +37,9 @@ describe("DamageRoll input optimization", () => {
         DamageRoll.parse("1d6+2+4-5", "");
 
         expect((foundryApi.roll as SinonStub).lastCall.args).to.have.members(["1d6 + 1"]);
-
     });
 });
+
 
 describe("DamageRoll feature string parsing and stringifying", () => {
     let sandbox: sinon.SinonSandbox;
@@ -74,13 +74,13 @@ describe("DamageRoll feature string parsing and stringifying", () => {
     });
 
     it("should add a numeric term is none present",() =>{
-        const roll = new DamageRoll(createTestRoll("1d6", [1], 0), ItemFeaturesModel.emptyFeatures());
+        const roll = new DamageRoll(createTestRoll("1d6", [1]), ItemFeaturesModel.emptyFeatures());
         roll.increaseDamage(2);
         expect(roll.getDamageFormula()).to.equal("1W6 + 2");
     });
 
     it("should not add a numeric term if no modification happened",() =>{
-        const roll = new DamageRoll(createTestRoll("1d6", [1], 0), ItemFeaturesModel.emptyFeatures());
+        const roll = new DamageRoll(createTestRoll("1d6", [1]), ItemFeaturesModel.emptyFeatures());
         expect(roll.getDamageFormula()).to.equal("1W6");
     });
 

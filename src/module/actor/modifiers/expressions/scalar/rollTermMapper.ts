@@ -11,7 +11,7 @@ export function mapRoll(roll:FoundryRoll):Expression {
     const termIterator = terms[Symbol.iterator]()
     let rightTerm=termIterator.next();
     if(rightTerm.done || isOperator(rightTerm.value)){
-       throw new Error("Foundry Roll appears invalid, cannot map to expression");
+       throw new Error(`Foundry Roll ${roll.formula} appears invalid, cannot map to expression`);
     }
     let rightExpression:Expression=termToExpression(asNoOperator(rightTerm.value));
     while(true){

@@ -1,7 +1,9 @@
 import SplittermondItem from "./item";
 import AttackableItem from "./attackable-item";
 import {SpellDataModelType} from "./dataModel/SpellDataModel";
+import {DamageInitializer} from "../util/chat/damageChatMessage/initDamage";
 
+type ProtoDamageImplement = Parameters<typeof DamageInitializer.rollFromDamageRoll>[0][number]
 declare class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
    type: "spell";
    system: SpellDataModelType;

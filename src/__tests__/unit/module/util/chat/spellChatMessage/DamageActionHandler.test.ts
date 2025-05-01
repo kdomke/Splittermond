@@ -16,7 +16,7 @@ import {foundryApi} from "module/api/foundryApi";
 import {DamageActionHandler} from "module/util/chat/spellChatMessage/DamageActionHandler";
 import {DamageInitializer} from "module/util/chat/damageChatMessage/initDamage";
 import {SplittermondChatCard} from "module/util/chat/SplittermondChatCard";
-import {MockRoll, stubRollApi} from "__tests__/unit/RollMock";
+import {createTestRoll, MockRoll, stubFoundryRoll, stubRollApi} from "__tests__/unit/RollMock";
 import {DamageRoll} from "module/util/damage/DamageRoll";
 import {ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 
@@ -24,6 +24,7 @@ describe("DamageActionHandler", () => {
     let sandbox: sinon.SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
+        stubRollApi(sandbox)
         sandbox.stub(foundryApi, "localize").callsFake((key: string) => key)
         sandbox.stub(foundryApi, "getSpeaker").returns({
             actor: "actor",
@@ -107,12 +108,6 @@ describe("DamageActionHandler", () => {
     });
 
     describe("Increasing damage", () => {
-        let sandbox: SinonSandbox;
-        beforeEach(() => {
-            sandbox = sinon.createSandbox();
-            stubRollApi(sandbox);
-        });
-        afterEach(() => sandbox.restore());
         it("should not render action if its not an option", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             underTest.checkReportReference.get().succeeded = false;
@@ -159,7 +154,7 @@ describe("DamageActionHandler", () => {
                 principalComponent: {
                     damageRoll: new DamageRoll(new MockRoll("0d0 + 1"), ItemFeaturesModel.emptyFeatures()),
                     damageType: "bleeding",
-                    source: underTest.spellReference.getItem().name
+                    damageSource: underTest.spellReference.getItem().name
                 },
                 otherComponents: []
             })
@@ -189,6 +184,42 @@ describe("DamageActionHandler", () => {
         });
 
     });
+
+    describe("Actions", ()=>{
+        it("should not render action if its not an option", () => {
+            const underTest = setUpDamageActionHandler(sandbox);
+            underTest.checkReportReference.get().succeeded = false;
+
+            const actions = underTest.renderActions();
+
+            expect(actions).to.have.length(0);
+        });
+
+        it("should render modified actions", () => {
+            const underTest = setUpDamageActionHandler(sandbox);
+            underTest.checkReportReference.get().succeeded = true;
+            underTest.spellReference.getItem().getForDamageRoll.returns({
+                principalComponent: {
+                    damageRoll: new DamageRoll(new MockRoll("1d6 + 1"), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "physical",
+                    damageSource: underTest.spellReference.getItem().name
+                },
+                otherComponents:[{
+                    damageRoll: new DamageRoll(createTestRoll("",[],2), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "rock",
+                    damageSource: "Felsenharter Hammer"
+                }]
+            });
+            const mockRoll = new MockRoll("1d6 + 1");
+            mockRoll.terms.push(foundryApi.rollInfra.plusTerm(), foundryApi.rollInfra.numericTerm(2))
+            stubFoundryRoll(mockRoll, sandbox)
+
+            const actions = underTest.renderActions();
+
+            expect(actions).to.have.length(1);
+            expect(actions[0].value).to.equal("1W6 + 3")
+        });
+    })
 });
 
 function setUpDamageActionHandler(sandbox: SinonSandbox): WithMockedRefs<DamageActionHandler> {
@@ -212,7 +243,7 @@ function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<
         principalComponent: {
             damageRoll: new DamageRoll(new MockRoll("1d6"), ItemFeaturesModel.emptyFeatures()),
             damageType: "physical",
-            source: spellMock.name
+            damageSource: spellMock.name
         },
         otherComponents: []
     })

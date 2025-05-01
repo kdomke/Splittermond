@@ -56,12 +56,14 @@ export declare class Roll {
     /**@internal*/_evaluated: boolean
     /**@internal*/_total: number
     readonly total: number
+    readonly isDeterministic: boolean
     dice: Die[]
     terms: (Die | OperatorTerm | NumericTerm | ParentheticTerm)[]
 
     getTooltip(): Promise<string>;
 
     resetFormula(): void;
+
 
     static validate(formula:string):boolean
 
@@ -118,7 +120,10 @@ export function addRolls(one: Roll, other: Roll): Roll {
 
 export function sumRolls(rolls: Roll[]): Roll {
     if (rolls.length === 0) {
-        return new Roll("0")
+        return new Roll("0");
+    }
+    if(rolls.length === 1) {
+        return rolls[0];
     }
 
     //TODO: Remove with Foundry V13, see above

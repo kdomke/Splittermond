@@ -139,6 +139,9 @@ class EvaluatedDamageRoll {
 
 async function evaluateDamageRoll(roll: FoundryRoll, features: ItemFeaturesModel) {
     const activeFeatures: Set<ItemFeature> = new Set<ItemFeature>();
+    if(roll.isDeterministic){
+       return Promise.resolve({roll: roll.evaluateSync(), activeFeatures});
+    }
     modifyFormulaForExactFeature();
     await roll.evaluate();
     modifyResultForScharfFeature();

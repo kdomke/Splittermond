@@ -117,6 +117,10 @@ export class MockRoll implements FoundryRoll {
         return Promise.resolve(this.evaluateSync());
     }
 
+    get isDeterministic(){
+        return !this.terms.some(t => t instanceof MockDie)
+    }
+
     evaluateSync() {
         if (!this._evaluated) {
             this._total = this.terms.reduce((sum, term) => {

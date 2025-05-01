@@ -271,6 +271,25 @@ export default class Attack {
     }
 
 
+    toObject() {
+        return {
+            id: this.id,
+            img: this.img,
+            name: this.name,
+            skill: this.skill.toObject(),
+            range: this.range,
+            features: this.features,
+            damage: this.damage,
+            damageType: this.damageType,
+            costType: this.costType,
+            weaponSpeed: this.weaponSpeed,
+            editable: this.editable,
+            deletable: this.deletable,
+            isPrepared: this.isPrepared,
+            featureList: this.attackData.features.featuresAsStringList(),
+        }
+    }
+
     async roll(options: Record<string, any> = {}) {
         if (!this.actor) return false;
 
@@ -283,8 +302,10 @@ export default class Attack {
             preSelectedModifier: [this.item.name],
             modifier: 0,
             checkMessageData: {
-                costType: this.attackData.costType,
-                damageImplements: this.getForDamageRoll(),
+                weapon: {
+                    ...this.toObject(),
+                    damageImplements: this.getForDamageRoll(),
+                }
             }
         };
         return this.skill.roll(attackRollOptions);

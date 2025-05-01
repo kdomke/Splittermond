@@ -17,6 +17,9 @@ import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 import {DamageInitializer} from "../damageChatMessage/initDamage";
 import {CostBase} from "../../costs/costTypes";
+import {foundryApi} from "../../../api/foundryApi";
+import {asString, condense, mapRoll} from "../../../actor/modifiers/expressions/scalar";
+import {toDisplayFormula, toRollFormula} from "../../damage/util";
 
 function DamageActionHandlerSchema() {
     return {
@@ -119,11 +122,23 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
         return [
             {
                 type: "applyDamage",
-                value: `${this.totalDamage.principalComponent.getDamageFormula()}`,
+                value: this.getConcatenatedDamageRolls(),
                 disabled: this.used,
                 isLocal: false
             }
         ]
+    }
+
+    private getConcatenatedDamageRolls() {
+        const allDamage = this.totalDamage;
+        const allFormulas= [
+            allDamage.principalComponent.damageRoll.getDamageFormula(),
+            ...allDamage.otherComponents.map(c => c.damageRoll.getDamageFormula())
+        ]
+        return (allFormulas.length <= 1) ?
+            allFormulas.join("") :
+            toDisplayFormula(asString(condense(mapRoll(foundryApi.roll(toRollFormula(allFormulas.join(" + ")))))));
+
     }
 
     //TODO: should the check report be used here?
@@ -136,7 +151,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
     get totalDamage() {
         const damage = this.spellReference.getItem().getForDamageRoll();
-        damage.principalComponent.increaseDamage(this.damageAddition);
+        damage.principalComponent.damageRoll.increaseDamage(this.damageAddition);
         return damage;
     }
 }
