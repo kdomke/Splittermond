@@ -9,14 +9,14 @@ import {DataModelConstructorInput} from "../api/DataModel";
 import {ArmorDataModelType, MasteryDataModelType, SpellDataModelType} from "../item";
 
 export const itemCreator = {
-    createSpell(data: {type: "spell", system: Partial<SpellDataModelType>}): Promise<SplittermondSpellItem> {
+    createSpell(data: {type: "spell", system: Partial<DataModelConstructorInput<SpellDataModelType>>}): Promise<SplittermondSpellItem> {
         return foundryApi.createItem(data) as Promise<SplittermondSpellItem>;
     },
 
-    createMastery(data:{type: "mastery", system: Partial<MasteryDataModelType>}): Promise<SplittermondMasteryItem> {
+    createMastery(data:{type: "mastery", system: Partial<DataModelConstructorInput<MasteryDataModelType>>}): Promise<SplittermondMasteryItem> {
         return foundryApi.createItem(data) as Promise<SplittermondMasteryItem>;
     },
-    createArmor(data:{type: "armor", system: Partial<ArmorDataModelType>}): Promise<SplittermondArmorItem> {
+    createArmor(data:{type: "armor", system: Partial<DataModelConstructorInput<ArmorDataModelType>>}): Promise<SplittermondArmorItem> {
         return foundryApi.createItem(data) as Promise<SplittermondArmorItem>;
     }
 }
