@@ -577,7 +577,7 @@ export function modifierTest(context: QuenchBatchContext) {
             subject.modifier.add("damage", {name: "Mystery", type: "magic"}, of(2), null, false);
             subject.modifier.add("weaponspeed", {name: "Mystery", type: "magic"}, of(2), null, false);
 
-            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("3+3");
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("6");
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.weaponSpeed).to.equal(4);
         });
 
