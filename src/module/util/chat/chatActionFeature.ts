@@ -6,9 +6,9 @@ import {ChatMessage} from "../../api/foundryTypes";
 const socketEvent = "system.splittermond";
 
 export function chatActionFeature() {
-    foundryApi.hooks.on("renderChatLog", (_app:unknown, html:JQuery, _data:unknown) => chatListeners(html));
-    foundryApi.hooks.on("renderChatPopout", (_app:unknown, html:JQuery, _data:unknown) => chatListeners(html));
-    foundryApi.hooks.on("renderChatMessage", (_app:ChatMessage, html:JQuery, _data:unknown) => prohibitActionOnChatCard(_app, html, _data));
+    foundryApi.hooks.on("renderChatLog", (_app:unknown, html:HTMLElement, _data:unknown) => chatListeners(html));
+    foundryApi.hooks.on("renderChatPopout", (_app:unknown, html:HTMLElement, _data:unknown) => chatListeners(html));
+    foundryApi.hooks.on("renderChatMessageHTML", (_app:ChatMessage, html:HTMLElement, _data:unknown) => prohibitActionOnChatCard(_app, html, _data));
 
     foundryApi.hooks.once("init", () => {
         foundryApi.socket.on(socketEvent, (data) => {
@@ -35,9 +35,13 @@ export function chatActionFeature() {
     });
 }
 
-function chatListeners(html:JQuery) {
-    html.on("click", ".splittermond-chat-action[data-action]", onChatCardAction);
-    html.on("click", ".splittermond-chat-action[data-localAction]", onLocalChatCardAction)
+function chatListeners(html:HTMLElement) {
+    html.querySelectorAll(".splittermond-chat-action[data-action]").forEach(el => {
+        el.addEventListener("click", onChatCardAction);
+    })
+    html.querySelectorAll(".splittermond-chat-action[data-localAction]").forEach(el => {
+        el.addEventListener("click", onLocalChatCardAction);
+    })
 }
 
 async function onChatCardAction(event: Event) {
@@ -80,17 +84,19 @@ async function onLocalChatCardAction(event:Event) {
  *  We have to rely on JQuery to edit user access rights, because actual message evaluation is only done by the GM
  *  who always has edit rights.
  */
-function prohibitActionOnChatCard(__:unknown, html:JQuery, data:unknown) {
+function prohibitActionOnChatCard(__:unknown, html:HTMLElement, data:unknown) {
     if(!dataHasRequiredAttributes(data)) {
        throw new Error("data parameter is expected to be an object with keys 'message' and 'author', but it was not.") ;
     }
     let actor = foundryApi.getSpeaker(data.message.speaker).actor;
 
     if (!((actor && foundryApi.getActor(actor)?.isOwner) || canEditMessageOf(data.author.id))) {
-        html.find(".splittermond-chat-action[data-action]").not(".splittermond-chat-action[data-localaction]").remove();
+        html.querySelectorAll(".splittermond-chat-action[data-action]:not(.splittermond-chat-action[data-localaction])")
+            .forEach(el => el.remove());
     }
 
-    html.find(".splittermond-chat-action-container").not(":has(.splittermond-chat-action)").remove();
+    html.querySelectorAll(".splittermond-chat-action-container:not(:has(.splittermond-chat-action))")
+        .forEach(el => el.remove());
 }
 
 function dataHasRequiredAttributes(data:unknown): data is { message:{speaker:object}, author:{id:string} } {

@@ -1,4 +1,4 @@
-export default class SplittermondCombatTracker extends CombatTracker {
+export default class SplittermondCombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
 
 
     async getData(options) {

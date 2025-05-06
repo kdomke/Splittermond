@@ -117,6 +117,16 @@ global.foundry = {
             }
         }
     },
+    appv1: {
+        sheets: {
+            ItemSheet: class {
+                constructor(item) {
+                    this.item = item;
+                    this.system = {};
+                }
+            }
+        }
+    },
     applications:{
         api:{
             DialogV2: class {
@@ -133,12 +143,6 @@ global.Dialog = class {
     }
 };
 
-global.ItemSheet = class {
-    constructor(item) {
-        this.item = item;
-        this.system = {};
-    }
-};
 global.game = {};
 
 /**

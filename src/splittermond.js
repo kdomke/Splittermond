@@ -406,6 +406,97 @@ Hooks.on('init', function(){
 
 })
 
+/**
+ *
+ * @param {object} app
+ * @param {HTMLElement} html
+ * @param {Record<string,string>} data
+ */
+function commonEventHandlerHTMLEdition(app, html, data) {
+
+    html.querySelectorAll(".rollable").forEach(element => {
+        element.addEventListener("click", event => {
+            const type = element.closest("[data-roll-type]").getAttribute("data-roll-type");
+            if (type === "skill") {
+                event.preventDefault();
+                event.stopPropagation()
+                const difficulty = element.closest("[data-difficulty]").getAttribute("data-difficulty");
+                const skill = element.closest("[data-skill]").getAttribute("data-skill");
+                Macros.skillCheck(skill, {difficulty: difficulty});
+            }
+        });
+    });
+
+    html.querySelectorAll(".request-skill-check").forEach(element => {
+        element.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation()
+            const type = element.closest("[data-roll-type]").getAttribute("data-roll-type");
+
+            const difficulty = element.closest("[data-difficulty]").getAttribute("data-difficulty");
+            const skill = element.closest("[data-skill]").getAttribute("data-skill");
+
+            Macros.requestSkillCheck(skill,difficulty);
+        });
+    });
+
+    html.querySelectorAll(".pdflink").forEach(element => {
+        element.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            let pdfcode = element.closest("[data-pdfcode]").getAttribute("data-pdfcode");
+            let pdfpage = element.closest("[data-pdfpage]").getAttribute("data-pdfpage");
+
+            let pdfcodelink = pdfcode + pdfpage;
+
+            handlePdf(pdfcodelink);
+        });
+    });
+
+    html.querySelectorAll(".add-tick").forEach(element => {
+        element.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation()
+            let value = element.closest("[data-ticks]").getAttribute("data-ticks");
+            let message = element.closest("[data-message]").getAttribute("data-message");
+            let chatMessageId = element.closest("[data-message-id]").getAttribute("data-message-id");
+
+            const speaker = game.messages.get(chatMessageId).speaker;
+            let actor;
+            if (speaker.token) actor = game.actors.tokens[speaker.token];
+            if (!actor) actor = game.actors.get(speaker.actor);
+            if (!actor) {
+                ui.notifications.info(game.i18n.localize("splittermond.pleaseSelectAToken"));
+                return
+            }
+
+            actor.addTicks(value, message);
+        });
+    });
+
+    html.querySelectorAll(".maneuver").forEach(element => {
+        element.addEventListener("click", event => {
+            let descriptionElement = element.querySelector(".description")
+
+            if (descriptionElement.classList.contains("expanded")) {
+                descriptionElement.style.display = "none";
+            } else {
+                descriptionElement.style.display = "block";
+            }
+
+            descriptionElement.classList.toggle("expanded");
+        });
+    });
+}
+
+
+/**
+ * @deprecated
+ * @param {object} app
+ * @param {JQuery} html
+ * @param {Record<string,string>} data
+ */
 function commonEventHandler(app, html, data) {
     
     html.find(".rollable").click(event => {
@@ -490,24 +581,25 @@ Hooks.on('renderItemSheet',  function (app, html, data) {
     commonEventHandler(app, html, data);
 });
 
-Hooks.on('renderChatMessage', function (app, html, data) {
+Hooks.on('renderChatMessageHTML', /**@param {HTMLElement} html*/function (app, html, data) {
     let actor = ChatMessage.getSpeakerActor(data.message.speaker);
 
     if (!game.user.isGM) {
-        html.find(".gm-only").remove();
+        html.querySelectorAll(".gm-only").forEach(el => el.remove());
     }
 
     if (!((actor && actor.isOwner) || canEditMessageOf(data.author.id))) {
         //splittermond-chat-action is handled by chatActionFeature
-        html.find(".actions button").not(".splittermond-chat-action").not(".active-defense").remove();
+        html.querySelectorAll(".actions button:not(.splittermond-chat-action):not(.active-defense)")
+            .forEach(el => el.remove());
     }
 
     
-    html.find(".actions").not(":has(button)").remove();
+    html.querySelectorAll(".actions:not(:has(button))").forEach(el => el.remove());
 
-    commonEventHandler(app, html, data)
+    commonEventHandlerHTMLEdition(app, html, data)
 
-    html.find(".rollable").click(event => {
+    html.querySelector(".rollable")?.addEventListener("click", event => {
         
         const type = $(event.currentTarget).closestData("roll-type");
 
@@ -539,16 +631,18 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         }
     });
 
-    html.find(".consume").click(event => {
+    html.querySelectorAll(".consume")
+        .forEach(el => el.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation()
         const type = $(event.currentTarget).closestData('type');
         const value = $(event.currentTarget).closestData('value');
         const description = $(event.currentTarget).closestData('description');
         actor.consumeCost(type, value, description);
-    });
+    }));
 
-    html.find(".active-defense").click(event => {
+    html.querySelectorAll(".active-defense").forEach(
+        el => el.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation()
         let type = $(event.currentTarget).closestData("type");
@@ -558,13 +652,16 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         }catch(e){
             foundryApi.informUser("splittermond.pleaseSelectAToken")
         }
-    });
+    }));
 
-    html.find(".fumble-table-result").click(event => {
-        html.find(".fumble-table-result-item").not(".fumble-table-result-item-active").toggle(200);
-    });
+    html.querySelectorAll(".fumble-table-result")
+        .forEach(el => el.addEventListener("click", event => {
+        html.querySelectorAll(".fumble-table-result-item:not(.fumble-table-result-item-active)")
+            .forEach(toggleElement);
+    }));
 
-    html.find(".use-splinterpoint").click(event => {
+    html.querySelectorAll(".use-splinterpoint")
+        .forEach(el => el.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation()
         
@@ -577,9 +674,10 @@ Hooks.on('renderChatMessage', function (app, html, data) {
         if (!actor) actor = game.actors.get(speaker.actor);
         
         actor.useSplinterpointBonus(message);
-    });
+    }));
 
-    html.find('.remove-status').click(async event => {
+    html.querySelectorAll('.remove-status')
+        .forEach(el => el.addEventListener("click", async event => {
         const statusId = $(event.currentTarget).closestData('status-id');
 
         let chatMessageId = $(event.currentTarget).closestData("message-id");
@@ -592,13 +690,39 @@ Hooks.on('renderChatMessage', function (app, html, data) {
 
         await actor.deleteEmbeddedDocuments("Item", [statusId]);
         await Hooks.call("redraw-combat-tick");
-    });
-
+    }));
 });
 
-Hooks.on("renderCompendiumDirectory", (app, html, data) => {
+function toggleElement(element) {
+    if (element.style.display === 'none' || !element.style.display) {
+        // Show with animation
+        element.style.display = 'block';
+        element.animate(
+            [
+                { opacity: 0, maxHeight: '0' },
+                { opacity: 1, maxHeight: `${element.scrollHeight}px` }
+            ],
+            { duration: 200, easing: 'ease-in-out' }
+        );
+    } else {
+        // Hide with animation
+        const animation = element.animate(
+            [
+                { opacity: 1, maxHeight: `${element.scrollHeight}px` },
+                { opacity: 0, maxHeight: '0' }
+            ],
+            { duration: 200, easing: 'ease-in-out' }
+        );
+        animation.onfinish = () => {
+            element.style.display = 'none';
+        };
+    }
+}
+
+
+Hooks.on("renderCompendiumDirectory", (app, html) => {
     const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
-    html.find(".header-actions").append(compendiumBrowserButton);
+    html.querySelector(".header-actions").append(compendiumBrowserButton);
 });
 
 chatActionFeature()

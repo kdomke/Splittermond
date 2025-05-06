@@ -311,7 +311,7 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
             let storedData;
             let callbackId:number;
             const callbackPromise = new Promise<void>(resolve => {
-                callbackId = Hooks.on("renderChatMessage", (app:any, html:any, data:any) => {
+                callbackId = Hooks.on("renderChatMessageHTML", (app:any, html:any, data:any) => {
                     storedApp = app;
                     storedHtml = html;
                     storedData = data;
