@@ -1,5 +1,5 @@
 
-body {
+body:not(.icon) {
     font-family: @font-primary;
     font-variant-numeric: lining-nums;
 }
@@ -20,13 +20,11 @@ dialog.splittermond.application.dialog .window-header {
     }
 }
 
-    dialog.application.dialog button {
+    dialog.application.dialog button:not(.icon) {
         .button-style();
     }
     dialog.application.splittermond button.button-inline:extend(button.button-inline) {}
-    button,form button, .dialog .dialog-buttons button, .dialog .dialog-buttons button.default {
-        .button-style();
-    }
+
 
 
     button.button-inline {

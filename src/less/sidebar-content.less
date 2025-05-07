@@ -1,0 +1,13 @@
+@import "./variables.less";
+
+@sidebar-content: #sidebar-content;
+@regular-button: @{sidebar-content} button:not(.icon):not(.control-icon):not(.combat-tracker-header .inline-control);
+
+@{regular-button} {
+  .button-style();
+  font-family: @font-secondary;
+}
+@{sidebar-content} .documentation a {
+  .button-style();
+  font-family: @font-secondary;
+}
