@@ -1,13 +1,15 @@
 import type {
-    ChatMessage,
     ChatMessageTypes,
     Hooks,
     MergeObjectOptions,
-    SettingsConfig, SettingTypeMapper,
-    Socket, Speaker,
+    SettingsConfig,
+    SettingTypeMapper,
+    Socket,
+    Speaker,
     User
 } from "./foundryTypes";
 import type {FoundryRoll, NumericTerm, Roll} from "./Roll";
+import {FoundryChatMessage} from "./ChatMessage";
 
 export const foundryApi = new class FoundryApi {
 
@@ -41,7 +43,7 @@ export const foundryApi = new class FoundryApi {
         ui.notifications.info(message);
     }
 
-    get messages(): { get: (id: string) => ChatMessage } {
+    get messages(): { get: (id: string) => FoundryChatMessage} {
         //@ts-ignore
         return game.messages;
     }
@@ -51,7 +53,7 @@ export const foundryApi = new class FoundryApi {
         return renderTemplate;
     }
 
-    createChatMessage(chatData: object): Promise<ChatMessage> {
+    createChatMessage(chatData: object): Promise<FoundryChatMessage> {
         //@ts-ignore
         return ChatMessage.create(chatData);
     }
