@@ -720,9 +720,14 @@ function toggleElement(element) {
 }
 
 
-Hooks.on("renderCompendiumDirectory", (app, html) => {
-    const compendiumBrowserButton = $(`<button><i class="fas fa-university"></i>${game.i18n.localize("splittermond.compendiumBrowser")}</button>`).click(() => { game.splittermond.compendiumBrowser.render(true) });
-    html.querySelector(".header-actions").append(compendiumBrowserButton);
+Hooks.on("renderCompendiumDirectory", (app,/**@type HTMLElement*/ html) => {
+    html.querySelector(".header-actions").innerHTML += `
+        <button type="button" data-action="open-compendium">
+            <i class="fas fa-university"></i>
+            ${foundryApi.localize("splittermond.compendiumBrowser")}
+        </button>
+        `;
+    html.querySelector(".header-actions button[data-action='open-compendium']")?.addEventListener("click", ()=> { game.splittermond.compendiumBrowser.render(true) });
 });
 
 chatActionFeature()
