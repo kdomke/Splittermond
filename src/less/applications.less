@@ -1,0 +1,51 @@
+@import "./variables.less";
+//should affect all AppV2 Dialogues
+@window-foreground-color: #3a3a3a;
+.window-header-def() {
+  flex: 0 0 30px;
+  overflow: hidden;
+  padding: 0 8px;
+  background: none;
+  color: @window-foreground-color;
+  .window-title {
+    color: @window-foreground-color;
+    font-family: @font-primary;
+    font-variant-numeric: lining-nums;
+  }
+  button.header-control:extend(button.button-style) {
+    color: @window-foreground-color;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+;
+
+
+dialog.application.dialog .window-header {
+  .window-header-def()
+}
+
+dialog.application .window-content {
+  label {
+    color: @window-foreground-color;
+  }
+
+  button {
+    .button-style();
+  }
+}
+
+form.application .window-header {
+  .window-header-def()
+}
+
+form.application .window-content {
+  label {
+    color: @window-foreground-color;
+  }
+
+  button {
+    .button-style();
+  }
+}
