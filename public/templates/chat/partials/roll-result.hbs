@@ -1,4 +1,4 @@
-<div class="roll-summary dice-roll">
+<div class="roll-summary dice-roll" data-action="expandRoll">
     <div class="roll-total">{{rollTotal}}</div>
     <div class="dice-tooltip">
         {{#if skillAndModifierTooltip}}
@@ -12,8 +12,10 @@
 </div>
 
 {{#* inline "skillAndModifierTooltip" }}
-    <section class="tooltip-part">
-        <p>
+    <div class="dice-tooltip">
+        <div class="wrapper">
+            <section class="tooltip-part">
+                <p>
             <span class="formula">
                 {{#each this}}
                     <span class="{{classes}}">
@@ -24,14 +26,20 @@
                 </span>
                 {{/each}}
             </span>
-        </p>
-    </section>
+                </p>
+            </section>
+        </div>
+    </div>
 {{/inline}}
 
 {{#* inline "actionDescription"}}
-    <section class="tooltip-part">
-        <p>
-            {{{this}}}
-        </p>
-    </section>
+    <div class="dice-tooltip">
+        <div class="wrapper">
+            <section class="tooltip-part">
+                <p>
+                    {{{this}}}
+                </p>
+            </section>
+        </div>
+    </div>
 {{/inline}}
