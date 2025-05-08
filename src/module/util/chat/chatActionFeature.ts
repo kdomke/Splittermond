@@ -1,14 +1,24 @@
 import {handleChatAction, handleLocalChatAction} from "./SplittermondChatCard";
 import {foundryApi} from "../../api/foundryApi";
 import {canEditMessageOf} from "../chat.js";
-import {ChatMessage} from "../../api/foundryTypes";
+import {FoundryChatMessage} from "../../api/ChatMessage";
+import {ChatMessageModel, SimpleMessage, SplittermondChatMessage} from "../../data/SplittermondChatMessage";
+import {SpellRollMessage} from "./spellChatMessage/SpellRollMessage";
+import {DamageMessage} from "./damageChatMessage/DamageMessage";
 
 const socketEvent = "system.splittermond";
 
-export function chatActionFeature() {
+interface ChatMessageConfig  {
+    dataModels: Record<string, new(...args:any[])=>ChatMessageModel>
+    documentClass: new(...args:any[])=>SplittermondChatMessage;
+}
+
+export function chatActionFeature(config:ChatMessageConfig) {
+    console.log("Splittermond | Initializing Chat action feature");
     foundryApi.hooks.on("renderChatLog", (_app:unknown, html:HTMLElement, _data:unknown) => chatListeners(html));
     foundryApi.hooks.on("renderChatPopout", (_app:unknown, html:HTMLElement, _data:unknown) => chatListeners(html));
-    foundryApi.hooks.on("renderChatMessageHTML", (_app:ChatMessage, html:HTMLElement, _data:unknown) => prohibitActionOnChatCard(_app, html, _data));
+    foundryApi.hooks.on("renderChatMessageHTML", (_app:unknown, html:HTMLElement, _data:unknown) => chatListeners(html));
+    foundryApi.hooks.on("renderChatMessageHTML", (app:FoundryChatMessage, html:HTMLElement, data:unknown) => prohibitActionOnChatCard(app, html, data));
 
     foundryApi.hooks.once("init", () => {
         foundryApi.socket.on(socketEvent, (data) => {
@@ -33,6 +43,11 @@ export function chatActionFeature() {
             return Promise.resolve();
         });
     });
+
+    config.documentClass = SplittermondChatMessage;
+    config.dataModels.simple = SimpleMessage;
+    config.dataModels.spellRollMessage = SpellRollMessage;
+    config.dataModels.damageMessage = DamageMessage;
 }
 
 function chatListeners(html:HTMLElement) {

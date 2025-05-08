@@ -150,7 +150,7 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
         });
 
         it("should have a property called ChatMessage", () => {
-            expect(CONFIG, "CONFIG does not have a property called ChatMessage").to.have.property("Actor");
+            expect(CONFIG, "CONFIG does not have a property called ChatMessage").to.have.property("ChatMessage");
         });
 
         it("should have required Item properties", () => {
@@ -158,7 +158,7 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
         });
 
         it("should have required ChatMessage properties", () => {
-            expect(CONFIG.Item.dataModels, "CONFIG.ChatMessage is not initialized").to.deep.contain.keys(["spellRollMessage"]);
+            expect(CONFIG.ChatMessage.dataModels, "CONFIG.ChatMessage is not initialized").to.deep.contain.keys(["spellRollMessage"]);
         })
 
         it("should have splittermond properties", () => {

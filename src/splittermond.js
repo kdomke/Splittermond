@@ -108,6 +108,7 @@ Hooks.once("init", async function () {
     }
 
     initializeItem();
+    chatActionFeature(CONFIG.ChatMessage)
 
     CONFIG.Combat.documentClass = SplittermondCombat;
     CONFIG.ui.combat = SplittermondCombatTracker;
@@ -730,4 +731,3 @@ Hooks.on("renderCompendiumDirectory", (app,/**@type HTMLElement*/ html) => {
     html.querySelector(".header-actions button[data-action='open-compendium']")?.addEventListener("click", ()=> { game.splittermond.compendiumBrowser.render(true) });
 });
 
-chatActionFeature()

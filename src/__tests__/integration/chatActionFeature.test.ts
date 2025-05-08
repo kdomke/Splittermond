@@ -1,12 +1,9 @@
 import {getActor, getActorWithItemOfType} from "./fixtures.js"
-import {
-    handleChatAction,
-    handleLocalChatAction,
-    SplittermondChatCard
-} from "../../module/util/chat/SplittermondChatCard";
+import {ChatMessage} from "../../module/api/ChatMessage";
+import {handleChatAction, SplittermondChatCard} from "../../module/util/chat/SplittermondChatCard";
 import {foundryApi} from "../../module/api/foundryApi";
-import {SplittermondTestRollMessage} from "./resources/SplittermondTestRollMessage.js";
-import type {ChatMessage, Hooks} from "../../module/api/foundryTypes";
+import {SimpleMessage} from "module/data/SplittermondChatMessage";
+import type {Hooks} from "../../module/api/foundryTypes";
 import SplittermondActor from "../../module/actor/actor";
 import SplittermondSpellItem from "../../module/item/spell";
 import {CheckReport} from "../../module/actor/CheckReport";
@@ -15,24 +12,28 @@ import {SpellRollMessage} from "../../module/util/chat/spellChatMessage/SpellRol
 import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 
 declare const game: any;
-declare const ChatMessage: ChatMessage;
 declare const Hooks: Hooks;
+declare const CONFIG: any;
 
+type ChatMessageConfig = Parameters<typeof SplittermondChatCard["create"]>[2]
 export function chatActionFeatureTest(context: QuenchBatchContext) {
     const {describe, it, expect} = context;
-    const splittermondMessageConfig = {
-        blind: false,
-        rolls: [],
-        whisper: [],
-        type: foundryApi.chatMessageTypes.OTHER,
-        mode: 'CHAT.RollPublic'
+    function getMessageConfig(input:Partial<ChatMessageConfig>={}):ChatMessageConfig {
+        return {
+            blind: false,
+            rolls: [],
+            whisper: [],
+            type: "simple",
+            mode: 'CHAT.RollPublic',
+                ...input,
+        }
     }
 
     describe("SplittermondChatCard", () => {
         it("should post a message in the chat", async () => {
             const actor = getActor(it);
-            const message = new SplittermondTestRollMessage({title: "a"});
-            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
+            const message = new SimpleMessage({title: "title", body: "I am a test message, I do nothing"});
+            const chatCard = SplittermondChatCard.create(actor, message, getMessageConfig());
 
             await chatCard.sendToChat();
             const messageId = chatCard.messageId;
@@ -44,14 +45,13 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
 
         it("should rerender the same chat card on update", async () => {
             const actor = getActor(it);
-            const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
+            const message = new SimpleMessage({title: "title", body: "I am a test message, I do nothing"});
+            const chatCard = SplittermondChatCard.create(actor, message, getMessageConfig());
 
             await chatCard.sendToChat();
             const messagesBeforeUpdate = getCollectionLength(game.messages);
             const messageId = chatCard.messageId;
-            message.updateSource({title: "Manchete"});
-            await chatCard.updateMessage();
+            await handleChatAction({action:"alterTitle", title: "Manchete"}, messageId!);
 
 
             expect(game.messages.get(messageId), `Did not find message with id ${messageId}`).to.not.be.null;
@@ -63,25 +63,25 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
 
         it("should be able to reproduce a message from handled chat action", async () => {
             const actor = getActor(it);
-            const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
+            const message = new SimpleMessage({title: "title", body: "I am a test message, I do nothing"});
+            const chatCard = SplittermondChatCard.create(actor, message, getMessageConfig());
             await chatCard.sendToChat();
 
             const messageId = chatCard.messageId ?? "This should not happen";
-            await handleChatAction({action: "alterTitle"}, messageId);
-            expect(foundryApi.messages.get(messageId).content, "title not was updated").to.contain("title2");
+            await handleChatAction({action: "alterBody", body:"I have done something"}, messageId);
+            expect(foundryApi.messages.get(messageId).content, "body was not updated").to.contain("I have done something");
             return ChatMessage.deleteDocuments([messageId]);
         });
 
         it("should be able to reproduce a message from local handled chat action", async () => {
             const actor = getActor(it);
-            const message = new SplittermondTestRollMessage({title: "title"});
-            const chatCard = SplittermondChatCard.create(actor, message, splittermondMessageConfig);
+            const message = new SimpleMessage({title: "title", body: "I am a test message, I do nothing"});
+            const chatCard = SplittermondChatCard.create(actor, message, getMessageConfig());
             await chatCard.sendToChat();
 
             const messageId = chatCard.messageId ?? "This should not happen";
-            expect(await handleLocalChatAction({localaction: "alterTitle"}, messageId)).not.to.throw;
-            expect(foundryApi.messages.get(messageId).content, "title was updated").not.to.contain("title2");
+            await handleChatAction({action: "alterBody", body:"I have done something"}, messageId);
+            expect(foundryApi.messages.get(messageId).content, "body was updated").to.contain("I have done something");
             return ChatMessage.deleteDocuments([messageId]);
         });
 
@@ -155,7 +155,7 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
             };
             return SplittermondChatCard.create(
                 actor, SpellRollMessage.initialize(spell, checkReport),
-                splittermondMessageConfig
+                getMessageConfig({type:"spellRollMessage"})
             );
         }
     });
@@ -282,7 +282,7 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
         it("should deliver a template renderer", async () => {
             const content = "Rhaaaaagaahh"
             const renderedHtml = await foundryApi.renderer(
-                "systems/splittermond/templates/__tests__/integration/resources/testTemplate.hbs", {title: content});
+                "systems/splittermond/templates/chat/simpleTemplate.hbs", {title: content, body:""});
             expect(renderedHtml, "renderedHtml is a string").to.be.a("string");
             expect(renderedHtml, "renderedHtml contains the content").to.contain(content);
         });
@@ -326,7 +326,7 @@ export function chatActionFeatureTest(context: QuenchBatchContext) {
             const message = await foundryApi.createChatMessage(sampleMessageContent)
             await callbackPromise;
             expect(storedApp, "app is a chat message app").to.be.instanceOf(ChatMessage)
-            expect(storedHtml, "html is a JQuery object").to.be.instanceOf(jQuery)
+            expect(storedHtml, "html is an HTMLElement ").to.be.instanceOf(HTMLElement)
             expect(storedData, "data is the data of the chat message app").is.not.undefined
             return ChatMessage.deleteDocuments([message.id]).then(() => {
                 Hooks.off("renderChatMessage", callbackId);

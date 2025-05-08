@@ -19,6 +19,11 @@
     "splittermond.css"
   ],
   "documentTypes": {
+    "ChatMessage": {
+      "simple": {},
+      "spellRollMessage": {},
+      "damageMessage": {}
+    },
     "Actor": {
       "character": {
         "htmlFields": [

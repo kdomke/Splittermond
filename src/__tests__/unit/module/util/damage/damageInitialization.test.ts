@@ -44,7 +44,7 @@ describe("Damage Event initialization", ()=>{
             .onFirstCall().returns(createTestRoll("1d6", [5], 0))
             .onSecondCall().returns(createTestRoll("1d10", [3], 0));
         const damageMessage= await DamageInitializer.rollDamage([firstImplement, secondImplement], "V", null)
-            .then((chatMessage) => chatMessage.message)
+            .then((chatMessage) => chatMessage.system)
             .then((message) => message as DamageMessage);
 
         expect(damageMessage.damageEvent.implements).to.have.length(2);
@@ -56,7 +56,7 @@ describe("Damage Event initialization", ()=>{
             .onFirstCall().returns(createTestRoll("2d10", [10,1], 0))
 
         const damageMessage= await DamageInitializer.rollDamage([thirdImplement], "V", null)
-            .then((chatMessage) => chatMessage.message)
+            .then((chatMessage) => chatMessage.system)
             .then((message) => message as DamageMessage);
 
         expect(damageMessage.damageEvent.implements[0].ignoredReduction).to.equal(5);

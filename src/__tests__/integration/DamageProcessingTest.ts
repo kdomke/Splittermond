@@ -69,7 +69,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
                 damageType: "fire" as const
             }
             const chatMessage = await DamageInitializer.rollDamage([firstImplement,secondImplement],"V", null)
-            const damageMessage = chatMessage.message as DamageMessage;
+            const damageMessage = chatMessage.system as DamageMessage;
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);
             expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());

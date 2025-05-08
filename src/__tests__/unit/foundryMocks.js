@@ -26,6 +26,10 @@ global.Item = class Item{
     constructor(data, context) {
     }
 };
+global.ChatMessage = class ChatMessage{
+    constructor(data, context) {
+    }
+};
 
 global.foundry = {
     data: {

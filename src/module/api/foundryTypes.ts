@@ -108,6 +108,7 @@ declare global {
     const CONFIG:{
         Item: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
         Actor: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+        ChatMessage: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
     } & Record<string, unknown>
 }
 

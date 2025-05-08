@@ -1,6 +1,6 @@
 import {Roll} from "./Roll";
 
-export declare class ChatMessage extends FoundryDocument {
+declare class ChatMessage extends FoundryDocument {
     id: string;
     /** The Ids of the users that are to be addressed by this message*/
     whisper: string[];
@@ -15,4 +15,8 @@ export declare class ChatMessage extends FoundryDocument {
 
     deleteDocuments(documentId: string[]): Promise<void>
 }
+
+const foundryChatMessage:typeof ChatMessage = ChatMessage
 export type FoundryChatMessage = ChatMessage;
+
+export {foundryChatMessage as ChatMessage};

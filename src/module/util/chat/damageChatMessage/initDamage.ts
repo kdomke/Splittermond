@@ -1,5 +1,3 @@
-import {SplittermondChatCard} from "../SplittermondChatCard";
-import {foundryApi} from "../../../api/foundryApi";
 import {DamageEvent, DamageImplement} from "../../damage/DamageEvent";
 import {AgentReference} from "../../../data/references/AgentReference";
 import {DamageRoll} from "../../damage/DamageRoll";
@@ -10,6 +8,7 @@ import {Roll, sumRolls} from "../../../api/Roll";
 import {DamageFeature} from "../../damage/DamageFeature";
 import SplittermondActor from "../../../actor/actor";
 import {CostBase, CostType} from "../../costs/costTypes";
+import {SplittermondChatCard} from "../SplittermondChatCard";
 
 interface ProtoDamageImplement {
     damageFormula: string;
@@ -38,7 +37,7 @@ async function rollDamage(damages: ProtoDamageImplement[], costType: CostType|Co
         speaker,
         DamageMessage.initialize(damageEvent,damageResults.features),
         {
-            type: foundryApi.chatMessageTypes.OTHER,
+            type: "damageMessage",
             whisper: [],
             blind: false,
             rolls: [damageResults.totalRoll]
