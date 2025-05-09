@@ -18,7 +18,6 @@ import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compe
 import {registerRequestedSystemSettings} from "./module/settings";
 import TickBarHud from "./module/apps/tick-bar-hud";
 
-import {init as quenchTestsInit} from "./__tests__/integration/quench";
 import {chatActionFeature} from "./module/util/chat/chatActionFeature";
 import SplittermondWeaponItem from "./module/item/weapon";
 import SplittermondShieldItem from "./module/item/shield";
@@ -201,24 +200,13 @@ Hooks.once("init", async function () {
     getTemplate(`${templateBasePath}/chat/partials/roll-result.hbs`)
         .then(template => {Handlebars.registerPartial("roll-result", template)});
 
-    //if (game.data.version.startsWith("0.")) {
         document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
-        /*
-        
-    } else {
-        document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
-        game.keybindings.register("splittermond", "paste", {
-            name: "KEYBINDINGS.Paste",
-            restricted: true,
-            uneditable: [
-                {key: "V", modifiers: [ "CONTROL" ]}
-            ],
-            onDown: (e) => {ItemImporter.pasteEventhandler(e)},
-            reservedModifiers: [ "ALT", "SHIFT" ]
-        });
+
+
+    if(import.meta.env.PROD !== true) {
+        const quenchTestsInit = (await import("./__tests__/integration/quench")).init;
+        quenchTestsInit();
     }
-    */  
-    quenchTestsInit(); //starts quench tests when ready
     console.log("Splittermond | DONE!");
 });
 
