@@ -30,9 +30,9 @@
             <ul class="checkbox-list">
                 {{#each emphasis}}
                     <li>
-                        <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}"
+                        <input type="checkbox" name="emphasis" data-name="{{this.name}}" id="emphasis_{{@index}}_{{@root.baseId}}"
                                value="{{this.value}}" {{#if this.active}}checked{{/if}}>
-                        <label for="emphasis_{{@index}}">
+                        <label for="emphasis_{{@index}}_{{@root.baseId}}">
                             <i class="fa-solid fa-plus icon" data-name="unchecked"></i>
                             <i class="fa-check fa-solid icon" data-name="checked"></i>
                             {{this.label}}
@@ -77,9 +77,9 @@
                 <ul class="checkbox-list">
                     {{#each skill.maneuvers}}
                         <li>
-                            <input type="checkbox" name="maneuvers" data-name="{{this.name}}" id="maneuver_{{@index}}"
+                            <input type="checkbox" name="maneuvers" data-name="{{this.name}}" id="maneuver_{{@index}}_{{@root.baseId}}"
                                    value="{{@index}}">
-                            <label for="maneuver_{{@index}}">
+                            <label for="maneuver_{{@index}}_{{@root.baseId}}">
                                 <i class="fa-solid fa-plus icon" data-name="unchecked"></i>
                                 <i class="fa-check fa-solid icon" data-name="checked"></i>
                                 {{this.name}}

@@ -20,7 +20,8 @@ export default class CheckDialog extends Dialog {
         checkData.rollMode = game.settings.get("core", "rollMode");
         checkData.rollModes = CONFIG.Dice.rollModes;
 
-        const html = await renderTemplate("systems/splittermond/templates/apps/dialog/check-dialog.hbs", checkData);
+        const baseId= `${new Date().toISOString()}${Math.random()}`;
+        const html = await renderTemplate("systems/splittermond/templates/apps/dialog/check-dialog.hbs", {baseId, ...checkData});
 
         return new Promise((resolve) => {
             const dlg = new this(checkData, {

@@ -3,6 +3,7 @@ import {UserReport, UserReportRecord} from "./UserReporterImpl";
 import {CostType} from "../../../costs/costTypes";
 
 export interface DamageRecord {
+    baseId: string;
     type: CostType;
     items: DamageRecordItem[];
     isGrazingHit: boolean;
@@ -55,6 +56,7 @@ export class Renderer {
     private mapData(): DamageRecord {
         const source = this.userModificationRecord;
         return {
+            baseId: `${new Date().toISOString()}${Math.random()}`,
             type: this.costType,
             damageReduction: source.damageReduction.length,
             effectiveDamageReduction: this.getEffectiveDamageReduction(),
