@@ -25,29 +25,23 @@ ul.checkbox-list {
             white-space: nowrap;
         }
 
-        input~label {
+        input:not(:checked)~label {
+            >i[data-name="checked"]{
+            display: none;
+            }
+            >i[data-name="unchecked"] {
+                display: inline;
+            }
             opacity: 0.7;
-
-            &::before {
-                display: inline-block;
-                font-style: normal;
-                font-variant: normal;
-                text-rendering: auto;
-                font-family: "Font Awesome 5 Free";
-                font-weight: 900;
-                font-size: 12px;
-                padding: 2px 6px 2px 2px;
-                content: "\f067";
-            }
         }
-
-        input:checked~label {
-            opacity: 1;
-
-            &::before {
-                content: "\f00c";
+        input:checked~label{
+            >i[data-name="unchecked"]{
+                display: none;
             }
-
+            >i[data-name="checked"]{
+                display: inline;
+            }
+            opacity: 1;
         }
     }
 }
