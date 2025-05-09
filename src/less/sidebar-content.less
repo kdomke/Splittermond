@@ -1,13 +1,46 @@
 @import "./variables.less";
 
-@sidebar-content: #sidebar-content;
-@regular-button: @{sidebar-content} button:not(.icon):not(.control-icon):not(.combat-tracker-header .inline-control);
-
-@{regular-button} {
+.regular-button() {
+  &:not(.icon):not(.control-icon):not(.combat-tracker-header .inline-control) {
   .button-style();
-  font-family: @font-secondary;
+  }
 }
-@{sidebar-content} .documentation a {
-  .button-style();
+
+#sidebar-content {
+  button {
+    .regular-button();
+  }
   font-family: @font-secondary;
+
+  .documentation a {
+    .button-style();
+    font-family: @font-secondary;
+  }
+}
+
+#chat-notifications {
+  button {
+    .regular-button();
+  }
+}
+
+.chat-message {
+  color: var(--color-text-secondary);
+
+  &.emote, &.whisper, &.blind {
+    &:extend(.chat-message);
+    background: @image-grunge;
+  }
+
+  &.emote {
+    background-color: var(--background-color-emote, #f3edde);
+  }
+
+  &.whisper {
+    background-color: var(--background-color-whisper, #e8e8ef);
+  }
+
+  &.blind {
+    background-color: var(--background-color-blind, #f5eaf5);
+  }
 }
