@@ -166,7 +166,6 @@
 
 .button-style {
     .border-wobbly-line-double;
-    //.shiny-border();
     color: var(--color-text);
     font-family: @font-secondary;
     height: unset;
@@ -178,16 +177,13 @@
     background-image:  @image-grunge,
         linear-gradient(var(--color-secondary), var(--color-secondary)), @image-noise, repeating-linear-gradient(60deg, var(--color-shiny-border-dark), var(--color-shiny-border-light), var(--color-shiny-border-dark));
     background-clip: padding-box, padding-box, border-box, border-box;
-    //linear-gradient(30deg, rgba(0,0,0,0.3) 10%,   rgba(0,0,0,0.0),rgba(0,0,0,0.3) 90%);
     background-blend-mode: normal, multiply, normal, normal, normal;
-    //background-color: rgba(var(--color-primary_rgb),0.6);
-    
+
 
     text-shadow:  0 0 3px rgb(0,0,0), 0px -1px 0px rgb(0, 0,0,0.5), 0px 1px 0px rgb(255,255,255,0.5);
     
     transition: box-shadow 0.1s;
 
-    //box-shadow: inset 0 0 0px 1px rgba(0, 0, 0, 0.2),inset 0 2px 1px 0px rgba(255,255,255,0.2);
     box-shadow: inset 0 -8px 8px 0px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.3);
 
     &:hover,
@@ -214,12 +210,34 @@
     }
 
     position: relative;
-
 }
 
+.button-inline() {
+    display: inline-block;
 
+    font-size: @fontSizeSmall;
+    /*
+    width: 28px;
+    height: 28px;
+    */
+    .border-wobbly-line();
+    width: 22px;
+    height: 22px;
 
+    &:before {
+        display: none;
+        content: unset;
+    }
 
+    aspect-ratio: 1 / 1;
+    padding: 0;
+    vertical-align: middle;
+    line-height: 22px;
+
+    > i {
+        margin: 0;
+    }
+}
 
 .system-splittermond {
     .define-color(color-text, @color-text);

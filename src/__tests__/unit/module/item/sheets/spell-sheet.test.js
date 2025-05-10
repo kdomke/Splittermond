@@ -10,10 +10,10 @@ import {simplePropertyResolver} from "../../../../util.js";
 
 describe("Spell Properties display", () => {
     const testParser = getSpellAvailabilityParser({localize: (str) => str}, ["illusionmagic", "deathmagic"]);
-    global.ItemSheet.prototype.getData = function () {
+    global.foundry.appv1.sheets.ItemSheet.prototype.getData = function () {
         return {data: this.item};
     };
-    global.ItemSheet.prototype.activateListeners = () => {};
+    global.foundry.appv1.sheets.ItemSheet.prototype.activateListeners = () => {};
     global.duplicate = (obj) => obj;
 
     it("displays the availableIn property of the spell item", async () => {

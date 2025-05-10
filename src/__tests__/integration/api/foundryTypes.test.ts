@@ -7,6 +7,40 @@ declare const game: any
 export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
     const {describe, it, expect} = context;
 
+    describe("ChatMessage", () => {
+        it("should be a class", () => {
+            expect(typeof Item).to.equal("function");
+        });
+
+        ["img", "name", "type",].forEach(property => {
+            it(`should have a string property ${property}`, () => {
+                    game.items.forEach((item: FoundryDocument) => {
+                        expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
+                        expect(typeof item[property as keyof typeof item], `item property ${property} is not a string`)
+                            .to.equal("string");
+                    });
+                }
+            )
+        });
+        ["system"].forEach(property => {
+            it(`should have an object property ${property}`, () => {
+                    game.items.forEach((item: FoundryDocument) => {
+                        expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
+                        expect(typeof item[property as keyof typeof item], `item property ${property} is not an object`)
+                            .to.equal("object");
+                    });
+                }
+            )
+        });
+        ["prepareBaseData", "prepareDerivedData", "toObject", "getFlag", "updateSource"].forEach(property => {
+            it(`should have a method ${property}`, () => {
+                expect(Item.prototype, `Item prototype does not have ${property}`).to.have.property(property);
+                expect(typeof Item.prototype[property as keyof typeof Item.prototype], `item property ${property} is not a function`)
+                    .to.equal("function");
+
+            });
+        });
+    });
     describe("Item", () => {
         it("should be a class", () => {
             expect(typeof Item).to.equal("function");
@@ -40,8 +74,8 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
 
             });
         });
-
     });
+
     describe("Actor", () => {
         ["system"].forEach(property => {
             it(`should have an object property ${property}`, () => {
@@ -115,9 +149,17 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
             expect(CONFIG, "CONFIG does not have a property called Actor").to.have.property("Actor");
         });
 
+        it("should have a property called ChatMessage", () => {
+            expect(CONFIG, "CONFIG does not have a property called ChatMessage").to.have.property("ChatMessage");
+        });
+
         it("should have required Item properties", () => {
             expect(CONFIG.Item.dataModels, "CONFIG.Item is not initialized").to.deep.contain.keys(["education", "resource", "ancestry", "culturelore"]);
         });
+
+        it("should have required ChatMessage properties", () => {
+            expect(CONFIG.ChatMessage.dataModels, "CONFIG.ChatMessage is not initialized").to.deep.contain.keys(["spellRollMessage"]);
+        })
 
         it("should have splittermond properties", () => {
             const underTest = CONFIG.splittermond;

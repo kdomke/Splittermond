@@ -1,6 +1,6 @@
 import {foundryApi} from "../../api/foundryApi";
 
-export default class SplittermondItemSheet extends ItemSheet {
+export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemSheet {
     static get defaultOptions() {
         return foundryApi.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/item/item-sheet.hbs",

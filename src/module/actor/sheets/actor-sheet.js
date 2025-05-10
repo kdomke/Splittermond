@@ -3,7 +3,7 @@ import {splittermond} from "../../config.js";
 import {foundryApi} from "../../api/foundryApi";
 import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
 
-export default class SplittermondActorSheet extends ActorSheet {
+export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {
         super(...args);
         this._hoverOverlays = [];

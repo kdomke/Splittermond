@@ -43,11 +43,11 @@
         </table>
     </div>
     <div class="properties-editor">
-        <label for="damageInput">{{localize "splittermond.damage"}}</label>
+        <label for="damageInput-{{@root.baseId}}">{{localize "splittermond.damage"}}</label>
         <div class="row">
             <button class="button-inline" type="button" data-action="dec-value" data-input-query="input[name='damage']">
                 <i class="fa fa-minus" aria-hidden="true"></i></button>
-            <input style="width:80px" id="damageInput" name="damage" value="{{totalDamage}}" type="text">
+            <input style="width:80px" id="damageInput-{{@root.baseId}}" name="damage" value="{{totalDamage}}" type="text">
             <button class="button-inline" type="button" data-action="inc-value" data-input-query="input[name='damage']">
                 <i class="fa fa-plus" aria-hidden="true"></i></button>
             <button class="button-inline" type="button" data-action="half-value"

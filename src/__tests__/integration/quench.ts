@@ -14,6 +14,7 @@ import {modifierTest} from "./modifier.test";
 declare const Hooks: any;
 
 function registerQuenchTests(quench: Quench) {
+    console.log("Splittermond | Initializing quench tests")
     quench.registerBatch("splittermond.roll", foundryRollTest);
     quench.registerBatch("splittermond.compendium-browser", compendiumBrowserTest);
     quench.registerBatch("splittermond.item", itemTest);

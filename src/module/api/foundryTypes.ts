@@ -1,21 +1,5 @@
 import {DataModel} from "./DataModel";
-import {Roll} from "./Roll";
 
-export interface ChatMessage {
-    id: string,
-    /** The Ids of the users that are to be addressed by this message*/
-    whisper: string[],
-    /** the message content, an HTML string*/
-    content: string,
-
-    rolls: Roll[],
-
-    update(data: object): Promise<ChatMessage>
-
-    getFlag(scope: string, key: string): object
-
-    deleteDocuments(documentId: string[]): Promise<void>
-}
 
 export interface Speaker {
     scene: string;
@@ -124,6 +108,7 @@ declare global {
     const CONFIG:{
         Item: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
         Actor: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
+        ChatMessage: {documentClass: Function, dataModels:Record<string, unknown>} & Record<string, unknown>
     } & Record<string, unknown>
 }
 

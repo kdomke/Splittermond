@@ -1,11 +1,11 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
-import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
 import {DamageMessageData} from "./interfaces";
 import {addToRegistry} from "../chatMessageRegistry";
 import {DamageEvent} from "../../damage/DamageEvent";
 import {foundryApi} from "../../../api/foundryApi";
 import {DamageFeature, DamageFeatureSchema} from "../../damage/DamageFeature";
 import {damageHandlers} from "./damageApplicationHandlers";
+import {ChatMessageModel} from "../../../data/SplittermondChatMessage";
 
 const constructorRegistryKey = "DamageMessage";
 
@@ -22,7 +22,7 @@ function DamageMessageSchema() {
 type DamageMessageType = DataModelSchemaType<typeof DamageMessageSchema>
 
 
-export class DamageMessage extends SplittermondDataModel<DamageMessageType> implements SplittermondChatMessage {
+export class DamageMessage extends SplittermondDataModel<DamageMessageType> implements ChatMessageModel{
 
     static defineSchema = DamageMessageSchema;
 

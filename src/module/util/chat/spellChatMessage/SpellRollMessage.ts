@@ -1,20 +1,11 @@
-import {
-    DataModelSchemaType,
-    fields,
-    SplittermondDataModel
-} from "../../../data/SplittermondDataModel";
+import {DataModelSchemaType, fields, SplittermondDataModel} from "../../../data/SplittermondDataModel";
 import {CheckReport} from "../../../actor/CheckReport";
-import {SplittermondChatMessage} from "../../../data/SplittermondChatCardModel";
 import {FocusCostHandler} from "./FocusCostHandler";
 import SplittermondSpellItem from "../../../item/spell";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {ItemReference} from "../../../data/references/ItemReference";
 import {AgentReference} from "../../../data/references/AgentReference";
-import {addToRegistry} from "../chatMessageRegistry";
-import {
-    ActionHandler,
-
-} from "./interfaces";
+import {ActionHandler,} from "./interfaces";
 import {foundryApi} from "../../../api/foundryApi";
 import {TickCostActionHandler} from "./TickCostActionHandler";
 import {DamageActionHandler} from "./DamageActionHandler";
@@ -24,6 +15,7 @@ import {isAvailableAction, SpellRollMessageRenderedData} from "./SpellRollTempla
 import {NoOptionsActionHandler} from "./NoOptionsActionHandler";
 import {RollResultRenderer} from "../RollResultRenderer";
 import {DataModelConstructorInput} from "../../../api/DataModel";
+import {ChatMessageModel} from "../../../data/SplittermondChatMessage";
 
 const constructorRegistryKey = "SpellRollMessage";
 
@@ -50,7 +42,7 @@ type SpellRollMessageType = Omit<DataModelSchemaType<typeof SpellRollMessageSche
     checkReport: CheckReport
 }
 
-export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType> implements SplittermondChatMessage {
+export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType> implements ChatMessageModel{
 
     static defineSchema = SpellRollMessageSchema;
 
@@ -199,5 +191,3 @@ function getRollResultClass(checkReport: CheckReport): string {
     }
     return resultClasses.join(" ")
 }
-
-addToRegistry(constructorRegistryKey, SpellRollMessage);

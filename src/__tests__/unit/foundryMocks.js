@@ -26,6 +26,10 @@ global.Item = class Item{
     constructor(data, context) {
     }
 };
+global.ChatMessage = class ChatMessage{
+    constructor(data, context) {
+    }
+};
 
 global.foundry = {
     data: {
@@ -117,6 +121,16 @@ global.foundry = {
             }
         }
     },
+    appv1: {
+        sheets: {
+            ItemSheet: class {
+                constructor(item) {
+                    this.item = item;
+                    this.system = {};
+                }
+            }
+        }
+    },
     applications:{
         api:{
             DialogV2: class {
@@ -133,12 +147,6 @@ global.Dialog = class {
     }
 };
 
-global.ItemSheet = class {
-    constructor(item) {
-        this.item = item;
-        this.system = {};
-    }
-};
 global.game = {};
 
 /**

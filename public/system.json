@@ -2,7 +2,7 @@
   "id": "splittermond",
   "title": "Splittermond",
   "description": "A system for playing the german pen and paper RPG Splittermond.",
-  "version": "0.12.20",
+  "version": "13.0.0.0",
   "authors": [
     {
       "name": "Simon"
@@ -19,6 +19,11 @@
     "splittermond.css"
   ],
   "documentTypes": {
+    "ChatMessage": {
+      "simple": {},
+      "spellRollMessage": {},
+      "damageMessage": {}
+    },
     "Actor": {
       "character": {
         "htmlFields": [
@@ -241,9 +246,9 @@
   "primaryTokenAttribute": "healthBar",
   "secondaryTokenAttribute": "focusBar",
   "compatibility": {
-    "minimum": 12,
-    "verified": 12.333,
-    "maximum": 12
+    "minimum": 13,
+    "verified": 13.342,
+    "maximum": 13
   },
   "url": "https://github.com/SplittermondFoundry/splittermond",
   "manifest": "https://raw.githubusercontent.com/SplittermondFoundry/Splittermond/main/public/system.json",
