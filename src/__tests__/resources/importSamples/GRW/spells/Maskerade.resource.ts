@@ -38,7 +38,9 @@ export const expected = {
         availableIn: "illusionmagic 4",
         castDuration: "4 Minuten",
         costs: "K16V4",
-        damage:null,
+        damage:{
+            stringInput:null,
+        },
         damageType:null,
         costType:null,
         effectArea: null,

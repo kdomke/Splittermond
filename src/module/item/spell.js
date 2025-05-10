@@ -158,7 +158,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             .withAttributeValuesOrAbsent("item", this.name)
             .getModifiers().map(m => m.value)
             .reduce((a,b) => plus(a,b), of(0));
-        const mainComponent = condense(mapRoll(foundryApi.roll(this.getSystemDamage())))
+        const mainComponent = condense(mapRoll(this.system.damage.asRoll()))
         return toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, fromModifiers)));
     }
 
@@ -181,7 +181,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         });
         return {
             principalComponent: {
-                damageRoll: DamageRoll.from(this.getSystemDamage(), this.system.features),
+                damageRoll: DamageRoll.from(this.system.damage.calculationValue, this.system.features),
                 damageType: this.system.damageType,
                 damageSource: this.name
             },
@@ -189,14 +189,6 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         }
     }
 
-    /**
-     * @private
-     * @returns {string}
-     */
-    getSystemDamage(){
-        const damage = toRollFormula(this.system.damage ?? "0");
-        return foundryApi.rollInfra.validate(damage) ? damage : "0";
-    }
 
     async roll(options) {
         if (!this.actor) return false;

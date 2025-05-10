@@ -170,7 +170,9 @@ export function actorTest(context: QuenchBatchContext) {
 
             expect(actor.items.find(i => i.name === "Dolch")?.system, "Comparing item 'Dolch'").to.deep.contain(
                 {
-                    damage: "1W6+3",
+                    damage: {
+                        stringInput: "1W6+3"
+                    },
                     damageType: "physical",
                     costType: "V",
                     range: 0,
@@ -187,7 +189,9 @@ export function actorTest(context: QuenchBatchContext) {
                         skillMod: 0,
                         attribute1: "agility",
                         attribute2: "intuition",
-                        damage: "1W6+1",
+                        damage: {
+                            stringInput: "1W6+1"
+                        },
                         damageType: "physical",
                         costType: "V",
                         range: 5,

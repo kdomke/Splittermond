@@ -136,4 +136,16 @@ describe("Modifier migration from 0.12.20",()=>{
             }
         });
     });
+
+    it ("should map damage",()=>{
+        const source = {damage: "1W6 +    3"};
+        const replaced = migrateFrom0_12_20({...source});
+        expect((replaced as any).damage.stringInput).to.deep.equal(source.damage);
+    })
+
+    it("should not map migrated damage", () => {
+        const source = {damage: {stringInput: "1W6 +    3"}};
+        const replaced = migrateFrom0_12_20({...source});
+        expect(replaced).to.deep.equal(source);
+    })
 });

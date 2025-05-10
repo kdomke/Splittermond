@@ -14,7 +14,8 @@ import {splittermond} from "../config";
 import {initMapper} from "../util/LanguageMapper";
 import {ItemFeaturesModel, mergeFeatures} from "../item/dataModel/propertyModels/ItemFeaturesModel";
 import {DamageRoll} from "../util/damage/DamageRoll";
-import {toDisplayFormula, toRollFormula} from "../util/damage/util";
+import {toDisplayFormula} from "../util/damage/util";
+import {DamageModel} from "../item/dataModel/propertyModels/DamageModel";
 
 type Options<T extends object> = { [K in keyof T]+?: T[K] | null | undefined };
 
@@ -36,17 +37,10 @@ interface AttackItemData {
     damageLevel: number;
     range: number;
     features: ItemFeaturesModel;
-    damage: string;
+    damage: DamageModel;
     weaponSpeed: number;
     damageType: string;
     costType: string;
-}
-
-function validate(data: Options<AttackItemData>): Options<AttackItemData> {
-    if(data.damage !== null && data.damage !== undefined && !foundryApi.rollInfra.validate(toRollFormula(data.damage))){
-        data.damage = null;
-    }
-    return data;
 }
 
 function withDefaults(data: Options<AttackItemData>): AttackItemData {
@@ -61,7 +55,7 @@ function withDefaults(data: Options<AttackItemData>): AttackItemData {
         get damageLevel() {return data.damageLevel ?? 0},
         get range() {return data.range ?? 0},
         get features() {return data.features ?? new ItemFeaturesModel({internalFeatureList:[]})},
-        get damage() {return toRollFormula(data.damage ?? "0")},
+        get damage() {return data.damage ?? new DamageModel({stringInput: null})},
         get weaponSpeed() {return data.weaponSpeed ?? 7},
         get damageType() {return data.damageType ?? "physical"},
         get costType() {return data.costType ?? "V"},
@@ -97,8 +91,8 @@ export default class Attack {
      */
     constructor(private readonly actor: SplittermondActor, item: AttackItem, secondaryAttack = false) {
         this.isSecondaryAttack = secondaryAttack;
-        this.attackData = withDefaults(validate(secondaryAttack && item.system.secondaryAttack ?
-            item.system.secondaryAttack : item.system));
+        this.attackData = withDefaults(secondaryAttack && item.system.secondaryAttack ?
+            item.system.secondaryAttack : item.system);
 
         this.editable = ["weapon", "shield", "npcattack"].includes(item.type);
         this.deletable = ["npcattack"].includes(item.type);
@@ -201,7 +195,7 @@ export default class Attack {
             });
         return {
             principalComponent: {
-                damageRoll: DamageRoll.from(this.attackData.damage, this.attackData.features),
+                damageRoll: DamageRoll.from(this.attackData.damage.calculationValue, this.attackData.features),
                 damageType: this.attackData.damageType,
                 damageSource: this.name
             },
@@ -212,9 +206,11 @@ export default class Attack {
 
     get damage() {
         const modifiers = this.collectModifiers().map(m => m.damageExpression)
-            .reduce((a, b) => plus(a,b), of(0));
-        const mainComponent = condense(mapRoll(foundryApi.roll(this.attackData.damage)))
-        return toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, modifiers)));
+            .reduce((a, b) => plus(a, b), of(0));
+        const damage = this.attackData.damage.calculationValue
+        const mainComponent = condense(mapRoll(foundryApi.roll(damage)))
+        const displayFormula = toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, modifiers)));
+        return displayFormula === "0" ? "" : displayFormula;
     }
 
     private collectModifiers() {
@@ -245,7 +241,6 @@ export default class Attack {
         };
         return improviationBonus ? [modifier] : [];
     }
-
 
 
     get damageType() {

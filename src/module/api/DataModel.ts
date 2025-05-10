@@ -28,4 +28,5 @@ export declare class DataModel<T extends object, PARENT> extends _InternalDataMo
     static migrateData(source: unknown): unknown;
 }
 
-export type DataModelConstructorInput<T> = { [K in keyof T]: T[K] extends DataModel<infer U, any> ? DataModelConstructorInput<U> : T[K] };
+export type DataModelConstructorInput<T> = {
+    [K in keyof T]: T[K] extends DataModel<infer U, any> ? DataModelConstructorInput<U> : T[K] };

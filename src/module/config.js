@@ -567,7 +567,7 @@ splittermond.itemSheetProperties.weapon = [
                 choices: splittermond.attributeOptions
             },
             {
-                field: "system.damage",
+                field: "system.damage.stringInput",
                 label: "splittermond.damage",
                 template: "input"
             },
@@ -633,7 +633,7 @@ splittermond.itemSheetProperties.weapon = [
                 choices: splittermond.attributeOptions
             },
             {
-                field: "system.secondaryAttack.damage",
+                field: "system.secondaryAttack.damage.stringInput",
                 label: "splittermond.damage",
                 template: "input"
             },
@@ -797,7 +797,7 @@ splittermond.itemSheetProperties.spell = [
                 template: "input"
             },
             {
-                field: "system.damage",
+                field: "system.damage.stringInput",
                 label: "splittermond.damage",
                 template: "input"
             },
@@ -939,7 +939,7 @@ splittermond.itemSheetProperties.npcattack = [
                 template: "inputNumberWithSpinner"
             },
             {
-                field: "system.damage",
+                field: "system.damage.stringInput",
                 label: "splittermond.damage",
                 template: "input"
             },

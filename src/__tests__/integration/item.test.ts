@@ -64,7 +64,9 @@ export function itemTest(this:any, context: QuenchBatchContext) {
                     costs: "5000V5000",
                     skillLevel: 6,
                     description: "abc",
-                    damage: "500d10+200",
+                    damage: {
+                        stringInput: "500d10+200"
+                    },
                     damageType: "physical",
                     costType: "V",
                     effectArea: "50km²",

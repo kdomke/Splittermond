@@ -15,6 +15,7 @@ import {
     roll,
     times, toRollFormula
 } from "module/actor/modifiers/expressions/scalar";
+import {DamageModel} from "../../module/item/dataModel/propertyModels/DamageModel";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -558,7 +559,7 @@ export function modifierTest(context: QuenchBatchContext) {
                 name: "Lance of Longinus",
                 system: {
                     skill: "blades",
-                    damage: "3",
+                    damage: DamageModel.from("3"),
                     equipped: true,
                     attribute1: "strength",
                     attribute2: "agility",

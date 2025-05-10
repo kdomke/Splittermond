@@ -10,13 +10,14 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import {foundryApi} from "module/api/foundryApi";
 import {DamageRoll} from "../../../../../module/util/damage/DamageRoll";
 import {createTestRoll, stubRollApi} from "../../../RollMock";
+import {DamageModel} from "../../../../../module/item/dataModel/propertyModels/DamageModel";
 
 describe("Attack", () => {
     let sandbox: SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox()
         sandbox.stub(foundryApi, "localize").callsFake((key: string) => key);
-        stubRollApi(sandbox).rollStub
+        stubRollApi(sandbox);
     });
 
     afterEach(() => sandbox.restore());
@@ -28,42 +29,10 @@ describe("Attack", () => {
                 return new DamageRoll(createTestRoll("", [], parsed), features);
             });
         });
-        ["", "aW6 +b", null, undefined, "aW6 +"].forEach((input) => {
-            it (`should handle garbage input ${input} for display`, () => {
-                const actor = setUpActor(sandbox);
-                const attackItem = setUpAttackItem({damage: input});
-                attackItem.name = "Langschwert";
-                const modifierAttributes = {
-                    type: "magic" as const,
-                    name: "Klinge des Lichts",
-                }
-                actor.modifier.add("damage", modifierAttributes, of(3), null, false)
-                const underTest = new Attack(actor, attackItem);
 
-                expect(underTest.damage).to.equal("3");
-            });
-
-            it("should handle garbage input for calculation", () => {
-                const actor = setUpActor(sandbox);
-                const attackItem = setUpAttackItem({damage: input});
-                attackItem.name = "Langschwert";
-                const modifierAttributes = {
-                    type: "magic" as const,
-                    name: "Klinge des Lichts",
-                }
-                actor.modifier.add("damage", modifierAttributes, of(3), null, false)
-                const underTest = new Attack(actor, attackItem);
-
-                const result = underTest.getForDamageRoll()
-
-                expect(result.principalComponent.damageRoll.getDamageFormula()).to.equal("0");
-                expect(result.otherComponents[0]?.damageRoll.getDamageFormula()).to.equal("3");
-            });
-
-        });
         it("should produce a damage roll", () => {
             const actor = setUpActor(sandbox);
-            const attackItem = setUpAttackItem({damage: "1W6+2", features: ItemFeaturesModel.from("Scharf 2")});
+            const attackItem = setUpAttackItem({damage: DamageModel.from("1W6+2"), features: ItemFeaturesModel.from("Scharf 2")});
             actor.modifier.add("damage", {
                 type: "magic",
                 damageType: "light",
@@ -153,7 +122,7 @@ describe("Attack", () => {
         it("should account for Improvisation feature", () => {
             const actor = setUpActor(sandbox);
             sandbox.stub(actor, "items").value([({name: "Improvisation", type: "mastery"})]);
-            const attackItem = setUpAttackItem({damage: "1W6+2", features: ItemFeaturesModel.from("Improvisiert")});
+            const attackItem = setUpAttackItem({damage: DamageModel.from("1W6+2"), features: ItemFeaturesModel.from("Improvisiert")});
             actor.modifier.add("damage", {
                 type: "magic",
                 damageType: "light",
@@ -170,7 +139,7 @@ describe("Attack", () => {
 
         it("should produce a readable damage string", () => {
             const actor = setUpActor(sandbox);
-            const attackItem = setUpAttackItem({damage: "1W6+2"});
+            const attackItem = setUpAttackItem({damage: DamageModel.from("1W6+2")});
             attackItem.name = "Langschwert";
             const modifierAttributes = {
                 type: "magic" as const,
@@ -180,6 +149,20 @@ describe("Attack", () => {
             const underTest = new Attack(actor, attackItem);
 
             expect(underTest.damage).to.equal("1W6 + 5");
+        });
+
+        it("zero damage should be rendered as empty string ", () => {
+            const actor = setUpActor(sandbox);
+            const attackItem = setUpAttackItem({damage: DamageModel.from("0")});
+            attackItem.name = "Langschwert";
+            const modifierAttributes = {
+                type: "magic" as const,
+                name: "Klinge des Lichts",
+            }
+            actor.modifier.add("damage", modifierAttributes, of(0), null, false)
+            const underTest = new Attack(actor, attackItem);
+
+            expect(underTest.damage).to.equal("");
         });
     });
 
@@ -199,8 +182,7 @@ describe("Attack", () => {
         const underTest = new Attack(actor, attackItem);
 
         expect(underTest.weaponSpeed).to.equal(5);
-
-    })
+    });
 
     it("should report prepared if attack represents a melee attack", () => {
         const actor = setUpActor(sandbox);
@@ -266,7 +248,7 @@ function setUpAttackItem(props: AttackItemData = {}): ConstructorParameters<type
             damageLevel: 0,
             range: 0,
             features: ItemFeaturesModel.from("Scharf 2"),
-            damage: "1W6+2",
+            damage: new DamageModel({stringInput: "1W6+2"}),
             weaponSpeed: 7,
             damageType: "physical",
             costType: "V",

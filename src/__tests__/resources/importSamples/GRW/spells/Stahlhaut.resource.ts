@@ -28,7 +28,9 @@ export const expected = {
         availableIn:  "stonemagic 4, protectionmagic 4",
         castDuration:  "25 Ticks",
         costs:  "K16V4",
-        damage: null,
+        damage: {
+            stringInput:  null,
+        },
         damageType:null,
         costType:null,
         effectArea: null,

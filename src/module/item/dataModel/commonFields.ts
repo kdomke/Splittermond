@@ -2,8 +2,7 @@ import {fieldExtensions, fields} from "../../data/SplittermondDataModel";
 import {DamageType} from "../../config/damageTypes";
 import {splittermond} from "../../config";
 import {CostType, costTypes} from "../../util/costs/costTypes";
-import {foundryApi} from "../../api/foundryApi";
-import {toRollFormula} from "../../util/damage/util";
+import {DamageModel} from "./propertyModels/DamageModel";
 
 export function getPhysicalProperties() {
     return {
@@ -35,13 +34,12 @@ export function getDefense() {
     }
 }
 
+function damageDataField(){
+    return new fields.EmbeddedDataField(DamageModel,{required:true, nullable:false});
+}
 export function damage() {
     return {
-        damage: new fields.StringField({
-            required: true,
-            nullable: true,
-            validate: (x:string|null) => x === null ||foundryApi.rollInfra.validate(toRollFormula(x))
-        }),
+        damage: damageDataField(),
         damageType: new fieldExtensions.StringEnumField({
                 validate: (x: DamageType) => x == null || splittermond.damageTypes.includes(x),
                 required: true,

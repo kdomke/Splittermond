@@ -75,6 +75,7 @@ export function migrateFrom0_12_20(source: unknown) {
         source.modifier = [...keep, ...change].join(", ");
     }
     source = migrateFeatures(source);
+    source = migrateDamage(source);
     return source;
 }
 
@@ -124,4 +125,14 @@ function mapDamageModifier(mod: string): string {
     } else {
         return `${path} ${valueAsString}`;
     }
+}
+
+function migrateDamage(source:unknown) {
+    if(!source || typeof source !== "object"){
+        return source;
+    }
+    if("damage" in source && typeof source["damage"] === "string") {
+        source.damage = {stringInput:source["damage"]};
+    }
+    return source;
 }
