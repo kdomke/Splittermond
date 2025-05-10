@@ -11,7 +11,7 @@ const SCRIPT_FILE_PATH = function() {
 }();
 
 if(path.basename(path.join(MODULE_ID,"..")) !== "systems"){
-    console.error("This script must be run in the splittermond of the FoundryVTT systems directory");
+    console.error("This script must be run in the splittermond folder of the FoundryVTT systems directory");
     process.exit(1);
 }
 
@@ -23,6 +23,7 @@ for (const pack of packs) {
             console.debug(`Omitting file ${pack}`);
             continue;
     }
+    console.log("Unpacking " + pack);
     await unpackLdbCompendium(pack);
 }
 
@@ -32,19 +33,25 @@ for (const pack of packs) {
  * @returns {Promise<void>}
  */
 async function unpackLdbCompendium(pack){
-    console.log("Unpacking " + pack);
     const directory = `${SCRIPT_FILE_PATH}/../src/packs/${pack}`;
     try {
+        console.debug(`\tProcessing directory ${directory}`);
         for (const file of await fs.readdir(directory)) {
+            console.debug(`\t\tUnlinking ${file}`);
             await fs.unlink(path.join(directory, file));
         }
     } catch (error) {
-        if (error.code === "ENOENT") console.log("No files inside of " + pack);
-        else console.log(error);
+        if (error.code === "ENOENT") console.warn("No files inside of " + pack);
+        else console.warn(error);
+        return
     }
+
+    const extractSource = `${MODULE_ID}/packs/${pack}`
+    const extractTarget = `${SCRIPT_FILE_PATH}/../src/packs/${pack}`
+    console.debug(`\tExtracting pack ${extractSource} into ${extractTarget}`);
     await extractPack(
-        `${MODULE_ID}/packs/${pack}`,
-        `${SCRIPT_FILE_PATH}/../src/packs/${pack}`,
+        extractSource,
+        extractTarget,
         {
             yaml,
             transformName,
