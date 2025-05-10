@@ -13,6 +13,7 @@
     * Sie können global gelten oder mittels attribute `item="<name>" beschränkt werden`
     * Merkmale die für gewönlich keinen Wert haben (z.B. "Ablenkend") müssen mit Wert 1 hinzugefügt werden
     * Beispiel: `item.addfeature feature="Ablenkend" item=Schwert" 1`
+ * Überarbeitete und detailliertere Dokumentation
 ### Fixed
  * Wenn mehr als ein Probendialog offen ist, funktioniert das Auswählen von Modifikatoren und Manövern jetzt zuverlässig.
 ## 0.12.20

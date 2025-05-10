@@ -5,7 +5,7 @@ flags: {}
 img: icons/svg/ice-aura.svg
 effects: []
 _stats:
-  coreVersion: '12.331'
+  coreVersion: '13.342'
   systemId: null
   systemVersion: null
   createdTime: null
@@ -13,6 +13,7 @@ _stats:
   lastModifiedBy: null
   compendiumSource: null
   duplicateSource: null
+  exportSource: null
 ownership:
   default: 0
   m5HI1NMGmW1y9fyL: 3

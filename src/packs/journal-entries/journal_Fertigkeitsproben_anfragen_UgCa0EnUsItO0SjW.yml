@@ -3,8 +3,7 @@ name: Fertigkeitsproben anfragen
 folder: null
 sort: 0
 flags:
-  core:
-    sourceId: JournalEntry.DcfflndGJNONkIpn
+  core: {}
 pages:
   - name: Fertigkeitsproben anfragen
     type: text
@@ -15,115 +14,69 @@ pages:
       format: 1
       content: >-
         <p>Bitte importiere zunächst die Macros aus dem Kompendium
-        splittermond</p>
-
-        <h2>Allgemeine Fertigkeiten</h2>
-
-        <p>@RequestSkillCheck[Akrobatik]</p>
-
-        <p>@RequestSkillCheck[Alchemie]</p>
-
-        <p>@RequestSkillCheck[Athletik]</p>
-
-        <p>@RequestSkillCheck[Anführen]</p>
-
-        <p>@RequestSkillCheck[Arkane Kunde]</p>
-
-        <p>@RequestSkillCheck[Athletik]</p>
-
-        <p>@RequestSkillCheck[Darbietung]</p>
-
-        <p>@RequestSkillCheck[Diplomatie]</p>
-
-        <p>@RequestSkillCheck[Edelhandwerk]</p>
-
-        <p>@RequestSkillCheck[Empathie]</p>
-
-        <p>@RequestSkillCheck[Entschlossenheit]</p>
-
-        <p>@RequestSkillCheck[Fingerfertigkeit]</p>
-
-        <p>@RequestSkillCheck[Geschichte und Mythen]</p>
-
-        <p>@RequestSkillCheck[Handwerk]</p>
-
-        <p>@RequestSkillCheck[Heilkunde]</p>
-
-        <p>@RequestSkillCheck[Heimlichkeit]</p>
-
-        <p>@RequestSkillCheck[Jagdkunst]</p>
-
-        <p>@RequestSkillCheck[Länderkunde]</p>
-
-        <p>@RequestSkillCheck[Naturkunde]</p>
-
-        <p>@RequestSkillCheck[Redegewandtheit]</p>
-
-        <p>@RequestSkillCheck[Schlösser und Fallen]</p>
-
-        <p>@RequestSkillCheck[Schwimmen]</p>
-
-        <p>@RequestSkillCheck[Seefahrt]</p>
-
-        <p>@RequestSkillCheck[Straßenkunde]</p>
-
-        <p>@RequestSkillCheck[Tierführung]</p>
-
-        <p>@RequestSkillCheck[Überleben]</p>
-
-        <p>@RequestSkillCheck[Wahrnehmung]</p>
-
-        <p>@RequestSkillCheck[Zähigkeit]</p>
-
-        <h2>Magieschulen</h2>
-
-        <p>@RequestSkillCheck[Bannmagie]</p>
-
-        <p>@RequestSkillCheck[Beherrschungsmagie]</p>
-
-        <p>@RequestSkillCheck[Bewegungsmagie]</p>
-
-        <p>@RequestSkillCheck[Erkenntnismagie]</p>
-
-        <p>@RequestSkillCheck[Felsmagie]</p>
-
-        <p>@RequestSkillCheck[Feuermagie]</p>
-
-        <p>@RequestSkillCheck[Heilungsmagie]</p>
-
-        <p>@RequestSkillCheck[Illusionsmagie]</p>
-
-        <p>@RequestSkillCheck[Kampfmagie]</p>
-
-        <p>@RequestSkillCheck[Lichtmagie]</p>
-
-        <p>@RequestSkillCheck[Naturmagie]</p>
-
-        <p>@RequestSkillCheck[Schattenmagie]</p>
-
-        <p>@RequestSkillCheck[Schicksalsmagie]</p>
-
-        <p>@RequestSkillCheck[Schutzmagie]</p>
-
-        <p>@RequestSkillCheck[Stärkungsmagie]</p>
-
-        <p>@RequestSkillCheck[Todesmagie]</p>
-
-        <p>@RequestSkillCheck[Verwandlungsmagie]</p>
-
-        <p>@RequestSkillCheck[Wassermagie]</p>
-
-        <p>@RequestSkillCheck[Windmagie]</p>
+        Splittermond.</p><p></p><h2>Allgemeine
+        Fertigkeiten</h2><table><tbody><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Akrobatik]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Alchemie]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Athletik]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Anführen]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Arkane Kunde]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Athletik]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Darbietung]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Diplomatie]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Edelhandwerk]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Empathie]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Entschlossenheit]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Fingerfertigkeit]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Geschichte und
+        Mythen]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Handwerk]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Heilkunde]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Heimlichkeit]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Jagdkunst]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Länderkunde]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Naturkunde]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Redegewandtheit]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Schlösser und
+        Fallen]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Schwimmen]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Seefahrt]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Straßenkunde]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Tierführung]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Überleben]</p></td></tr><tr><td
+        data-colwidth="308"><p>@RequestSkillCheck[Wahrnehmung]</p></td><td
+        data-colwidth="260"><p>@RequestSkillCheck[Zähigkeit]</p></td></tr></tbody></table><p></p><h2>Magieschulen</h2><p></p><table><tbody><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Bannmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Beherrschungsmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Bewegungsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Erkenntnismagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Felsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Feuermagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Heilungsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Illusionsmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Kampfmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Lichtmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Naturmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Schattenmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Schicksalsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Schutzmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Stärkungsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Todesmagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Verwandlungsmagie]</p></td><td
+        data-colwidth="283"><p>@RequestSkillCheck[Wassermagie]</p></td></tr><tr><td
+        data-colwidth="279"><p>@RequestSkillCheck[Windmagie]</p></td><td
+        data-colwidth="283"><p></p></td></tr></tbody></table><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
     _stats:
-      coreVersion: '12.331'
+      coreVersion: '13.342'
       systemId: null
       systemVersion: null
       createdTime: null
-      modifiedTime: null
-      lastModifiedBy: null
+      modifiedTime: 1741686599942
+      lastModifiedBy: 2n6beZWSvIclIvyD
       compendiumSource: null
       duplicateSource: null
-    _id: wIdjgKolJQ5XUIyX
+      exportSource: null
+    _id: tlnpVJOfj3LJW23I
     system: {}
     image: {}
     video:
@@ -134,19 +87,21 @@ pages:
     ownership:
       default: -1
     flags: {}
-    _key: '!journal.pages!UgCa0EnUsItO0SjW.wIdjgKolJQ5XUIyX'
+    category: null
+    _key: '!journal.pages!UgCa0EnUsItO0SjW.tlnpVJOfj3LJW23I'
 _stats:
-  coreVersion: '12.331'
+  coreVersion: '13.342'
   systemId: null
   systemVersion: null
   createdTime: null
   modifiedTime: null
   lastModifiedBy: null
-  compendiumSource: null
+  compendiumSource: JournalEntry.DcfflndGJNONkIpn
   duplicateSource: null
+  exportSource: null
 ownership:
   default: 0
   m5HI1NMGmW1y9fyL: 3
-_key: '!journal!UgCa0EnUsItO0SjW'
 categories: []
+_key: '!journal!UgCa0EnUsItO0SjW'
 
