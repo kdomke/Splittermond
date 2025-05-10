@@ -1,5 +1,7 @@
-## 0.12.21
+## 13.0.0.0
 ### Breaking changes
+ * Kompatibilität von Splittermond mit Foundry Version V12 wird nicht mehr garantiert
+ * Quench tests werden nicht mehr in Produktion ausgeliefert
  * Der Modifikator `damage.<Waffename>` ist kein gültiger Modifikator mehr
  * Der Modifikator `weaponspeed.<Waffename>` ist kein gültiger Modifikator mehr
  * Ersatz für beide ist `damage item="Waffename"` bzw. `weaponspeed item="Waffename"`
@@ -10,6 +12,8 @@
     * Sie können global gelten oder mittels attribute `item="<name>" beschränkt werden`
     * Merkmale die für gewönlich keinen Wert haben (z.B. "Ablenkend") müssen mit Wert 1 hinzugefügt werden
     * Beispiel: `item.addfeature feature="Ablenkend" item=Schwert" 1`
+### Fixed
+ * Wenn mehr als ein Probendialog offen ist, funktioniert das Auswählen von Modifikatoren und Manövern jetzt zuverlässig.
 ## 0.12.20
 ### Fixed
  * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte
