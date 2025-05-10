@@ -1,5 +1,6 @@
 ## 13.0.0.0
 ### Breaking changes
+ * Migrationen von v0.12.11 müssen zuerst auf v0.12.20 migrieren.
  * Kompatibilität von Splittermond mit Foundry Version V12 wird nicht mehr garantiert
  * Quench tests werden nicht mehr in Produktion ausgeliefert
  * Der Modifikator `damage.<Waffename>` ist kein gültiger Modifikator mehr
