@@ -10,6 +10,7 @@ import SplittermondActor from "../../../actor/actor";
 import {CostBase, CostType} from "../../costs/costTypes";
 import {SplittermondChatCard} from "../SplittermondChatCard";
 import {toDisplayFormula} from "../../damage/util";
+import {asString, condense, mapRoll} from "../../../actor/modifiers/expressions/scalar";
 
 export const DamageInitializer = {
     rollDamage,
@@ -77,7 +78,7 @@ async function rollFromDamageRoll(damages: ProtoDamageImplement[], costBase: Cos
     const damageEvent = new DamageEvent({
         causer: speaker ? AgentReference.initialize(speaker) : null,
         _costBase: costBase,
-        formula: toDisplayFormula(totalRoll.formula),
+        formula: toDisplayFormula(asString(condense(mapRoll(totalRoll)))),
         tooltip: await totalRoll.getTooltip(),
         implements: damageImplements,
         isGrazingHit: false,
