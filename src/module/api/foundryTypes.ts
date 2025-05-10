@@ -103,6 +103,10 @@ declare global {
          * Computation of values that are not put to the database
          */
         prepareDerivedData(): void;
+
+        getFlag(scope: string, key: string): unknown;
+
+        setFlag(scope: string, key: string, value:unknown): Promise<FoundryDocument>;
     }
 
     const CONFIG:{

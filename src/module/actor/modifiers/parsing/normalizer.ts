@@ -4,7 +4,7 @@ import {attributes, derivedAttributes} from "../../../config/attributes";
 import {isRoll} from "../../../api/Roll";
 import {splittermond} from "../../../config";
 
-const modifierKeys = ["emphasis", "damageType", "value", "skill"] as const;
+const modifierKeys = ["emphasis", "damageType", "value", "skill", "feature", "item"] as const;
 const attributeMapper = initMapper(attributes)
     .withTranslator((t) => `splittermond.attribute.${t}.long`)
     .andOtherMappers((t) => `splittermond.attribute.${t}.short`)
@@ -19,6 +19,10 @@ const modifierKeyMapper = initMapper(modifierKeys)
 const skillMapper = initMapper(splittermond.skillGroups.all)
     .withTranslator((t) => `splittermond.skillLabel.${t}`)
     .andOtherMappers((t) => `splittermond.skillAbbreviation.${t}`)
+    .build();
+const damageTypeMapper = initMapper(splittermond.damageTypes)
+    .withTranslator((t) => `splittermond.damageTypes.long.${t}`)
+    .andOtherMappers((t) => `splittermond.damageTypes.short.${t}`)
     .build();
 
 /**
@@ -117,6 +121,7 @@ class NoValueAdornmentNormalizer {
         derivedAttributes:{collection: splittermond.attributes, mapper:derivedAttributeMapper},
         skills: {collection: splittermond.skillGroups.all, mapper:skillMapper},
         modifiers: {collection: modifierKeys, mapper: modifierKeyMapper},
+        damageTypes: {collection: splittermond.damageTypes, mapper: damageTypeMapper},
     } as const;
     constructor(private readonly descriptor: string) {
     }

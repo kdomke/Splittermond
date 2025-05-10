@@ -5,7 +5,17 @@ import {CharacterDataModel} from "module/actor/dataModel/CharacterDataModel";
 import SplittermondActor from "module/actor/actor";
 import {splittermond} from "module/config";
 import {NpcDataModel} from "module/actor/dataModel/NpcDataModel";
-import {evaluate, isGreaterZero, isLessThanZero, of, roll} from "../../module/actor/modifiers/expressions/scalar";
+import {
+    abs, asString,
+    dividedBy,
+    evaluate,
+    isGreaterZero,
+    isLessThanZero, mapRoll, minus,
+    of, plus, ref,
+    roll,
+    times, toRollFormula
+} from "module/actor/modifiers/expressions/scalar";
+import {DamageModel} from "../../module/item/dataModel/propertyModels/DamageModel";
 
 export function modifierTest(context: QuenchBatchContext) {
     const {describe, it, expect, beforeEach, afterEach} = context;
@@ -500,6 +510,36 @@ export function modifierTest(context: QuenchBatchContext) {
             expect(isLessThanZero(roll(foundryApi.roll("2 + -1 * 3d6")))).to.be.true;
             expect(isGreaterZero(roll(foundryApi.roll("-2d6")))).to.be.false;
         });
+
+        it("should be able to produce a valid roll expression", async () => {
+            //is (1*14 + |-4|/1) - (2*3 + 1)
+            const expression = minus(
+                plus(
+                    times(roll(foundryApi.roll("1d1")), of(14)),
+                    dividedBy(abs(of(-4)), roll(foundryApi.roll("1d1")))
+                ),
+                plus(
+                    times(of(2), ref("value", {value:3}, "value")),
+                    ref("value", {value: 1}, "value")
+                )
+            );
+
+            const rollFormula = toRollFormula(expression)
+            const rollObject = foundryApi.roll(...rollFormula);
+            const evaluated = await rollObject.evaluate();
+
+        expect(rollFormula[0]).to.equal("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)")
+            expect(evaluated.total, `${asString(expression)} should equal`).to.equal(11);
+        });
+
+        it("should be able to parse a valid roll expression", async () => {
+            const roll = foundryApi.roll("((1d1 * 14) + (abs(-4) / 1d1)) - ((2 * @value0) + @value1)", {value0: "3", value1: "1"});
+
+            const mapped = mapRoll(roll);
+            const evaluated = evaluate(mapped);
+
+            expect(evaluated).to.equal(11);
+        });
     });
 
     describe("Item modifiers", () => {
@@ -519,7 +559,7 @@ export function modifierTest(context: QuenchBatchContext) {
                 name: "Lance of Longinus",
                 system: {
                     skill: "blades",
-                    damage: "3",
+                    damage: DamageModel.from("3"),
                     equipped: true,
                     attribute1: "strength",
                     attribute2: "agility",
@@ -538,8 +578,51 @@ export function modifierTest(context: QuenchBatchContext) {
             subject.modifier.add("damage", {name: "Mystery", type: "magic"}, of(2), null, false);
             subject.modifier.add("weaponspeed", {name: "Mystery", type: "magic"}, of(2), null, false);
 
-            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("3+3");
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.damage).to.equal("6");
             expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.weaponSpeed).to.equal(4);
+        });
+
+        it("should account for modifications on shields", async () => {
+            const subject = await createActor("WeaponizedCharacter");
+            (subject.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
+            (subject.system as CharacterDataModel).updateSource({
+                    skills: {
+                        ...subject.system.skills,
+                        blades: {points: 2, value: 6}
+                    }
+                }
+            );
+            await subject.createEmbeddedDocuments("Item", [{
+                type: "weapon",
+                name: "Lance of Longinus",
+                system: {
+                    skill: "blades",
+                    damage: "3",
+                    equipped: true,
+                    attribute1: "strength",
+                    attribute2: "agility",
+                    features: "Scharf 1",
+                    weaponSpeed: 6
+                }
+            }]);
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+            subject.modifier.add("damage", {
+                item: "Lance of Longinus",
+                name: "Mastery",
+                type: "magic"
+            }, of(1), null, false);
+            subject.modifier.add("item.addfeature", {
+                name: "Mystery",
+                feature: "Scharf",
+                item: "Lance of Longinus",
+                type: "magic"
+            }, of(2), null, false);
+
+            expect(subject.attacks.find(a => a.name === "Lance of Longinus")?.features).to.equal("Scharf 2");
         });
     });
 }

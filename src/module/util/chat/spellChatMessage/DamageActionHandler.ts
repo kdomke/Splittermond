@@ -11,12 +11,15 @@ import {AgentReference} from "../../../data/references/AgentReference";
 import {splittermond} from "../../../config";
 import {ItemReference} from "../../../data/references/ItemReference";
 import SplittermondSpellItem from "../../../item/spell";
-import {DamageRoll} from "../../damage/DamageRoll";
 import {OnAncestorReference} from "../../../data/references/OnAncestorReference";
 import {CheckReport} from "../../../actor/CheckReport";
 import {configureUseOption} from "./commonAlgorithms/defaultUseOptionAlgorithm";
 import {configureUseAction} from "./commonAlgorithms/defaultUseActionAlgorithm";
 import {DamageInitializer} from "../damageChatMessage/initDamage";
+import {CostBase} from "../../costs/costTypes";
+import {foundryApi} from "../../../api/foundryApi";
+import {asString, condense, mapRoll} from "../../../actor/modifiers/expressions/scalar";
+import {toDisplayFormula, toRollFormula} from "../../damage/util";
 
 function DamageActionHandlerSchema() {
     return {
@@ -102,15 +105,10 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
             .whenAllChecksPassed(() => {
                     this.updateSource({used: true});
                     const spell = this.spellReference.getItem();
-                    const damageFormula  =this.totalDamage.getDamageFormula();
-                    return DamageInitializer.rollDamage(
-                        [{
-                            damageFormula,
-                            featureString: spell.system.features ?? "",
-                            damageSource: spell.name,
-                            damageType: spell.system.damageType,
-                        }],
-                        spell.system.costType ?? "V",
+                    const damages = this.spellReference.getItem().getForDamageRoll();
+                    return DamageInitializer.rollFromDamageRoll(
+                        [damages.principalComponent, ...damages.otherComponents],
+                        CostBase.create(spell.system.costType ?? "V"),
                         this.actorReference.getAgent()
                     ).then((chatCard) => chatCard.sendToChat());
                 }
@@ -124,11 +122,23 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
         return [
             {
                 type: "applyDamage",
-                value: `${this.totalDamage.getDamageFormula()}`,
+                value: this.getConcatenatedDamageRolls(),
                 disabled: this.used,
                 isLocal: false
             }
         ]
+    }
+
+    private getConcatenatedDamageRolls() {
+        const allDamage = this.totalDamage;
+        const allFormulas= [
+            allDamage.principalComponent.damageRoll.getDamageFormula(),
+            ...allDamage.otherComponents.map(c => c.damageRoll.getDamageFormula())
+        ]
+        return (allFormulas.length <= 1) ?
+            allFormulas.join("") :
+            toDisplayFormula(asString(condense(mapRoll(foundryApi.roll(toRollFormula(allFormulas.join(" + ")))))));
+
     }
 
     //TODO: should the check report be used here?
@@ -140,8 +150,8 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
 
 
     get totalDamage() {
-        const damage = DamageRoll.parse(this.spellReference.getItem().damage, "");
-        damage.increaseDamage(this.damageAddition);
+        const damage = this.spellReference.getItem().getForDamageRoll();
+        damage.principalComponent.damageRoll.increaseDamage(this.damageAddition);
         return damage;
     }
 }

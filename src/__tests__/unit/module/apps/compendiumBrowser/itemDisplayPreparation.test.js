@@ -152,7 +152,7 @@ describe("mastery item preparation for compendium browser", () => {
         expect(collector.mastery[0].availableInList).to.deep.equal([{label: "Stangenwaffen"}]);
     });
 
-    it("should not have features, nor skill, nor skill level", async () => {
+    it("should not have propertyModel, nor skill, nor skill level", async () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.mastery[0].skillLevel).to.be.undefined; //jshint ignore:line
@@ -203,7 +203,7 @@ describe("weapon item preparation for compendium browser", () => {
     });
 
 
-    it("should have features, skill and secondary attack skill", async () => {
+    it("should have propertyModel, skill and secondary attack skill", async () => {
         const collector = {};
         await produceDisplayableItems(sampleCompendiumData, Promise.resolve(getAllItemData()), collector);
         expect(collector.weapon[0].system.features).not.to.be.undefined; //jshint ignore:line

@@ -212,11 +212,15 @@ function* createMockTarget(sandbox: SinonSandbox, targetSize: number): Generator
                 },
                 getFlag: function () {
                 },
+                setFlag: function () {
+                    return Promise.resolve(this);
+                },
                 update(): Promise<FoundryDocument> {
                     return Promise.resolve(this);
                 }
             }
-        };
+        }
+        ;
     }
 }
 
@@ -232,6 +236,6 @@ function createTargetActor(sandbox: SinonSandbox, id: number) {
     sandbox.stub(actor, "resistances").get(() => ({"physical": 0}));
     sandbox.stub(actor, "weaknesses").get(() => ({"physical": 0}));
     sandbox.stub(actor, "damageReduction").get(() => 0);
-    sandbox.stub(actor, "protectedDamageReduction").get(()=>0);
+    sandbox.stub(actor, "protectedDamageReduction").get(() => 0);
     return actor;
 }

@@ -5,17 +5,21 @@ export default class ActiveDefense {
      * @param {string}type
      * @param {string}name
      * @param {Skill}skill
-     * @param {string}features
+     * @param {ItemFeaturesModel}features
      * @param {string|null}img
      */
-    constructor(id, type, name, skill, features = "", img = null) {
+    constructor(id, type, name, skill, features , img = null) {
         this.id = id;
         this.type = type;
         this.skill = skill;
         this.actor = this.skill.actor;
-        this.features = features;
+        this.itemFeatures = features;
         this.name = name;
         this.img = img;
+    }
+
+    get features() {
+        return this.itemFeatures.features;
     }
 
     async roll(options = {}) {

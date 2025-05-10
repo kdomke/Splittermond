@@ -4,6 +4,8 @@ import {foundryApi} from "../../api/foundryApi";
 import {itemCreator} from "../../data/EntityCreator";
 import {getSpellAvailabilityParser} from "../../item/availabilityParser";
 import {SpellDataModelType} from "../../item";
+import {ItemFeatureDataModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel";
+import {DataModelConstructorInput} from "../../api/DataModel";
 
 export async function importSpell(spellName: string, rawData: string, folder: string): Promise<SplittermondSpellItem> {
     let spellData = {
@@ -12,9 +14,14 @@ export async function importSpell(spellName: string, rawData: string, folder: st
         img: splittermond.icons.spell.default,
         folder: folder,
         system: {
-            damage: null,
+            damage: {
+                stringInput:null
+            },
             damageType:null,
-            features: null,
+            costType:null,
+            features: {
+                internalFeatureList: [] as ItemFeatureDataModel[],
+            },
             skill: null,
             skillLevel: null,
             source: null,
@@ -39,7 +46,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
                 range: false,
                 effectArea: false
             }
-        } as SpellDataModelType
+        } as DataModelConstructorInput<SpellDataModelType>
     };
 
     const sectionLabels = ["Schulen", "Typus", "Schwierigkeit", "Kosten", "Zauberdauer", "Reichweite", "Wirkung", "Wirkungsdauer", "Wirkungsbereich", "Erfolgsgrade"];
@@ -115,7 +122,7 @@ export async function importSpell(spellName: string, rawData: string, folder: st
 
     let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(spellData.system.description ?? "");
     if (damage) {
-        spellData.system.damage = (damage[0] || "").trim();
+        spellData.system.damage.stringInput = (damage[0] || "").trim();
         spellData.system.damageType = "physical";
         spellData.system.costType = "V";
     } else {

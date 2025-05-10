@@ -1,4 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
+import {parseFeatures} from "../dataModel/propertyModels/ItemFeaturesModel";
 
 export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemSheet {
     static get defaultOptions() {
@@ -130,5 +131,13 @@ export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemShee
 
     roll() {
 
+    }
+
+    _updateObject(event, formData) {
+        if(formData["system.features.innateFeatures"] !== undefined) {
+            formData["system.features.internalFeatureList"] = parseFeatures(formData["system.features.innateFeatures"]);
+            delete formData["system.features.features"];
+        }
+        return super._updateObject(event, formData);
     }
 }

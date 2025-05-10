@@ -49,7 +49,8 @@
           "emphasis": "emphasis",
           "damageType": "damageType",
           "skill": "skill",
-          "item": "item"
+          "item": "item",
+          "feature": "feature"
         },
         "parseMessages": {
           "notAModifier": "Modifier '{modifier}' is not of a modifier format.",
@@ -73,7 +74,8 @@
     },
     "message": {
       "itemImported": "The item \"{name}\" was imported as \"{type}\"!",
-      "mangledTableData": "table data is corrupted. Please check attributes and derived values."
+      "mangledTableData": "table data is corrupted. Please check attributes and derived values.",
+      "featureParsingFailure": "Feature '{feature}' did not resolve to a valid feature descriptor"
     },
     "settings": {
       "reducibleEnhancementCosts": {

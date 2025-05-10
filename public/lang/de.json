@@ -127,7 +127,8 @@
         "value": "Wert",
         "damageType": "Schadensart",
         "skill": "Fertigkeit",
-        "item": "Objekt"
+        "item": "Objekt",
+        "feature": "Merkmal"
       },
       "parseMessages": {
         "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",
@@ -145,7 +146,8 @@
         "unknownObject": "unbekannt",
         "allErrorMessage": "Syntaxfehler in Modifikatoren '{str}' in '{objectName}'!",
         "foNoCost": "Ausdruck '{expression}' lässt sich nicht in Fokuscosten umwandeln.",
-        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln."
+        "notANumber": "Ausdruck'{expression}' lässt sich nicht in eine Zahl umwandeln.",
+        "unknownDescriptor": "Der Wert {value} für das Attribut '{descriptor}' für einen Modifikator auf '{itemName}' ist ungültig."
       }
     },
     "modifier": "Modifikator",
@@ -332,7 +334,8 @@
     "attackFumble": "Kampfpatzer",
     "message": {
       "itemImported": "Das Item \"{name}\" wurde als \"{type}\" importiert!",
-      "mangledTableData": "Tabellendaten sind beschädigt. Bitte überprüfen Sie Attribute und abgeleitete Werte."
+      "mangledTableData": "Tabellendaten sind beschädigt. Bitte überprüfen Sie Attribute und abgeleitete Werte.",
+      "featureParsingFailure": "Merkmal '{feature}' konnte nicht in ein bekanntes Merkmal umgewandelt werden."
     },
     "masteryItem": {
       "level": "Schwelle"

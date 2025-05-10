@@ -19,6 +19,11 @@ import {CheckReport} from "../../../../../../module/actor/CheckReport";
 import {referencesUtils} from "../../../../../../module/data/references/referencesUtils";
 import {AgentReference} from "../../../../../../module/data/references/AgentReference";
 import {injectParent} from "../../../../testUtils";
+import {DamageRoll} from "../../../../../../module/util/damage/DamageRoll";
+import {createTestRoll} from "../../../../RollMock";
+import {ItemFeaturesModel} from "../../../../../../module/item/dataModel/propertyModels/ItemFeaturesModel";
+import {DamageInitializer} from "../../../../../../module/util/chat/damageChatMessage/initDamage";
+import {SplittermondChatCard} from "../../../../../../module/util/chat/SplittermondChatCard";
 
 
 describe("SpellRollMessage", () => {
@@ -131,7 +136,7 @@ describe("SpellRollMessage", () => {
     });
 
     //produces a warning that apply damage should not have been used. This is ok, it means that the action reached the handler.
-    ["applyDamage" , "consumeCosts" , "advanceToken", "rollMagicFumble"].forEach(action => {
+    ["consumeCosts" , "advanceToken", "rollMagicFumble"].forEach(action => {
         it(`should handle action ${action}`, async () => {
             const underTest = createSpellRollMessage(sandbox);
             underTest.checkReport.succeeded = true;
@@ -141,6 +146,19 @@ describe("SpellRollMessage", () => {
 
             expect(warnUserStub.called).to.be.false;
         });
+    });
+
+    it("should handle action applyDamage", async () => {
+        //sandbox.stub(foundryApi, "warnUser");
+        const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
+        const damageStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
+            .resolves(chatCardMock);
+        const underTest = createSpellRollMessage(sandbox);
+        underTest.checkReport.succeeded = true;
+
+        await underTest.handleGenericAction({action: "applyDamage"});
+
+        expect(damageStub.called).to.be.true;
     });
 
     it("should handle action activeDefense", async ()=>{
@@ -266,6 +284,15 @@ function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<
     sandbox.stub(spellMock, "enhancementCosts").get(() => "1EG/+1V1");
     sandbox.stub(spellMock, "castDuration").get(() => 3);
     sandbox.stub(spellMock, "description").get(() => "description");
+    sandbox.stub(spellMock,"damage").get(()=> "1W6 + 1");
+    spellMock.getForDamageRoll.returns({
+        principalComponent:{
+            damageRoll: new DamageRoll(createTestRoll("1d6",[6],1), ItemFeaturesModel.emptyFeatures()),
+            damageType: "physical",
+            damageSource: spellMock.name,
+        },
+        otherComponents:[]
+    });
     spellMock.getCostsForFinishedRoll.returns(new Cost(10, 4, false).asPrimaryCost());
     sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => ({
         consumedFocus: true,

@@ -186,6 +186,17 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 });
                 break;
             case "damage":
+                if("damageType" in modifier.attributes) {
+                    modifier.attributes.damageType = normalizeDescriptor(modifier.attributes.damageType).usingMappers("damageTypes").do();
+                    if(!(splittermond.damageTypes as Readonly<string[]>).includes(modifier.attributes.damageType)) {
+                        allErrors.push(foundryApi.format("splittermond.modifiers.parseMessages.unknownDescriptor", {
+                            descriptor: "damageType",
+                            value: modifier.attributes.damageType,
+                            itemName: item.name,
+                        }));
+                        delete modifier.attributes.damageType;
+                    }
+                }
                 actor.modifier.add("damage", {
                     ...modifier.attributes,
                     name: emphasisFromName,

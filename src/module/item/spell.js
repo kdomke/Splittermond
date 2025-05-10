@@ -1,15 +1,27 @@
-import SplittermondItem from "./item.js";
-import AttackableItem from "./attackable-item.ts";
+import SplittermondItem from "./item";
+import AttackableItem from "./attackable-item";
 
-import {getSpellAvailabilityParser} from "./availabilityParser.ts";
-import {produceSpellAvailabilityTags} from "./tags/spellTags.js";
-import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser.ts";
-import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts.ts";
-import {SplittermondChatCard} from "../util/chat/SplittermondChatCard.ts";
-import {splittermond} from "../config.js";
-import {PrimaryCost} from "../util/costs/PrimaryCost.ts";
-import {Cost} from "../util/costs/Cost.ts";
-import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage.ts";
+import {getSpellAvailabilityParser} from "./availabilityParser";
+import {produceSpellAvailabilityTags} from "./tags/spellTags";
+import {parseCostString, parseSpellEnhancementDegreesOfSuccess} from "../util/costs/costParser";
+import {calculateReducedEnhancementCosts, calculateReducedSpellCosts} from "../util/costs/spellCosts";
+import {SplittermondChatCard} from "../util/chat/SplittermondChatCard";
+import {splittermond} from "../config";
+import {PrimaryCost} from "../util/costs/PrimaryCost";
+import {Cost} from "../util/costs/Cost";
+import {SpellRollMessage} from "../util/chat/spellChatMessage/SpellRollMessage";
+import {ItemFeaturesModel, mergeFeatures} from "./dataModel/propertyModels/ItemFeaturesModel";
+import {DamageRoll} from "../util/damage/DamageRoll";
+import {
+    asString,
+    condense,
+    condenseCombineDamageWithModifiers,
+    mapRoll,
+    of,
+    plus
+} from "../actor/modifiers/expressions/scalar/index.js";
+import {foundryApi} from "../api/foundryApi.js";
+import {toDisplayFormula, toRollFormula} from "../util/damage/util";
 
 
 /**
@@ -135,13 +147,48 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
         return this.spellType?.split(",").map(str => str.trim());
     }
 
-    get damage() {
-        return this.system.damage;
-    }
-
     get availableInList() {
         return produceSpellAvailabilityTags(this.system, this.availabilityParser);
     }
+
+
+    get damage() {
+        const fromModifiers = this.actor.modifier.getForId("damage")
+            .notSelectable()
+            .withAttributeValuesOrAbsent("item", this.name)
+            .getModifiers().map(m => m.value)
+            .reduce((a,b) => plus(a,b), of(0));
+        const mainComponent = condense(mapRoll(this.system.damage.asRoll()))
+        return toDisplayFormula(asString(condenseCombineDamageWithModifiers(mainComponent, fromModifiers)));
+    }
+
+    /**
+     * @return {principalComponent: ProtoDamageImplement, otherComponents: ProtoDamageImplement[]}
+     */
+    getForDamageRoll() {
+        const fromModifiers = this.actor.modifier.getForId("damage")
+            .notSelectable()
+            .withAttributeValuesOrAbsent("item", this.name)
+            .getModifiers().map(m => {
+            const features = mergeFeatures(
+                ItemFeaturesModel.from(m.attributes.features ?? ""),
+                this.system.features);
+            return {
+                damageRoll: DamageRoll.fromExpression(m.value, features),
+                damageType: m.attributes.damageType ?? this.system.damageType,
+                damageSource: m.attributes.name ?? null
+            }
+        });
+        return {
+            principalComponent: {
+                damageRoll: DamageRoll.from(this.system.damage.calculationValue, this.system.features),
+                damageType: this.system.damageType,
+                damageSource: this.name
+            },
+            otherComponents: fromModifiers
+        }
+    }
+
 
     async roll(options) {
         if (!this.actor) return false;

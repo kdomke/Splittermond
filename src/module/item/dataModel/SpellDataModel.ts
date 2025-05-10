@@ -1,6 +1,7 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondSpellItem from "../spell";
 import {damage, getDescriptorFields, validatedBoolean} from "./commonFields";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 
 function SpellDataModelSchema() {
     return {
@@ -18,7 +19,7 @@ function SpellDataModelSchema() {
         effectArea: new fields.StringField({ required: true, nullable:true }),
         enhancementDescription: new fields.StringField({ required: true, nullable:true }),
         enhancementCosts: new fields.StringField({ required: true, nullable:true }),
-        features: new fields.StringField({ required: true, nullable:true }),
+        features: new fields.EmbeddedDataField(ItemFeaturesModel,{ required: true, nullable: false}),
         degreeOfSuccessOptions: new fields.SchemaField({
             castDuration: validatedBoolean(),
             consumedFocus: validatedBoolean(),

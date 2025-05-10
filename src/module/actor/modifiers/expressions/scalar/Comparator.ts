@@ -76,7 +76,7 @@ function evalRolls(expression: RollExpression){
 }
 //We are ignoring foundry dice modifiers for now
 function evalDies(term:Die): Range {
-    if(term.modifier && term.modifier.length > 0){
+    if(term.modifiers && term.modifiers.length > 0){
         console.warn("Splittermond | Value estimation for dice with modifiers is not supported. will assume any range")
         return {min:Number.NaN, max:Number.NaN}
     }

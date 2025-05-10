@@ -3,6 +3,7 @@ import {expect} from "chai";
 import sinon, {SinonSandbox} from "sinon";
 import {clearMappers} from "../../../../../../module/actor/modifiers/parsing/normalizer";
 import {foundryApi} from "../../../../../../module/api/foundryApi";
+import {stubRollApi} from "../../../../RollMock";
 
 
 describe('Modifier Parser', () => {
@@ -12,6 +13,7 @@ describe('Modifier Parser', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        stubRollApi(sandbox)
         sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => key);
     });
@@ -141,6 +143,7 @@ describe('Modifier Normalization', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        stubRollApi(sandbox)
         sandbox.stub(foundryApi, 'format').callsFake((key: string) => key);
         sandbox.stub(foundryApi, 'localize').callsFake((key: string) => {
             switch (key) {

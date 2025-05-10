@@ -1,6 +1,6 @@
 /**
- * Renders the features of an attackable item as tags.
- * @param {{features?:string|null}} system
+ * Renders the propertyModel of an attackable item as tags.
+ * @param {{propertyModel?:string|null}} system
  * @returns {string[]}
  */
 export function produceAttackableItemTags(system) {

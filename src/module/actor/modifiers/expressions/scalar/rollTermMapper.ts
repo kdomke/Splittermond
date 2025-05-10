@@ -1,42 +1,35 @@
 import {FoundryRoll, isRoll, OperatorTerm, RollTerm} from "module/api/Roll";
-import {
-    AmountExpression,
-    dividedBy,
-    Expression,
-    minus,
-    plus,
-    RollExpression,
-    times
-} from "./definitions";
-import {exhaustiveMatchGuard} from "module/actor/modifiers/expressions/util";
+import {AmountExpression, dividedBy, Expression, minus, plus, RollExpression, times} from "./definitions";
 import {foundryApi} from "module/api/foundryApi";
 
 type NoOperatorTerm = Exclude<RollTerm, OperatorTerm>;
 
 export function mapRoll(roll:FoundryRoll):Expression {
-    const terms = groupTermsByOperator(roll.terms);
+    //counting from the right produces an order of operations with whicht the most common roll expression 1d6+ 2+3 can be easily condensed.
+    //also copy all terms, because we don't want an in-place reversal
+    const terms = [...groupTermsByOperator(roll.terms)].reverse();
     const termIterator = terms[Symbol.iterator]()
-    let leftTerm=termIterator.next();
-    if(leftTerm.done || isOperator(leftTerm.value)){
-       throw new Error("Foundry Roll appears invalid, cannot map to expression");
+    let rightTerm=termIterator.next();
+    if(rightTerm.done || isOperator(rightTerm.value)){
+       throw new Error(`Foundry Roll ${roll.formula} appears invalid, cannot map to expression`);
     }
-    let leftExpression:Expression=termToExpression(asNoOperator(leftTerm.value));
+    let rightExpression:Expression=termToExpression(asNoOperator(rightTerm.value));
     while(true){
         const operator = termIterator.next();
-        const rightTerm = termIterator.next();
+        const leftTerm = termIterator.next();
 
-        if(operator.done && rightTerm.done){
-            return leftExpression;
-        }else if(operator.done || rightTerm.done){
+        if(operator.done && leftTerm.done){
+            return rightExpression;
+        }else if(operator.done || leftTerm.done){
             throw new Error("Not enough terms to be a correct roll formula")
         }else if (asOperator(operator.value).operator === "+"){
-            leftExpression = plus(leftExpression, termToExpression(asNoOperator(rightTerm.value)));
+            rightExpression = plus(termToExpression(asNoOperator(leftTerm.value)),rightExpression);
         }else if (asOperator(operator.value).operator === "-"){
-            leftExpression = minus(leftExpression, termToExpression(asNoOperator(rightTerm.value)));
+            rightExpression = minus(termToExpression(asNoOperator(leftTerm.value)),rightExpression);
         }else if (asOperator(operator.value).operator === "*"){
-            leftExpression = times(leftExpression, termToExpression(asNoOperator(rightTerm.value)));
+            rightExpression = times(termToExpression(asNoOperator(leftTerm.value)), rightExpression);
         }else if (asOperator(operator.value).operator === "/"){
-            leftExpression = dividedBy(leftExpression, termToExpression(asNoOperator(rightTerm.value)));
+            rightExpression = dividedBy(termToExpression(asNoOperator(leftTerm.value)),rightExpression);
         }
     }
 }
@@ -105,6 +98,8 @@ function termToExpression(term:NoOperatorTerm):Expression {
             throw new Error("Found a term with a roll expression that was not a parenthetic expression")
         }
         return mapRoll(term.roll);
+    } else {
+        console.debug(`Splittermond | Found an unknown term ${(term as any)?.formula ?? term} while mapping to expression.`)
+        return new RollExpression(foundryApi.rollInfra.rollFromTerms([term]));
     }
-    exhaustiveMatchGuard(term);
 }

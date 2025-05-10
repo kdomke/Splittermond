@@ -2,6 +2,7 @@ import {fieldExtensions, fields} from "../../data/SplittermondDataModel";
 import {DamageType} from "../../config/damageTypes";
 import {splittermond} from "../../config";
 import {CostType, costTypes} from "../../util/costs/costTypes";
+import {DamageModel} from "./propertyModels/DamageModel";
 
 export function getPhysicalProperties() {
     return {
@@ -33,9 +34,12 @@ export function getDefense() {
     }
 }
 
+function damageDataField(){
+    return new fields.EmbeddedDataField(DamageModel,{required:true, nullable:false});
+}
 export function damage() {
     return {
-        damage: new fields.StringField({required: true, nullable: true}),
+        damage: damageDataField(),
         damageType: new fieldExtensions.StringEnumField({
                 validate: (x: DamageType) => x == null || splittermond.damageTypes.includes(x),
                 required: true,

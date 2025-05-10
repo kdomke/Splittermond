@@ -14,7 +14,9 @@ import {splittermond} from "../config.js";
 import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
-import {of, evaluate} from "./modifiers/expressions/scalar";
+import {evaluate, of} from "./modifiers/expressions/scalar";
+import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel.js";
+import {DamageModel} from "../item/dataModel/propertyModels/DamageModel.js";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -34,7 +36,7 @@ settings.registerBoolean("stableProtectsAllReduction", {
     config: true,
     default: true,
 }).then(accessor => getStableProtectsAllReduction = accessor.get)
-.catch(e => console.error("Splittermond | Failed to register setting for stable protecting all damage reduction", e));
+    .catch(e => console.error("Splittermond | Failed to register setting for stable protecting all damage reduction", e));
 
 settings.registerNumber("HGMultiplier", {
     position: 1,
@@ -395,7 +397,7 @@ export default class SplittermondActor extends Actor {
         if (this.type === "character") {
             attacks.push(new Attack(this, {
                 id: "weaponless",
-                type:"not-an-item",
+                type: "not-an-item",
                 name: game.i18n.localize("splittermond.weaponless"),
                 img: "icons/equipment/hand/gauntlet-simple-leather-brown.webp",
                 system: {
@@ -403,8 +405,8 @@ export default class SplittermondActor extends Actor {
                     attribute1: "agility",
                     attribute2: "strength",
                     weaponSpeed: 5,
-                    features: ["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", "),
-                    damage: "1W6",
+                    features: ItemFeaturesModel.from(["Entwaffnend 1", "Umklammern", ...(isInjuring ? [] : ["Stumpf"])].join(", ")),
+                    damage: DamageModel.from("1W6"),
                     damageType: "physical",
                     costType: isInjuring ? "V" : "E"
                 }
@@ -415,9 +417,9 @@ export default class SplittermondActor extends Actor {
     _prepareActiveDefense() {
         const data = this.system;
 
-        this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", game.i18n.localize(this.skills["acrobatics"].label), this.skills["acrobatics"]));
-        this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", game.i18n.localize(this.skills["determination"].label), this.skills["determination"]));
-        this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", game.i18n.localize(this.skills["endurance"].label), this.skills["endurance"]));
+        this.activeDefense.defense.push(new ActiveDefense(this.skills["acrobatics"].id, "defense", foundryApi.localize(this.skills["acrobatics"].label), this.skills["acrobatics"], ItemFeaturesModel.emptyFeatures()));
+        this.activeDefense.mindresist.push(new ActiveDefense(this.skills["determination"].id, "mindresist", foundryApi.localize(this.skills["determination"].label), this.skills["determination"], ItemFeaturesModel.emptyFeatures()));
+        this.activeDefense.bodyresist.push(new ActiveDefense(this.skills["endurance"].id, "bodyresist", foundryApi.localize(this.skills["endurance"].label), this.skills["endurance"], ItemFeaturesModel.emptyFeatures()));
     }
 
     //this function is used in item.js to add modifiers to the actor
@@ -511,7 +513,8 @@ export default class SplittermondActor extends Actor {
      */
     get protectedDamageReduction() {
         const itemsWithProtection = this.items
-            .filter(i => i.system.features?.toLowerCase().includes("stabil"))
+            .filter(i => "feature" in i.system)
+            .filter(i => i.system.features.hasFeature("Stabil"))
             .filter(i => i.system.equipped ?? false)
         if (itemsWithProtection.length === 0) {
             return 0;
@@ -695,11 +698,7 @@ export default class SplittermondActor extends Actor {
 
         genesisData.spells.forEach((s) => {
             let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(s.longDescription);
-            if (damage) {
-                damage = damage[0] || "";
-            } else {
-                damage = "";
-            }
+            damage = {stringInput: (damage?.[0] ?? null)}
             let skill = "";
             if (s.school === "Arkane Kunde") {
                 skill = "arcanelore";
@@ -720,10 +719,11 @@ export default class SplittermondActor extends Actor {
                     skillLevel: s.schoolGrade,
                     costs: s.focus,
                     difficulty: s.difficulty,
-                    damage: damage.trim(),
+                    damage,
                     range: s.castRange,
                     castDuration: s.castDuration,
                     effectDuration: s.spellDuration,
+                    features: { internalFeatureList: []},
                     enhancementCosts: s.enhancement,
                     enhancementDescription: s.enhancementDescription,
                     degreeOfSuccessOptions: {
@@ -750,7 +750,7 @@ export default class SplittermondActor extends Actor {
                     tickMalus: a.tickMalus,
                     handicap: a.handicap,
                     damageReduction: a.damageReduction,
-                    features: a.features.map(f => `${f.name}`)?.join(', ')
+                    features: toItemFeatureModel(a.features),
                 }
             })
         });
@@ -767,7 +767,7 @@ export default class SplittermondActor extends Actor {
                     defenseBonus: s.defensePlus,
                     tickMalus: s.tickMalus,
                     handicap: s.handicap,
-                    features: s.features.map(f => `${f.name}`)?.join(', ')
+                    features: toItemFeatureModel(s.features)
                 }
             })
         });
@@ -785,8 +785,8 @@ export default class SplittermondActor extends Actor {
                         }),
                         attribute1: w.attribute1Id.toLowerCase(),
                         attribute2: w.attribute2Id.toLowerCase(),
-                        features: w.features.map(f => `${f.name}`)?.join(', '),
-                        damage: w.damage,
+                        features: toItemFeatureModel(w.features),
+                        damage: {stringInput: w.damage},
                         weaponSpeed: w.weaponSpeed,
                     }
                 })
@@ -803,8 +803,8 @@ export default class SplittermondActor extends Actor {
                     }),
                     attribute1: w.attribute1Id.toLowerCase(),
                     attribute2: w.attribute2Id.toLowerCase(),
-                    features: w.features.map(f => `${f.name}`)?.join(', '),
-                    damage: w.damage,
+                    features: toItemFeatureModel(w.features),
+                    damage: {stringInput: w.damage},
                     weaponSpeed: w.weaponSpeed,
                     range: w.range
                 }
@@ -819,8 +819,8 @@ export default class SplittermondActor extends Actor {
                         }),
                         attribute1: w.attribute1Id.toLowerCase(),
                         attribute2: w.attribute2Id.toLowerCase(),
-                        features: w.features.map(f => `${f.name}`)?.join(', '),
-                        damage: w.damage,
+                        features: toItemFeatureModel(w.features),
+                        damage: {stringInput: w.damage},
                         weaponSpeed: w.weaponSpeed,
                         range: w.range
                     }
@@ -1034,8 +1034,8 @@ export default class SplittermondActor extends Actor {
         let defaultTable = "sorcerer";
         eg = Math.abs(eg);
         const lowerFumbleResult = this.modifier.getForId("lowerfumbleresult").notSelectable()
-            .withAttributeValuesOrAbsent("skill",skill).getModifiers().value;
-        if (this.items.find(i => i.type == "strength" && i.name.toLowerCase() == "priester")) {
+            .withAttributeValuesOrAbsent("skill", skill).getModifiers().value;
+        if (this.items.find(i => i.type === "strength" && i.name.toLowerCase() === "priester")) {
             defaultTable = "priest";
         }
 
@@ -1392,6 +1392,37 @@ export default class SplittermondActor extends Actor {
         this.setFlag('splittermond', 'originId', this._id);
         return super.toCompendium(pack);
     }
+
+    findItem() {
+        let targetType = null;
+        let targetName = null;
+        const actor = this;
+
+        /**
+         * @param {string} type
+         * @returns {SplittermondItem}
+         */
+        function withType(type) {
+            targetType = type.toLowerCase();
+            return {withName: withName};
+        }
+
+        /**
+         * @param {string} name
+         * @returns {SplittermondItem}
+         */
+        function withName(name) {
+            targetName = name.toLowerCase();
+            return execute();
+        }
+
+        function execute() {
+            return actor.items.filter(i => i.type === null || i.type.toLowerCase() === targetType)
+                .find(i => i.name.toLowerCase() === targetName);
+        }
+
+        return {withType, withName}
+    }
 }
 
 
@@ -1420,4 +1451,30 @@ async function askUserAboutActorOverwrite() {
         });
         dialog.render(true);
     });
+}
+
+/**
+ *
+ * @param {[{name:string, value:number, description:string}]}genesisFeatures
+ * @returns {DataModelConstructorInput<ItemFeaturesType>}
+ */
+function toItemFeatureModel(genesisFeatures){
+    if(!genesisFeatures){
+        return [];
+    }
+    /**@type {{name:ItemFeature, value:number}[]}*/
+    const featureList = genesisFeatures.map(f =>({
+        name: normalizeName(f.name),
+        value: parseInt(f.value ?? 1)})
+    )
+    return {internalFeatureList: featureList};
+
+}
+
+/**
+ * @param {string} name
+ * @returns {ItemFeature}
+ */
+function normalizeName(name) {
+    return splittermond.itemFeatures.find(f => f.toLowerCase() === name.trim().toLowerCase()) ?? name;
 }

@@ -28,6 +28,28 @@ import {StrengthDataModel, type StrengthDataModelType} from "./dataModel/Strengt
 import {WeaknessDataModel, type WeaknessDataModelType} from "./dataModel/WeaknessDataModel";
 import {WeaponDataModel, type WeaponDataModelType} from "./dataModel/WeaponDataModel";
 
+type SplittermondItemDataModel = AncestryDataModel |
+    NpcAttackDataModel |
+    NpcFeatureDataModel |
+    ProjectileDataModel |
+    ResourceDataModel |
+    SpeciesDataModel |
+    SpellEffectDataModel |
+    SpellDataModel |
+    StatusEffectDataModel |
+    StrengthDataModel |
+    WeaknessDataModel |
+    WeaponDataModel |
+    ArmorDataModel |
+    CultureDataModel |
+    CultureLoreDataModel |
+    EducationDataModel |
+    EquipmentDataModel |
+    LanguageDataModel |
+    MasteryDataModel |
+    MoonsignDataModel |
+    ShieldDataModel
+    ;
 type SplittermondItemDataModelType = AncestryDataModelType |
     NpcAttackDataModelType |
     NpcFeatureDataModelType |
@@ -72,7 +94,8 @@ export type {
     MasteryDataModelType,
     MoonsignDataModelType,
     ShieldDataModelType,
-    SplittermondItemDataModelType
+    SplittermondItemDataModelType,
+    SplittermondItemDataModel
 };
 
 export function initializeItem() {

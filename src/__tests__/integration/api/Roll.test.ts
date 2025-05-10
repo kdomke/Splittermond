@@ -1,9 +1,14 @@
 import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 import {foundryApi} from "module/api/foundryApi";
-import {addRolls, sumRolls} from "module/api/Roll";
+import {addRolls, sumRolls, type Die as DieType} from "module/api/Roll";
 
-declare class Die {
-    results: any;
+declare class Die implements DieType{
+    formula:string;
+    results: { active: boolean; result: number; discarded?:boolean}[];
+    _evaluated: boolean;
+    faces: number;
+    modifiers: string[];
+    number: number;
 }
 
 declare class OperatorTerm {
@@ -22,6 +27,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
             foundryApi.roll("1000d6").evaluate()
                 .then(() => expect.fail("Expected test to throw an error"));
         });
+
         it("should return a roll object", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
 
@@ -51,7 +57,6 @@ export function foundryRollTest(context: QuenchBatchContext) {
 
             expect(rollResult.terms[2]).to.be.instanceOf(NumericTerm);
             expect((rollResult.terms[2] as NumericTerm).number).to.equal(1);
-
         });
 
         it("should not fail for a zero dice formula", async () => {
@@ -60,7 +65,7 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(rollResult.total).to.equal(0);
         });
 
-        it("should have a result if not evalutated", () => {
+        it("should have a result if not evaluated", () => {
             expect(foundryApi.roll("1d6+3").result).to.contain("+ 3");
         })
 
@@ -68,11 +73,48 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(foundryApi.roll("1d6+3").total).to.equal(0);
         });
 
+        it("has an absolute function", () => {
+            expect(foundryApi.roll("abs(-3)").evaluateSync().total).to.equal(3);
+
+        });
+
         it("should have a result if evaluated", async () => {
             const rollResult = await foundryApi.roll("1d6").evaluate().then((roll) => roll.total);
             expect(rollResult).to.be.above(0);
             expect(rollResult).to.be.below(7);
-        })
+        });
+
+        it("should allow manipulation of roll terms", async () => {
+            const roll =     foundryApi.roll("998d6");
+            (roll.terms[0] as Die).number+= 1;
+            (roll.terms[0] as Die).modifiers.push("kh1");
+
+            const rollResult = await roll.evaluate();
+
+            expect((rollResult.terms[0] as Die).results.length).to.equal(999);
+            expect(rollResult.total).to.be.below(7);
+        });
+
+        it("should allow adding of roll terms", async () => {
+            const roll =  foundryApi.roll("1d6");
+
+            roll.terms.push(foundryApi.rollInfra.plusTerm())
+            roll.terms.push(foundryApi.rollInfra.numericTerm(3))
+            roll.terms.push(foundryApi.rollInfra.minusTerm())
+            roll.terms.push(foundryApi.rollInfra.numericTerm(3))
+            roll.resetFormula();
+
+            expect(roll.terms.length).to.equal(5);
+            expect(roll.formula).to.equal("1d6 + 3 - 3");
+        });
+
+        it("should reset formula", async () => {
+            const roll = foundryApi.roll("1d6+3");
+            roll.terms.push(foundryApi.rollInfra.plusTerm(), foundryApi.rollInfra.numericTerm(3));
+            roll.resetFormula();
+
+            expect(roll.formula).to.equal("1d6 + 3 + 3");
+        });
 
         it("should produce a tooltip", async () => {
             const rollResult = await foundryApi.roll("2d6+1").evaluate()
@@ -82,9 +124,9 @@ export function foundryRollTest(context: QuenchBatchContext) {
             expect(tooltip).to.match(/(<li class="roll die d6(?: min| max)?">[1-6]<\/li>)/);
         });
 
-        ["1W6", "leerzeichen", "+K2V3", null, undefined].forEach((input) => {
+        ["1d6 +", "1W6", "leerzeichen", "+K2V3", ""].forEach((input) => {
             it(`should fail if '${input}' is not a roll formula`, () => {
-                expect(() => foundryApi.roll(input as string).evaluateSync()).to.throw();
+                expect(foundryApi.rollInfra.validate(input as string)).to.be.false;
             });
         });
 

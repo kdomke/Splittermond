@@ -1,41 +1,57 @@
-import {Die, FoundryRoll, NumericTerm, OperatorTerm} from "module/api/Roll";
+import {Die, FoundryRoll, NumericTerm, OperatorTerm, ParentheticTerm, RollTerm} from "module/api/Roll";
 import {foundryApi} from "../../module/api/foundryApi";
 import sinon, {SinonSandbox} from "sinon";
 
 // roll.mock.ts
 class MockDie implements Die {
-    modifier:string[]=[]
+    modifiers: string[] = []
+
     constructor(
-        public number:number,
+        public number: number,
         public faces: number,
         public results: Array<{ active: boolean; result: number }>,
         public _evaluated = false
-    ) {}
+    ) {
+    }
+
+    get formula() {
+        return `${this.number}d${this.faces}${this.modifiers.join("")}`;
+    }
 }
 
 class MockOperatorTerm implements OperatorTerm {
     constructor(
         public operator: string,
         public _evaluated = false
-    ) {}
+    ) {
+    }
+
+    get formula() {
+        return this.operator;
+    }
 }
 
 class MockNumericTerm implements NumericTerm {
     constructor(
         public number: number,
         public _evaluated = false
-    ) {}
+    ) {
+    }
 
-    get total(){
+    get total() {
         return this.number;
     }
 
-    get expression(){
+    get expression() {
         return `${this.number}`
+    }
+
+    get formula() {
+        return this.expression;
     }
 }
 
-export class MockRoll implements FoundryRoll{
+export class MockRoll implements FoundryRoll {
     /**@internal*/_evaluated: boolean;
     /**@internal*/_total: number;
     terms: Array<Die | OperatorTerm | NumericTerm>;
@@ -57,7 +73,7 @@ export class MockRoll implements FoundryRoll{
             const modifier = match[3] ? parseInt(match[3]) : null;
 
             // Create dice terms
-            const dieResults = Array.from({ length: diceCount }, () => ({
+            const dieResults = Array.from({length: diceCount}, () => ({
                 active: true,
                 result: Math.floor(Math.random() * faces) + 1
             }));
@@ -75,6 +91,10 @@ export class MockRoll implements FoundryRoll{
         }
     }
 
+    resetFormula() {
+        this.formula = this.terms.map(t => t.formula).join(" ");
+    }
+
     get result(): string {
         return this.terms
             .map(term => {
@@ -89,11 +109,19 @@ export class MockRoll implements FoundryRoll{
         return this._evaluated ? this._total : 0;
     }
 
+    static validate(formula: string) {
+        return /^\d+d\d+\s*(?:[+-]\s*\d+)?$/.test(formula);
+    }
+
     async evaluate(): Promise<MockRoll> {
         return Promise.resolve(this.evaluateSync());
     }
 
-    evaluateSync(){
+    get isDeterministic(){
+        return !this.terms.some(t => t instanceof MockDie)
+    }
+
+    evaluateSync() {
         if (!this._evaluated) {
             this._total = this.terms.reduce((sum, term) => {
                 if ('results' in term) {
@@ -110,7 +138,8 @@ export class MockRoll implements FoundryRoll{
         }
         return this;
     }
-    clone(){
+
+    clone() {
         const roll = new MockRoll(this.formula);
         roll.terms = this.terms;
         roll.dice = this.dice;
@@ -140,41 +169,70 @@ export class MockRoll implements FoundryRoll{
 
 // Test utility functions
 export function createTestRoll(
-    formula: `${number}d${number}`|`${number}d${number}+${number}`,
+    formula: `${number}d${number}` | "",
     results: number[],
-    modifier = 0
-): FoundryRoll{
+    modifier:number|null =null
+): FoundryRoll {
     const terms: Array<Die | OperatorTerm | NumericTerm> = [];
     const dice: Die[] = [];
+    let pushedDie = false;
 
     if (results.length > 0) {
+        pushedDie = true;
         const die = new MockDie(
             results.length,
             parseInt(/(?<=d)\d/.exec(formula)![0]),
-            results.map(result => ({ active: true, result })),
+            results.map(result => ({active: true, result})),
             true
         );
         terms.push(die);
         dice.push(die);
     }
 
-    if (modifier !== 0) {
-        terms.push(
-            new MockOperatorTerm(modifier > 0 ? '+' : '-'),
-            new MockNumericTerm(Math.abs(modifier))
-        );
+    if (modifier !== null) {
+        if (pushedDie) {
+            terms.push(new MockOperatorTerm(modifier > 0 ? '+' : '-'));
+        }
+        terms.push(new MockNumericTerm(Math.abs(modifier)));
     }
 
     const roll = new MockRoll(formula);
     roll.terms = terms;
     roll.dice = dice;
-    roll._total = results.reduce((a, b) => a + b, 0) + modifier;
+    roll._total = results.reduce((a, b) => a + b, 0) + (modifier ?? 0);
     roll._evaluated = true;
 
     return roll;
 }
 
 // Sinon stub setup helper
-export function stubFoundryRoll(rollInstance: FoundryRoll, sandbox:SinonSandbox=sinon) {
+export function stubFoundryRoll(rollInstance: FoundryRoll, sandbox: SinonSandbox = sinon) {
+    //handle case where roll is already stubbed (e.g. by stubRollApi)
+    if ("restore" in foundryApi.roll && typeof (foundryApi.roll as any).restore === "function") {
+        (foundryApi.roll as any).restore();
+    }
     return sandbox.stub(foundryApi, 'roll').returns(rollInstance);
+}
+
+export function stubRollApi(sandbox: SinonSandbox = sinon) {
+    const rollStub = sandbox.stub(foundryApi, 'roll')
+        .callsFake(str => /^\s*\d+\s*$/.test(str) ? createTestRoll("",[],parseInt(str)) : new MockRoll(str));
+    const infraStub = sandbox.stub(foundryApi, 'rollInfra').get(() => {
+        return {
+            validate: sandbox.stub().callsFake(formula => MockRoll.validate(formula)),
+            rollFromTerms(terms: Exclude<RollTerm, ParentheticTerm>[]): FoundryRoll {
+                return MockRoll.fromTerms(terms);
+            },
+            plusTerm(): OperatorTerm {
+                return new MockOperatorTerm("+");
+            },
+            minusTerm(): OperatorTerm {
+                return new MockOperatorTerm("-");
+            },
+            numericTerm(number: number): NumericTerm {
+                return new MockNumericTerm(number);
+            }
+        }
+    });
+    return {rollStub, infraStub};
 }

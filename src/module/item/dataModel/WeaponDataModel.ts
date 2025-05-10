@@ -1,7 +1,8 @@
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/SplittermondDataModel";
 import SplittermondWeaponItem from "../weapon";
 import {damage, getDescriptorFields, getPhysicalProperties, validatedBoolean} from "./commonFields";
-import {migrateFrom0_12_11, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
+import {migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
+import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
 
 function ItemWeaponDataModelSchema() {
     return {
@@ -13,7 +14,7 @@ function ItemWeaponDataModelSchema() {
         weaponSpeed: new fields.NumberField({required: true, nullable: true, initial: 0}),
         skill: new fields.StringField({required: true, nullable: false}),
         skillMod: new fields.NumberField({required: true, nullable: false, initial: 0}),
-        features: new fields.StringField({required: true, nullable: false}),
+        features: new fields.EmbeddedDataField(ItemFeaturesModel,{required: true, nullable: false}),
         attribute1: new fields.StringField({required: true, nullable: false}),
         attribute2: new fields.StringField({required: true, nullable: false}),
         minAttributes: new fields.StringField({required: true, nullable: false}),
@@ -28,7 +29,7 @@ function ItemWeaponDataModelSchema() {
             range: new fields.NumberField({required: true, nullable: true, initial: 0}),
             weaponSpeed: new fields.NumberField({required: true, nullable: true, initial: 0}),
             minAttributes: new fields.StringField({required: true, nullable: true}),
-            features: new fields.StringField({required: true, nullable: true}),
+            features: new fields.EmbeddedDataField(ItemFeaturesModel,{required: true, nullable: false}),
         }, {required: false, nullable: false}),
     };
 }
@@ -39,9 +40,11 @@ export class WeaponDataModel extends SplittermondDataModel<WeaponDataModelType, 
     static defineSchema = ItemWeaponDataModelSchema;
 
     static migrateData(source:unknown){
-        source = migrateFrom0_12_11(source);
         source = migrateFrom0_12_13(source);
         source = migrateFrom0_12_20(source);
         return super.migrateData(source);
     }
+
+
 }
+

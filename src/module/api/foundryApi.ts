@@ -8,7 +8,7 @@ import type {
     Speaker,
     User
 } from "./foundryTypes";
-import type {FoundryRoll, NumericTerm, Roll} from "./Roll";
+import type {FoundryRoll, NumericTerm, OperatorTerm, Roll} from "./Roll";
 import {FoundryChatMessage} from "./ChatMessage";
 
 export const foundryApi = new class FoundryApi {
@@ -17,7 +17,7 @@ export const foundryApi = new class FoundryApi {
      * @param messageKey the key to an entry in the localization file
      * @param templateArgs the arguments to be inserted into the localized string
      */
-    reportError(messageKey: string, templateArgs?:Record<string, string>): void {
+    reportError(messageKey: string, templateArgs?: Record<string, string>): void {
         const message = templateArgs ? this.format(messageKey, templateArgs) : this.localize(messageKey);
         //@ts-ignore
         ui.notifications.error(message);
@@ -27,7 +27,7 @@ export const foundryApi = new class FoundryApi {
      * @param messageKey the key to an entry in the localization file
      * @param templateArgs the arguments to be inserted into the localized string
      */
-    warnUser(messageKey: string, templateArgs?:Record<string, string>): void {
+    warnUser(messageKey: string, templateArgs?: Record<string, string>): void {
         const message = templateArgs ? this.format(messageKey, templateArgs) : this.localize(messageKey);
         //@ts-ignore
         ui.notifications.warn(message);
@@ -37,7 +37,7 @@ export const foundryApi = new class FoundryApi {
      * @param messageKey the key to an entry in the localization file
      * @param templateArgs the arguments to be inserted into the localized string
      */
-    informUser(messageKey: string, templateArgs?:Record<string, string>): void {
+    informUser(messageKey: string, templateArgs?: Record<string, string>): void {
         const message = templateArgs ? this.format(messageKey, templateArgs) : this.localize(messageKey);
         // @ts-ignore
         ui.notifications.info(message);
@@ -58,12 +58,12 @@ export const foundryApi = new class FoundryApi {
         return ChatMessage.create(chatData);
     }
 
-    createItem(data: object, options:object={}): Promise<Item>{
+    createItem(data: object, options: object = {}): Promise<Item> {
         //@ts-ignore
         return Item.create(data, options);
     }
 
-    createActor(data:object, options:object={}): Promise<Actor>{
+    createActor(data: object, options: object = {}): Promise<Actor> {
         //@ts-ignore
         return Actor.create(data, options);
     }
@@ -72,7 +72,7 @@ export const foundryApi = new class FoundryApi {
      * @param {actor:Actor,scene:Scene,token:TokenDocument, alias:string} data object containing the actor
      * @return  the token that is registered as the speaker
      */
-    getSpeaker(data:object): Speaker {
+    getSpeaker(data: object): Speaker {
         //@ts-ignore
         return ChatMessage.getSpeaker(data);
     }
@@ -90,7 +90,7 @@ export const foundryApi = new class FoundryApi {
      * @param messageKey the key to an entry in the localization file
      * @param templateArgs the arguments to be inserted into the localized string
      */
-    format(messageKey: string, templateArgs: Record<string,string>): string {
+    format(messageKey: string, templateArgs: Record<string, string>): string {
         //@ts-ignore
         return game.i18n.format(messageKey, templateArgs);
     }
@@ -133,29 +133,42 @@ export const foundryApi = new class FoundryApi {
         return game.actors.get(actorId);
     }
 
-    getToken(sceneId: string, tokenId: string):TokenDocument|undefined {
+    getToken(sceneId: string, tokenId: string): TokenDocument | undefined {
         //@ts-ignore
         return game.scenes.get(sceneId)?.tokens.get(tokenId);
     }
 
-    roll(damageFormula: string, data:Record<string,string>={}, context: object = {}): FoundryRoll{
+    roll(damageFormula: string, data: Record<string, string> = {}, context: object = {}): FoundryRoll {
         //@ts-ignore
         return new Roll(damageFormula, data, context)
     }
-    get rollInfra(){
+
+    get rollInfra() {
         return {
-            rollFromTerms(terms: FoundryRoll["terms"]) {
+            validate(formula: string): boolean {
+                //@ts-ignore
+                return Roll.validate(formula);
+            },
+            rollFromTerms(terms: FoundryRoll["terms"]): FoundryRoll {
                 //@ts-ignore
                 return Roll.fromTerms(terms);
             },
-            numericTerm(number:number):NumericTerm{
+            plusTerm(): OperatorTerm {
+                //@ts-ignore
+                return new foundry.dice.terms.OperatorTerm({operator: "+"})
+            },
+            minusTerm(): OperatorTerm {
+                //@ts-ignore
+                return new foundry.dice.terms.OperatorTerm({operator: "-"})
+            },
+            numericTerm(number: number): NumericTerm {
                 //@ts-ignore
                 return new foundry.dice.terms.NumericTerm({number})
             }
         }
     }
 
-    mergeObject<T extends object, U extends object>(original: T, other?: U, options?:MergeObjectOptions): Partial<T> & Partial<U>{
+    mergeObject<T extends object, U extends object>(original: T, other?: U, options?: MergeObjectOptions): Partial<T> & Partial<U> {
         // @ts-ignore
         return foundry.utils.mergeObject(original, other, options);
     }

@@ -94,6 +94,27 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     }
                 });
 
+                //Officially damage modifier is a private member. We're exploiting the fact that we're using JS here
+                //where the TS compile will not notice. I find this hack acceptable, because this code should be
+                //migrated
+                const serializedImplements = {
+                    principalComponent:{
+                        formula: data.weapon.damageImplements.principalComponent.damageRoll.backingRoll.formula,
+                        features: data.weapon.damageImplements.principalComponent.damageRoll._features.features,
+                        modifier: data.weapon.damageImplements.principalComponent.damageRoll._damageModifier,
+                        damageSource:data.weapon.damageImplements.principalComponent.damageSource,
+                        damageType: data.weapon.damageImplements.principalComponent.damageType
+                    },
+                    otherComponents: data.weapon.damageImplements.otherComponents.map(i => {
+                        return {
+                            formula: i.damageRoll.backingRoll.formula,
+                            features: i.damageRoll._features.features,
+                            modifier: i.damageRoll._damageModifier,
+                            damageSource: i.damageSource,
+                            damageType: i.damageType
+                        }
+                    })
+                }
                 templateContext.actions.push({
                     name: game.i18n.localize(`splittermond.damage`) + " (" + data.weapon.damage + ")",
                     icon: "fa-heart-broken",
@@ -101,11 +122,8 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
                     data: {
                         "roll-type": "damage",
                         actorId: actor.id,
-                        damageFormula: data.weapon.damage,
-                        featureString: data.weapon.features,
-                        damageSource: data.weapon.name,
-                        damageType: data.weapon.damageType,
-                        costType: data.weapon.costType
+                        costType: data.weapon.costType,
+                        damageImplements: JSON.stringify(serializedImplements),
                     }
                 });
             }
@@ -141,20 +159,7 @@ export async function prepareCheckMessageData(actor, rollMode, roll, data) {
             let tickCost = 3;
             let defenseValue = data.baseDefense;
             if (data.succeeded) {
-                defenseValue = defenseValue + 1 + data.degreeOfSuccess;
-
-                let feature = {};
-                data.itemData.features?.toLowerCase().split(',').forEach(feat => {
-                    let temp = /([^0-9 ]*)[ ]*([0-9]*)/.exec(feat.trim());
-                    if (temp[1]) {
-                        feature[temp[1]] = parseInt(temp[2] || 1);
-                    }
-                });
-
-                if (feature["defensiv"]) {
-                    defenseValue += feature["defensiv"];
-                }
-
+                defenseValue = defenseValue + 1 + data.degreeOfSuccess + data.itemData.itemFeatures.valueOf("Defensiv");
                 templateContext.degreeOfSuccessDescription = "<p style='text-align: center'><strong>" + game.i18n.localize(`splittermond.derivedAttribute.${data.defenseType}.short`) + `: ${defenseValue}</strong></p>`;
 
 

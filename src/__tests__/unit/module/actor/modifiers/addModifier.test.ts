@@ -13,6 +13,7 @@ import {CharacterAttribute} from "module/actor/dataModel/CharacterAttribute";
 import Attribute from "module/actor/attribute";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 import {evaluate, of} from "module/actor/modifiers/expressions/scalar";
+import {stubRollApi} from "../../../RollMock";
 
 //Duplicated, because I don't want to export the original type definition
 interface PreparedSystem {
@@ -32,6 +33,7 @@ describe('addModifier', () => {
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         clearMappers();
+        stubRollApi(sandbox);
         systemData = {
             healthRegeneration: {multiplier: 1, bonus: 0},
             focusRegeneration: {multiplier: 1, bonus: 0},
@@ -183,15 +185,39 @@ describe('addModifier', () => {
 
     });
 
-    it('should handle damage modifiers', () => {
-        addModifier(actor, item, 'Damage', 'Damage/fire +5');
-        expect(modifierManager.add.lastCall.args).to.have.deep.members([
-            'damage',
-            {name: 'Damage', type: null, emphasis: 'fire'},
-            of(5),
-            item,
-            false
-        ]);
+    describe("damage modifiers", () => {
+        it('should handle damage modifiers', () => {
+            addModifier(actor, item, 'Damage', 'Damage/fire +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: 'Damage', type: null, emphasis: 'fire'},
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it("should pass valid damage types on modifiers", () => {
+            addModifier(actor, item,"", 'damage damageType="fire" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: '', type: null, damageType: 'fire'},
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it("should omit invalid damage types on modifiers", () => {
+            addModifier(actor, item,"", 'damage damageType="frie" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: '', type: null},
+                of(5),
+                item,
+                false
+            ]);
+        });
     });
 
     ["Initiative", "INI"].forEach(iniRepresentation => {

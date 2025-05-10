@@ -1,21 +1,22 @@
 import {
     abs,
     asString,
-    condense,
+    condense, condenseCombineDamageWithModifiers,
     dividedBy,
     evaluate,
     isGreaterZero,
-    isLessThanZero,
+    isLessThanZero, mapRoll,
     minus,
     of,
     plus,
-    roll,
     ref,
-    times
+    roll,
+    times,
+    toRollFormula
 } from "module/actor/modifiers/expressions/scalar";
 import {expect} from "chai";
-import {createTestRoll, MockRoll} from "__tests__/unit/RollMock";
-import sinon from "sinon";
+import {createTestRoll, MockRoll, stubRollApi} from "__tests__/unit/RollMock";
+import sinon, {SinonSandbox} from "sinon";
 import {foundryApi} from "module/api/foundryApi";
 import {NumericTerm, OperatorTerm} from "module/api/Roll";
 import {AddExpression} from "module/actor/modifiers/expressions/scalar/definitions";
@@ -23,14 +24,14 @@ import {AddExpression} from "module/actor/modifiers/expressions/scalar/definitio
 
 describe("Expressions", () => {
     ([
-        [abs(of(-3)), 3, of(3), "3"],
-        [of(3), 3, of(3), "3"],
-        [of(-3), -3, of(-3), "-3"],
-        [plus(of(3), of(3)), 6, of(6), "3 + 3"],
-        [minus(of(3), of(3)), 0, of(0), "3 - 3"],
-        [times(of(3), of(3)), 9, of(9), "3 \u00D7 3"],
-        [dividedBy(of(3), of(3)), 1, of(1), "3 / 3"],
-    ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
+        [abs(of(-3)), 3, of(3), "3", "abs(-3)"],
+        [of(3), 3, of(3), "3", "3"],
+        [of(-3), -3, of(-3), "-3", "-3"],
+        [plus(of(3), of(3)), 6, of(6), "3 + 3", "3 + 3"],
+        [minus(of(3), of(3)), 0, of(0), "3 - 3", "3 - 3"],
+        [times(of(3), of(3)), 9, of(9), "3 \u00D7 3", "3 * 3"],
+        [dividedBy(of(3), of(3)), 1, of(1), "3 / 3", "3 / 3"],
+    ] as const).forEach(([input, evaluated, condensed, stringRepresentation, rollRepresentation]) => {
 
         it(`simple expression ${stringRepresentation} should evaluate to ${evaluated}`, () => {
             expect(evaluate(input)).to.equal(evaluated);
@@ -44,6 +45,10 @@ describe("Expressions", () => {
             expect(asString(input)).to.equal(stringRepresentation);
         });
 
+        it(`should convert simple expression ${stringRepresentation} to roll representation`, () => {
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation, {}]);
+        })
+
         it(`should correctly estimate ${stringRepresentation} greater than zero`, () => {
             expect(isGreaterZero(input)).to.equal(evaluated > 0);
         });
@@ -54,13 +59,13 @@ describe("Expressions", () => {
     });
 
     ([
-        [times(plus(of(1), of(0)), of(1)), 1, of(1), "1"],
-        [times(minus(of(1), of(0)), of(1)), 1, of(1), "1"],
-        [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1"],
-        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) \u00D7 3"],
-        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) \u00D7 3"],
-        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) \u00D7 3"],
-        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| \u00D7 3"],
+        [times(plus(of(1), of(0)), of(1)), 1, of(1), "1", "1"],
+        [times(minus(of(1), of(0)), of(1)), 1, of(1), "1", "1"],
+        [times(minus(of(0), of(1)), of(1)), -1, of(-1), "-1", "-1"],
+        [times(plus(of(3), of(3)), of(3)), 18, of(18), "(3 + 3) \u00D7 3", "(3 + 3) * 3"],
+        [times(minus(of(4), of(3)), of(3)), 3, of(3), "(4 - 3) \u00D7 3", "(4 - 3) * 3"],
+        [times(minus(of(3), of(4)), of(3)), -3, of(-3), "(3 - 4) \u00D7 3", "(3 - 4) * 3"],
+        [times(abs(minus(of(3), of(4))), of(3)), 3, of(3), "|(3 - 4)| \u00D7 3", "abs(3 - 4) * 3"],
         [dividedBy(
             times(
                 of(2),
@@ -70,13 +75,17 @@ describe("Expressions", () => {
                 of(3),
                 minus(of(4), of(3))
             )
-        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))"],
+        ), 2, of(2), "(2 \u00D7 (1 + 2)) / (3 \u00D7 (4 - 3))", "(2 * (1 + 2)) / (3 * (4 - 3))"],
 
-    ] as const).forEach(([input, evaluated, condensed, stringRepresentation]) => {
+    ] as const).forEach(([input, evaluated, condensed, stringRepresentation, rollRepresentation]) => {
 
         it(`braced expression ${stringRepresentation} should evaluate to ${evaluated}`, () => {
             expect(evaluate(input)).to.equal(evaluated);
         });
+
+        it(`braced expression ${stringRepresentation} should convert to roll representation`, () => {
+            expect(toRollFormula(input)).to.deep.equal([rollRepresentation, {}]);
+        })
 
         it(`braced expression ${stringRepresentation} should condense to ${stringRepresentation}`, () => {
             expect(condense(input)).to.deep.equal(condensed);
@@ -100,7 +109,7 @@ describe("Expressions", () => {
                             total: value,
                         }
                     },
-                    rollFromTerms(terms: (OperatorTerm|NumericTerm)[]) {
+                    rollFromTerms(terms: (OperatorTerm | NumericTerm)[]) {
                         return MockRoll.fromTerms(terms);
                     }
 
@@ -181,6 +190,16 @@ describe("Expressions", () => {
             const expression = times(plus(of(3), property), minus(of(4), of(3)));
             expect(asString(expression)).to.equal("(3 + ${value}) \u00D7 (4 - 3)");
         });
+
+        it("should produce a unique identifier for each reference", () => {
+            const property1 = ref("value", {value: 3}, "value");
+            const property2 = ref("value", {value: 4}, "value");
+            const expression = plus(property1, property2);
+            expect(toRollFormula(expression)).to.deep.equal(["@value0 + @value1", {value0: "3", value1: "4"}]);
+
+
+        });
+
     });
 });
 
@@ -228,5 +247,69 @@ describe("Smart constructors", () => {
     it("should throw for division by zero", () => {
         expect(() => dividedBy(of(3), of(0))).to.throw();
     })
+});
+
+describe("Roll condensation", () => {
+    let sandbox: SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        stubRollApi(sandbox);
+    });
+    afterEach(() => sandbox.restore());
+
+    it("should condense a roll with a single numeric term", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],3));
+        const modifiers = of(0);
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 + 3");
+    });
+
+    it("should condense a roll with a single numeric term and a modifier", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],3));
+        const modifiers = plus(of(3), of(-2));
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 + 4");
+    });
+
+    it("should condense a roll with a single negative numeric term ", () => {
+        const rollTerm = mapRoll(createTestRoll("1d6",[6],-3));
+        const modifiers = of(0);
+        const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+        expect(asString(result)).to.equal("1d6 - 3");
+    });
+
+    ([
+        [3, of(-3), ""],
+        [-3, of(3), ""],
+        [-3, of(4), "+ 1"],
+        [6, of(-8), "- 2"],
+        [2, plus(minus(of(3),of(8)),of(2)), "- 1"],
+    ] as const).forEach(([principalModifier, modifiers, expected]) => {
+        it(`should condense a roll with inputs ${principalModifier}, ${asString(modifiers)}`, () => {
+            const rollTerm = mapRoll(createTestRoll("1d6",[6],principalModifier));
+            const result = condenseCombineDamageWithModifiers(rollTerm, modifiers);
+
+            expect(asString(result)).to.equal(`1d6 ${expected}`.trim());
+        });
+    });
+
+    it(`should pass through a roll with two roll terms`, () => {
+        const firstRoll= mapRoll(createTestRoll("1d6",[6]));
+        const secondRoll= mapRoll(createTestRoll("1d10",[10]));
+        const roll = plus(firstRoll, secondRoll);
+
+        expect(asString(condenseCombineDamageWithModifiers(roll, of(0)))).to.equal(asString(roll));
+    });
+
+    it(`should pass through a roll in the modifier term`, () => {
+        const firstRoll= mapRoll(createTestRoll("1d6",[6],3));
+        const secondRoll= mapRoll(createTestRoll("1d9",[9]));
+
+        expect(asString(condenseCombineDamageWithModifiers(firstRoll, secondRoll)))
+            .to.equal(asString(plus(firstRoll, secondRoll)));
+    });
 });
 

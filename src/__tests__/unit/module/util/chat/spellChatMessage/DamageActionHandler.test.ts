@@ -13,14 +13,18 @@ import {expect} from "chai";
 import {splittermond} from "module/config";
 import SplittermondSpellItem from "module/item/spell";
 import {foundryApi} from "module/api/foundryApi";
-import {DamageActionHandler} from "../../../../../../module/util/chat/spellChatMessage/DamageActionHandler";
-import {DamageInitializer} from "../../../../../../module/util/chat/damageChatMessage/initDamage";
-import {SplittermondChatCard} from "../../../../../../module/util/chat/SplittermondChatCard";
+import {DamageActionHandler} from "module/util/chat/spellChatMessage/DamageActionHandler";
+import {DamageInitializer} from "module/util/chat/damageChatMessage/initDamage";
+import {SplittermondChatCard} from "module/util/chat/SplittermondChatCard";
+import {createTestRoll, MockRoll, stubFoundryRoll, stubRollApi} from "__tests__/unit/RollMock";
+import {DamageRoll} from "module/util/damage/DamageRoll";
+import {ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
 
 describe("DamageActionHandler", () => {
     let sandbox: sinon.SinonSandbox;
     beforeEach(() => {
         sandbox = sinon.createSandbox();
+        stubRollApi(sandbox)
         sandbox.stub(foundryApi, "localize").callsFake((key: string) => key)
         sandbox.stub(foundryApi, "getSpeaker").returns({
             actor: "actor",
@@ -115,7 +119,7 @@ describe("DamageActionHandler", () => {
 
         it("should disable all options after consuming ticks", () => {
             const underTest = setUpDamageActionHandler(sandbox);
-            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
+            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
             underTest.checkReportReference.get().succeeded = true;
 
             underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity: "2"});
@@ -131,10 +135,10 @@ describe("DamageActionHandler", () => {
         it("should invoke Dice module on damage application", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
                 .returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
-            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
+            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
 
             underTest.useAction({action: "applyDamage"});
 
@@ -144,25 +148,33 @@ describe("DamageActionHandler", () => {
         it("should respect damage increases", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage")
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
                 .returns(Promise.resolve(chatCardMock));
-            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
+            underTest.spellReference.getItem().getForDamageRoll.returns({
+                principalComponent: {
+                    damageRoll: new DamageRoll(new MockRoll("0d0 + 1"), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "bleeding",
+                    damageSource: underTest.spellReference.getItem().name
+                },
+                otherComponents: []
+            })
             underTest.checkReportReference.get().succeeded = true;
-            underTest.spellReference.getItem().system.damageType = "bleeding";
 
             underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity: "2"}).action();
             underTest.useAction({action: "applyDamage"});
 
-            expect(diceModuleStub.lastCall.firstArg).to.deep.equal([{damageFormula: "0W0+2", featureString:"", damageSource: "name", damageType:"bleeding"}]);
+            expect(diceModuleStub.lastCall.firstArg).to.deep.equal(
+                [underTest.spellReference.getItem().getForDamageRoll().principalComponent]
+            );
             expect(diceModuleStub.lastCall.lastArg).to.equal(underTest.actorReference.getAgent());
         });
 
         it("should not allow using actions multiple times", () => {
             const underTest = setUpDamageActionHandler(sandbox);
             const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
-            const diceModuleStub = sandbox.stub(DamageInitializer, "rollDamage").returns(Promise.resolve(chatCardMock));
+            const diceModuleStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll").returns(Promise.resolve(chatCardMock));
             underTest.checkReportReference.get().succeeded = true;
-            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "1");
+            sandbox.stub(underTest.spellReference.getItem(), "damage").get(() => "0d0 + 1");
 
             underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity: "2"}).action();
             underTest.useAction({action: "applyDamage"});
@@ -172,6 +184,42 @@ describe("DamageActionHandler", () => {
         });
 
     });
+
+    describe("Actions", ()=>{
+        it("should not render action if its not an option", () => {
+            const underTest = setUpDamageActionHandler(sandbox);
+            underTest.checkReportReference.get().succeeded = false;
+
+            const actions = underTest.renderActions();
+
+            expect(actions).to.have.length(0);
+        });
+
+        it("should render modified actions", () => {
+            const underTest = setUpDamageActionHandler(sandbox);
+            underTest.checkReportReference.get().succeeded = true;
+            underTest.spellReference.getItem().getForDamageRoll.returns({
+                principalComponent: {
+                    damageRoll: new DamageRoll(new MockRoll("1d6 + 1"), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "physical",
+                    damageSource: underTest.spellReference.getItem().name
+                },
+                otherComponents:[{
+                    damageRoll: new DamageRoll(createTestRoll("",[],2), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "rock",
+                    damageSource: "Felsenharter Hammer"
+                }]
+            });
+            const mockRoll = new MockRoll("1d6 + 1");
+            mockRoll.terms.push(foundryApi.rollInfra.plusTerm(), foundryApi.rollInfra.numericTerm(2))
+            stubFoundryRoll(mockRoll, sandbox)
+
+            const actions = underTest.renderActions();
+
+            expect(actions).to.have.length(1);
+            expect(actions[0].value).to.equal("1W6 + 3")
+        });
+    })
 });
 
 function setUpDamageActionHandler(sandbox: SinonSandbox): WithMockedRefs<DamageActionHandler> {
@@ -191,5 +239,13 @@ function setUpDamageActionHandler(sandbox: SinonSandbox): WithMockedRefs<DamageA
 function setNecessaryDefaultsForSpellproperties(spellMock: SinonStubbedInstance<SplittermondSpellItem>, sandbox: sinon.SinonSandbox) {
     sandbox.stub(spellMock, "degreeOfSuccessOptions").get(() => ({damage: true,} as Record<keyof typeof splittermond.spellEnhancement, boolean>));
     sandbox.stub(spellMock, "damage").get(() => "1W6");
+    spellMock.getForDamageRoll.returns({
+        principalComponent: {
+            damageRoll: new DamageRoll(new MockRoll("1d6"), ItemFeaturesModel.emptyFeatures()),
+            damageType: "physical",
+            damageSource: spellMock.name
+        },
+        otherComponents: []
+    })
     spellMock.name = "name";
 }

@@ -11,6 +11,7 @@ import {AgentReference} from "../../../../../../module/data/references/AgentRefe
 import SplittermondItem from "../../../../../../module/item/item";
 import {SpellDataModel} from "../../../../../../module/item/dataModel/SpellDataModel";
 import {CharacterDataModel} from "../../../../../../module/actor/dataModel/CharacterDataModel";
+import {ItemFeaturesModel} from "../../../../../../module/item/dataModel/propertyModels/ItemFeaturesModel";
 
 export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondActor> {
     const actorMock = sandbox.createStubInstance(SplittermondActor);
@@ -23,7 +24,12 @@ export function setUpMockActor(sandbox: SinonSandbox): SinonStubbedInstance<Spli
 
 export function setUpMockSpellSelfReference(sandbox: SinonSandbox): SinonStubbedInstance<SplittermondSpellItem> & ItemReference<SinonStubbedInstance<SplittermondSpellItem>> {
     const spellMock = sandbox.createStubInstance(SplittermondSpellItem);
-    spellMock.system = sandbox.createStubInstance(SpellDataModel) ;
+    spellMock.system = sandbox.createStubInstance(SpellDataModel);
+    Object.defineProperty(spellMock.system, "features", {
+        value: ItemFeaturesModel.emptyFeatures(),
+        enumerable: true,
+        writable: false
+    });
     sandbox.stub(foundryApi, "getItem").returns(spellMock);
     Object.defineProperty(spellMock, "getItem", {
         value: function () {
@@ -43,7 +49,7 @@ export function linkSpellAndActor(spellMock: SinonStubbedInstance<SplittermondSp
     Object.defineProperty(spellMock, "actor", {value: actorMock, enumerable: true});
 }
 
-export function setUpCheckReportSelfReference():CheckReport & OnAncestorReference<CheckReport> {
+export function setUpCheckReportSelfReference(): CheckReport & OnAncestorReference<CheckReport> {
     const checkReportReference = {}
     Object.defineProperty(checkReportReference, "get", {
         value: function () {
@@ -58,7 +64,7 @@ export function setUpCheckReportSelfReference():CheckReport & OnAncestorReferenc
     return checkReportReference as CheckReport & OnAncestorReference<CheckReport>;
 }
 
-export function withToObjectReturnsSelf<T>(wrappedFunction:()=>T):T {
+export function withToObjectReturnsSelf<T>(wrappedFunction: () => T): T {
     const toObjectMock = sinon.stub(SplittermondDataModel.prototype, "toObject").callsFake(function () {
         //@ts-expect-error we accept an "any" this here, because we cannot know the actual type for this mock
         return this;
