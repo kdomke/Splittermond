@@ -128,7 +128,8 @@
         "damageType": "Schadensart",
         "skill": "Fertigkeit",
         "item": "Objekt",
-        "feature": "Merkmal"
+        "feature": "Merkmal",
+        "features": "Merkmale"
       },
       "parseMessages": {
         "notAModifier": "Modifikator '{modifier}' hat kein korrektes Format.",

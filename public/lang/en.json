@@ -50,7 +50,8 @@
           "damageType": "damageType",
           "skill": "skill",
           "item": "item",
-          "feature": "feature"
+          "feature": "feature",
+          "features": "features"
         },
         "parseMessages": {
           "notAModifier": "Modifier '{modifier}' is not of a modifier format.",
