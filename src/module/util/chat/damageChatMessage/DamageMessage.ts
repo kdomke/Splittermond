@@ -47,7 +47,7 @@ export class DamageMessage extends SplittermondDataModel<DamageMessageType> impl
         ].filter(action => action !== null);
         return {
             features: this.renderFeaturesToDisplay(),
-            formula: this.damageEvent.formula,
+            formulaToDisplay: this.damageEvent.formulaToDisplay,
             total: this.damageEvent.totalDamage(),
             source: this.getPrincipalDamageComponent().implementName,
             tooltip: this.damageEvent.tooltip,

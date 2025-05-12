@@ -76,7 +76,7 @@ async function rollFromDamageRoll(damages: ProtoDamageImplement[], costBase: Cos
     const damageEvent = new DamageEvent({
         causer: speaker ? AgentReference.initialize(speaker) : null,
         _costBase: costBase,
-        formula: toDisplayFormula(asString(condense(mapRoll(totalRoll)))),
+        formulaToDisplay: toDisplayFormula(asString(condense(mapRoll(totalRoll)))),
         tooltip: await totalRoll.getTooltip(),
         implements: damageImplements,
         isGrazingHit: false,

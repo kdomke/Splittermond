@@ -10,7 +10,7 @@ import {CostBase} from "../costs/costTypes";
 function DamageEventSchema() {
     return {
         causer: new fields.EmbeddedDataField(AgentReference, {required: true, nullable: true}),
-        formula: new fields.StringField({required: true, nullable: false}),
+        formulaToDisplay: new fields.StringField({required: true, nullable: false}),
         tooltip: new fields.StringField({required: true, nullable: false}),
         _costBase: new fields.EmbeddedDataField(CostBase, {required: true, nullable: false}),
         isGrazingHit: new fields.BooleanField({required: true, nullable: false, initial:false}),

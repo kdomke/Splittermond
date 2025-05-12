@@ -19,12 +19,12 @@ export function createDamageImplement(damage: number, baseReductionOverride: num
 
 type EventProps = Partial<ConstructorParameters<typeof DamageEvent>[0]>;
 export function createDamageEvent(sandbox: SinonSandbox, eventProps:EventProps={}){
-    const agent = eventProps.causer ??createStubActor(sandbox);
+    const agent = eventProps.causer ?? createStubActor(sandbox);
     const damageImplements = eventProps.implements ?? [createDamageImplement(1, 0)];
     const event = new DamageEvent({
         causer: agent,
         _costBase: eventProps._costBase ??  new CostBase({costType: "E"}),
-        formula: eventProps.formula ?? damageImplements.map(imp => imp.formula).join(" + "),
+        formulaToDisplay: eventProps.formulaToDisplay ?? damageImplements.map(imp => imp.formula).join(" + "),
         tooltip: eventProps.tooltip ?? "",
         isGrazingHit: eventProps.isGrazingHit ?? false,
         implements: damageImplements,

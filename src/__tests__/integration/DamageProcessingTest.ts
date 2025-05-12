@@ -75,7 +75,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
             expect(damageMessage).to.be.instanceOf(DamageMessage);
             expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());
             expect(damageMessage.getData().actions.map(a => a.data.localAction)).to.contain("applyDamageToTargets");
-            expect(damageMessage.getData().formula).to.equal("1d6 + 1d10");
+            expect(damageMessage.getData().formulaToDisplay).to.equal("1W6 + 1W10");
 
             expect(damageMessage.damageEvent.implements).to.have.length(2);
             expect(damageMessage.damageEvent.implements.map(i => i.damageType)).to.contain.members(["physical","fire"]);
@@ -115,7 +115,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
 
         it("should call the immunity handler for event immunities", () => {
             const target = getActor(it);
-            const event = new DamageEvent({causer:null, _costBase: CostBase.create("K"), formula:"1d6", tooltip:"", isGrazingHit:false, implements:[implement]});
+            const event = new DamageEvent({causer:null, _costBase: CostBase.create("K"), formulaToDisplay:"1W6", tooltip:"", isGrazingHit:false, implements:[implement]});
             const id = foundryApi.hooks.on(eventImmunityHook, (_,__,imms)=>{imms.push({name:"Test"})})
             eventIds.push(id)
 
