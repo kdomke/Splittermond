@@ -3,6 +3,8 @@ import {splittermond} from "../../config.js";
 import {foundryApi} from "../../api/foundryApi";
 import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
 import {ItemFeaturesModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel.js";
+import {DamageRoll} from "../../util/damage/DamageRoll.js";
+import {CostBase} from "../../util/costs/costTypes.js";
 
 export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {
@@ -60,10 +62,11 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         });
 
         this._prepareItems(sheetData);
+        sheetData.attacks= mapAttacks(sheetData.actor);
+        sheetData.activeDefense = sheetData.actor.activeDefense;
 
 
-
-        console.log("getData()");
+        console.debug("Splittermond | got actor data");
 
 
         return sheetData;
@@ -88,7 +91,6 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             sheetData.itemsByType.weapon.forEach((item) => {
                 item.system.features = this.actor.items.getName(item.name).system.features.features;
                 item.system.damage = this.actor.items.getName(item.name).system.damage.displayValue;
-
             });
         }
         if (sheetData.itemsByType.shield){
@@ -326,12 +328,28 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             }
 
             if (type === "damage") {
-                const damageFormula = event.currentTarget.dataset.damage;
-                const featureString = event.currentTarget.dataset.features;
-                const damageSource = event.currentTarget.dataset.source;
-                const damageType = event.currentTarget.dataset.damageType ?? null;
-                return DamageInitializer.rollDamage([{damageFormula, featureString, damageSource, damageType}], "V", this.actor)
-                    .then(chatCard => chatCard.sendToChat());
+                const serializedImplementsParsed = $(event.currentTarget).closestData("damageimplements");
+                const implementsAsArray = [serializedImplementsParsed.principalComponent, ...serializedImplementsParsed.otherComponents];
+                const damageImplements = implementsAsArray.map(i => {
+                    const features = ItemFeaturesModel.from(i.features)
+                    const damageRoll = DamageRoll.from(i.formula, features)
+                    //the modifier we 'reflected' from inside damage roll already accounted for "Wuchtig" so, if we reapply modifiers,
+                    //we have to make sure we don't double damage by accident
+                    const modifier = features.hasFeature("Wuchtig") ? math.floor(i.modifier * 0.5) : i.modifier;
+                    damageRoll.increaseDamage(modifier)
+                    return {
+                        damageRoll,
+                        damageType: i.damageType,
+                        damageSource: i.damageSource,
+                    }
+                });
+
+                const costType = $(event.currentTarget).closestData("costtype") ?? "V";
+                const actorId = $(event.currentTarget).closestData("actorid");
+                const actor = foundryApi.getActor("source") ?? null;//May fail if ID refers to a token
+                return DamageInitializer.rollFromDamageRoll(damageImplements, CostBase.create(costType), actor)
+                    .then(message => message.sendToChat());
+
             }
 
             if (type === "activeDefense") {
@@ -768,4 +786,44 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
     }
 
 
+}
+
+/**
+ * @param {SplittermondActor} actor
+ */
+function mapAttacks(actor){
+    return actor.attacks.map(attack => ({
+            ...attack.toObject(),
+            damageImplements: mapDamageImplements(attack)
+        }));
+}
+
+/**
+ *  Officially damage modifier is a private member. We're exploiting the fact that we're using JS here
+ *  where the TS compile will not notice. I find this hack acceptable, because this code should be
+ *  migrated
+ * @param {Attack} attack
+ * @returns {string}
+ */
+function mapDamageImplements(attack){
+    const damage = attack.getForDamageRoll();
+    const serializedImplements = {
+        principalComponent:{
+            formula: damage.principalComponent.damageRoll.backingRoll.formula,
+            features: damage.principalComponent.damageRoll._features.features,
+            modifier: damage.principalComponent.damageRoll._damageModifier,
+            damageSource:damage.principalComponent.damageSource,
+            damageType: damage.principalComponent.damageType
+        },
+        otherComponents: damage.otherComponents.map(i => {
+            return {
+                formula: i.damageRoll.backingRoll.formula,
+                features: i.damageRoll._features.features,
+                modifier: i.damageRoll._damageModifier,
+                damageSource: i.damageSource,
+                damageType: i.damageType
+            }
+        })
+    }
+    return JSON.stringify(serializedImplements);
 }

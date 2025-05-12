@@ -60,18 +60,16 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
     describe("Damage Message initialization", () => {
         it("should account for multiple damage types", async () => {
             const firstImplement = {
-                damageFormula: "1d6",
-                featureString: "Scharf 1",
+                damageRoll: DamageRoll.parse("1d6", "Scharf 1"),
                 damageSource: "Schwert",
                 damageType: "physical" as const
             }
             const secondImplement = {
-                damageFormula: "1d10",
-                featureString: "Durchdringung 1",
+                damageRoll: DamageRoll.parse("1d10",  "Durchdringung 1"),
                 damageSource: "Brennende Klinge",
                 damageType: "fire" as const
             }
-            const chatMessage = await DamageInitializer.rollDamage([firstImplement,secondImplement],"V", null)
+            const chatMessage = await DamageInitializer.rollFromDamageRoll([firstImplement,secondImplement],CostBase.create("V"), null)
             const damageMessage = chatMessage.system as DamageMessage;
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);
