@@ -149,7 +149,6 @@ describe("SpellRollMessage", () => {
     });
 
     it("should handle action applyDamage", async () => {
-        //sandbox.stub(foundryApi, "warnUser");
         const chatCardMock = sandbox.createStubInstance(SplittermondChatCard);
         const damageStub = sandbox.stub(DamageInitializer, "rollFromDamageRoll")
             .resolves(chatCardMock);

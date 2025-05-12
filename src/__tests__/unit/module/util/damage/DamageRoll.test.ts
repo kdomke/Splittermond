@@ -195,6 +195,17 @@ describe("DamageRoll evaluation", () => {
         expect(getFirstDie(roll.roll).results[0].result).to.equal(6);
         expect(getFirstDie(roll.roll).results[1].result).to.equal(6);
     });
+
+    it("should carry modification through evaluation", async() => {
+        const damageString = "1d6"
+
+        const damageRoll = DamageRoll.parse(damageString);
+        damageRoll.increaseDamage(2)
+        const evaluatedRoll = await damageRoll.evaluate();
+
+        expect(evaluatedRoll.roll.formula).to.equal("1d6 + 2");
+
+    })
 });
 
 describe("Feature activation", () => {

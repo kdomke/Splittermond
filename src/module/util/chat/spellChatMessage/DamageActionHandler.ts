@@ -105,7 +105,7 @@ export class DamageActionHandler extends SplittermondDataModel<DamageActionHandl
             .whenAllChecksPassed(() => {
                     this.updateSource({used: true});
                     const spell = this.spellReference.getItem();
-                    const damages = this.spellReference.getItem().getForDamageRoll();
+                    const damages = this.totalDamage
                     return DamageInitializer.rollFromDamageRoll(
                         [damages.principalComponent, ...damages.otherComponents],
                         CostBase.create(spell.system.costType ?? "V"),
