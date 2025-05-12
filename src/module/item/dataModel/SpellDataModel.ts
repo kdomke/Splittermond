@@ -2,6 +2,7 @@ import {DataModelSchemaType, fields, SplittermondDataModel} from "../../data/Spl
 import SplittermondSpellItem from "../spell";
 import {damage, getDescriptorFields, validatedBoolean} from "./commonFields";
 import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
+import {from0_12_20_migrateDamage, from0_12_20_migrateFeatures} from "./migrations";
 
 function SpellDataModelSchema() {
     return {
@@ -37,4 +38,10 @@ export type SpellDataModelType = DataModelSchemaType<typeof SpellDataModelSchema
 
 export class SpellDataModel extends SplittermondDataModel<SpellDataModelType, SplittermondSpellItem> {
     static defineSchema= SpellDataModelSchema;
+
+    static migrateData(source:unknown){
+        source = from0_12_20_migrateDamage(source);
+        source = from0_12_20_migrateFeatures(source);
+        return super.migrateData(source);
+    }
 }
