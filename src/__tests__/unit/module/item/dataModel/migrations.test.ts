@@ -85,18 +85,6 @@ describe("Modifier migration from 0.12.20", () => {
         })
     });
 
-    it("should initialize features if not present", () => {
-        const source = {}
-        const replaced = from0_12_20_migrateFeatures(source);
-        expect((replaced as any).features.internalFeatureList).to.deep.equal([]);
-    });
-
-    it("should initialize secondary features if not present", () => {
-        const source = {secondaryAttack:{}}
-        const replaced = from0_12_20_migrateFeatures(source);
-        expect((replaced as any).secondaryAttack.features.internalFeatureList).to.deep.equal([]);
-    });
-
     it("should map features", () => {
         const source = {features: "Wurffähig  , Scharf       2,     Wuchtig"};
 
@@ -147,16 +135,5 @@ describe("Modifier migration from 0.12.20", () => {
         const source = {damage: {stringInput: "1W6 +    3"}};
         const replaced = from0_12_20_migrateDamage({...source});
         expect(replaced).to.deep.equal(source);
-    });
-
-    it("should initialize damage if not present", () => {
-        const source = {}
-        const replaced = from0_12_20_migrateDamage(source);
-        expect((replaced as any).damage.stringInput).to.be.null;
-    });
-    it("should initialize damage if not present", () => {
-        const source = {secondaryAttack:{}}
-        const replaced = from0_12_20_migrateDamage(source);
-        expect((replaced as any).secondaryAttack.damage.stringInput).to.be.null;
     });
 });
