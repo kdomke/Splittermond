@@ -41,7 +41,7 @@ img {
 .app {
   color: var(--color-text);
 
-  background: var(--background-denim-splittermond), var(--background-denim);
+  background: var(--splittermond-background-denim-blue), var(--splittermond-background-denim);
   background-blend-mode: var(--background-denim-splittermond-blend-mode);
 
   > * {
@@ -51,12 +51,12 @@ img {
 
 .application:not(.sidebar-popout):not(.journal-entry), .window-app:not(.sidebar-popout):not(.journal-entry):not(.dark) {
   color: var(--color-text-secondary);
-  background: var(--background-parchment);
+  background: var(--splittermond-background-parchment);
 
   .window-content:extend(.border-double-corner-1) {
     color: var(--color-text-secondary);
 
-    background: var(--background-parchment);
+    background: var(--splittermond-background-parchment);
 
     margin: 5px;
     margin-top: 0px;
@@ -101,7 +101,7 @@ img {
 .sheet.journal-entry .journal-entry-content:extend(.border-paper) {
   border-radius: 0;
   color: var(--color-text-secondary);
-  background: var(--background-parchment);
+  background: var(--splittermond-background-parchment);
 }
 
 .sheet.journal-entry .journal-entry-pages {
@@ -211,7 +211,7 @@ img {
 
 
 #chat-form textarea {
-  background: var(--background-parchment-splittermond), var(--background-parchment);
+  background: var(--splittermond-background-parchment-blue), var(--splittermond-background-parchment);
   background-blend-mode: var(--background-parchment-splittermond-blend-mode);
   background-size: cover, auto;
 
@@ -281,10 +281,10 @@ input[type="time"],
   input[type="password"],
   input[type="date"],
   input[type="time"] {
-    background: @image-noise center center, var(--background-parchment);
+    background: @image-noise center center, var(--splittermond-background-parchment);
 
     &:hover, &:focus {
-      background: @image-noise center center, var(--background-parchment);
+      background: @image-noise center center, var(--splittermond-background-parchment);
     }
   }
 }
@@ -407,10 +407,10 @@ form h1.form-header, form h2.form-header, form h3.form-header {
     .header-search {
       input {
         &:extend(input[type="text"] all);
-        background: @image-noise center center, var(--background-parchment);
+        background: @image-noise center center, var(--splittermond-background-parchment);
 
         &:hover, &:focus {
-          background: @image-noise center center, var(--background-parchment);
+          background: @image-noise center center, var(--splittermond-background-parchment);
         }
       }
     }
@@ -446,13 +446,13 @@ form .notes, form .hint {
 }
 
 :root {
-  scrollbar-color: none var(--background-parchment);
+  scrollbar-color: none var(--splittermond-background-parchment);
 }
 
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
-  scrollbar-color: none var(--background-parchment);
+  scrollbar-color: none var(--splittermond-background-parchment);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -460,7 +460,7 @@ form .notes, form .hint {
   /* border-radius: 3px; */
   background: #782e22;
   border: 1px solid #ff6400;
-  background: url(../../systems/splittermond/images/noise6.png), url(../../systems/splittermond/images/grunge_alpha.png), var(--background-parchment);
+  background: url(../../systems/splittermond/images/noise6.png), url(../../systems/splittermond/images/grunge_alpha.png), var(--splittermond-background-parchment);
   background-blend-mode: overlay;
   border: 2px solid transparent;
   border-image: url(../../systems/splittermond/images/double-border_small.png) 2 2;
@@ -475,7 +475,7 @@ form .notes, form .hint {
 }
 
 a.rollable, a.request-skill-check, a.add-tick, a.entity-link, a.inline-roll, a.pdflink {
-  background: var(--background-parchment);
+  background: var(--splittermond-background-parchment);
   padding: 1px 4px;
   border: 1px solid rgba(var(--color-text-secondary_rgb), 0.5);
   border-radius: 2px;
