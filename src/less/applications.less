@@ -19,7 +19,7 @@
   }
 }
 
-.window-body-def(){
+.window-body-def() {
   label {
     color: @window-foreground-color;
   }
@@ -61,8 +61,34 @@ form.application .window-content {
   button[data-action="short-rest"] {
     .button-style();
   }
+
   button[data-action="long-rest"] {
     .button-style();
+  }
+
+  button[data-action="toggle-equipped"] {
+    background: none;
+    border-image: none;
+    box-shadow: none;
+
+    i {
+      --toggle-color-light: #f0f0e0;
+      --toggle-color-dark: #0f0f10;
+
+      &.fa-toggle-off {
+        color: var(--toggle-color-dark);
+        text-shadow: 0px 0px 1px var(--toggle-color-light),
+        0px 1px 0px var(--toggle-color-light),
+        0px 1px 0px var(--toggle-color-dark);
+      }
+
+      &.fa-toggle-on {
+        color: var(--toggle-color-light);
+        text-shadow: 0px 0px 1px var(--toggle-color-dark),
+        0px 1px 0px var(--toggle-color-dark),
+        0px 1px 0px var(--toggle-color-light);
+      }
+    }
   }
 
   //Prevents having space around the <pre> element used for the help text of min-attributes
