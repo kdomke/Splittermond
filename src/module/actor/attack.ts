@@ -177,8 +177,8 @@ export default class Attack {
         return this.attackData.features.features
     }
 
-    get featuresAsObject() {
-        return this.attackData.features.featureList;
+    get featuresAsRef() {
+        return this.attackData.features;
     }
 
     /**

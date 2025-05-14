@@ -2,7 +2,6 @@ import ActiveDefense from "module/actor/active-defense";
 import AttackableItem from "module/item/attackable-item";
 import SplittermondPhysicalItem from "module/item/physical";
 import {WeaponDataModel} from "module/item/dataModel/WeaponDataModel";
-import {ItemFeaturesModel} from "./dataModel/propertyModels/ItemFeaturesModel";
 
 
 export default class SplittermondWeaponItem extends AttackableItem(SplittermondPhysicalItem) {
@@ -31,7 +30,7 @@ export default class SplittermondWeaponItem extends AttackableItem(SplittermondP
 
         this.attacks.forEach(attack => {
             if (["melee", "slashing", "chains", "blades", "staffs"].includes(attack.skill.id)) {
-                this.activeDefense.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, ItemFeaturesModel.from(attack.featuresAsObject), attack.img));
+                this.activeDefense.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, attack.featuresAsRef, attack.img));
             }
         });
 

@@ -2,7 +2,6 @@ import AttackableItem from "module/item/attackable-item";
 import SplittermondItem from "module/item/item";
 import ActiveDefense from "module/actor/active-defense";
 import {NpcAttackDataModel} from "module/item/dataModel/NpcAttackDataModel";
-import {ItemFeaturesModel} from "./dataModel/propertyModels/ItemFeaturesModel";
 
 export default class SplittermondNPCAttackItem extends AttackableItem(SplittermondItem) {
 
@@ -25,7 +24,7 @@ export default class SplittermondNPCAttackItem extends AttackableItem(Splittermo
     prepareActiveDefense() {
         this.attacks.forEach(attack => {
             if (attack.range === 0) {
-                this.activeDefenses.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, ItemFeaturesModel.from(attack.featuresAsObject), attack.img));
+                this.activeDefenses.push(new ActiveDefense(this.id, "defense", attack.name, attack.skill, attack.featuresAsRef, attack.img));
             }
         });
 
