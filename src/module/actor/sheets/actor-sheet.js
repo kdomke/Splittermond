@@ -89,19 +89,19 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
 
         if (sheetData.itemsByType.weapon){
             sheetData.itemsByType.weapon.forEach((item) => {
-                item.system.features = this.actor.items.getName(item.name).system.features.features;
-                item.system.damage = this.actor.items.getName(item.name).system.damage.displayValue;
+                item.system.features = this.actor.items.get(item._id).system.features.features;
+                item.system.damage = this.actor.items.get(item._id).system.damage.displayValue;
             });
         }
         if (sheetData.itemsByType.shield){
             sheetData.itemsByType.shield.forEach((item) => {
-                item.system.features = this.actor.items.getName(item.name).system.features.features;
+                item.system.features = this.actor.items.get(item._id).system.features.features;
 
             });
         }
         if (sheetData.itemsByType.armor){
             sheetData.itemsByType.armor.forEach((item) => {
-                item.system.features = this.actor.items.getName(item.name).system.features.features;
+                item.system.features = this.actor.items.get(item._id).system.features.features;
 
             });
         }
