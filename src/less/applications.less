@@ -49,11 +49,21 @@ form.application .window-header {
 
 //ApplicationV2 body
 form.application .window-content {
-  .window-body-def()
+  .window-body-def();
+
 }
 
-.app.window-app.dialog {
+//Application V1
+.app.window-app {
   .window-body-def();
+
+  //Style th short and long rest buttons on the actor sheet
+  button[data-action="short-rest"] {
+    .button-style();
+  }
+  button[data-action="long-rest"] {
+    .button-style();
+  }
 
   //Prevents having space around the <pre> element used for the help text of min-attributes
   .help-text pre {
