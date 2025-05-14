@@ -47,8 +47,11 @@ export default class Skill extends Modifiable {
     }
 
     get points() {
-        if (this._skillValue == null) {
-            return parseInt(this.actor.system.skills[this.id].points);
+        //No actual skill value can have a value of 0 (let alone null or undefined). Therefore if we encounter this,
+        // we're dealing with a proper skill (one calculated from attributes and points), meaning that we can just
+        // read out the points from the actor.
+        if (!this._skillValue) {
+            return parseInt(this.actor.system.skills[this.id]?.points ?? "0");
         } else {
             return this._skillValue - (this.attribute1?.value || 0) - (this.attribute2?.value || 0);
         }
@@ -257,13 +260,16 @@ export default class Skill extends Modifiable {
         let formula = new Tooltip.TooltipFormula();
         if (this.attribute1) {
             formula.addPart(this.attribute1.value, this.attribute1.label.short);
-            formula.addOperator("+");
         }
         if (this.attribute2) {
-            formula.addPart(this.attribute2.value, this.attribute2.label.short);
             formula.addOperator("+");
+            formula.addPart(this.attribute2.value, this.attribute2.label.short);
         }
-        formula.addPart(this.points, game.i18n.localize("splittermond.skillPointsAbbrev"));
+        const skillPoints = this.points;
+        if(this.attribute1 || this.attribute2) {
+            formula.addOperator(this.points < 0 ? "-" : "+");
+        }
+        formula.addPart(Math.abs(this.points), game.i18n.localize("splittermond.skillPointsAbbrev"));
 
         this.addModifierTooltipFormulaElements(formula);
         return formula;
