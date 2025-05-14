@@ -53,7 +53,12 @@ form.application .window-content {
 }
 
 .app.window-app.dialog {
-  .window-body-def()
+  .window-body-def();
+
+  //Prevents having space around the <pre> element used for the help text of min-attributes
+  .help-text pre {
+    margin: 0
+  }
 }
 
 
