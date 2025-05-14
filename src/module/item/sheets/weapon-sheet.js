@@ -15,7 +15,7 @@ export default class SplittermondWeaponSheet extends SplittermondItemSheet {
 
             {
                 label: "splittermond.damage",
-                value: this.item.system.damage
+                value: this.item.system.damage.displayValue
             }
         ];
 
