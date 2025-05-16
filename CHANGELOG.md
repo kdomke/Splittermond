@@ -1,4 +1,4 @@
-## 13.0.0.0
+## 13.0.0.3
 Mit großem Dank an ID_Bastion für das Überarbeiten der Dokumentation und an kleinerFuchs fürs Testen
 ### Breaking changes
  * Migrationen von v0.12.11 müssen zuerst auf v0.12.20 migrieren.
@@ -8,6 +8,8 @@ Mit großem Dank an ID_Bastion für das Überarbeiten der Dokumentation und an k
  * Der Modifikator `weaponspeed.<Waffename>` ist kein gültiger Modifikator mehr
  * Ersatz für beide ist `damage item="Waffename"` bzw. `weaponspeed item="Waffename"`
 ### New Features
+ * Kompatibel mit Foundry V13
+ * Der Versionsname setzt sich zukünftig aus der kompatiblen Foundry Version, sowie semver formatierten Versionsnummern zusammen
  * Schadensmodifikatoren akzeptieren jetzt Merkmale und Schadensarten
    * neue syntax ist `damage Merkmale="Scharf 2" Schadensart="Feuerschaden" 3`
    * Ein Schadensmodifikator übernimmt immer die Merkmale des Objekts, auf dem er angewandt wird.
@@ -22,6 +24,7 @@ Mit großem Dank an ID_Bastion für das Überarbeiten der Dokumentation und an k
  * Überarbeitete und detailliertere Dokumentation
 ### Fixed
  * Wenn mehr als ein Probendialog offen ist, funktioniert das Auswählen von Modifikatoren und Manövern jetzt zuverlässig.
+ * Alle möglichen Fehler die durch die Migration nach V13 aufgetreten sind.
 ## 0.12.20
 ### Fixed
  * Fertigkeitsgruppen akzeptieren jetzt wieder Schwerpunkte
