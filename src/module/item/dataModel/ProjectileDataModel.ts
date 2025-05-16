@@ -3,7 +3,7 @@ import { fields } from "../../data/SplittermondDataModel";
 import SplittermondItem from "../item";
 import {getDescriptorFields, getPhysicalProperties} from "./commonFields";
 import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
-import {migrateFrom0_12_20} from "./migrations";
+import {from0_12_20_migrateFeatures, migrateFrom0_12_20} from "./migrations";
 
 function ItemProjectileDataModelSchema() {
     return {
@@ -23,6 +23,7 @@ export class ProjectileDataModel extends SplittermondDataModel<ProjectileDataMod
 
     static migrateData(source:unknown){
         source = migrateFrom0_12_20(source);
+        source = from0_12_20_migrateFeatures(source);
         return super.migrateData(source);
 
     }

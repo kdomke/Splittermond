@@ -19,7 +19,7 @@
   }
 }
 
-.window-body-def(){
+.window-body-def() {
   label {
     color: @window-foreground-color;
   }
@@ -49,11 +49,52 @@ form.application .window-header {
 
 //ApplicationV2 body
 form.application .window-content {
-  .window-body-def()
+  .window-body-def();
+
 }
 
-.app.window-app.dialog {
-  .window-body-def()
+//Application V1
+.app.window-app {
+  .window-body-def();
+
+  //Style th short and long rest buttons on the actor sheet
+  button[data-action="short-rest"] {
+    .button-style();
+  }
+
+  button[data-action="long-rest"] {
+    .button-style();
+  }
+
+  button[data-action="toggle-equipped"] {
+    background: none;
+    border-image: none;
+    box-shadow: none;
+
+    i {
+      --toggle-color-light: #f0f0e0;
+      --toggle-color-dark: #0f0f10;
+
+      &.fa-toggle-off {
+        color: var(--toggle-color-dark);
+        text-shadow: 0px 0px 1px var(--toggle-color-light),
+        0px 1px 0px var(--toggle-color-light),
+        0px 1px 0px var(--toggle-color-dark);
+      }
+
+      &.fa-toggle-on {
+        color: var(--toggle-color-light);
+        text-shadow: 0px 0px 1px var(--toggle-color-dark),
+        0px 1px 0px var(--toggle-color-dark),
+        0px 1px 0px var(--toggle-color-light);
+      }
+    }
+  }
+
+  //Prevents having space around the <pre> element used for the help text of min-attributes
+  .help-text pre {
+    margin: 0
+  }
 }
 
 
@@ -62,14 +103,14 @@ form.application .window-content {
 }
 
 .application-override-mixin() {
-  background: var(--background-parchment-splittermond), var(--background-parchment);
+  background: var(--splittermond-background-parchment-blue), var(--splittermond-background-parchment);
   background-position: top right;
   background-blend-mode: var(--background-parchment-splittermond-blend-mode);
   background-clip: padding-box;
 }
 
 .chat-message:extend(.border-paper) {
-  background: var(--background-parchment);
+  background: var(--splittermond-background-parchment);
   border-image-repeat: repeat;
   z-index: 0;
   position: relative;

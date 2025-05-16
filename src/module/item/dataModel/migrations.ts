@@ -56,12 +56,10 @@ export function migrateFrom0_12_20(source: unknown) {
             .map(mapDamageModifier);
         source.modifier = [...keep, ...change].join(", ");
     }
-    source = migrateFeatures(source);
-    source = migrateDamage(source);
     return source;
 }
 
-function migrateFeatures(source: unknown) {
+export function from0_12_20_migrateFeatures(source: unknown) {
     if (source && typeof source === "object" && "features" in source && typeof source["features"] === "string") {
         const features = source["features"];
         source["features"] = {
@@ -79,9 +77,26 @@ function migrateFeatures(source: unknown) {
     return source;
 }
 
+export function from0_12_20_migrateDamage(source: unknown) {
+    if (!source || typeof source !== "object") {
+        return source;
+    }
+    if ("damage" in source && typeof source["damage"] === "string") {
+        source.damage = {stringInput: source["damage"]};
+    }
+    if (source && typeof source === "object" && "secondaryAttack" in source &&
+        typeof source["secondaryAttack"] === "object" && source.secondaryAttack &&
+        "damage" in source.secondaryAttack && typeof source.secondaryAttack["damage"] === "string") {
+        source.secondaryAttack.damage = {
+            stringInput: source.secondaryAttack["damage"]
+        };
+    }
+    return source;
+}
+
 function mapDamageModifier(mod: string): string {
-    if(!mod.includes("/") && !/^\s*\S+[.]\S+/.test(mod) && !/emphasis=\S+/.test(mod)) {
-       return mod;
+    if (!mod.includes("/") && !/^\s*\S+[.]\S+/.test(mod) && !/emphasis=\S+/.test(mod)) {
+        return mod;
     }
     const parsedModifier = parseModifiers(mod).modifiers[0];
     const path = parsedModifier.path.split(".")[0];
@@ -107,14 +122,4 @@ function mapDamageModifier(mod: string): string {
     } else {
         return `${path} ${valueAsString}`;
     }
-}
-
-function migrateDamage(source:unknown) {
-    if(!source || typeof source !== "object"){
-        return source;
-    }
-    if("damage" in source && typeof source["damage"] === "string") {
-        source.damage = {stringInput:source["damage"]};
-    }
-    return source;
 }

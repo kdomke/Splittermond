@@ -19,6 +19,7 @@ import {SplittermondChatCard} from "module/util/chat/SplittermondChatCard";
 import {createTestRoll, MockRoll, stubFoundryRoll, stubRollApi} from "__tests__/unit/RollMock";
 import {DamageRoll} from "module/util/damage/DamageRoll";
 import {ItemFeaturesModel} from "module/item/dataModel/propertyModels/ItemFeaturesModel";
+import {CostBase} from "../../../../../../module/util/costs/costTypes";
 
 describe("DamageActionHandler", () => {
     let sandbox: sinon.SinonSandbox;
@@ -219,6 +220,36 @@ describe("DamageActionHandler", () => {
             expect(actions).to.have.length(1);
             expect(actions[0].value).to.equal("1W6 + 3")
         });
+
+        it("should pass updated damage values to damage calculator", () => {
+            const underTest = setUpDamageActionHandler(sandbox);
+            const chatCardMock =  sandbox.createStubInstance(SplittermondChatCard);
+            const initMock = sandbox.stub(DamageInitializer, "rollFromDamageRoll").resolves(chatCardMock);
+            underTest.checkReportReference.get().succeeded = true;
+            underTest.spellReference.getItem().getForDamageRoll.returns({
+                principalComponent: {
+                    damageRoll: new DamageRoll(new MockRoll("1d6 + 1"), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "physical",
+                    damageSource: underTest.spellReference.getItem().name
+                },
+                otherComponents:[{
+                    damageRoll: new DamageRoll(createTestRoll("",[],2), ItemFeaturesModel.emptyFeatures()),
+                    damageType: "rock",
+                    damageSource: "Felsenharter Hammer"
+                }]
+            });
+            const mockRoll = new MockRoll("1d6 + 1");
+            mockRoll.terms.push(foundryApi.rollInfra.plusTerm(), foundryApi.rollInfra.numericTerm(2))
+            stubFoundryRoll(mockRoll, sandbox)
+
+            underTest.useDegreeOfSuccessOption({action: "damageUpdate", multiplicity: "2"}).action();
+            underTest.useAction({action: "applyDamage"});
+
+            expect(initMock.lastCall.args[0][0].damageRoll.getDamageFormula()).to.deep.equal("1W6 + 3");
+            expect(initMock.lastCall.args[0][1]).to.deep.equal(underTest.spellReference.getItem().getForDamageRoll().otherComponents[0]);
+            expect(initMock.lastCall.args[1]).to.deep.equal(CostBase.create("V"))
+
+        })
     })
 });
 

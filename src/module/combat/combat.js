@@ -147,7 +147,7 @@ export default class SplittermondCombat extends Combat {
 
     async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
         let tick = this.currentTick;
-        await super.rollInitiative(ids, { formula: formula, updateTurn: updateTurn, messageOptions: messageOptions });
+        await super.rollInitiative(ids, { formulaToDisplay: formula, updateTurn: updateTurn, messageOptions: messageOptions });
 
         if (this.started) {
             for ( let [i, id] of ids.entries() ) {

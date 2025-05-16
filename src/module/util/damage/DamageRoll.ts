@@ -50,7 +50,8 @@ export class DamageRoll {
     }
 
     async evaluate(){
-        const {roll, activeFeatures} = await evaluateDamageRoll(this.backingRoll.clone(), this._features);
+        const modifiedRoll = this.modifyRollFormula(this.backingRoll.clone());
+        const {roll, activeFeatures} = await evaluateDamageRoll(modifiedRoll, this._features);
         if(this._features.hasFeature("Wuchtig") && this._damageModifier > 0){
             activeFeatures.add("Wuchtig");
         }

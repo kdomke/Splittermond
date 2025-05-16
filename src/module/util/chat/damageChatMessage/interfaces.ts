@@ -3,7 +3,7 @@
 export interface DamageMessageData {
     source: string|null;
     features: {active: boolean, name: string, value:number}[];
-    formula: string;
+    formulaToDisplay: string;
     total: number;
     tooltip: string;
     actions: DamageAction[];

@@ -13,7 +13,7 @@
         opacity: 0;
         transition: opacity 0.5s;
 
-        background: var(--background-parchment);
+        background: var(--splittermond-background-parchment);
         font-size: 12px;
         display: inline-flex;
         z-index: 100;
@@ -75,7 +75,7 @@
         top: 0px;
         z-index: 10;
 
-        background: var(--background-parchment), @image-noise;
+        background: var(--splittermond-background-parchment), @image-noise;
         background-blend-mode: multiply;
 
         *:not(:first-child) {
@@ -115,7 +115,7 @@
 
         &:hover,
         &.hover {
-            background: linear-gradient(to right, transparent, rgba(var(--color-primary_rgb),0.1), transparent), url(../../systems/splittermond/images/noise6.png);
+            background: linear-gradient(to right, transparent, rgba(var(--color-primary_rgb),0.1), transparent), url(../../public/images/noise6.png);
             background-blend-mode: multiply;
         }
 
@@ -133,7 +133,7 @@
     }
 
     &.dialog .list {
-        background: var(--background-parchment) fixed;
+        background: var(--splittermond-background-parchment) fixed;
     }
 
     .list.spells,
@@ -337,7 +337,7 @@
             
             &::before:extend(.border-paper) {
                 border-image-repeat: repeat;
-                background: var(--background-parchment);
+                background: var(--splittermond-background-parchment);
                 //content: unset;
                 //display: none;
                 margin: -3px;

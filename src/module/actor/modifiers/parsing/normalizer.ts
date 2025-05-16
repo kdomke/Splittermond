@@ -4,7 +4,7 @@ import {attributes, derivedAttributes} from "../../../config/attributes";
 import {isRoll} from "../../../api/Roll";
 import {splittermond} from "../../../config";
 
-const modifierKeys = ["emphasis", "damageType", "value", "skill", "feature", "item"] as const;
+const modifierKeys = ["emphasis", "damageType", "value", "skill", "feature", "features", "item"] as const;
 const attributeMapper = initMapper(attributes)
     .withTranslator((t) => `splittermond.attribute.${t}.long`)
     .andOtherMappers((t) => `splittermond.attribute.${t}.short`)

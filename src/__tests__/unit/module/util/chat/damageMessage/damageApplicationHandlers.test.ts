@@ -27,7 +27,7 @@ describe("damageApplicationHandlers", () => {
             sandbox.stub(foundryApi, "currentUser").get(() => createMockUser(sandbox, 0));
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
 
-            await damageHandlers.applyDamageToTargets(createDamageEvent(sandbox, createDamageImplement(10, 1)))
+            await damageHandlers.applyDamageToTargets(createDamageEvent(sandbox,{implements: [createDamageImplement(10, 1)]}))
 
             expect(warnUser.calledOnce).to.be.true;
             expect(dialogMock.getUserAdjustedDamage.called).to.be.false;
@@ -37,7 +37,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(foundryApi, "currentUser").get(() => createMockUser(sandbox, 3));
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToTargets(report);
 
@@ -53,7 +53,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(foundryApi, "currentUser").get(() => createMockUser(sandbox, 2));
             const dialogMock = mockDialog(sandbox, "Aborted");
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToTargets(report);
 
@@ -68,7 +68,7 @@ describe("damageApplicationHandlers", () => {
         it("should warn user if actor", async () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
             sandbox.stub(report, "causer").get(() => null);
 
             await damageHandlers.applyDamageToUserTargets(report)
@@ -82,7 +82,7 @@ describe("damageApplicationHandlers", () => {
             sandbox.stub(foundryApi, "users").get(() => []);
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
 
-            await damageHandlers.applyDamageToUserTargets(createDamageEvent(sandbox, createDamageImplement(10, 1)))
+            await damageHandlers.applyDamageToUserTargets(createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]}))
 
             expect(warnUser.calledOnce).to.be.true;
             expect(dialogMock.getUserAdjustedDamage.called).to.be.false;
@@ -93,7 +93,7 @@ describe("damageApplicationHandlers", () => {
             sandbox.stub(foundryApi, "users").get(() => [createMockUser(sandbox, 0)]);
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
 
-            await damageHandlers.applyDamageToUserTargets(createDamageEvent(sandbox, createDamageImplement(10, 1)))
+            await damageHandlers.applyDamageToUserTargets(createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]}))
 
             expect(warnUser.calledOnce).to.be.true;
             expect(dialogMock.getUserAdjustedDamage.called).to.be.false;
@@ -104,7 +104,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(foundryApi, "users").get(() => [createMockUser(sandbox, 3)]);
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox,{implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToUserTargets(report);
 
@@ -120,7 +120,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(foundryApi, "users").get(() => [createMockUser(sandbox, 2)]);
             const dialogMock = mockDialog(sandbox, "Aborted");
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToUserTargets(report);
 
@@ -137,7 +137,7 @@ describe("damageApplicationHandlers", () => {
             sandbox.stub(referencesUtils).findBestUserActor.throws(new Error("buya"));
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
 
-            await damageHandlers.applyDamageToSelf(createDamageEvent(sandbox, createDamageImplement(10, 1)))
+            await damageHandlers.applyDamageToSelf(createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]}))
 
             expect(warnUser.calledOnce).to.be.true;
             expect(dialogMock.getUserAdjustedDamage.called).to.be.false;
@@ -147,7 +147,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(referencesUtils).findBestUserActor.returns(createAgentReference(sandbox, 5));
             const dialogMock = mockDialog(sandbox, new Cost(0, 1, false, true).asPrimaryCost());
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToSelf(report);
 
@@ -162,7 +162,7 @@ describe("damageApplicationHandlers", () => {
             const warnUser = sandbox.stub(foundryApi, "warnUser");
             sandbox.stub(referencesUtils).findBestUserActor.returns(createAgentReference(sandbox, 5));
             const dialogMock = mockDialog(sandbox, "Aborted");
-            const report = createDamageEvent(sandbox, createDamageImplement(10, 1));
+            const report = createDamageEvent(sandbox, {implements: [createDamageImplement(10, 1)]});
 
             await damageHandlers.applyDamageToSelf(report);
 

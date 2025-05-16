@@ -60,24 +60,22 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
     describe("Damage Message initialization", () => {
         it("should account for multiple damage types", async () => {
             const firstImplement = {
-                damageFormula: "1d6",
-                featureString: "Scharf 1",
+                damageRoll: DamageRoll.parse("1d6", "Scharf 1"),
                 damageSource: "Schwert",
                 damageType: "physical" as const
             }
             const secondImplement = {
-                damageFormula: "1d10",
-                featureString: "Durchdringung 1",
+                damageRoll: DamageRoll.parse("1d10",  "Durchdringung 1"),
                 damageSource: "Brennende Klinge",
                 damageType: "fire" as const
             }
-            const chatMessage = await DamageInitializer.rollDamage([firstImplement,secondImplement],"V", null)
+            const chatMessage = await DamageInitializer.rollFromDamageRoll([firstImplement,secondImplement],CostBase.create("V"), null)
             const damageMessage = chatMessage.system as DamageMessage;
 
             expect(damageMessage).to.be.instanceOf(DamageMessage);
             expect(damageMessage.getData().total).to.equal(damageMessage.damageEvent.totalDamage());
             expect(damageMessage.getData().actions.map(a => a.data.localAction)).to.contain("applyDamageToTargets");
-            expect(damageMessage.getData().formula).to.equal("1d6 + 1d10");
+            expect(damageMessage.getData().formulaToDisplay).to.equal("1W6 + 1W10");
 
             expect(damageMessage.damageEvent.implements).to.have.length(2);
             expect(damageMessage.damageEvent.implements.map(i => i.damageType)).to.contain.members(["physical","fire"]);
@@ -117,7 +115,7 @@ export function DamageProcessingTest(context:QuenchBatchContext) {
 
         it("should call the immunity handler for event immunities", () => {
             const target = getActor(it);
-            const event = new DamageEvent({causer:null, _costBase: CostBase.create("K"), formula:"1d6", tooltip:"", isGrazingHit:false, implements:[implement]});
+            const event = new DamageEvent({causer:null, _costBase: CostBase.create("K"), formulaToDisplay:"1W6", tooltip:"", isGrazingHit:false, implements:[implement]});
             const id = foundryApi.hooks.on(eventImmunityHook, (_,__,imms)=>{imms.push({name:"Test"})})
             eventIds.push(id)
 
